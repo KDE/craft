@@ -4,6 +4,7 @@ from Packager.PackagerBase import *
 from Package.VirtualPackageBase import *
 from Source.MultiSource import *
 
+
 class PipPackageBase(PackageBase, MultiSource, PipBuildSystem, PackagerBase):
     """provides a base class for pip packages"""
 

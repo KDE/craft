@@ -32,15 +32,22 @@ CraftRoot = Path(__file__).parent.parent.parent
 
 with tarfile.open(fileobj=sys.stdin.buffer, mode="r|") as tar:
     # as we are working on a stream, we can't seek, delay the resolution util the end
-    tar.makelink = lambda tarinfo, targetpath: symlinks.append((tarinfo.linkname, targetpath, 0))
+    tar.makelink = lambda tarinfo, targetpath: symlinks.append(
+        (tarinfo.linkname, targetpath, 0)
+    )
     tar.extractall(sys.argv[1])
 
-def hardlink(src : Path, dest : Path, count : int):
+
+def hardlink(src: Path, dest: Path, count: int):
     if count >= 100:
-        sys.stderr.write(f"\033[0;31mSkip unreasolvable symlink {dest} -> {src}\n\033[0m")
+        sys.stderr.write(
+            f"\033[0;31mSkip unreasolvable symlink {dest} -> {src}\n\033[0m"
+        )
         return
     if not CraftRoot in src.parents:
-        sys.stderr.write(f"\033[0;31mSkip forbidden symlink outside of CraftRoot {dest} -> {src}\n\033[0m")
+        sys.stderr.write(
+            f"\033[0;31mSkip forbidden symlink outside of CraftRoot {dest} -> {src}\n\033[0m"
+        )
         return
     if not src.exists():
         # src does not exist yet, delay
@@ -54,6 +61,7 @@ def hardlink(src : Path, dest : Path, count : int):
                 hardlink(Path(f.path), dest / f.name, 0)
     else:
         os.link(src, dest)
+
 
 # resolve the links and use hard links
 while symlinks:

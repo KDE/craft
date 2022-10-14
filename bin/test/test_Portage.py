@@ -12,8 +12,9 @@ class CraftBlueprintTest(CraftTestBase.CraftTestBase):
         CraftPackageObject.__rootPackage = None
         CraftDependencyPackage._packageCache = dict()
         installable = CraftPackageObject.CraftPackageObject.root().allChildren()
-        CraftDependencyPackage.CraftDependencyPackage(CraftPackageObject.CraftPackageObject.get("/")).getDependencies()
-
+        CraftDependencyPackage.CraftDependencyPackage(
+            CraftPackageObject.CraftPackageObject.get("/")
+        ).getDependencies()
 
 
 class TestAPI(CraftBlueprintTest):

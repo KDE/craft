@@ -41,5 +41,3 @@ class Package(PipPackageBase):
     def __init__(self, **args):
         PipPackageBase.__init__(self)
         self.python2 = False
-
-

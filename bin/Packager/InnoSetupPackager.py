@@ -35,34 +35,33 @@ from Blueprints.CraftVersion import CraftVersion
 
 class InnoSetupPackager(PortablePackager):
     """
-Packager for InnoSetup installer
+    Packager for InnoSetup installer
 
-This Packager generates an InnoSetup installer (an executable which contains all files)
-from the image directories of craft. This way you can be sure to have a clean
-installer.
+    This Packager generates an InnoSetup installer (an executable which contains all files)
+    from the image directories of craft. This way you can be sure to have a clean
+    installer.
 
-In your package, you can add regexp whitelists and blacklists (see example files
-for the fileformat). The files for both white- and blacklists, must be given already
-in the constructor.
+    In your package, you can add regexp whitelists and blacklists (see example files
+    for the fileformat). The files for both white- and blacklists, must be given already
+    in the constructor.
 
-The following paramters all to tune the generated installer:
-scriptname:     Set this to use an entirely custom .iss-template (note: for custom replacements
-                add your own defines into self.defines).
-setupname:      PACKAGENAME-setup-BUILDTARGET.exe
-                PACKAGENAME is the name of the package
-srcdir:         is set to the image directory, where all files from the image directories
-                of all dependencies are gathered. You shouldn't normally have to set this.
-company:        sets the company name used for the registry key of the installer. Default
-                value is "KDE".
-productname:    contains the capitalized PACKAGENAME and the buildTarget of the current package
-executable:     executable is defined empty by default, but it is used to add a link into the
-                start menu. Either this, or at least one shortcut neeeds to be set.
-shortcuts:      Array of dict ("name", "target", "icon", "parameter", "description", "workingDirectory")
-                of shortcuts to create.
-file_types:     Array of file extensions (".xyz"). The installer will offer to associate
-                these with the app.
-registry_keys:  Array of dict ("name", "value") of custom registry keys to add on installation.
-"""
+    The following paramters all to tune the generated installer:
+    scriptname:     Set this to use an entirely custom .iss-template (note: for custom replacements
+                    add your own defines into self.defines).
+    setupname:      PACKAGENAME-setup-BUILDTARGET.exe
+                    PACKAGENAME is the name of the package
+    srcdir:         is set to the image directory, where all files from the image directories
+                    of all dependencies are gathered. You shouldn't normally have to set this.
+    company:        sets the company name used for the registry key of the installer. Default
+                    value is "KDE".
+    productname:    contains the capitalized PACKAGENAME and the buildTarget of the current package
+    executable:     executable is defined empty by default, but it is used to add a link into the
+                    start menu. Either this, or at least one shortcut neeeds to be set.
+    shortcuts:      Array of dict ("name", "target", "icon", "parameter", "description", "workingDirectory")
+                    of shortcuts to create.
+    file_types:     Array of file extensions (".xyz"). The installer will offer to associate
+                    these with the app.
+    registry_keys:  Array of dict ("name", "value") of custom registry keys to add on installation."""
 
     @InitGuard.init_once
     def __init__(self, whitelists=None, blacklists=None):
@@ -72,35 +71,43 @@ registry_keys:  Array of dict ("name", "value") of custom registry keys to add o
 
     def setDefaults(self, defines) -> {}:
         defines = super().setDefaults(defines)
-        defines.setdefault("srcdir", self.archiveDir())# deprecated
+        defines.setdefault("srcdir", self.archiveDir())  # deprecated
         defines.setdefault("registry_keys", [])
-        defines.setdefault("file_types", [])  # extension -> label pair would be better, but trying to be compatible with existing AppxPackager
+        defines.setdefault(
+            "file_types", []
+        )  # extension -> label pair would be better, but trying to be compatible with existing AppxPackager
 
         if not self.scriptname:
-            self.scriptname = os.path.join(os.path.dirname(__file__), "InnoSetupTemplate.iss")
+            self.scriptname = os.path.join(
+                os.path.dirname(__file__), "InnoSetupTemplate.iss"
+            )
         return defines
 
     def isInnoInstalled(self):
         if not self._isInstalled:
             self._isInstalled = self.__isInstalled()
             if not self._isInstalled:
-                CraftCore.log.critical("Craft requires InnoSetup to create a package, please install InnoSetup\n"
-                                       "\t'craft innosetup'")
+                CraftCore.log.critical(
+                    "Craft requires InnoSetup to create a package, please install InnoSetup\n"
+                    "\t'craft innosetup'"
+                )
                 return False
         return True
 
     def __isInstalled(self):
-        """ check if nsis (Nullsoft scriptable install system) is installed somewhere """
+        """check if nsis (Nullsoft scriptable install system) is installed somewhere"""
         self.innoExe = CraftCore.cache.findApplication("ISCC")
         if not self.innoExe:
             return False
         return True
 
-    def _createShortcut(self, name, target, icon="", parameter="", description="", workingDirectory=None) -> str:
+    def _createShortcut(
+        self, name, target, icon="", parameter="", description="", workingDirectory=None
+    ) -> str:
         return f"""Name: "{{group}}\\{name}" ; Filename: "{{app}}\\{OsUtils.toNativePath(target)}" ; WorkingDir: "{workingDirectory}" ; Parameters: "{parameter}" ; IconFileName: "{icon}" ; Comment : "{description}"\n"""
 
     def generateInnoInstaller(self, defines):
-        """ runs ISCC to generate the installer itself """
+        """runs ISCC to generate the installer itself"""
         defines["setupname"] = str(Path(defines["setupname"]).with_suffix(".exe"))
         if not defines["license"] == "":
             defines["license"] = f"""LicenseFile="{defines["license"]}" """
@@ -109,7 +116,9 @@ registry_keys:  Array of dict ("name", "value") of custom registry keys to add o
 
         shortcuts = []
         if "executable" in defines:
-            shortcuts.append(self._createShortcut(defines["productname"], defines["executable"]))
+            shortcuts.append(
+                self._createShortcut(defines["productname"], defines["executable"])
+            )
         else:
             # Needed below, for registering file associations
             # This will error out, if neither executable, nor any shortcuts have been set, but that is certainly an error, anyway
@@ -123,17 +132,31 @@ registry_keys:  Array of dict ("name", "value") of custom registry keys to add o
         tasks = []
         registry_keys = []
         for key in defines["registry_keys"]:
-            registry_keys.append(f"""Root: HKA; Subkey: ; ValueType: string; ValueName: "{key["name"]}"; ValueData: "{key["value"]}" """)
+            registry_keys.append(
+                f"""Root: HKA; Subkey: ; ValueType: string; ValueName: "{key["name"]}"; ValueData: "{key["value"]}" """
+            )
         for ftype in defines["file_types"]:
             ftype_id = self.subinfo.displayName + ftype
             ftype_id = ftype_id.replace(".", "_")
-            tasks.append(f"""Name: "{ftype_id}"; Description: "{{cm:AssocFileExtension,{self.subinfo.displayName},{ftype}}}";""")
+            tasks.append(
+                f"""Name: "{ftype_id}"; Description: "{{cm:AssocFileExtension,{self.subinfo.displayName},{ftype}}}";"""
+            )
 
-            registry_keys.append(f"""Root: HKA; Subkey: "Software\\Classes\\{ftype}\\OpenWithProgids"; ValueType: string; ValueName: "{ftype_id}"; ValueData: ""; Flags: uninsdeletevalue ; Tasks: {ftype_id}""")
-            registry_keys.append(f"""Root: HKA; Subkey: "Software\\Classes\\{ftype_id}"; ValueType: string; ValueName: ""; ValueData: "{ftype} file"; Flags: uninsdeletekey ; Tasks: {ftype_id}""")
-            registry_keys.append(f"""Root: HKA; Subkey: "Software\\Classes\\{ftype_id}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{{app}}\\{defines["executable"]},0" ; Tasks: {ftype_id}""")
-            registry_keys.append(f"""Root: HKA; Subkey: "Software\\Classes\\{ftype_id}\\shell\\open\\command"; ValueType: string; ValueName: ""; ValueData: \"""{{app}}\\{defines["executable"]}"" ""%1""\" ; Tasks: {ftype_id}""")
-            registry_keys.append(f"""Root: HKA; Subkey: "Software\\Classes\\Applications\\{os.path.basename(defines["executable"])}\\SupportedTypes"; ValueType: string; ValueName: "{ftype}"; ValueData: "" ; Tasks: {ftype_id}""")
+            registry_keys.append(
+                f"""Root: HKA; Subkey: "Software\\Classes\\{ftype}\\OpenWithProgids"; ValueType: string; ValueName: "{ftype_id}"; ValueData: ""; Flags: uninsdeletevalue ; Tasks: {ftype_id}"""
+            )
+            registry_keys.append(
+                f"""Root: HKA; Subkey: "Software\\Classes\\{ftype_id}"; ValueType: string; ValueName: ""; ValueData: "{ftype} file"; Flags: uninsdeletekey ; Tasks: {ftype_id}"""
+            )
+            registry_keys.append(
+                f"""Root: HKA; Subkey: "Software\\Classes\\{ftype_id}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{{app}}\\{defines["executable"]},0" ; Tasks: {ftype_id}"""
+            )
+            registry_keys.append(
+                f"""Root: HKA; Subkey: "Software\\Classes\\{ftype_id}\\shell\\open\\command"; ValueType: string; ValueName: ""; ValueData: \"""{{app}}\\{defines["executable"]}"" ""%1""\" ; Tasks: {ftype_id}"""
+            )
+            registry_keys.append(
+                f"""Root: HKA; Subkey: "Software\\Classes\\Applications\\{os.path.basename(defines["executable"])}\\SupportedTypes"; ValueType: string; ValueName: "{ftype}"; ValueData: "" ; Tasks: {ftype_id}"""
+            )
         if registry_keys:
             defines["registry"] = "[Registry]\n" + "\n".join(registry_keys)
             defines["associations"] = "ChangesAssociations=yes"
@@ -153,18 +176,22 @@ registry_keys:  Array of dict ("name", "value") of custom registry keys to add o
 
         cmdDefines = []
         cmdDefines.append(f"""/O{os.path.dirname(defines["setupname"])}""")
-        cmdDefines.append(f"""/F{str(Path(os.path.basename(defines["setupname"])).with_suffix(""))}""")
+        cmdDefines.append(
+            f"""/F{str(Path(os.path.basename(defines["setupname"])).with_suffix(""))}"""
+        )
         configuredScrip = os.path.join(self.workDir(), f"{self.package.name}.iss")
         utils.configureFile(self.scriptname, configuredScrip, defines)
 
-        if not utils.systemWithoutShell([self.innoExe, verboseString] + cmdDefines + [configuredScrip],
-                                        cwd=os.path.abspath(self.packageDir())):
+        if not utils.systemWithoutShell(
+            [self.innoExe, verboseString] + cmdDefines + [configuredScrip],
+            cwd=os.path.abspath(self.packageDir()),
+        ):
             CraftCore.log.critical("Error in ISCC execution")
             return False
         return CodeSign.signWindows([defines["setupname"]])
 
     def createPackage(self):
-        """ create a package """
+        """create a package"""
         if not self.isInnoInstalled():
             return False
 

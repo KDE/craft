@@ -35,6 +35,7 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         self.buildDependencies["dev-utils/kshimgen"] = None
 
+
 from Package.BinaryPackageBase import *
 
 
@@ -55,8 +56,12 @@ class Package(BinaryPackageBase):
         if gitPath == "":
             return False
 
-        return utils.createShim(os.path.join(self.imageDir(), "dev-utils", "bin", "git"),
-                                gitPath, env=env, useAbsolutePath=True)
+        return utils.createShim(
+            os.path.join(self.imageDir(), "dev-utils", "bin", "git"),
+            gitPath,
+            env=env,
+            useAbsolutePath=True,
+        )
 
     def postQmerge(self):
         CraftCore.cache.clear()

@@ -36,11 +36,13 @@ from Utils import CodeSign
 
 
 def toRegExp(fname, targetName) -> re:
-    """ Read regular expressions from fname """
+    """Read regular expressions from fname"""
     assert os.path.isabs(fname)
 
     if not os.path.isfile(fname):
-        CraftCore.log.critical("%s not found at: %s" % (targetName.capitalize(), os.path.abspath(fname)))
+        CraftCore.log.critical(
+            "%s not found at: %s" % (targetName.capitalize(), os.path.abspath(fname))
+        )
     regex = []
     with open(fname, "rt+") as f:
         for line in f:
@@ -59,12 +61,18 @@ def toRegExp(fname, targetName) -> re:
 
 
 class PackagerLists(object):
-    """ This class provides some staticmethods that can be used as pre defined black or whitelists """
+    """This class provides some staticmethods that can be used as pre defined black or whitelists"""
 
     @staticmethod
     def runtimeBlacklist():
-        bls = ["applications_blacklist.txt", f"applications_blacklist_{CraftCore.compiler.platform.name.lower()}.txt"]
-        return filter(lambda x: x.exists(), [(Path(__file__).absolute().parent / "blacklists" / x) for x in bls])
+        bls = [
+            "applications_blacklist.txt",
+            f"applications_blacklist_{CraftCore.compiler.platform.name.lower()}.txt",
+        ]
+        return filter(
+            lambda x: x.exists(),
+            [(Path(__file__).absolute().parent / "blacklists" / x) for x in bls],
+        )
 
     @staticmethod
     def defaultWhitelist():
@@ -95,20 +103,35 @@ class CollectionPackagerBase(PackagerBase):
         self._blacklist_filters = set()
         self.scriptname = None
 
-        self.__deployQtSdk = (OsUtils.isWin() and
-                             CraftCore.settings.getboolean("QtSDK", "Enabled", False) and
-                             CraftCore.settings.getboolean("QtSDK","PackageQtSDK",True))
-        self.__qtSdkDir = OsUtils.toNativePath(os.path.join(CraftCore.settings.get("QtSDK", "Path"),
-                                                            CraftCore.settings.get("QtSDK", "Version"),
-                                                            CraftCore.settings.get("QtSDK", "Compiler"))) if self.__deployQtSdk else None
+        self.__deployQtSdk = (
+            OsUtils.isWin()
+            and CraftCore.settings.getboolean("QtSDK", "Enabled", False)
+            and CraftCore.settings.getboolean("QtSDK", "PackageQtSDK", True)
+        )
+        self.__qtSdkDir = (
+            OsUtils.toNativePath(
+                os.path.join(
+                    CraftCore.settings.get("QtSDK", "Path"),
+                    CraftCore.settings.get("QtSDK", "Version"),
+                    CraftCore.settings.get("QtSDK", "Compiler"),
+                )
+            )
+            if self.__deployQtSdk
+            else None
+        )
 
     def addBlacklistFilter(self, x):
         assert callable(x) and len(inspect.signature(x).parameters) == 2
         self._blacklist_filters.add(x)
 
-    def addExecutableFilter(self, pattern : str):
+    def addExecutableFilter(self, pattern: str):
         # TODO: move to parent?
-        self.addBlacklistFilter(lambda fileName, root: utils.regexFileFilter(fileName, root, [re.compile(pattern, re.IGNORECASE)]) and utils.isExecuatable(fileName, includeShellScripts=True))
+        self.addBlacklistFilter(
+            lambda fileName, root: utils.regexFileFilter(
+                fileName, root, [re.compile(pattern, re.IGNORECASE)]
+            )
+            and utils.isExecuatable(fileName, includeShellScripts=True)
+        )
 
     def addWhitelistFilter(self, x):
         assert callable(x) and len(inspect.signature(x).parameters) == 2
@@ -133,7 +156,9 @@ class CollectionPackagerBase(PackagerBase):
                 CraftCore.log.debug("reading blacklist: %s" % entry)
                 if callable(entry):
                     if entry == PackagerLists.runtimeBlacklist:
-                        CraftCore.log.warn("Compat mode for PackagerLists.runtimeBlacklist -- please just use self.blacklist_file.append(\"myblacklist.txt\") instead of self.blacklist_file = [...]")
+                        CraftCore.log.warn(
+                            'Compat mode for PackagerLists.runtimeBlacklist -- please just use self.blacklist_file.append("myblacklist.txt") instead of self.blacklist_file = [...]'
+                        )
                         self._blacklist += PackagerLists.defaultBlacklist()
                         continue
 
@@ -144,64 +169,82 @@ class CollectionPackagerBase(PackagerBase):
         return self._blacklist
 
     def __imageDirPattern(self, package, buildTarget):
-        """ return base directory name for package related image directory """
+        """return base directory name for package related image directory"""
         directory = "image"
 
         if package.subinfo.options.useBuildType == True:
-            directory += '-' + package.buildType()
-        directory += '-' + buildTarget
+            directory += "-" + package.buildType()
+        directory += "-" + buildTarget
         return directory
 
     def __getImageDirectories(self):
-        """ return the image directories where the files are stored """
+        """return the image directories where the files are stored"""
         imageDirs = []
-        depList = CraftDependencyPackage(self.package).getDependencies(depType=DependencyType.Runtime|DependencyType.Packaging,
-                                                                       ignoredPackages=self.ignoredPackages)
+        depList = CraftDependencyPackage(self.package).getDependencies(
+            depType=DependencyType.Runtime | DependencyType.Packaging,
+            ignoredPackages=self.ignoredPackages,
+        )
 
         for x in depList:
             _package = x.instance
             if isinstance(_package, SourceOnlyPackageBase):
                 CraftCore.log.debug(f"Ignoring package it is source only: {x}")
                 continue
-            imageDirs.append((x.instance.imageDir(), x.subinfo.options.package.disableStriping))
+            imageDirs.append(
+                (x.instance.imageDir(), x.subinfo.options.package.disableStriping)
+            )
             # this loop collects the files from all image directories
-            CraftCore.log.debug(f"__getImageDirectories: package: {x}, version: {x.version}")
+            CraftCore.log.debug(
+                f"__getImageDirectories: package: {x}, version: {x.version}"
+            )
 
         if self.__deployQtSdk:
             imageDirs.append((self.__qtSdkDir, False))
 
         return imageDirs
 
-    def read_whitelist(self, fname : str) -> re:
+    def read_whitelist(self, fname: str) -> re:
         if not os.path.isabs(fname):
             fname = os.path.join(self.packageDir(), fname)
         """ Read regular expressions from fname """
         try:
-          return toRegExp(fname, "whitelist")
+            return toRegExp(fname, "whitelist")
         except Exception as e:
-          raise BlueprintException(str(e), self.package)
+            raise BlueprintException(str(e), self.package)
 
-    def read_blacklist(self, fname : str) -> re:
+    def read_blacklist(self, fname: str) -> re:
         if not os.path.isabs(fname):
             fname = os.path.join(self.packageDir(), fname)
         """ Read regular expressions from fname """
         try:
-          return toRegExp(fname, "blacklist")
+            return toRegExp(fname, "blacklist")
         except Exception as e:
-          raise BlueprintException(str(e), self.package)
+            raise BlueprintException(str(e), self.package)
 
-    def whitelisted(self, filename : os.DirEntry, root : str, whiteList : [re]=None) -> bool:
-        """ return True if pathname is included in the pattern, and False if not """
+    def whitelisted(
+        self, filename: os.DirEntry, root: str, whiteList: [re] = None
+    ) -> bool:
+        """return True if pathname is included in the pattern, and False if not"""
         if whiteList is None:
             whiteList = self.whitelist
-        return self.blacklisted(filename, root=root, blackList=whiteList, message="whitelisted")
+        return self.blacklisted(
+            filename, root=root, blackList=whiteList, message="whitelisted"
+        )
 
-    def blacklisted(self, filename : os.DirEntry, root : str, blackList : [re]=None, message : str="blacklisted") -> bool:
-        """ return False if file is not blacklisted, and True if it is blacklisted """
+    def blacklisted(
+        self,
+        filename: os.DirEntry,
+        root: str,
+        blackList: [re] = None,
+        message: str = "blacklisted",
+    ) -> bool:
+        """return False if file is not blacklisted, and True if it is blacklisted"""
         if blackList is None:
             blackList = self.blacklist
         CraftCore.log.debug(f"Start filtering: {message}")
-        _blacklists = set([lambda filename, root: utils.regexFileFilter(filename, root, blackList)])
+        _blacklists = set(
+            [lambda filename, root: utils.regexFileFilter(filename, root, blackList)]
+        )
         if message == "blacklisted":
             _blacklists.update(self._blacklist_filters)
         elif message == "whitelisted":
@@ -220,8 +263,13 @@ class CollectionPackagerBase(PackagerBase):
 
         if utils.isBinary(filename):
             if not CraftCore.cache.findApplication("dependencies"):
-                raise BlueprintException("Deploying a QtSdk depends on dev-util/dependencies", CraftPackageObject.get("dev-util/dependencies"))
-            _, imports = CraftCore.cache.getCommandOutput("dependencies", f"-imports {filename}")
+                raise BlueprintException(
+                    "Deploying a QtSdk depends on dev-util/dependencies",
+                    CraftPackageObject.get("dev-util/dependencies"),
+                )
+            _, imports = CraftCore.cache.getCommandOutput(
+                "dependencies", f"-imports {filename}"
+            )
             rt = CollectionPackagerBase.reMsvcDebugRt.findall(imports)
             out = False
             if self.buildType() == "Debug":
@@ -229,25 +277,31 @@ class CollectionPackagerBase(PackagerBase):
             else:
                 out = not rt
             if not out:
-                CraftCore.log.debug(f"Skipp {filename} as it has the wrong build type: {rt}")
+                CraftCore.log.debug(
+                    f"Skipp {filename} as it has the wrong build type: {rt}"
+                )
             return out
         return True
 
     def copyFiles(self, srcDir, destDir) -> bool:
         """
-            Copy the binaries for the Package from srcDir to the imageDir
-            directory
+        Copy the binaries for the Package from srcDir to the imageDir
+        directory
         """
         CraftCore.log.debug("Copying %s -> %s" % (srcDir, destDir))
 
         filesToSign = []
         # Only sign all files on Windows. On MacOS we recursively sign the whole .app Folder
-        doSign = CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "Enabled", False)
+        doSign = CraftCore.compiler.isWindows and CraftCore.settings.getboolean(
+            "CodeSigning", "Enabled", False
+        )
         if doSign and CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
             # files from the cache are already signed
             doSign = os.path.samefile(srcDir, self.imageDir())
 
-        for entry in utils.filterDirectoryContent(srcDir, self.whitelisted, self.blacklisted, handleAppBundleAsFile=True):
+        for entry in utils.filterDirectoryContent(
+            srcDir, self.whitelisted, self.blacklisted, handleAppBundleAsFile=True
+        ):
             if not self._filterQtBuildType(entry):
                 continue
             entry_target = os.path.join(destDir, os.path.relpath(entry, srcDir))
@@ -267,10 +321,14 @@ class CollectionPackagerBase(PackagerBase):
                 return False
         return True
 
-    def internalCreatePackage(self, defines=None, seperateSymbolFiles=False, packageSymbols=True) -> bool:
-        """ create a package """
+    def internalCreatePackage(
+        self, defines=None, seperateSymbolFiles=False, packageSymbols=True
+    ) -> bool:
+        """create a package"""
 
-        seperateSymbolFiles = seperateSymbolFiles and CraftCore.settings.getboolean("Packager", "PackageDebugSymbols", False)
+        seperateSymbolFiles = seperateSymbolFiles and CraftCore.settings.getboolean(
+            "Packager", "PackageDebugSymbols", False
+        )
         archiveDir = self.archiveDir()
 
         if CraftCore.compiler.isMacOS:
@@ -308,7 +366,10 @@ class CollectionPackagerBase(PackagerBase):
         pathsToMoveToBinPath = []
         if self.subinfo.options.package.movePluginsToBin:
             # Qt expects plugins and qml files below bin, on the target system
-            pathsToMoveToBinPath += [os.path.join(archiveDir, "plugins"), os.path.join(archiveDir, "qml")]
+            pathsToMoveToBinPath += [
+                os.path.join(archiveDir, "plugins"),
+                os.path.join(archiveDir, "qml"),
+            ]
         binPath = os.path.join(archiveDir, "bin")
         for path in pathsToMoveToBinPath:
             if os.path.isdir(path):
@@ -319,7 +380,9 @@ class CollectionPackagerBase(PackagerBase):
             # Qt expects translations directory below bin, on the target system
             translationsPath = os.path.join(archiveDir, "translations")
             if os.path.isdir(translationsPath):
-                if not utils.mergeTree(translationsPath, os.path.join(binPath, "translations")):
+                if not utils.mergeTree(
+                    translationsPath, os.path.join(binPath, "translations")
+                ):
                     return False
 
         if not self.preArchive():
@@ -327,24 +390,33 @@ class CollectionPackagerBase(PackagerBase):
 
         if seperateSymbolFiles:
             CraftCore.log.info(f"Move symbols to {self.archiveDebugDir()}")
+
             def binaryFilter(x):
                 if CraftCore.compiler.isMacOS:
                     # TODO:
                     if Path(x.path).suffix in {".framework", ".app"}:
                         return True
                 return utils.isBinary(x.path)
+
             # use a final list and don't scan on demand
             # the moved folders might cause issues otherwise
-            binaries = list(utils.filterDirectoryContent(archiveDir, handleAppBundleAsFile=True,
-                                                    whitelist=lambda x, root: binaryFilter(x),
-                                                    blacklist=lambda x, root: True))
+            binaries = list(
+                utils.filterDirectoryContent(
+                    archiveDir,
+                    handleAppBundleAsFile=True,
+                    whitelist=lambda x, root: binaryFilter(x),
+                    blacklist=lambda x, root: True,
+                )
+            )
             for sym in binaries:
                 if CraftCore.compiler.isWindows:
                     sym = Path(sym).with_suffix(symbolSuffix)
                 else:
                     sym = Path(sym + symbolSuffix)
                 if sym.exists():
-                    dest = Path(self.archiveDebugDir()) / os.path.relpath(sym, archiveDir)
+                    dest = Path(self.archiveDebugDir()) / os.path.relpath(
+                        sym, archiveDir
+                    )
                     CraftCore.log.info(f"Move symbols: {sym} {dest}")
                     if not utils.createDir(dest.parent):
                         return False
@@ -353,7 +425,7 @@ class CollectionPackagerBase(PackagerBase):
 
             CraftCore.log.info("Remove unused symbols")
 
-            def symFilter(x : os.DirEntry, root):
+            def symFilter(x: os.DirEntry, root):
                 if CraftCore.compiler.isMacOS:
                     if x.is_file():
                         return False
@@ -362,9 +434,12 @@ class CollectionPackagerBase(PackagerBase):
                         return False
                 return utils.regexFileFilter(x, root, [symbolPattern])
 
-            for sym in utils.filterDirectoryContent(archiveDir, handleAppBundleAsFile=True,
-                                                    whitelist=symFilter,
-                                                    blacklist=lambda x, root: True):
+            for sym in utils.filterDirectoryContent(
+                archiveDir,
+                handleAppBundleAsFile=True,
+                whitelist=symFilter,
+                blacklist=lambda x, root: True,
+            ):
                 CraftCore.log.info(f"Delete symbols: {sym}")
                 if CraftCore.compiler.isMacOS:
                     if not utils.rmtree(sym):
@@ -374,12 +449,16 @@ class CollectionPackagerBase(PackagerBase):
                         return False
 
             if packageSymbols and os.listdir(self.archiveDebugDir()):
-                dbgName = Path("{0}-dbg{1}".format(*os.path.splitext(defines["setupname"])))
+                dbgName = Path(
+                    "{0}-dbg{1}".format(*os.path.splitext(defines["setupname"]))
+                )
                 if not CraftCore.compiler.isWindows:
                     dbgName = dbgName.with_suffix(".tar.7z")
                 if dbgName.exists():
                     dbgName.unlink()
-                if not self._createArchive(dbgName, self.archiveDebugDir(), self.packageDestinationDir()):
+                if not self._createArchive(
+                    dbgName, self.archiveDebugDir(), self.packageDestinationDir()
+                ):
                     return False
 
         return True

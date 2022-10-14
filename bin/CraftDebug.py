@@ -13,6 +13,7 @@ from CraftCore import CraftCore
 
 try:
     import coloredlogs
+
     _SUPPORTS_COLORED_LOGS = True
 except:
     _SUPPORTS_COLORED_LOGS = False
@@ -36,29 +37,44 @@ class CraftDebug(object):
         self._fileHandler = None
         try:
             if "CRAFT_LOG_FILE" not in os.environ:
-                logDir = CraftCore.settings.get("CraftDebug", "LogDir", os.path.expanduser("~/.craft/"))
+                logDir = CraftCore.settings.get(
+                    "CraftDebug", "LogDir", os.path.expanduser("~/.craft/")
+                )
                 if not os.path.exists(logDir):
                     os.makedirs(logDir)
-                logfileName = os.path.join(logDir, "log-%s.txt" % re.compile(r":?\\+|/+|:|;").sub("_",
-                                                                                                  CraftCore.settings._craftRoot()))
+                logfileName = os.path.join(
+                    logDir,
+                    "log-%s.txt"
+                    % re.compile(r":?\\+|/+|:|;").sub(
+                        "_", CraftCore.settings._craftRoot()
+                    ),
+                )
             else:
                 logfileName = os.environ["CRAFT_LOG_FILE"]
 
             if logfileName != "0":
-                self._fileHandler = logging.handlers.RotatingFileHandler(logfileName, mode="at",
-                        maxBytes=100000000, # 100mb uncompressed
-                        backupCount=50 # 50 compressed gz files
+                self._fileHandler = logging.handlers.RotatingFileHandler(
+                    logfileName,
+                    mode="at",
+                    maxBytes=100000000,  # 100mb uncompressed
+                    backupCount=50,  # 50 compressed gz files
                 )
                 self._fileHandler.rotator = CraftDebug.__rotator
                 self._fileHandler.namer = lambda x: f"{x}.gz"
                 self._fileHandler.doRollover()
-                self._fileHandler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
+                self._fileHandler.setFormatter(
+                    logging.Formatter("%(asctime)s %(levelname)s %(message)s")
+                )
                 self._log.addHandler(self._fileHandler)
         except Exception as e:
             print(f"Failed to setup log file: {e}", file=sys.stderr)
-            print(f"Right now we don't support running multiple Craft instances with the same configuration.",
-                  file=sys.stderr)
-        if _SUPPORTS_COLORED_LOGS and CraftCore.settings.getboolean("General", "AllowAnsiColor", True):
+            print(
+                f"Right now we don't support running multiple Craft instances with the same configuration.",
+                file=sys.stderr,
+            )
+        if _SUPPORTS_COLORED_LOGS and CraftCore.settings.getboolean(
+            "General", "AllowAnsiColor", True
+        ):
             coloredlogs.install(logger=self._log, fmt="%(message)s", stream=sys.stdout)
             self._handler = self._log.handlers[-1]
         else:
@@ -111,17 +127,31 @@ class CraftDebug(object):
 
     def print(self, msg, file=sys.stdout, stack_info=False):
         if 0 <= self.verbose() < 2:
-            print(msg, file=file if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) else sys.stdout)
+            print(
+                msg,
+                file=file
+                if not CraftCore.settings.getboolean(
+                    "ContinuousIntegration", "Enabled", False
+                )
+                else sys.stdout,
+            )
             self.log.debug(msg, stack_info=stack_info)
         else:
             self.log.debug(msg, stack_info=stack_info)
 
     def printOut(self, msg, file=sys.stdout):
-        """ Should only be used to report independent of the verbosity level
-            for example to print the installed files etc
+        """Should only be used to report independent of the verbosity level
+        for example to print the installed files etc
         """
         if self.verbose() < 2:
-            print(msg, file=file if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) else sys.stdout)
+            print(
+                msg,
+                file=file
+                if not CraftCore.settings.getboolean(
+                    "ContinuousIntegration", "Enabled", False
+                )
+                else sys.stdout,
+            )
             self.log.debug(msg)
         else:
             self.log.debug(msg)
@@ -142,6 +172,7 @@ class CraftDebug(object):
     def close(self):
         if self._fileHandler:
             self._fileHandler.close()
+
 
 class TemporaryVerbosity(object):
     """Context handler for temporarily different verbosity"""
@@ -202,8 +233,13 @@ def deprecated(replacement=None):
         @functools.wraps(fun)
         def inner(*args, **kwargs):
             _info = inspect.stack()[1]
-            if not (_info.filename, _info.lineno) in CraftCore.debug.seenDeprecatedFunctions:
-                CraftCore.debug.seenDeprecatedFunctions.add((_info.filename, _info.lineno))
+            if (
+                not (_info.filename, _info.lineno)
+                in CraftCore.debug.seenDeprecatedFunctions
+            ):
+                CraftCore.debug.seenDeprecatedFunctions.add(
+                    (_info.filename, _info.lineno)
+                )
                 if CraftCore.settings.getboolean("CraftDebug", "LogDeprecated", False):
                     CraftCore.debug.print(msg, stack_info=True)
                 else:

@@ -40,8 +40,8 @@ from Packager.CMakeApkPackager import *
 
 class TypePackager(PackagerBase):
     """packager that is used in place of different other packagers
-The packager used can be decided at runtime
-"""
+    The packager used can be decided at runtime"""
+
     def __init__(self):
         CraftCore.log.debug("TypePackager __init__")
         self.__packager = None
@@ -66,7 +66,9 @@ The packager used can be decided at runtime
         if isinstance(packager, str):
             if packager == "MultiCollectionPackager":
                 packager = "NullsoftInstallerPackager"
-                CraftCore.log.warning("MultiCollectionPackager is deprecated, please use NullsoftInstallerPackager")
+                CraftCore.log.warning(
+                    "MultiCollectionPackager is deprecated, please use NullsoftInstallerPackager"
+                )
             packager = eval(packager)
 
         if self.__packager:

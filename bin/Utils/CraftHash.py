@@ -38,13 +38,14 @@ class HashAlgorithm(Enum):
         return None
 
 
-def digestString(string : str, algorithm=HashAlgorithm.SHA256)-> str:
+def digestString(string: str, algorithm=HashAlgorithm.SHA256) -> str:
     hash = getattr(hashlib, algorithm.name.lower())()
     hash.update(bytes(string, "UTF-8"))
     return hash.hexdigest()
 
+
 def digestFile(filepath, algorithm=HashAlgorithm.SHA256):
-    """ digests a file """
+    """digests a file"""
     blockSize = 65536
     hash = getattr(hashlib, algorithm.name.lower())()
     if os.path.islink(filepath):
@@ -58,7 +59,9 @@ def digestFile(filepath, algorithm=HashAlgorithm.SHA256):
     return hash.hexdigest()
 
 
-def checkFilesDigests(downloaddir, filenames, digests=None, digestAlgorithm=HashAlgorithm.SHA1):
+def checkFilesDigests(
+    downloaddir, filenames, digests=None, digestAlgorithm=HashAlgorithm.SHA1
+):
     """check digest of (multiple) files specified by 'filenames' from 'downloaddir'"""
     if type(digests) == list:
         digestList = digests
@@ -69,7 +72,10 @@ def checkFilesDigests(downloaddir, filenames, digests=None, digestAlgorithm=Hash
         pathName = os.path.join(downloaddir, filename)
         CraftCore.log.debug(f"checking digest of: {pathName}")
         if digests == None:
-            for digestAlgorithm, digestFileEnding in HashAlgorithm.fileEndings().items():
+            for (
+                digestAlgorithm,
+                digestFileEnding,
+            ) in HashAlgorithm.fileEndings().items():
                 digestFileName = pathName + digestFileEnding
                 if not os.path.exists(digestFileName):
                     digestFileName, _ = os.path.splitext(pathName)
@@ -82,18 +88,24 @@ def checkFilesDigests(downloaddir, filenames, digests=None, digestAlgorithm=Hash
                         data = f.read()
                 except UnicodeDecodeError:
                     with open(digestFileName, "rb") as f:
-                        CraftCore.log.error(f"Failed to decode digests file {digestFileName}: {f.read(100)}...")
+                        CraftCore.log.error(
+                            f"Failed to decode digests file {digestFileName}: {f.read(100)}..."
+                        )
                     return False
                 if not re.findall(currentHash, data):
-                    CraftCore.log.error("%s hash for file %s (%s) does not match (%s)" % (
-                        digestAlgorithm.name, pathName, currentHash, data))
+                    CraftCore.log.error(
+                        "%s hash for file %s (%s) does not match (%s)"
+                        % (digestAlgorithm.name, pathName, currentHash, data)
+                    )
                     return False
                     # digest provided in digests parameter
         else:
             currentHash = digestFile(pathName, digestAlgorithm)
             if len(digests) != len(currentHash) or digests.find(currentHash) == -1:
-                CraftCore.log.error("%s hash for file %s (%s) does not match (%s)" % (
-                    digestAlgorithm.name, pathName, currentHash, digests))
+                CraftCore.log.error(
+                    "%s hash for file %s (%s) does not match (%s)"
+                    % (digestAlgorithm.name, pathName, currentHash, digests)
+                )
                 return False
     return True
 
@@ -108,10 +120,14 @@ def createDigestFiles(path, algorithms=None):
             f.write("%s\n" % digets)
 
 
-def printFilesDigests(downloaddir, filenames, buildTarget, algorithm=HashAlgorithm.SHA256):
+def printFilesDigests(
+    downloaddir, filenames, buildTarget, algorithm=HashAlgorithm.SHA256
+):
     digests = []
     for filename in filenames:
         if not filename == "":
             digests.append(digestFile(os.path.join(downloaddir, filename), algorithm))
     if digests:
-        CraftCore.log.info(f"Digests for {buildTarget}: ({digests}, CraftHash.{algorithm})")
+        CraftCore.log.info(
+            f"Digests for {buildTarget}: ({digests}, CraftHash.{algorithm})"
+        )

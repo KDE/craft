@@ -34,22 +34,28 @@ from Blueprints.CraftVersion import *
 from Package.VirtualPackageBase import VirtualPackageBase
 from CraftOS.osutils import OsUtils
 
+
 class QtIFPackager(SevenZipPackager):
-  # Generate packages that can be used by the qt installer framework
-  # to generate a repo or offline installer call "craft --package qt-installer-framework"
-  # To manage the packaged dependencies using [Packager]CacheDirectTargetsOnly = True and the use
-  # of a package.list is recommended.
-  # TODO: the root package is currently hardcoded in __rootPackage
+    # Generate packages that can be used by the qt installer framework
+    # to generate a repo or offline installer call "craft --package qt-installer-framework"
+    # To manage the packaged dependencies using [Packager]CacheDirectTargetsOnly = True and the use
+    # of a package.list is recommended.
+    # TODO: the root package is currently hardcoded in __rootPackage
 
     @InitGuard.init_once
     def __init__(self):
         self.__resources = os.path.join(os.path.dirname(__file__), "QtIF")
         SevenZipPackager.__init__(self)
         self.__packageDir = os.path.join(self.packageDestinationDir(), "qtif")
-        self.__sdkMode = OsUtils.isWin() and CraftCore.settings.getboolean("QtSDK", "Enabled", False)
+        self.__sdkMode = OsUtils.isWin() and CraftCore.settings.getboolean(
+            "QtSDK", "Enabled", False
+        )
         if self.__sdkMode:
             win = "win32" if CraftCore.compiler.isX86() else "win64"
-            self.__imagePrefix = os.path.join(CraftCore.settings.get("QtSDK", "Version"), CraftCore.settings.get("QtSDK", "Compiler"))
+            self.__imagePrefix = os.path.join(
+                CraftCore.settings.get("QtSDK", "Version"),
+                CraftCore.settings.get("QtSDK", "Compiler"),
+            )
             self.__depPrefix = f"{self.__rootPackage}.{CraftCore.settings.get('QtSDK', 'Version').replace('.', '')}.{win}_{CraftCore.settings.get('QtSDK', 'Compiler')}"
         else:
             self.__depPrefix = self.__rootPackage
@@ -57,7 +63,7 @@ class QtIFPackager(SevenZipPackager):
 
     @property
     def __rootPackage(self):
-        #TODO: allow to specify the root node
+        # TODO: allow to specify the root node
         return "kdab"
 
     def __qtiFy(self, package):
@@ -66,6 +72,7 @@ class QtIFPackager(SevenZipPackager):
 
     def _shortCuts(self, defines):
         out = []
+
         def shortCut(name, target, icon="", parameter="", description=""):
             target = OsUtils.toUnixPath(os.path.join(self.__imagePrefix, target))
             name = OsUtils.toUnixPath(name)
@@ -80,35 +87,61 @@ class QtIFPackager(SevenZipPackager):
             out += [shortCut(**short)]
         return "\n".join(out)
 
-    def __createMeta(self, defines, *,  dstpath : str, name : str, version : str, description : str, webpage : str, deps : str=""):
+    def __createMeta(
+        self,
+        defines,
+        *,
+        dstpath: str,
+        name: str,
+        version: str,
+        description: str,
+        webpage: str,
+        deps: str = "",
+    ):
 
-        data = {"VERSION" : str(CraftVersion(version).strictVersion),
-                "NAME" : name,
-                "DESCRIPTION" : cgi.escape(f"{name} {version}<br>{description}" + (f"<br>{webpage}" if webpage else "")),
-                "DATE" : datetime.datetime.utcnow().strftime("%Y-%m-%d"),
-                "DEPENDENCIES" : deps}
-        if not utils.configureFile(os.path.join(self.__resources, "package.xml"), os.path.join(dstpath, "meta", "package.xml"), data):
+        data = {
+            "VERSION": str(CraftVersion(version).strictVersion),
+            "NAME": name,
+            "DESCRIPTION": cgi.escape(
+                f"{name} {version}<br>{description}"
+                + (f"<br>{webpage}" if webpage else "")
+            ),
+            "DATE": datetime.datetime.utcnow().strftime("%Y-%m-%d"),
+            "DEPENDENCIES": deps,
+        }
+        if not utils.configureFile(
+            os.path.join(self.__resources, "package.xml"),
+            os.path.join(dstpath, "meta", "package.xml"),
+            data,
+        ):
             return False
 
-        data = {"SHORTCUTS" : self._shortCuts(defines=defines)}
-        if not utils.configureFile(os.path.join(self.__resources, "installscript.qs"), os.path.join(dstpath, "meta", "installscript.qs"), data):
+        data = {"SHORTCUTS": self._shortCuts(defines=defines)}
+        if not utils.configureFile(
+            os.path.join(self.__resources, "installscript.qs"),
+            os.path.join(dstpath, "meta", "installscript.qs"),
+            data,
+        ):
             return False
         return True
 
-
     def __resolveDeps(self):
         deps = []
-        for package in CraftDependencyPackage(self.package).getDependencies(DependencyType.Runtime):
+        for package in CraftDependencyPackage(self.package).getDependencies(
+            DependencyType.Runtime
+        ):
             if isinstance(package.instance, VirtualPackageBase):
                 continue
             if package == self.package:
-              continue
+                continue
             # in case we don't want to provide a full installer
-            if CraftCore.settings.getboolean("Packager", "CacheDirectTargetsOnly") and package not in CraftCore.state.directTargets:
-              continue
+            if (
+                CraftCore.settings.getboolean("Packager", "CacheDirectTargetsOnly")
+                and package not in CraftCore.state.directTargets
+            ):
+                continue
             deps += [self.__qtiFy(package)]
         return deps
-
 
     def _addPackage(self, defines) -> bool:
         dstpath = os.path.join(self.__packageDir, "image", self.__qtiFy(self.package))
@@ -116,14 +149,28 @@ class QtIFPackager(SevenZipPackager):
             if self.__sdkMode:
                 # adept the prefix
                 utils.cleanDirectory(self.archiveDir())
-                utils.copyDir(self.imageDir(), os.path.join(self.archiveDir(), self.__imagePrefix))
+                utils.copyDir(
+                    self.imageDir(), os.path.join(self.archiveDir(), self.__imagePrefix)
+                )
 
-            if not self._createArchive("data.7z", self.imageDir() if not self.__sdkMode else self.archiveDir(), os.path.join(dstpath, "data"), createDigests=False, ):
+            if not self._createArchive(
+                "data.7z",
+                self.imageDir() if not self.__sdkMode else self.archiveDir(),
+                os.path.join(dstpath, "data"),
+                createDigests=False,
+            ):
                 return False
 
         info = MetaInfo(self.package)
-        return self.__createMeta(defines, dstpath=dstpath , name=info.displayName, version=self.version, description=info.description, webpage=info.webpage, deps=", ".join(self.__resolveDeps()))
-
+        return self.__createMeta(
+            defines,
+            dstpath=dstpath,
+            name=info.displayName,
+            version=self.version,
+            description=info.description,
+            webpage=info.webpage,
+            deps=", ".join(self.__resolveDeps()),
+        )
 
     def __initPrefix(self, defines):
         dest = os.path.join(self.__packageDir, "image", self.__depPrefix)
@@ -134,13 +181,18 @@ class QtIFPackager(SevenZipPackager):
             displayName = info.displayName
             if self.__sdkMode:
                 displayName = f"{displayName} for Qt {CraftCore.settings.get('QtSDK', 'Version')} {CraftCore.settings.get('QtSDK', 'Compiler')}"
-            return self.__createMeta(defines, dstpath=dest, name=displayName, version="0.0", description=info.description, webpage=info.webpage)
+            return self.__createMeta(
+                defines,
+                dstpath=dest,
+                name=displayName,
+                version="0.0",
+                description=info.description,
+                webpage=info.webpage,
+            )
         return True
 
     def createPackage(self):
         defines = self.setDefaults(self.defines)
         if not self.__initPrefix(defines):
-          return False
+            return False
         return self._addPackage(defines)
-
-

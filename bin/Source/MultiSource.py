@@ -10,7 +10,7 @@ from Source.SvnSource import SvnSource
 
 
 class MultiSource(SourceBase):
-    """ provides multi source type api """
+    """provides multi source type api"""
 
     def __init__(self):
         SourceBase.__init__(self)

@@ -52,7 +52,9 @@ def main():
 
     parser = optparse.OptionParser()
     parser.set_defaults(verbosity=1)
-    parser.add_option("-v", "--verbose", action="store_const", const=3, dest="verbosity")
+    parser.add_option(
+        "-v", "--verbose", action="store_const", const=3, dest="verbosity"
+    )
     parser.add_option("-t", "--target", action="store", dest="target", default=None)
     opts, rest = parser.parse_args()
 

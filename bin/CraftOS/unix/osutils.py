@@ -11,6 +11,7 @@ from CraftCore import CraftCore
 
 class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     InDocker = None
+
     @staticmethod
     def rm(path, force=False):
         CraftCore.log.debug("deleting file %s" % path)
@@ -48,11 +49,11 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
         return True
 
     @staticmethod
-    def toNativePath(path : str) -> str:
+    def toNativePath(path: str) -> str:
         return OsUtils.toUnixPath(path)
 
     @staticmethod
-    def killProcess(name : str="*", prefix : str=None) -> bool:
+    def killProcess(name: str = "*", prefix: str = None) -> bool:
         CraftCore.log.warning("killProcess is not implemented")
         return True
 
@@ -69,25 +70,26 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
                     CraftCore.log.debug(f"detectDocker: {OsUtils.InDocker} {lines}")
         return OsUtils.InDocker
 
+
 class LockFile(CraftOS.OsUtilsBase.LockFileBase):
-    def __init__(self ,name):
+    def __init__(self, name):
         super().__init__(name)
         self.__lockFileName = f"/tmp/craftlock-{self.name}"
         self.__lockFile = None
-
 
     def lock(self):
         while True:
             try:
                 if not self.__lockFile:
-                    self.__lockFile = os.open(self.__lockFileName, os.O_WRONLY | os.O_CREAT, 0o777)
+                    self.__lockFile = os.open(
+                        self.__lockFileName, os.O_WRONLY | os.O_CREAT, 0o777
+                    )
                 fcntl.flock(self.__lockFile, fcntl.LOCK_EX | fcntl.LOCK_NB)
                 self._locked = True
                 break
             except IOError as e:
                 CraftCore.log.info(f"{self.__lockFileName} is locked waiting: {e}")
                 time.sleep(10)
-
 
     def unlock(self):
         if self._locked:

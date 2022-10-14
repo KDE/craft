@@ -6,7 +6,10 @@ from Blueprints.CraftPackageObject import *
 class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValuesFromFile(
-            os.path.join(CraftCore.settings.get("InternalTemp", "add-bluprints-template.ini")))
+            os.path.join(
+                CraftCore.settings.get("InternalTemp", "add-bluprints-template.ini")
+            )
+        )
 
     def setDependencies(self):
         # make sure core is up to date first
@@ -22,13 +25,21 @@ class Package(BlueprintRepositoryPackageBase):
     def __init__(self):
         BlueprintRepositoryPackageBase.__init__(self)
         self.subinfo.options.package.disableBinaryCache = True
-        if (("InternalTemp", "add-bluprints-template.ini") not in CraftCore.settings
-            or not os.path.exists(CraftCore.settings.get("InternalTemp", "add-bluprints-template.ini"))):
-                raise BlueprintException(self, "This recipe only works with 'craft --add-blueprint-repository")
+        if (
+            "InternalTemp",
+            "add-bluprints-template.ini",
+        ) not in CraftCore.settings or not os.path.exists(
+            CraftCore.settings.get("InternalTemp", "add-bluprints-template.ini")
+        ):
+            raise BlueprintException(
+                self, "This recipe only works with 'craft --add-blueprint-repository"
+            )
 
     def checkoutDir(self, index=0):
         names = Package.NameRegex.findall(self.repositoryUrl())
         if len(names) != 1:
-            CraftCore.log.error(f"Failed to determine the blueprint install folder for {self.repositoryUrl()}")
+            CraftCore.log.error(
+                f"Failed to determine the blueprint install folder for {self.repositoryUrl()}"
+            )
             return False
         return os.path.join(CraftStandardDirs.blueprintRoot(), names[0])

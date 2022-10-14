@@ -3,4 +3,4 @@ class NotificationInterface(object):
         self.name = name
 
     def notify(self, title, message, alertClass):
-        raise NameError('Not Implemented')
+        raise NameError("Not Implemented")

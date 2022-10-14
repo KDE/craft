@@ -32,11 +32,12 @@ from Source.VersionSystemSourceBase import *
 
 ## \todo requires installed git package -> add suport for installing packages
 
+
 class GitSource(VersionSystemSourceBase):
     """git support"""
 
     def __init__(self, subinfo=None):
-        CraftCore.debug.trace('GitSource __init__')
+        CraftCore.debug.trace("GitSource __init__")
         if subinfo:
             self.subinfo = subinfo
         VersionSystemSourceBase.__init__(self)
@@ -51,7 +52,11 @@ class GitSource(VersionSystemSourceBase):
     def __isLocalBranch(self, branch):
         if os.path.exists(self.checkoutDir()):
             with io.StringIO() as tmp:
-                self.__git("for-each-ref", ["--format=%(refname:short)", "refs/heads/**"], stdout=tmp)
+                self.__git(
+                    "for-each-ref",
+                    ["--format=%(refname:short)", "refs/heads/**"],
+                    stdout=tmp,
+                )
                 return branch in tmp.getvalue().strip().split("\n")
         return False
 
@@ -84,7 +89,11 @@ class GitSource(VersionSystemSourceBase):
         """executes a git command in a shell.
         Default for cwd is self.checkoutDir()"""
         parts = ["git"]
-        if "stdout" not in kwargs and "stderr" not in kwargs and CraftCore.settings.getboolean("General", "AllowAnsiColor", True):
+        if (
+            "stdout" not in kwargs
+            and "stderr" not in kwargs
+            and CraftCore.settings.getboolean("General", "AllowAnsiColor", True)
+        ):
             parts += ["-c", "color.ui=always"]
         if command in ("clone", "checkout", "fetch", "pull", "submodule"):
             if CraftCore.debug.verbose() < 0:
@@ -101,7 +110,7 @@ class GitSource(VersionSystemSourceBase):
         return utils.system(parts, **kwargs)
 
     def fetch(self):
-        CraftCore.debug.trace('GitSource fetch')
+        CraftCore.debug.trace("GitSource fetch")
         # get the path where the repositories should be stored to
 
         repopath = self.repositoryUrl()
@@ -123,14 +132,16 @@ class GitSource(VersionSystemSourceBase):
             repoBranch = self.subinfo.options.dynamic.branch
 
         if repoTag and repoBranch:
-            CraftCore.log.error(f"Your not allowed to specify a branch and a tag: branch -> {repoBranch},  tag -> {repoTag}")
+            CraftCore.log.error(
+                f"Your not allowed to specify a branch and a tag: branch -> {repoBranch},  tag -> {repoTag}"
+            )
             return False
 
         if not repoBranch and not repoTag:
             repoBranch = "master"
 
         # only run if wanted (e.g. no --offline is given on the commandline)
-        if (self.noFetch):
+        if self.noFetch:
             CraftCore.log.debug("skipping git fetch (--offline)")
             return True
         else:
@@ -138,12 +149,20 @@ class GitSource(VersionSystemSourceBase):
             checkoutDir = self.checkoutDir()
             # if we only have the checkoutdir but no .git within,
             # clean this up first
-            if os.path.exists(checkoutDir) \
-                    and not os.path.exists(os.path.join(checkoutDir, ".git")):
+            if os.path.exists(checkoutDir) and not os.path.exists(
+                os.path.join(checkoutDir, ".git")
+            ):
                 os.rmdir(checkoutDir)
             if os.path.isdir(checkoutDir):
-                if self.subinfo.buildTarget in self.subinfo.targetUpdatedRepoUrl and CraftCore.cache.checkCommandOutputFor("git", "get-url", "remote -h"):
-                    oldUrls, newUrl = self.subinfo.targetUpdatedRepoUrl[self.subinfo.buildTarget]
+                if (
+                    self.subinfo.buildTarget in self.subinfo.targetUpdatedRepoUrl
+                    and CraftCore.cache.checkCommandOutputFor(
+                        "git", "get-url", "remote -h"
+                    )
+                ):
+                    oldUrls, newUrl = self.subinfo.targetUpdatedRepoUrl[
+                        self.subinfo.buildTarget
+                    ]
                     if isinstance(oldUrls, str):
                         oldUrls = [oldUrls]
                     with io.StringIO() as tmp:
@@ -151,12 +170,16 @@ class GitSource(VersionSystemSourceBase):
                         currentUrl = tmp.getvalue().strip()
                     for oldUrl in oldUrls:
                         if currentUrl.startswith(oldUrl):
-                            CraftCore.log.info(f"Updating remote url from {currentUrl} to {newUrl}")
+                            CraftCore.log.info(
+                                f"Updating remote url from {currentUrl} to {newUrl}"
+                            )
                             self.__git("remote", ["set-url", "origin", newUrl])
                 if not repoTag:
-                    ret = (self.__git("fetch")
-                          and self.__git("checkout", [repoBranch or "master"])
-                          and self.__git("merge"))
+                    ret = (
+                        self.__git("fetch")
+                        and self.__git("checkout", [repoBranch or "master"])
+                        and self.__git("merge")
+                    )
             else:
                 args = []
                 # it doesn't exist so clone the repo
@@ -164,7 +187,7 @@ class GitSource(VersionSystemSourceBase):
                 # first try to replace with a repo url from etc/blueprints/crafthosts.conf
                 if self.subinfo.options.fetch.checkoutSubmodules:
                     args += ["--recursive"]
-                ret = self.__git('clone', args + [repoUrl, self.checkoutDir()])
+                ret = self.__git("clone", args + [repoUrl, self.checkoutDir()])
 
             # if a branch is given, we should check first if the branch is already downloaded
             # locally, otherwise we can track the remote branch
@@ -179,19 +202,19 @@ class GitSource(VersionSystemSourceBase):
             if ret and repoTag:
                 if self.__isTag(repoTag):
                     if not self.__isLocalBranch("_" + repoTag):
-                        ret = self.__git('checkout', ['-b', f"_{repoTag}", repoTag])
+                        ret = self.__git("checkout", ["-b", f"_{repoTag}", repoTag])
                     else:
-                        ret = self.__git('checkout', [f"_{repoTag}"])
+                        ret = self.__git("checkout", [f"_{repoTag}"])
                 else:
                     # unknown tag, try to fetch it first
-                    self.__git('fetch', ['--tags'])
+                    self.__git("fetch", ["--tags"])
 
-                    ret = self.__git('checkout', [repoTag])
+                    ret = self.__git("checkout", [repoTag])
         return ret and self.__updateSubmodeule()
 
     def applyPatch(self, fileName, patchdepth, unusedSrcDir=None):
         """apply single patch o git repository"""
-        CraftCore.debug.trace('GitSource ')
+        CraftCore.debug.trace("GitSource ")
         patchfile = self.packageDir() / fileName
         if os.path.isdir(patchfile):
             # apply a whole dir of patches
@@ -199,37 +222,46 @@ class GitSource(VersionSystemSourceBase):
             with os.scandir(patchfile) as scan:
                 for patch in scan:
                     if patch.is_file() and not patch.name.startswith("."):
-                        out = self.applyPatch(patchfile / patch, patchdepth=patchdepth) and out
+                        out = (
+                            self.applyPatch(patchfile / patch, patchdepth=patchdepth)
+                            and out
+                        )
             return out
-        return self.__git('apply', ['--ignore-space-change',
-                              '-p', str(patchdepth), patchfile], logCommand=True)
+        return self.__git(
+            "apply",
+            ["--ignore-space-change", "-p", str(patchdepth), patchfile],
+            logCommand=True,
+        )
 
     def createPatch(self):
         """create patch file from git source into the related package dir.
         The patch file is named autocreated.patch"""
-        CraftCore.debug.trace('GitSource createPatch')
-        patchFileName = os.path.join(self.packageDir(), "%s-%s.patch" % \
-                                     (self.package.name, str(datetime.date.today()).replace('-', '')))
+        CraftCore.debug.trace("GitSource createPatch")
+        patchFileName = os.path.join(
+            self.packageDir(),
+            "%s-%s.patch"
+            % (self.package.name, str(datetime.date.today()).replace("-", "")),
+        )
         CraftCore.log.debug("git diff %s" % patchFileName)
-        with open(patchFileName, 'wt+') as patchFile:
-            return self.__git('diff', stdout=patchFile)
+        with open(patchFileName, "wt+") as patchFile:
+            return self.__git("diff", stdout=patchFile)
 
     def sourceVersion(self):
         """print the revision returned by git show"""
-        CraftCore.debug.trace('GitSource sourceVersion')
+        CraftCore.debug.trace("GitSource sourceVersion")
 
         return self.__getCurrentRevision()
 
     def checkoutDir(self, index=0):
-        CraftCore.debug.trace('GitSource checkoutDir')
+        CraftCore.debug.trace("GitSource checkoutDir")
         return VersionSystemSourceBase.checkoutDir(self, index)
 
     def sourceDir(self, index=0) -> Path:
-        CraftCore.debug.trace('GitSource sourceDir')
+        CraftCore.debug.trace("GitSource sourceDir")
         repopath = self.repositoryUrl()
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
         repopath = repopath.replace("[git]", "")
-        chkDir  = Path(self.checkoutDir(index))
+        chkDir = Path(self.checkoutDir(index))
         # shorten the path to the dir containing the src on Windows
         sourcedir = CraftShortPath(chkDir.parent).shortPath / chkDir.name
 
@@ -247,5 +279,5 @@ class GitSource(VersionSystemSourceBase):
         [repoUrl, repoBranch, repoTag] = utils.splitVCSUrl(repoString)
         if not repoBranch and not repoTag:
             repoBranch = "master"
-        print('|'.join([repoUrl, repoBranch, repoTag]))
+        print("|".join([repoUrl, repoBranch, repoTag]))
         return True

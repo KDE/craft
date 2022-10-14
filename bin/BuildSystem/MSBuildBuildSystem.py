@@ -31,41 +31,55 @@ class MSBuildBuildSystem(BuildSystemBase):
     def __init__(self):
         BuildSystemBase.__init__(self, "msbuild")
         self.msbuildTargets = ["Rebuild"]
-        self.buildTypes = {"Release" : "Release", "RelWithDebInfo" : "Release", "MinSizeRel" : "Release", "Debug" : "Debug" }
+        self.buildTypes = {
+            "Release": "Release",
+            "RelWithDebInfo": "Release",
+            "MinSizeRel": "Release",
+            "Debug": "Debug",
+        }
 
     def configure(self, defines=""):
         return True
 
     def make(self):
         env = {
-            "LIB" : f"{os.environ['LIB']};{os.path.join(CraftStandardDirs.craftRoot() , 'lib')}",
-            "INCLUDE" : f"{os.environ['INCLUDE']};{os.path.join(CraftStandardDirs.craftRoot() , 'include')}"}
+            "LIB": f"{os.environ['LIB']};{os.path.join(CraftStandardDirs.craftRoot() , 'lib')}",
+            "INCLUDE": f"{os.environ['INCLUDE']};{os.path.join(CraftStandardDirs.craftRoot() , 'include')}",
+        }
         with utils.ScopedEnv(env):
             self.enterSourceDir()
-            msbuildVersion = CraftCore.cache.getVersion("msbuild", versionCommand="-ver", pattern=re.compile(r"(\d+\.\d+)"))
-            buildType =self.buildTypes[self.buildType()]
+            msbuildVersion = CraftCore.cache.getVersion(
+                "msbuild", versionCommand="-ver", pattern=re.compile(r"(\d+\.\d+)")
+            )
+            buildType = self.buildTypes[self.buildType()]
             if CraftCore.compiler.isX86():
                 platform = " /p:Platform=win32"
             else:
                 platform = ""
             if "WINDOWSSDKVERSION" in os.environ:
-                sdkVer = " /p:WindowsTargetPlatformVersion={0}".format(os.environ["WINDOWSSDKVERSION"].replace("\\", ""))
+                sdkVer = " /p:WindowsTargetPlatformVersion={0}".format(
+                    os.environ["WINDOWSSDKVERSION"].replace("\\", "")
+                )
             else:
                 sdkVer = ""
             toolsVersion = f"{CraftCore.compiler.getInternalVersion()}.0"
             if toolsVersion == "15.0" and msbuildVersion >= "16":
                 toolsVersion = f" /toolsversion:Current"
-            elif os.path.exists(r"C:\Program Files (x86)\MSBuild\{0}".format(toolsVersion)):
+            elif os.path.exists(
+                r"C:\Program Files (x86)\MSBuild\{0}".format(toolsVersion)
+            ):
                 toolsVersion = f" /toolsversion:{toolsVersion}"
             else:
                 toolsVersion = ""
-            return utils.system(f"msbuild /m /t:{';'.join(self.msbuildTargets)} \"{self.subinfo.options.configure.projectFile}\""
-                                f" /p:Configuration={buildType}"
-                                f" /p:PlatformToolset=v{CraftCore.compiler.getMsvcPlatformToolset()}"
-                                f"{toolsVersion}"
-                                f"{sdkVer}"
-                                f"{platform}"
-                                f" {self.subinfo.options.configure.args}")
+            return utils.system(
+                f"msbuild /m /t:{';'.join(self.msbuildTargets)} \"{self.subinfo.options.configure.projectFile}\""
+                f" /p:Configuration={buildType}"
+                f" /p:PlatformToolset=v{CraftCore.compiler.getMsvcPlatformToolset()}"
+                f"{toolsVersion}"
+                f"{sdkVer}"
+                f"{platform}"
+                f" {self.subinfo.options.configure.args}"
+            )
 
     def install(self, buildDirs=None, installHeaders=True):
         if not buildDirs:
@@ -77,21 +91,28 @@ class MSBuildBuildSystem(BuildSystemBase):
             if not os.path.exists(os.path.join(self.installDir(), dir)):
                 os.makedirs(os.path.join(self.installDir(), dir))
 
-
-        def globCopy(sourceDir : str, destDir : str, patterns : [str]):
+        def globCopy(sourceDir: str, destDir: str, patterns: [str]):
             for pattern in patterns:
                 for f in glob.glob(os.path.join(sourceDir, pattern), recursive=True):
-                    if not utils.copyFile(f, os.path.join(destDir, os.path.basename(f)), linkOnly=False):
+                    if not utils.copyFile(
+                        f, os.path.join(destDir, os.path.basename(f)), linkOnly=False
+                    ):
                         return False
             return True
 
         for root in buildDirs:
             if not globCopy(root, os.path.join(self.imageDir(), "lib"), ["**/*.lib"]):
                 return False
-            if not globCopy(root, os.path.join(self.imageDir(), "bin"), ["**/*.exe", "**/*.dll"]):
+            if not globCopy(
+                root, os.path.join(self.imageDir(), "bin"), ["**/*.exe", "**/*.dll"]
+            ):
                 return False
             if installHeaders:
-                if not globCopy(root, os.path.join(self.imageDir(), "include"), ["**/*.h", "**/*.hpp"]):
+                if not globCopy(
+                    root,
+                    os.path.join(self.imageDir(), "include"),
+                    ["**/*.h", "**/*.hpp"],
+                ):
                     return False
         return True
 

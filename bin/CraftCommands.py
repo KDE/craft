@@ -39,7 +39,7 @@ from options import *
 import utils
 
 
-def __recurseCraft(command:[str], args:[str]):
+def __recurseCraft(command: [str], args: [str]):
     # command is the essential action, args might get split into multiple calls
     # close the log file and the db
     UserOptions.instance()._save()
@@ -47,10 +47,13 @@ def __recurseCraft(command:[str], args:[str]):
     CraftCore.debug.close()
     if hasattr(CraftCore, "installdb"):
         del CraftCore.installdb
-    for args in utils.limitCommandLineLength([sys.executable, sys.argv[0]] + command, args):
+    for args in utils.limitCommandLineLength(
+        [sys.executable, sys.argv[0]] + command, args
+    ):
         if not subprocess.call(args) == 0:
             return False
     return True
+
 
 def doExec(package, action):
     with CraftTimer.Timer("%s for %s" % (action, package), 1):
@@ -60,7 +63,9 @@ def doExec(package, action):
             if action == "fetch-binary":
                 CraftCore.debug.step(f"{package} not found in cache")
                 return False
-            CraftCore.log.warning(f"Action: {action} for {package}:{package.version} FAILED")
+            CraftCore.log.warning(
+                f"Action: {action} for {package}:{package.version} FAILED"
+            )
         return ret
 
 
@@ -69,7 +74,11 @@ def handlePackage(package, buildAction, directTargets):
     with CraftTimer.Timer(f"HandlePackage {package}", 3) as timer:
         success = True
         actions = []
-        timer.hook = lambda : utils.notify(f"Craft {buildAction} {'succeeded' if success else 'failed'}", f"{package} after {timer}", buildAction)
+        timer.hook = lambda: utils.notify(
+            f"Craft {buildAction} {'succeeded' if success else 'failed'}",
+            f"{package} after {timer}",
+            buildAction,
+        )
         CraftCore.debug.debug_line()
         CraftCore.debug.step(f"Handling package: {package}, action: {buildAction}")
 
@@ -78,12 +87,23 @@ def handlePackage(package, buildAction, directTargets):
                 if doExec(package, "fetch-binary"):
                     return True
             if buildAction == "all":
-                actions = ["fetch", "unpack", "compile", "cleanimage", "install", "post-install"]
-                if CraftCore.settings.getboolean("ContinuousIntegration", "ClearBuildFolder", False):
+                actions = [
+                    "fetch",
+                    "unpack",
+                    "compile",
+                    "cleanimage",
+                    "install",
+                    "post-install",
+                ]
+                if CraftCore.settings.getboolean(
+                    "ContinuousIntegration", "ClearBuildFolder", False
+                ):
                     actions += ["cleanbuild"]
                 actions += ["qmerge", "post-qmerge"]
                 if CraftCore.settings.getboolean("Packager", "CreateCache"):
-                    onlyDirect = CraftCore.settings.getboolean("Packager", "CacheDirectTargetsOnly")
+                    onlyDirect = CraftCore.settings.getboolean(
+                        "Packager", "CacheDirectTargetsOnly"
+                    )
                     if not onlyDirect or (onlyDirect and package in directTargets):
                         actions += ["package"]
             elif buildAction == "update":
@@ -96,8 +116,10 @@ def handlePackage(package, buildAction, directTargets):
                 return False
         return True
 
-def resolvePackage(packageNames : [str], version : str=None) -> [CraftPackageObject]:
+
+def resolvePackage(packageNames: [str], version: str = None) -> [CraftPackageObject]:
     package = CraftPackageObject(None)
+
     def resolveChildren(child):
         if child.isCategory():
             for c in child.children.values():
@@ -115,7 +137,7 @@ def resolvePackage(packageNames : [str], version : str=None) -> [CraftPackageObj
     return package
 
 
-def setOption(packageNames : [str], option : str) -> bool:
+def setOption(packageNames: [str], option: str) -> bool:
     if "=" not in option:
         CraftCore.log.error(f"Invalid option {option}")
         return False
@@ -128,15 +150,18 @@ def setOption(packageNames : [str], option : str) -> bool:
         # version is a special case, it is build in and a non existing version causes an error during construction
         # skipping the check allows to replace an invalid version
         if option != "version" and not package.isCategory():
-                package.instance
+            package.instance
         options = UserOptions.get(package)
         if not options.setOption(key, value):
             return False
         CraftCore.log.info(f"[{package}]\n{key}={getattr(options, key)}")
     return True
 
-def addBlueprintsRepository(url : str) -> bool:
-    templateDir = os.path.join(CraftCore.standardDirs.craftBin(), "..", "internal_blueprints" )
+
+def addBlueprintsRepository(url: str) -> bool:
+    templateDir = os.path.join(
+        CraftCore.standardDirs.craftBin(), "..", "internal_blueprints"
+    )
     with tempfile.TemporaryDirectory() as tmp:
         iniPath = os.path.join(tmp, "version.ini")
         parser = configparser.ConfigParser()
@@ -156,29 +181,39 @@ def addBlueprintsRepository(url : str) -> bool:
             pkg._instance = None
         return handlePackage(pkg, "fetch", [])
 
+
 def destroyCraftRoot() -> bool:
     OsUtils.killProcess()
     settingsFiles = {"kdesettings.ini", "CraftSettings.ini", "BlueprintSettings.ini"}
-    dirsToKeep = [CraftCore.standardDirs.downloadDir(),
-                  os.path.join(CraftCore.standardDirs.craftBin(), ".."),
-                  os.path.join(CraftCore.standardDirs.craftRoot(), "python"),
-                  CraftCore.standardDirs.blueprintRoot()]
+    dirsToKeep = [
+        CraftCore.standardDirs.downloadDir(),
+        os.path.join(CraftCore.standardDirs.craftBin(), ".."),
+        os.path.join(CraftCore.standardDirs.craftRoot(), "python"),
+        CraftCore.standardDirs.blueprintRoot(),
+    ]
     # dirs with possible interesting sub dirs
     maybeKeepDir = [
         CraftCore.standardDirs.craftRoot(),
         CraftCore.standardDirs.etcDir(),
-        os.path.join(CraftCore.standardDirs.etcDir(), "blueprints")# might contain blueprintRoot
-        ]
+        os.path.join(
+            CraftCore.standardDirs.etcDir(), "blueprints"
+        ),  # might contain blueprintRoot
+    ]
+
     def deleteEntry(path):
         if utils.OsUtils.isLink(path):
             CraftCore.log.debug(f"Skipping symlink {path}")
             return
         if os.path.isdir(path):
-            if any(os.path.exists(x) and os.path.samefile(path, x) for x in maybeKeepDir):
+            if any(
+                os.path.exists(x) and os.path.samefile(path, x) for x in maybeKeepDir
+            ):
                 CraftCore.log.debug(f"Path {path} in maybeKeepDir")
                 for entry in os.listdir(path):
                     deleteEntry(os.path.join(path, entry))
-            elif any(os.path.exists(x) and os.path.samefile(path, x) for x in dirsToKeep):
+            elif any(
+                os.path.exists(x) and os.path.samefile(path, x) for x in dirsToKeep
+            ):
                 CraftCore.log.debug(f"Path {path} in dirsToKeep")
             else:
                 utils.cleanDirectory(path)
@@ -200,20 +235,28 @@ def unShelve(shelve, args):
     blueprintRepositories = []
     if "General" in parser:
         listVersion = int(parser["General"].get("version", listVersion))
-        blueprintRepositories = CraftCore.settings._parseList(parser["General"].get("blueprintRepositories", ""))
+        blueprintRepositories = CraftCore.settings._parseList(
+            parser["General"].get("blueprintRepositories", "")
+        )
     for repo in blueprintRepositories:
         addBlueprintsRepository(repo)
     Info = namedtuple("Info", "version revision patchLevel")
-    packages = {} # type: Info
+    packages = {}  # type: Info
     if listVersion == 1:
         for sections in parser.keys():
             for packageName in parser[sections]:
-                packages[packageName] = Info(parser[sections].get(packageName, None), None, None)
+                packages[packageName] = Info(
+                    parser[sections].get(packageName, None), None, None
+                )
     elif listVersion == 2:
         for p, s in parser.items():
             if p in {"General", "DEFAULT"}:
                 continue
-            packages[p] = Info(s.get("version", None), s.get("revision", None), s.get("patchLevel", None))
+            packages[p] = Info(
+                s.get("version", None),
+                s.get("revision", None),
+                s.get("patchLevel", None),
+            )
 
     settings = UserOptions.instance().settings
     for p, info in packages.items():
@@ -235,11 +278,14 @@ def unShelve(shelve, args):
                 continue
             opt.append(o)
         skip = False
-    if not __recurseCraft(["--options", "virtual.ignored=True", "--update"] + opt, ["craft"]):
+    if not __recurseCraft(
+        ["--options", "virtual.ignored=True", "--update"] + opt, ["craft"]
+    ):
         return False
     return __recurseCraft(opt, list(packages.keys()))
 
-def shelve(target : str):
+
+def shelve(target: str):
     target = Path(target)
     CraftCore.log.info(f"Creating shelve: {target}")
     listFile = configparser.ConfigParser(allow_no_value=True)
@@ -260,7 +306,7 @@ def shelve(target : str):
     listFile["General"]["blueprintRepositories"] = ";".join(blueprintRepos)
     reDate = re.compile(r"\d\d\d\d\.\d\d\.\d\d")
 
-    def _set(package, key:str, value:str):
+    def _set(package, key: str, value: str):
         if updating:
             old = package.get(key, value)
             if old != value:
@@ -271,7 +317,9 @@ def shelve(target : str):
     for package, version, revision in CraftCore.installdb.getDistinctInstalled():
         packageObject = CraftPackageObject.get(package)
         if not packageObject:
-            CraftCore.log.warning(f"{package} is no longer known to Craft, it will not be added to the list")
+            CraftCore.log.warning(
+                f"{package} is no longer known to Craft, it will not be added to the list"
+            )
             continue
         if not packageObject.subinfo.shelveAble:
             continue
@@ -284,25 +332,40 @@ def shelve(target : str):
         patchLvl = version.split("-", 1)
         if len(patchLvl) == 2:
             # have we encoded a date or a patch lvl?
-            clean = packageObject.subinfo.options.dailyUpdate and bool(reDate.match(patchLvl[1]))
-            clean |= patchLvl[0] in packageObject.subinfo.patchLevel and str(packageObject.subinfo.patchLevel[patchLvl[0]] + packageObject.categoryInfo.patchLevel) == patchLvl[1]
+            clean = packageObject.subinfo.options.dailyUpdate and bool(
+                reDate.match(patchLvl[1])
+            )
+            clean |= (
+                patchLvl[0] in packageObject.subinfo.patchLevel
+                and str(
+                    packageObject.subinfo.patchLevel[patchLvl[0]]
+                    + packageObject.categoryInfo.patchLevel
+                )
+                == patchLvl[1]
+            )
             if clean:
                 version = patchLvl[0]
-        _set(package, "version",  version)
+        _set(package, "version", version)
         if version != packageObject.subinfo.defaultTarget:
-            CraftCore.debug.printOut(f"For {packageObject} {version} is an update availible: {packageObject.subinfo.defaultTarget}")
+            CraftCore.debug.printOut(
+                f"For {packageObject} {version} is an update availible: {packageObject.subinfo.defaultTarget}"
+            )
         if revision:
             # sadly we combine the revision with the branch "master-1234ac"
             revParts = revision.split("-", 1)
             if len(revParts) == 2:
-                _set(package, "revision",  revParts[1])
+                _set(package, "revision", revParts[1])
     if updating:
         removed = oldSections - newPackages
         added = newPackages - oldSections
-        CraftCore.log.info(f"The following packages where removed from {target}: {removed}")
+        CraftCore.log.info(
+            f"The following packages where removed from {target}: {removed}"
+        )
         CraftCore.log.info(f"The following packages where added to {target}: {added}")
     utils.createDir(target.parent)
-    listFile._sections = OrderedDict(sorted(listFile._sections.items(), key=lambda k: k[0]))
+    listFile._sections = OrderedDict(
+        sorted(listFile._sections.items(), key=lambda k: k[0])
+    )
     with open(target, "wt", encoding="UTF-8") as out:
         listFile.write(out)
     return True
@@ -314,14 +377,16 @@ def packageIsOutdated(package):
         return True
     for pack in installed:
         version = pack.getVersion()
-        if not version: continue
+        if not version:
+            continue
         cacheVersion = pack.getCacheVersion()
         if cacheVersion and cacheVersion != CraftBase.CraftBase.cacheVersion():
             # can only happen for packages installed from cache
             return True
         return package.version != version
 
-def invoke(command : str, directTargets : [CraftPackageObject]) -> bool:
+
+def invoke(command: str, directTargets: [CraftPackageObject]) -> bool:
     args = {}
     key = command
     argsPattern = re.compile(r"(.+)\((.*)\)")
@@ -342,13 +407,16 @@ def invoke(command : str, directTargets : [CraftPackageObject]) -> bool:
                 else:
                     instance = attr
             else:
-                CraftCore.debug.printOut(f"{p} has no member {'.'.join(path)}", file=sys.stderr)
+                CraftCore.debug.printOut(
+                    f"{p} has no member {'.'.join(path)}", file=sys.stderr
+                )
                 return False
         CraftCore.log.debug(f"--get {command} on {p} -> {type(instance)}:{instance}")
         CraftCore.debug.printOut(instance)
     return True
 
-def run(package : [CraftPackageObject], action : str, args) -> bool:
+
+def run(package: [CraftPackageObject], action: str, args) -> bool:
     if package.isIgnored():
         CraftCore.log.info(f"Skipping package because it has been ignored: {package}")
         return True
@@ -368,7 +436,9 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
         depPackage = CraftDependencyPackage(package)
         if args.resolve_deps:
             if not args.resolve_deps.capitalize() in DependencyType.__members__:
-                CraftCore.log.error(f"Invalid dependency type {args.resolve_deps}, valid types are {DependencyType.__members__}")
+                CraftCore.log.error(
+                    f"Invalid dependency type {args.resolve_deps}, valid types are {DependencyType.__members__}"
+                )
                 return False
             depType = DependencyType.__getattr__(args.resolve_deps.capitalize())
         elif action == "install-deps":
@@ -382,15 +452,22 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
             # do it after the dependencies are initialised
             if p.isIgnored():
                 if not p.categoryInfo.isActive:
-                    CraftCore.log.warning(f"Ignoring: {p} as it is not supported on your platform/compiler")
+                    CraftCore.log.warning(
+                        f"Ignoring: {p} as it is not supported on your platform/compiler"
+                    )
 
         packages = []
         if not args.resolve_deps:
             for item in depList:
                 if not item.name:
-                    continue # are we a real package
-                if ((item in directTargets and (args.ignoreInstalled or (action == "update" and item.subinfo.hasSvnTarget())))
-                     or packageIsOutdated(item)):
+                    continue  # are we a real package
+                if (
+                    item in directTargets
+                    and (
+                        args.ignoreInstalled
+                        or (action == "update" and item.subinfo.hasSvnTarget())
+                    )
+                ) or packageIsOutdated(item):
                     packages.append(item)
                     CraftCore.log.debug(f"dependency: {item}")
                 elif item in directTargets:
@@ -412,7 +489,9 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
             if args.probe:
                 CraftCore.log.warning(f"pretending {info}: {info.version}")
             else:
-                if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+                if CraftCore.settings.getboolean(
+                    "ContinuousIntegration", "Enabled", False
+                ):
                     CraftCore.debug.debug_line()
                     CraftCore.log.info(f"Status: {CraftTitleUpdater.instance}")
                 else:
@@ -434,7 +513,10 @@ def run(package : [CraftPackageObject], action : str, args) -> bool:
     CraftCore.debug.new_line()
     return True
 
-def cleanBuildFiles(cleanArchives, cleanImages, cleanInstalledImages, cleanBuildDir, packages):
+
+def cleanBuildFiles(
+    cleanArchives, cleanImages, cleanInstalledImages, cleanBuildDir, packages
+):
     def cleanDir(dir):
         if os.path.isdir(dir):
             CraftCore.log.info(f"Cleaning: {Path(dir).resolve()}")
@@ -470,6 +552,7 @@ def cleanBuildFiles(cleanArchives, cleanImages, cleanInstalledImages, cleanBuild
         if cleanBuildDir:
             cleanDir(instance.buildDir())
 
+
 def upgrade(packages, args) -> bool:
     if packages.children:
         deps = CraftDependencyPackage(packages)
@@ -481,7 +564,10 @@ def upgrade(packages, args) -> bool:
             if p:
                 deps.children[p.path] = p.path
     packageList = deps.getDependencies()
-    return __recurseCraft([], ["-i", "--options", "virtual.ignored=True", "craft"]) and __recurseCraft(["--update"], [x.path for x in packageList])
+    return __recurseCraft(
+        [], ["-i", "--options", "virtual.ignored=True", "craft"]
+    ) and __recurseCraft(["--update"], [x.path for x in packageList])
+
 
 def installToDektop(packages):
     CraftCore.settings.set("Packager", "PackageType", "DesktopEntry")
@@ -502,9 +588,10 @@ def printFiles(packages):
     return True
 
 
-def createArchiveCache(packages : CraftPackageObject):
+def createArchiveCache(packages: CraftPackageObject):
     from Source.ArchiveSource import ArchiveSource
     from Package.VirtualPackageBase import SourceComponentPackageBase
+
     packages = CraftDependencyPackage(packages).getDependencies()
     for p in packages:
         if not isinstance(p.instance, ArchiveSource):
@@ -525,7 +612,6 @@ def createArchiveCache(packages : CraftPackageObject):
         else:
             if not p.instance.fetch():
                 return False
-        if not (p.instance.checkDigest() and
-                p.instance.generateSrcManifest()):
+        if not (p.instance.checkDigest() and p.instance.generateSrcManifest()):
             return False
     return True

@@ -17,6 +17,7 @@ from Blueprints.CraftPackageObject import CraftPackageObject
 from Utils.CraftShortPath import CraftShortPath
 from CraftOS.osutils import OsUtils
 
+
 class InitGuard(object):
     _initialized = {}
     _verbose = False
@@ -58,7 +59,7 @@ class CraftBase(object):
         mod = sys.modules[self.__module__]
         # ugly workaround we need to replace the constructor
         self.package = mod.CRAFT_CURRENT_MODULE  # type: CraftPackageObject
-        self.subinfo = mod.subinfo(self) # type: info.infoclass
+        self.subinfo = mod.subinfo(self)  # type: info.infoclass
 
         self.buildSystemType = None
 
@@ -89,7 +90,7 @@ class CraftBase(object):
         utils.abstract()
 
     def packageDir(self) -> Path:
-        """ add documentation """
+        """add documentation"""
         return Path(self.package.source).parent
 
     def installPrefix(self) -> Path:
@@ -115,8 +116,7 @@ class CraftBase(object):
         return builddir
 
     def imageDir(self) -> Path:
-        """return absolute path to the install root directory of the currently active package
-        """
+        """return absolute path to the install root directory of the currently active package"""
         return self.buildRoot() / self.imageDirPattern()
 
     def installDir(self) -> Path:
@@ -134,7 +134,13 @@ class CraftBase(object):
         Default is to optionally append build type subdirectory"""
 
         CraftCore.log.debug("CraftBase.packageDestinationDir called")
-        dstpath = Path(CraftCore.settings.get("Packager", "Destination", os.path.join(CraftStandardDirs.craftRoot(), "tmp")))
+        dstpath = Path(
+            CraftCore.settings.get(
+                "Packager",
+                "Destination",
+                os.path.join(CraftStandardDirs.craftRoot(), "tmp"),
+            )
+        )
         utils.createDir(dstpath)
         return dstpath
 
@@ -146,8 +152,13 @@ class CraftBase(object):
     def version(self):
         ver = self.subinfo.buildTarget
         patchLevel = 0
-        if CraftCore.settings.getboolean("BlueprintVersions", "EnableDailyUpdates", True)\
-                and self.subinfo.options.dailyUpdate and self.subinfo.hasSvnTarget():
+        if (
+            CraftCore.settings.getboolean(
+                "BlueprintVersions", "EnableDailyUpdates", True
+            )
+            and self.subinfo.options.dailyUpdate
+            and self.subinfo.hasSvnTarget()
+        ):
             ver += "-" + str(datetime.date.today()).replace("-", ".")
         elif self.subinfo.buildTarget in self.subinfo.patchLevel:
             patchLevel = int(self.subinfo.patchLevel[self.subinfo.buildTarget])
@@ -170,17 +181,19 @@ class CraftBase(object):
         CraftCore.log.debug("entering: %s" % self.buildDir())
 
     def enterSourceDir(self):
-        if (not self.sourceDir().is_dir()):
+        if not self.sourceDir().is_dir():
             return False
         CraftCore.log.warning("entering the source directory!")
         os.chdir(self.sourceDir())
         CraftCore.log.debug("entering: %s" % self.sourceDir())
 
     def buildNumber(self):
-        return (os.environ.get("APPVEYOR_BUILD_VERSION") or
-                os.environ.get("BUILD_NUMBER") or
-                os.environ.get("DRONE_BUILD_NUMBER") or
-                "")
+        return (
+            os.environ.get("APPVEYOR_BUILD_VERSION")
+            or os.environ.get("BUILD_NUMBER")
+            or os.environ.get("DRONE_BUILD_NUMBER")
+            or ""
+        )
 
     def formatVersion(self, includeRevision, includeTimeStamp) -> str:
         buildVersion = self.buildNumber()
@@ -198,13 +211,23 @@ class CraftBase(object):
         version = "-".join(filter(None, version))
         return version.replace("/", "_")
 
-    def binaryArchiveBaseName(self, pkgSuffix, includeRevision, includeTimeStamp) -> str:
+    def binaryArchiveBaseName(
+        self, pkgSuffix, includeRevision, includeTimeStamp
+    ) -> str:
         return f"{self.package.name}-{self.formatVersion(includeRevision=includeRevision, includeTimeStamp=includeTimeStamp)}-{CraftCore.compiler}{pkgSuffix}"
 
-    def binaryArchiveName(self, pkgSuffix="", fileType=CraftCore.settings.get("Packager", "7ZipArchiveType", "7z"),
-                          includeRevision=False, includePackagePath=False, includeTimeStamp=False) -> str:
+    def binaryArchiveName(
+        self,
+        pkgSuffix="",
+        fileType=CraftCore.settings.get("Packager", "7ZipArchiveType", "7z"),
+        includeRevision=False,
+        includePackagePath=False,
+        includeTimeStamp=False,
+    ) -> str:
 
-        archiveBaseName = self.binaryArchiveBaseName(pkgSuffix, includeRevision, includeTimeStamp)
+        archiveBaseName = self.binaryArchiveBaseName(
+            pkgSuffix, includeRevision, includeTimeStamp
+        )
 
         if fileType:
             if not fileType.startswith("."):
@@ -213,7 +236,6 @@ class CraftBase(object):
             fileType = ""
         prefix = "" if not includePackagePath else f"{self.package.path}/"
         return f"{prefix}{archiveBaseName}{fileType}"
-
 
     @staticmethod
     def cacheVersion():
@@ -225,14 +247,20 @@ class CraftBase(object):
 
     def cacheLocation(self, baseDir=None) -> str:
         if not baseDir:
-            cacheDir = CraftCore.settings.get("Packager", "CacheDir", os.path.join(CraftStandardDirs.downloadDir(), "binary"))
+            cacheDir = CraftCore.settings.get(
+                "Packager",
+                "CacheDir",
+                os.path.join(CraftStandardDirs.downloadDir(), "binary"),
+            )
         else:
             cacheDir = baseDir
 
         version = self.cacheVersion()
         if not version:
             return None
-        return os.path.join(cacheDir, version, *CraftCore.compiler.signature, self.buildType())
+        return os.path.join(
+            cacheDir, version, *CraftCore.compiler.signature, self.buildType()
+        )
 
     def cacheRepositoryUrls(self) -> [str]:
         version = self.cacheVersion()
@@ -243,7 +271,17 @@ class CraftBase(object):
             buildType += ["RelWithDebInfo"]
         out = []
         for bt in buildType:
-            out += ["/".join([url if not url.endswith("/") else url[0:-1], version, *CraftCore.compiler.signature, bt]) for url in CraftCore.settings.getList("Packager", "RepositoryUrl")]
+            out += [
+                "/".join(
+                    [
+                        url if not url.endswith("/") else url[0:-1],
+                        version,
+                        *CraftCore.compiler.signature,
+                        bt,
+                    ]
+                )
+                for url in CraftCore.settings.getList("Packager", "RepositoryUrl")
+            ]
         return out
 
     def internalPostInstall(self):

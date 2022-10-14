@@ -31,9 +31,16 @@ class TestUserOptions(CraftTestBase.CraftTestBase):
         package = CraftPackageObject.get("dev-utils/7zip")
         # init the package
         package.subinfo.registerOptions()
-        instance = self._prepare({
-            package.path : {"version":"5", "ignored":"True", "customeOptionInt":"5"},
-            "dev-utils"   : {"args":"Foo"}})
+        instance = self._prepare(
+            {
+                package.path: {
+                    "version": "5",
+                    "ignored": "True",
+                    "customeOptionInt": "5",
+                },
+                "dev-utils": {"args": "Foo"},
+            }
+        )
 
         o = UserOptions.get(package)
 
@@ -52,10 +59,14 @@ class TestUserOptions(CraftTestBase.CraftTestBase):
         self.assertEqual(o.not_existing, None)
 
     def testOptions(self):
-        UserOptions.setOptions(["qt-apps/gammaray.gammarayProbeOnly = True", "qt-apps/gammaray.disableGammarayBuildCliInjector = True"])
+        UserOptions.setOptions(
+            [
+                "qt-apps/gammaray.gammarayProbeOnly = True",
+                "qt-apps/gammaray.disableGammarayBuildCliInjector = True",
+            ]
+        )
         package = CraftPackageObject.get("qt-apps/gammaray")
         package.subinfo.registerOptions()
         option = UserOptions.get(package)
         self.assertEqual(option.gammarayProbeOnly, True)
         self.assertEqual(option.disableGammarayBuildCliInjector, True)
-

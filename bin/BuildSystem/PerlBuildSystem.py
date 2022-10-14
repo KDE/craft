@@ -32,40 +32,53 @@ class PerlBuildSystem(MakeFileBuildSystem):
 
     def configure(self):
         self.enterBuildDir()
-        env = {"PERL5LIB": None,
-               "PERL_MM_OPT": None,
-               "PERL_LOCAL_LIB_ROOT": None,
-               "PERL_MM_USE_DEFAULT": "1",
-               "PERL_AUTOINSTALL": "--skipdeps"}
+        env = {
+            "PERL5LIB": None,
+            "PERL_MM_OPT": None,
+            "PERL_LOCAL_LIB_ROOT": None,
+            "PERL_MM_USE_DEFAULT": "1",
+            "PERL_AUTOINSTALL": "--skipdeps",
+        }
         with utils.ScopedEnv(env):
-            return utils.system(Arguments.formatCommand(["perl", "Makefile.PL"], self.subinfo.options.configure.args))
+            return utils.system(
+                Arguments.formatCommand(
+                    ["perl", "Makefile.PL"], self.subinfo.options.configure.args
+                )
+            )
 
     def make(self):
         self.enterBuildDir()
-        env = {"PERL5LIB" : None,
-              "PERL_MM_OPT" : None,
-              "PERL_LOCAL_LIB_ROOT" : None,
-              "PERL_MM_USE_DEFAULT" : "1",
-              "PERL_AUTOINSTALL" : "--skipdeps"}
+        env = {
+            "PERL5LIB": None,
+            "PERL_MM_OPT": None,
+            "PERL_LOCAL_LIB_ROOT": None,
+            "PERL_MM_USE_DEFAULT": "1",
+            "PERL_AUTOINSTALL": "--skipdeps",
+        }
         if CraftCore.compiler.isMSVC():
             root = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
-            env.update({"INCLUDE": f"{os.environ['INCLUDE']};{root}/include",
-                        "LIB": f"{os.environ['LIB']};{root}/lib"})
+            env.update(
+                {
+                    "INCLUDE": f"{os.environ['INCLUDE']};{root}/include",
+                    "LIB": f"{os.environ['LIB']};{root}/lib",
+                }
+            )
         with utils.ScopedEnv(env):
             return utils.system([self.makeProgram])
 
     def install(self):
-        env = {"PERL5LIB": None,
-               "PERL_MM_OPT": None,
-               "PERL_LOCAL_LIB_ROOT": None}
+        env = {"PERL5LIB": None, "PERL_MM_OPT": None, "PERL_LOCAL_LIB_ROOT": None}
         with utils.ScopedEnv(env):
             if 1 and CraftCore.compiler.isWindows:
-                #ugly hack to make destdir work, it probably breaks some scripts
+                # ugly hack to make destdir work, it probably breaks some scripts
                 makeFile = os.path.join(self.buildDir(), "Makefile")
                 with open(makeFile, "rt") as make:
                     txt = make.read()
                 with open(makeFile, "wt") as make:
-                    txt = txt.replace(str(CraftCore.standardDirs.craftRoot()), str(CraftCore.standardDirs.craftRoot())[2:])
+                    txt = txt.replace(
+                        str(CraftCore.standardDirs.craftRoot()),
+                        str(CraftCore.standardDirs.craftRoot())[2:],
+                    )
                     make.write(txt)
             if not (super().install() and self._fixInstallPrefix()):
                 return False
@@ -76,5 +89,6 @@ class PerlBuildSystem(MakeFileBuildSystem):
                         utils.makeWritable(f.path)
                         if f.is_dir():
                             makeWriatable(f.path)
+
             makeWriatable(self.installDir())
             return True

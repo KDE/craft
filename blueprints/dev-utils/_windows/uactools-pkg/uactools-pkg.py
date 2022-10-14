@@ -8,8 +8,8 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["virtual/base"] = None
 
     def setTargets(self):
-        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/kdewin/tools/mt'
-        self.defaultTarget = 'svnHEAD'
+        self.svnTargets["svnHEAD"] = "trunk/kdesupport/kdewin/tools/mt"
+        self.defaultTarget = "svnHEAD"
 
 
 from Package.CMakePackageBase import *

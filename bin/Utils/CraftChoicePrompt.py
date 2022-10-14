@@ -37,7 +37,8 @@ import getpass
 
 from CraftCore import CraftCore
 
-def promptForChoice(title: str, choices : [], default : str=None):
+
+def promptForChoice(title: str, choices: [], default: str = None):
     simpleMode = not isinstance(choices[0], tuple)
     if simpleMode:
         choices = OrderedDict.fromkeys(choices)
@@ -54,10 +55,12 @@ def promptForChoice(title: str, choices : [], default : str=None):
     CraftCore.debug.new_line()
     if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
         CraftCore.log.info(title)
-        CraftCore.log.info(f"[ContinuousIntegration]Enabled = True: returning default: {default}")
+        CraftCore.log.info(
+            f"[ContinuousIntegration]Enabled = True: returning default: {default}"
+        )
         return default if simpleMode else choices[default]
 
-    while (True):
+    while True:
         CraftCore.log.info(title)
         choice = input(promp)
         CraftCore.log.debug(f"The user entered: {choice}")
@@ -77,23 +80,29 @@ def promptForChoice(title: str, choices : [], default : str=None):
     CraftCore.log.debug(f"Returning: {out}")
     return out
 
-def promptForPassword(message: str, key: str=None):
+
+def promptForPassword(message: str, key: str = None):
     if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", True):
         if key:
             key = f"CRAFT_SECRET_{key}"
             if key in os.environ:
                 return os.environ[key]
-        CraftCore.log.info(f"[ContinuousIntegration] Enabled = True: Please set the environment variable {key}")
+        CraftCore.log.info(
+            f"[ContinuousIntegration] Enabled = True: Please set the environment variable {key}"
+        )
         raise Exception("Password prompts for CI are not supported by Craft.")
     else:
         utils.notify("Craft needs your attention", message, log=False)
 
         CraftCore.debug.new_line()
-        password = getpass.getpass(prompt=message+": ", stream=None)
+        password = getpass.getpass(prompt=message + ": ", stream=None)
         return password
+
 
 if __name__ == "__main__":
     print(promptForChoice("Test1, simple no default", ["Foo", "Bar"]))
     print(promptForChoice("Test2, simple default", ["Foo", "Bar"], "Bar"))
     print(promptForChoice("Test3, touple no default", [("Foo", True), ("Bar", False)]))
-    print(promptForChoice("Test4, touple default", [("Foo", True), ("Bar", False)], "Bar"))
+    print(
+        promptForChoice("Test4, touple default", [("Foo", True), ("Bar", False)], "Bar")
+    )

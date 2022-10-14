@@ -23,7 +23,6 @@ class SeachPackage(object):
         versions.sort(key=lambda x: CraftVersion(x))
         self.availableVersions = ", ".join(versions)
 
-
     @property
     def package(self):
         # we can't cache the whole instance
@@ -34,13 +33,12 @@ class SeachPackage(object):
             exit(1)
         return out
 
-
     def __str__(self):
         installed = CraftCore.installdb.getInstalledPackages(self.package)
         version = None
         revision = None
         if installed:
-            if (len(installed) > 1):
+            if len(installed) > 1:
                 raise Exception("Multiple installs are not supported")
             version = installed[0].getVersion() or None
             revision = installed[0].getRevision() or None
@@ -71,7 +69,9 @@ def packages():
             for p in packages:
                 package = SeachPackage(p)
                 CraftCore.cache.availablePackages.append(package)
-                progress.print(int(len(CraftCore.cache.availablePackages) / total * 100))
+                progress.print(
+                    int(len(CraftCore.cache.availablePackages) / total * 100)
+                )
     return CraftCore.cache.availablePackages
 
 
@@ -83,7 +83,7 @@ def printSearch(search_package, maxDist=2):
         match = None
         package_re = re.compile(f".*{search_package}.*", re.IGNORECASE)
         for searchPackage in packages():
-            packageString =  searchPackage.path if isPath else searchPackage.name
+            packageString = searchPackage.path if isPath else searchPackage.name
             levDist = abs(len(searchPackageLower) - len(packageString))
             if levDist <= maxDist:
                 levDist = utils.levenshtein(searchPackageLower, packageString.lower())
@@ -95,13 +95,16 @@ def printSearch(search_package, maxDist=2):
             elif len(packageString) > maxDist and levDist <= maxDist:
                 similar.append((levDist, searchPackage))
             else:
-                if package_re.match(searchPackage.description) or \
-                        package_re.match(searchPackage.tags):
+                if package_re.match(searchPackage.description) or package_re.match(
+                    searchPackage.tags
+                ):
                     similar.append((100, searchPackage))
 
         if match is None:
             if len(similar) > 0:
-                CraftCore.log.info(f"Craft was unable to find {search_package}, similar packages are:")
+                CraftCore.log.info(
+                    f"Craft was unable to find {search_package}, similar packages are:"
+                )
                 similar.sort(key=lambda x: x[0])
             else:
                 CraftCore.log.info(f"Craft was unable to find {search_package}")
