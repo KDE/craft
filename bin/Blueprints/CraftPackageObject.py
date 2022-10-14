@@ -99,7 +99,7 @@ class CategoryPackageObject(object):
             return False
         if not CraftCore.compiler.compiler & self.compiler:
             CraftCore.log.debug(
-                f"{self.localPath}, is not supported on {CraftCore.compiler._compiler!r}, supported compiler {self.compiler!r}"
+                f"{self.localPath}, is not supported on {CraftCore.compiler!r}, supported compiler {self.compiler!r}"
             )
             return False
         return True

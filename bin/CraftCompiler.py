@@ -23,10 +23,86 @@
 # SUCH DAMAGE.
 
 import re
-from enum import IntFlag, unique
+from enum import Enum, IntFlag, auto, unique
 
-from CraftConfig import *
 from CraftCore import CraftCore
+
+
+class CraftCompilerSignature(object):
+    def __init__(
+        self, platform, compiler, abiString, architecture, sourceString: str = None
+    ) -> None:
+        self.platform = platform
+        self.compiler = compiler
+        self.abiString = abiString
+        self.abi = CraftCompiler.Abi.fromString(abiString) if abiString else None
+        self.architecture = architecture
+        self._sourceString = sourceString
+
+    def __str__(self):
+        return "-".join(self.signature)
+
+    def __iter__(self):
+        return self.signature.__iter__()
+
+    @property
+    def signature(self):
+        if self.abiString:
+            return (
+                self.platform.name.lower(),
+                self.abiString,
+                self.compiler.name.lower(),
+                self.architecture.name.lower(),
+            )
+        else:
+            return (
+                self.platform.name.lower(),
+                self.compiler.name.lower(),
+                self.architecture.name.lower(),
+            )
+
+    @staticmethod
+    def parseAbi(s: str):
+        split = s.split("-")
+        if 3 < len(split) < 4:
+            raise Exception(f"Invalid compiler: {s}")
+
+        abi = None
+        platform = CraftCompiler.Platforms.fromString(split[0])
+
+        try:
+            abi = split[1]
+            compiler = CraftCompiler.Compiler.fromString(split[2])
+            arch = CraftCompiler.Architecture.fromString(split[3])
+        except:
+            # legacy
+            try:
+                compiler = CraftCompiler.Compiler.fromString(split[2])
+                if "_" in split[1]:
+                    abi, arch = split[1].split("_", 1)
+                else:
+                    abi = None
+                    arch = split[1]
+                if arch == "32":
+                    # legacy
+                    arch = CraftCompiler.Architecture.x86_32
+                elif arch == "64":
+                    # legacy
+                    arch = CraftCompiler.Architecture.x86_64
+                else:
+                    arch = CraftCompiler.Architecture.fromString(arch)
+                if abi == "mingw":
+                    # no need to keep that as it doesn't cary any information
+                    abi = None
+            except:
+                raise Exception(f"Invalid compiler: {s}")
+
+        if platform == CraftCompiler.Platforms.Android:
+            if arch == CraftCompiler.Architecture.arm:
+                abi = "armeabi-v7a"
+            elif arch == CraftCompiler.Architecture.arm64:
+                abi = "arm64-v8a"
+        return CraftCompilerSignature(platform, compiler, abi, arch, sourceString=s)
 
 
 class CraftCompiler(object):
@@ -76,6 +152,24 @@ class CraftCompiler(object):
             return cls.__sting_map[name.lower()]
 
     @unique
+    class Abi(Enum):
+        Error = auto()
+        msvc2017 = auto()
+        msvc2019 = auto()
+        msvc2022 = auto()
+
+        armeabi_v7a = auto()
+        arm64_v8a = auto()
+
+        @classmethod
+        def fromString(cls, name):
+            if not hasattr(cls, "__sting_map"):
+                cls.__sting_map = dict(
+                    [(k.lower(), v) for k, v in cls.__members__.items()]
+                )
+            return cls.__sting_map[name.lower()] or cls.Error
+
+    @unique
     class Compiler(IntFlag):
         NoCompiler = 0
         CL = 0x1 << 0
@@ -94,65 +188,35 @@ class CraftCompiler(object):
             return cls.__sting_map[name.lower()]
 
     def __init__(self):
-        split = CraftCore.settings.get("General", "ABI").split("-")
-        if len(split) != 3:
-            raise Exception(
-                "Invalid compiler: " + CraftCore.settings.get("General", "ABI")
-            )
-
-        platform, self._abi, compiler = split
-
-        self._compiler = CraftCompiler.Compiler.fromString(compiler)
-        self._platform = CraftCompiler.Platforms.fromString(platform)
+        self.signature = CraftCompilerSignature.parseAbi(
+            CraftCore.settings.get("General", "ABI")
+        )
 
         self._MSVCToolset = None
+        self._apiLevel = None
         if self.isMSVC():
             self._MSVCToolset = CraftCore.settings.get("General", "MSVCToolset", "")
-
         if self.isAndroid:
-            self._architecture = CraftCompiler.Architecture.fromString(self._abi)
-            if self.architecture == CraftCompiler.Architecture.arm:
-                self._abi = "armeabi-v7a"
-            elif self.architecture == CraftCompiler.Architecture.arm64:
-                self._abi = "arm64-v8a"
             self._apiLevel = CraftCore.settings.get("General", "AndroidAPI", 21)
-        else:
-            arch = self._abi.split("_", 1)[-1]
-            if arch == "32":
-                # legacy
-                self._architecture = CraftCompiler.Architecture.x86_32
-            elif arch == "64":
-                # legacy
-                self._architecture = CraftCompiler.Architecture.x86_64
-            else:
-                self._architecture = CraftCompiler.Architecture.fromString(arch)
 
     def __str__(self):
-        return "-".join(self.signature)
-
-    @property
-    def signature(self):
-        return (
-            self.platform.name.lower(),
-            self.compiler.name.lower(),
-            self.architecture.name.lower(),
-        )
+        return str(self.signature)
 
     @property
     def platform(self) -> Platforms:
-        return self._platform
+        return self.signature.platform
 
     @property
     def abi(self):
-        return self._abi
+        return self.signature.abiString
 
     @property
     def compiler(self) -> Compiler:
-        return self._compiler
+        return self.signature.compiler
 
     @property
     def architecture(self) -> Architecture:
-        return self._architecture
+        return self.signature.architecture
 
     @property
     def hostArchitecture(self) -> Architecture:
@@ -230,7 +294,7 @@ class CraftCompiler(object):
         return self.compiler == CraftCompiler.Compiler.CL
 
     def isMinGW(self):
-        return self.abi.startswith("mingw")
+        return self.isWindows and self.isGCC()
 
     def isMinGW_W32(self):
         return self.isMinGW() and self.architecture == CraftCompiler.Architecture.x86_32
@@ -239,16 +303,16 @@ class CraftCompiler(object):
         return self.isMinGW() and self.architecture == CraftCompiler.Architecture.x86_64
 
     def isMSVC(self):
-        return self.abi.startswith("msvc")
+        return self.compiler == CraftCompiler.Compiler.CL
 
     def isMSVC2017(self):
-        return self.abi.startswith("msvc2017")
+        return self.signature.abi == CraftCompiler.Abi.msvc2017
 
     def isMSVC2019(self):
-        return self.abi.startswith("msvc2019")
+        return self.signature.abi == CraftCompiler.Abi.msvc2019
 
     def isMSVC2022(self):
-        return self.abi.startswith("msvc2022")
+        return self.signature.abi == CraftCompiler.Abi.msvc2022
 
     def getGCCLikeVersion(self, compilerExecutable):
         _, result = CraftCore.cache.getCommandOutput(compilerExecutable, "--version")
