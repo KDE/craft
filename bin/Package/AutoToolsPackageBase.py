@@ -7,7 +7,9 @@ from Packager.TypePackager import *
 from Source.MultiSource import *
 
 
-class AutoToolsPackageBase(PackageBase, MultiSource, AutoToolsBuildSystem, TypePackager):
+class AutoToolsPackageBase(
+    PackageBase, MultiSource, AutoToolsBuildSystem, TypePackager
+):
     """provides a base class for autotools based packages from any source"""
 
     def __init__(self):

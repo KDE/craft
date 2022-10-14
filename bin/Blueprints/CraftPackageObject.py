@@ -36,7 +36,7 @@ from CraftOS.osutils import OsUtils
 
 
 class CategoryPackageObject(object):
-    def __init__(self, blueprintRoot, localPath : str):
+    def __init__(self, blueprintRoot, localPath: str):
         self.localPath = Path(localPath)
         self.description = ""
         self.webpage = ""
@@ -54,7 +54,9 @@ class CategoryPackageObject(object):
         # TODO: cache or fix handling of actual parent vs mounted parent
         # /dev-utils vs craft-blueprints-kde/dev-utils
         self._ini = self.localPath / "info.ini"
-        while not self._ini.exists() and self._ini.parent.parent != blueprintRoot.parent:
+        while (
+            not self._ini.exists() and self._ini.parent.parent != blueprintRoot.parent
+        ):
             self._ini = self._ini.parent.parent / "info.ini"
         if self._ini.exists():
             self.valid = True
@@ -66,8 +68,12 @@ class CategoryPackageObject(object):
             self.tags = general.get("tags", "")
             self.webpage = general.get("webpage", "")
             self.patchLevel = int(general.get("patchLevel", "0"))
-            self.runtimeDependencies = CraftCore.settings._parseList(general.get("runtimeDependencies", ""))
-            self.buildDependencies = CraftCore.settings._parseList(general.get("buildDependencies", ""))
+            self.runtimeDependencies = CraftCore.settings._parseList(
+                general.get("runtimeDependencies", "")
+            )
+            self.buildDependencies = CraftCore.settings._parseList(
+                general.get("buildDependencies", "")
+            )
             platform = set(CraftCore.settings._parseList(general.get("platforms", "")))
 
             if platform:
@@ -80,26 +86,31 @@ class CategoryPackageObject(object):
             if compiler:
                 self.compiler = CraftCore.compiler.Compiler.NoCompiler
                 for c in compiler:
-                    self.compiler |=  CraftCore.compiler.Compiler.fromString(c)
+                    self.compiler |= CraftCore.compiler.Compiler.fromString(c)
             self.pathOverride = general.get("pathOverride", None)
             self.forceOverride = general.get("forceOverride", False)
 
     @property
     def isActive(self) -> bool:
         if not CraftCore.compiler.platform & self.platforms:
-            CraftCore.log.debug(f"{self.localPath}, is not supported on {CraftCore.compiler.platform!r}, supported platforms {self.platforms!r}")
+            CraftCore.log.debug(
+                f"{self.localPath}, is not supported on {CraftCore.compiler.platform!r}, supported platforms {self.platforms!r}"
+            )
             return False
         if not CraftCore.compiler.compiler & self.compiler:
-            CraftCore.log.debug(f"{self.localPath}, is not supported on {CraftCore.compiler._compiler!r}, supported compiler {self.compiler!r}")
+            CraftCore.log.debug(
+                f"{self.localPath}, is not supported on {CraftCore.compiler._compiler!r}, supported compiler {self.compiler!r}"
+            )
             return False
         return True
+
 
 class CraftPackageObject(object):
     __rootPackage = None
     __rootDirectories = []
     # list of all leaves, unaffected by overrides etc
     _allLeaves = {}
-    _recipes = {}#all recipes, for lookup by package name
+    _recipes = {}  # all recipes, for lookup by package name
     IgnoredDirectories = {"__pycache__"}
 
     @staticmethod
@@ -111,8 +122,10 @@ class CraftPackageObject(object):
             self.__dict__ = other.__dict__
             return
         if other and not parent:
-            raise Exception("Calling CraftPackageObject(str) directly is not supported,"
-                            " use CraftPackageObject.get(str) instead.")
+            raise Exception(
+                "Calling CraftPackageObject(str) directly is not supported,"
+                " use CraftPackageObject.get(str) instead."
+            )
 
         self.parent = parent
         self.name = other
@@ -120,11 +133,10 @@ class CraftPackageObject(object):
         self.children = {}
         self.source = None
         self._pattern = None
-        self.categoryInfo = None # type:CategoryPackageObject
+        self.categoryInfo = None  # type:CategoryPackageObject
         self._version = None
         self._instance = None
         self.__path = None
-
 
     @property
     def pattern(self):
@@ -187,7 +199,7 @@ class CraftPackageObject(object):
         return package
 
     @staticmethod
-    def _expandChildren(path, parent, blueprintRoot : Path):
+    def _expandChildren(path, parent, blueprintRoot: Path):
         if path:
             path = Path(path)
             name = path.name
@@ -209,24 +221,33 @@ class CraftPackageObject(object):
             fPath = os.path.abspath(os.path.join(path, f))
             if os.path.isdir(fPath):
                 if not CraftPackageObject._isDirIgnored(f):
-                    child = CraftPackageObject._expandChildren(fPath, package, blueprintRoot)
+                    child = CraftPackageObject._expandChildren(
+                        fPath, package, blueprintRoot
+                    )
                     if child:
                         if f in package.children:
                             existingNode = package.children[f]
                             if not existingNode.isCategory():
                                 CraftCore.log.warning(
-                                    f"Blueprint clash detected: Ignoring {child.source} in favour of {existingNode.source}")
+                                    f"Blueprint clash detected: Ignoring {child.source} in favour of {existingNode.source}"
+                                )
                                 continue
                             else:
-                                #merge with existing node
+                                # merge with existing node
                                 existingNode.children.update(child.children)
                         else:
                             package.children[f] = child
             elif f.endswith(".py"):
                 if package.source:
-                    raise BlueprintException(f"Multiple py files in one directory: {package.source} and {f}", package)
+                    raise BlueprintException(
+                        f"Multiple py files in one directory: {package.source} and {f}",
+                        package,
+                    )
                 if f[:-3] != package.name:
-                    raise BlueprintException(f"Recipes must match the name of the directory: {fPath}", package)
+                    raise BlueprintException(
+                        f"Recipes must match the name of the directory: {fPath}",
+                        package,
+                    )
                 package.source = fPath
                 CraftPackageObject._allLeaves[package.path] = package
 
@@ -236,8 +257,10 @@ class CraftPackageObject(object):
                     # the recipe was removed
                     utils.rmtree(path)
                 else:
-                    CraftCore.log.warning(f"Found an dead branch in {blueprintRoot}/{package.path}\n"
-                                       f"You might wan't to run \"git clean -xdf\" in that directry.")
+                    CraftCore.log.warning(
+                        f"Found an dead branch in {blueprintRoot}/{package.path}\n"
+                        f'You might wan\'t to run "git clean -xdf" in that directry.'
+                    )
                 return None
         return package
 
@@ -264,7 +287,9 @@ class CraftPackageObject(object):
         for child in list(package.children.values()):
             # hash leaves for direct acces
             if not child.isCategory():
-                if not (not child.categoryInfo.isActive and child.categoryInfo.pathOverride):
+                if not (
+                    not child.categoryInfo.isActive and child.categoryInfo.pathOverride
+                ):
                     CraftCore.log.debug(f"Adding package {child.source}")
                     if child.name not in CraftPackageObject._recipes:
                         CraftPackageObject._recipes[child.name] = []
@@ -272,19 +297,28 @@ class CraftPackageObject(object):
             else:
                 if child.categoryInfo.pathOverride:
                     # override path
-                    existingNode = CraftPackageObject.get(child.categoryInfo.pathOverride)
+                    existingNode = CraftPackageObject.get(
+                        child.categoryInfo.pathOverride
+                    )
                     if not existingNode:
-                        raise BlueprintNotFoundException(child.categoryInfo.pathOverride)
+                        raise BlueprintNotFoundException(
+                            child.categoryInfo.pathOverride
+                        )
                     child.parent = existingNode
                     for nodeName, node in child.children.items():
                         node.parent = existingNode
                         # reparent the packages
                         if nodeName in existingNode.children:
-                            if not node.categoryInfo.isActive and not node.categoryInfo.forceOverride:
+                            if (
+                                not node.categoryInfo.isActive
+                                and not node.categoryInfo.forceOverride
+                            ):
                                 continue
                             else:
                                 old = existingNode.children.pop(nodeName)
-                                CraftCore.log.debug(f"Overriding {old.path}({old.filePath}) with {node.path}")
+                                CraftCore.log.debug(
+                                    f"Overriding {old.path}({old.filePath}) with {node.path}"
+                                )
                         child.parent.children[nodeName] = node
             CraftPackageObject.__regiserNodes(child)
 
@@ -308,7 +342,9 @@ class CraftPackageObject(object):
     def instance(self):
         if not self._instance:
             CraftCore.log.debug(f"module to import: {self.source} {self.path}")
-            modulename = os.path.splitext(os.path.basename(self.source))[0].replace('.', '_')
+            modulename = os.path.splitext(os.path.basename(self.source))[0].replace(
+                ".", "_"
+            )
             loader = importlib.machinery.SourceFileLoader(modulename, self.source)
             try:
                 mod = loader.load_module()
@@ -318,7 +354,10 @@ class CraftPackageObject(object):
                 mod.CRAFT_CURRENT_MODULE = self
                 if hasattr(mod, "Package"):
                     if self.children:
-                        raise BlueprintException(f"{self} is a category and may only provide a Pattern not a Package!", self)
+                        raise BlueprintException(
+                            f"{self} is a category and may only provide a Pattern not a Package!",
+                            self,
+                        )
                     pack = mod.Package()
                     self._instance = pack
                 else:
@@ -347,6 +386,7 @@ class CraftPackageObject(object):
         if self.categoryInfo and not self.categoryInfo.isActive:
             return True
         import options
+
         if not self.path:
             return False
         return bool(options.UserOptions.get(self).ignored)
@@ -380,6 +420,7 @@ class CraftPackageObject(object):
             recipes.extend(p.allChildren())
         return recipes
 
+
 class BlueprintException(Exception):
     def __init__(self, message, package, exception=None):
         Exception.__init__(self, message)
@@ -388,7 +429,9 @@ class BlueprintException(Exception):
         self.exception = exception
 
     def __str__(self):
-        return f"{self.package.source or self.package} failed:\n{Exception.__str__(self)}"
+        return (
+            f"{self.package.source or self.package} failed:\n{Exception.__str__(self)}"
+        )
 
 
 class BlueprintNotFoundException(Exception):

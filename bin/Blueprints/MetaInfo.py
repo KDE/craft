@@ -26,8 +26,10 @@ import os
 
 from VersionInfo import VersionInfo
 
+
 class MetaInfo(object):
     """Wrapper for infoclass and CategoryPackageObject"""
+
     def __init__(self, package):
         self.__package = package
 
@@ -37,7 +39,9 @@ class MetaInfo(object):
             if self.__package.isCategory():
                 path = os.path.join(self.__package.filePath, "version.ini")
                 if os.path.exists(path):
-                    self.__versionInfo = VersionInfo(package=self.__package, fileName=path)
+                    self.__versionInfo = VersionInfo(
+                        package=self.__package, fileName=path
+                    )
                 else:
                     self.__versionInfo = None
             else:
@@ -72,8 +76,13 @@ class MetaInfo(object):
     def versions(self):
         if self.__package.isCategory():
             if self._versionInfo:
-                return self._versionInfo.tags() + self._versionInfo.tarballs() + self._versionInfo.branches()
+                return (
+                    self._versionInfo.tags()
+                    + self._versionInfo.tarballs()
+                    + self._versionInfo.branches()
+                )
         else:
-            return list(self.__package.subinfo.svnTargets.keys()) + list(self.__package.subinfo.targets.keys())
+            return list(self.__package.subinfo.svnTargets.keys()) + list(
+                self.__package.subinfo.targets.keys()
+            )
         return []
-

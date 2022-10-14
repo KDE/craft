@@ -24,10 +24,13 @@
 
 import info
 
+
 class subinfo(info.infoclass):
     def setTargets(self):
         for ver in ["master"]:
-            self.svnTargets[ver] = f"[git]https://github.com/smarttechnologies/peparser.git|{ver}"
+            self.svnTargets[
+                ver
+            ] = f"[git]https://github.com/smarttechnologies/peparser.git|{ver}"
             self.patchToApply[ver] = [("cmake.diff", 1)]
 
         self.description = "Win32 PE Parser"

@@ -35,7 +35,7 @@ from CraftCore import CraftCore
 
 
 class ArchiveSource(SourceBase):
-    """ file download source"""
+    """file download source"""
 
     def __init__(self):
         CraftCore.log.debug("ArchiveSource.__init__ called")
@@ -43,48 +43,69 @@ class ArchiveSource(SourceBase):
         self.__archiveDir = Path(CraftCore.standardDirs.downloadDir()) / "archives"
         self.__downloadDir = self.__archiveDir / self.package.path
 
-    def __retry(self, downloadRetriesLeft : int, func, **kw):
+    def __retry(self, downloadRetriesLeft: int, func, **kw):
         downloadRetriesLeft -= 1
-        if downloadRetriesLeft >= 0 and CraftChoicePrompt.promptForChoice("Do you want to delete the files and redownload them?",
-                                                                    [("Yes", True), ("No", False)],
-                                                                    default="Yes"):
+        if downloadRetriesLeft >= 0 and CraftChoicePrompt.promptForChoice(
+            "Do you want to delete the files and redownload them?",
+            [("Yes", True), ("No", False)],
+            default="Yes",
+        ):
             return func(downloadRetriesLeft=downloadRetriesLeft, **kw)
         return False
 
     def _getFileInfoFromArchiveCache(self) -> []:
         out = []
         for url in CraftCore.settings.getList("Packager", "ArchiveRepositoryUrl"):
-            manifest = CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(utils.urljoin(url, "manifest.json")))
+            manifest = CraftManifest.fromJson(
+                CraftCore.cache.cacheJsonFromUrl(utils.urljoin(url, "manifest.json"))
+            )
             files = manifest.get(str(self), compiler="all").files
             if files:
                 out.append((url, files))
         return out
 
-    def __fetchFromArchiveCache(self, downloadRetriesLeft : int=3):
+    def __fetchFromArchiveCache(self, downloadRetriesLeft: int = 3):
         for url, files in self._getFileInfoFromArchiveCache():
             self.__downloadDir.mkdir(parents=True, exist_ok=True)
             for entry in files:
                 if entry.version != self.buildTarget:
                     continue
-                if not GetFiles.getFile(utils.urljoin(url, entry.fileName), self.__archiveDir, entry.fileName):
+                if not GetFiles.getFile(
+                    utils.urljoin(url, entry.fileName),
+                    self.__archiveDir,
+                    entry.fileName,
+                ):
                     self.__retry(downloadRetriesLeft, self.__fetchFromArchiveCache)
-                if not CraftHash.checkFilesDigests(self.__archiveDir, [entry.fileName],
-                                    digests=entry.checksum,
-                                    digestAlgorithm=CraftHash.HashAlgorithm.SHA256):
-                    return self.__retry(downloadRetriesLeft,
-                        lambda downloadRetriesLeft: utils.deleteFile(self.__archiveDir / entry.fileName) and self.__fetchFromArchiveCache(downloadRetriesLeft))
+                if not CraftHash.checkFilesDigests(
+                    self.__archiveDir,
+                    [entry.fileName],
+                    digests=entry.checksum,
+                    digestAlgorithm=CraftHash.HashAlgorithm.SHA256,
+                ):
+                    return self.__retry(
+                        downloadRetriesLeft,
+                        lambda downloadRetriesLeft: utils.deleteFile(
+                            self.__archiveDir / entry.fileName
+                        )
+                        and self.__fetchFromArchiveCache(downloadRetriesLeft),
+                    )
             if self.__checkFilesPresent(self.localFileNames()):
                 return True
         return False
-
 
     def generateSrcManifest(self) -> bool:
         archiveNames = self.localFileNames()
         if self.subinfo.hasTargetDigestUrls():
             url, alg = self.subinfo.targetDigestUrl()
-            archiveNames.append(self.subinfo.archiveName()[0] + CraftHash.HashAlgorithm.fileEndings().get(alg))
+            archiveNames.append(
+                self.subinfo.archiveName()[0]
+                + CraftHash.HashAlgorithm.fileEndings().get(alg)
+            )
         manifestLocation = os.path.join(self.__archiveDir, "manifest.json")
-        manifest = CraftManifest.load(manifestLocation, urls=CraftCore.settings.getList("Packager", "ArchiveRepositoryUrl"))
+        manifest = CraftManifest.load(
+            manifestLocation,
+            urls=CraftCore.settings.getList("Packager", "ArchiveRepositoryUrl"),
+        )
         entry = manifest.get(str(self), compiler="all")
         entry.files.clear()
 
@@ -103,11 +124,10 @@ class ArchiveSource(SourceBase):
         if self.subinfo.archiveName() == [""]:
             urls = self.subinfo.targets[self.buildTarget]
             urls = urls if isinstance(urls, list) else [urls]
-            return [os.path.basename(url) for url in urls ]
+            return [os.path.basename(url) for url in urls]
         if isinstance(self.subinfo.archiveName(), (tuple, list)):
             return self.subinfo.archiveName()
         return [self.subinfo.archiveName()]
-
 
     def localFilePath(self):
         return [self.__downloadDir / f for f in self.localFileNames()]
@@ -145,20 +165,26 @@ class ArchiveSource(SourceBase):
 
         filenames = self.localFileNames()
 
-        if (self.noFetch):
+        if self.noFetch:
             CraftCore.log.debug("skipping fetch (--offline)")
             return True
 
         if self.subinfo.hasTarget():
             if self.__checkFilesPresent(filenames):
-                CraftCore.log.debug("files and digests available, no need to download files")
+                CraftCore.log.debug(
+                    "files and digests available, no need to download files"
+                )
                 return True
             if self.subinfo.target():
                 if self.__fetchFromArchiveCache():
                     return True
 
                 # compat for scripts that provide multiple files
-                files = zip(self.subinfo.target(), self.subinfo.archiveName()) if isinstance(self.subinfo.target(), list) else [(self.subinfo.target(), self.subinfo.archiveName()[0])]
+                files = (
+                    zip(self.subinfo.target(), self.subinfo.archiveName())
+                    if isinstance(self.subinfo.target(), list)
+                    else [(self.subinfo.target(), self.subinfo.archiveName()[0])]
+                )
                 for url, fileName in files:
                     if not GetFiles.getFile(url, self.__downloadDir, fileName):
                         CraftCore.log.debug("failed to download files")
@@ -167,26 +193,38 @@ class ArchiveSource(SourceBase):
                 if self.subinfo.hasTargetDigestUrls():
                     if isinstance(self.subinfo.targetDigestUrl(), tuple):
                         url, alg = self.subinfo.targetDigestUrl()
-                        return GetFiles.getFile(url[0], self.__downloadDir, self.subinfo.archiveName()[0] + CraftHash.HashAlgorithm.fileEndings().get(alg))
+                        return GetFiles.getFile(
+                            url[0],
+                            self.__downloadDir,
+                            self.subinfo.archiveName()[0]
+                            + CraftHash.HashAlgorithm.fileEndings().get(alg),
+                        )
                     else:
                         for url in self.subinfo.targetDigestUrl():
                             if not GetFiles.getFile(url, self.__downloadDir):
                                 return False
                 else:
-                  CraftCore.log.debug("no digestUrls present")
+                    CraftCore.log.debug("no digestUrls present")
             if downloadRetriesLeft and not self.__checkFilesPresent(filenames):
-                return ArchiveSource.fetch(self, downloadRetriesLeft=downloadRetriesLeft - 1)
+                return ArchiveSource.fetch(
+                    self, downloadRetriesLeft=downloadRetriesLeft - 1
+                )
         return True
 
-    def __redownload(self, downloadRetriesLeft : int, filenames):
+    def __redownload(self, downloadRetriesLeft: int, filenames):
         for filename in filenames:
             CraftCore.log.info(f"Deleting downloaded file: {filename}")
             utils.deleteFile(self.__downloadDir / filename)
             if self.subinfo.hasTargetDigestUrls():
-                for digestAlgorithm, digestFileEnding in CraftHash.HashAlgorithm.fileEndings().items():
+                for (
+                    digestAlgorithm,
+                    digestFileEnding,
+                ) in CraftHash.HashAlgorithm.fileEndings().items():
                     digestFileName = filename + digestFileEnding
-                    if (self.__downloadDir/ digestFileName).is_file():
-                        CraftCore.log.info(f"Deleting downloaded file: {digestFileName}")
+                    if (self.__downloadDir / digestFileName).is_file():
+                        CraftCore.log.info(
+                            f"Deleting downloaded file: {digestFileName}"
+                        )
                         utils.deleteFile(self.__downloadDir / digestFileName)
         return self.fetch() and self.checkDigest(downloadRetriesLeft)
 
@@ -197,17 +235,27 @@ class ArchiveSource(SourceBase):
             CraftCore.log.debug("check digests urls")
             if not CraftHash.checkFilesDigests(self.__downloadDir, filenames):
                 CraftCore.log.error("invalid digest file")
-                return self.__retry(downloadRetriesLeft, self.__redownload, filenames=filenames)
+                return self.__retry(
+                    downloadRetriesLeft, self.__redownload, filenames=filenames
+                )
         elif self.subinfo.hasTargetDigests():
             CraftCore.log.debug("check digests")
             digests, algorithm = self.subinfo.targetDigest()
-            if not CraftHash.checkFilesDigests(self.__downloadDir, filenames, digests, algorithm):
+            if not CraftHash.checkFilesDigests(
+                self.__downloadDir, filenames, digests, algorithm
+            ):
                 CraftCore.log.error("invalid digest file")
-                return self.__retry(downloadRetriesLeft, self.__redownload, filenames=filenames)
+                return self.__retry(
+                    downloadRetriesLeft, self.__redownload, filenames=filenames
+                )
         else:
             CraftCore.log.debug("print source file digests")
-            CraftHash.printFilesDigests(self.__downloadDir, filenames, self.subinfo.buildTarget,
-                                        algorithm=CraftHash.HashAlgorithm.SHA256)
+            CraftHash.printFilesDigests(
+                self.__downloadDir,
+                filenames,
+                self.subinfo.buildTarget,
+                algorithm=CraftHash.HashAlgorithm.SHA256,
+            )
         return True
 
     def unpack(self):
@@ -229,9 +277,14 @@ class ArchiveSource(SourceBase):
                 if self.subinfo.options.unpack.runInstaller:
                     _, ext = os.path.splitext(filename)
                     if ext == ".exe":
-                        return utils.system("%s %s" % (filePath, self.subinfo.options.configure.args))
-                    elif (ext == ".msi"):
-                        return utils.system("msiexec /package %s %s" % (filePath, self.subinfo.options.configure.args))
+                        return utils.system(
+                            "%s %s" % (filePath, self.subinfo.options.configure.args)
+                        )
+                    elif ext == ".msi":
+                        return utils.system(
+                            "msiexec /package %s %s"
+                            % (filePath, self.subinfo.options.configure.args)
+                        )
                 if not utils.copyFile(filePath, os.path.join(self.workDir(), filename)):
                     return False
             else:
@@ -249,10 +302,12 @@ class ArchiveSource(SourceBase):
         return True
 
     def createPatch(self):
-        """ unpacking all zipped(gz, zip, bz2) tarballs a second time and making a patch """
+        """unpacking all zipped(gz, zip, bz2) tarballs a second time and making a patch"""
 
         if not CraftCore.cache.findApplication("diff"):
-            CraftCore.log.critical("could not find diff tool, please run 'craft diffutils'")
+            CraftCore.log.critical(
+                "could not find diff tool, please run 'craft diffutils'"
+            )
             return False
 
         # get the file paths of the tarballs
@@ -261,8 +316,10 @@ class ArchiveSource(SourceBase):
         destdir = self.workDir()
 
         # it makes no sense to make a diff against nothing
-        if (not os.path.exists(self.sourceDir())):
-            CraftCore.log.error("source directory doesn't exist, please run unpack first")
+        if not os.path.exists(self.sourceDir()):
+            CraftCore.log.error(
+                "source directory doesn't exist, please run unpack first"
+            )
             return False
 
         CraftCore.log.debug("unpacking files into work root %s" % destdir)
@@ -274,7 +331,7 @@ class ArchiveSource(SourceBase):
             # unpack all packages
             for filename in filenames:
                 CraftCore.log.debug(f"unpacking this file: {filename}")
-                if (not utils.unpackFile(self.__downloadDir, filename, tmpdir)):
+                if not utils.unpackFile(self.__downloadDir, filename, tmpdir):
                     return False
 
             patches = self.subinfo.patchesToApply()
@@ -282,35 +339,62 @@ class ArchiveSource(SourceBase):
                 patches = [patches]
             for fileName, patchdepth in patches:
                 if os.path.basename(fileName) == _patchName:
-                    CraftCore.log.info(f"skipping patch {fileName} with patchlevel: {patchdepth}")
+                    CraftCore.log.info(
+                        f"skipping patch {fileName} with patchlevel: {patchdepth}"
+                    )
                     continue
-                CraftCore.log.info(f"applying patch {fileName} with patchlevel: {patchdepth}")
-                if not self.applyPatch(fileName, patchdepth, os.path.join(tmpdir, os.path.relpath(self.sourceDir(), self.workDir()))):
+                CraftCore.log.info(
+                    f"applying patch {fileName} with patchlevel: {patchdepth}"
+                )
+                if not self.applyPatch(
+                    fileName,
+                    patchdepth,
+                    os.path.join(
+                        tmpdir, os.path.relpath(self.sourceDir(), self.workDir())
+                    ),
+                ):
                     return False
 
             srcSubDir = os.path.relpath(self.sourceDir(), self.workDir())
             tmpSourceDir = os.path.join(tmpdir, srcSubDir)
             with io.BytesIO() as out:
                 ignores = []
-                for x in ["*~", r"*\.rej", r"*\.orig", r"*\.o", r"*\.pyc", "CMakeLists.txt.user"]:
+                for x in [
+                    "*~",
+                    r"*\.rej",
+                    r"*\.orig",
+                    r"*\.o",
+                    r"*\.pyc",
+                    "CMakeLists.txt.user",
+                ]:
                     ignores += ["-x", x]
 
                 # TODO: actually we should not accept code 2
-                if not utils.system(["diff", "-Nrub"] + ignores + [tmpSourceDir, self.sourceDir()],
-                                    stdout=out, acceptableExitCodes=[0,1,2], cwd=destdir):
+                if not utils.system(
+                    ["diff", "-Nrub"] + ignores + [tmpSourceDir, self.sourceDir()],
+                    stdout=out,
+                    acceptableExitCodes=[0, 1, 2],
+                    cwd=destdir,
+                ):
                     return False
                 patchContent = out.getvalue()
             # make the patch a -p1 patch
-            patchContent = patchContent.replace(tmpSourceDir.encode(), f"{srcSubDir}.orig".encode())
-            patchContent = patchContent.replace(str(self.sourceDir()).encode(), srcSubDir.encode())
+            patchContent = patchContent.replace(
+                tmpSourceDir.encode(), f"{srcSubDir}.orig".encode()
+            )
+            patchContent = patchContent.replace(
+                str(self.sourceDir()).encode(), srcSubDir.encode()
+            )
             patchPath = os.path.join(self.packageDir(), _patchName)
             with open(patchPath, "wb") as out:
                 out.write(patchContent)
 
-            CraftCore.log.info(f"Patch created {patchPath} self.patchToApply[\"{self.buildTarget}\"] = [(\"{_patchName}\", 1)]")
+            CraftCore.log.info(
+                f'Patch created {patchPath} self.patchToApply["{self.buildTarget}"] = [("{_patchName}", 1)]'
+            )
         return True
 
     def sourceVersion(self):
-        """ return a version based on the file name of the current target """
+        """return a version based on the file name of the current target"""
         # we hope that the build target is equal to the version that is build
         return self.subinfo.buildTarget

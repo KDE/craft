@@ -3,7 +3,11 @@ import info
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.Windows | CraftCore.compiler.Platforms.MacOS | CraftCore.compiler.Platforms.Linux 
+        self.parent.package.categoryInfo.platforms = (
+            CraftCore.compiler.Platforms.Windows
+            | CraftCore.compiler.Platforms.MacOS
+            | CraftCore.compiler.Platforms.Linux
+        )
 
     def setTargets(self):
         self.targets["latest"] = ""
@@ -16,6 +20,7 @@ class subinfo(info.infoclass):
 
 from Package.BinaryPackageBase import *
 
+
 class Package(BinaryPackageBase):
     def __init__(self):
         BinaryPackageBase.__init__(self)
@@ -26,15 +31,22 @@ class Package(BinaryPackageBase):
             return False
         cmakePath = Path(CraftCore.standardDirs.craftRoot()) / "dev-utils/cmake-base"
         if OsUtils.isMac():
-            cmakePath /=  "CMake.app/Contents/bin"
+            cmakePath /= "CMake.app/Contents/bin"
         else:
             cmakePath /= "bin"
 
         for name in ["cmake", "cmake-gui", "cmcldeps", "cpack", "ctest"]:
             sourceBinary = cmakePath / f"{name}{CraftCore.compiler.executableSuffix}"
-            targetBinary = os.path.join(self.imageDir(), "dev-utils", "bin", f"{name}{CraftCore.compiler.executableSuffix}")
+            targetBinary = os.path.join(
+                self.imageDir(),
+                "dev-utils",
+                "bin",
+                f"{name}{CraftCore.compiler.executableSuffix}",
+            )
             if os.path.exists(sourceBinary):
-                if not utils.createShim(targetBinary, sourceBinary, useAbsolutePath=True):
+                if not utils.createShim(
+                    targetBinary, sourceBinary, useAbsolutePath=True
+                ):
                     return False
         return True
 

@@ -41,20 +41,43 @@ from Utils.Arguments import Arguments
 
 class BuildSystemBase(CraftBase):
     """provides a generic interface for build systems and implements all stuff for all build systems"""
-    PatchableFile = {".service", ".pc", ".pri", ".prl", ".cmake", ".conf", ".sh", ".bat", ".cmd", ".ini", ".pl", ".pm", ".la", ".py"}
+
+    PatchableFile = {
+        ".service",
+        ".pc",
+        ".pri",
+        ".prl",
+        ".cmake",
+        ".conf",
+        ".sh",
+        ".bat",
+        ".cmd",
+        ".ini",
+        ".pl",
+        ".pm",
+        ".la",
+        ".py",
+    }
 
     def __init__(self, typeName=""):
         """constructor"""
         CraftBase.__init__(self)
         self.supportsNinja = False
-        self.supportsCCACHE = CraftCore.settings.getboolean("Compile", "UseCCache", False) and CraftCore.compiler.isGCCLike()
+        self.supportsCCACHE = (
+            CraftCore.settings.getboolean("Compile", "UseCCache", False)
+            and CraftCore.compiler.isGCCLike()
+        )
         self.supportsClang = True
         self.buildSystemType = typeName
 
     @property
     def makeProgram(self) -> str:
         if self.subinfo.options.make.supportsMultijob:
-            if self.supportsNinja and CraftCore.settings.getboolean("Compile", "UseNinja", False) and CraftCore.cache.findApplication("ninja"):
+            if (
+                self.supportsNinja
+                and CraftCore.settings.getboolean("Compile", "UseNinja", False)
+                and CraftCore.cache.findApplication("ninja")
+            ):
                 return "ninja"
             if ("Compile", "MakeProgram") in CraftCore.settings:
                 makeProgram = CraftCore.settings.get("Compile", "MakeProgram")
@@ -62,14 +85,19 @@ class BuildSystemBase(CraftBase):
                 if CraftCore.cache.findApplication(makeProgram):
                     return makeProgram
                 else:
-                    CraftCore.log.warning(f"Failed to find {CraftCore.settings.get('Compile', 'MakeProgram')}")
+                    CraftCore.log.warning(
+                        f"Failed to find {CraftCore.settings.get('Compile', 'MakeProgram')}"
+                    )
         elif not self.subinfo.options.make.supportsMultijob:
             if "MAKE" in os.environ:
                 del os.environ["MAKE"]
 
         if OsUtils.isWin():
             if CraftCore.compiler.isMSVC() or CraftCore.compiler.isIntel():
-                if self.subinfo.options.make.supportsMultijob and CraftCore.cache.findApplication("jom"):
+                if (
+                    self.subinfo.options.make.supportsMultijob
+                    and CraftCore.cache.findApplication("jom")
+                ):
                     return "jom"
                 else:
                     return "nmake"
@@ -84,8 +112,8 @@ class BuildSystemBase(CraftBase):
 
     def compile(self):
         """convencience method - runs configure() and make()"""
-        configure = getattr(self, 'configure')
-        make = getattr(self, 'make')
+        configure = getattr(self, "configure")
+        make = getattr(self, "make")
         return configure() and make()
 
     def configureSourceDir(self):
@@ -123,9 +151,19 @@ class BuildSystemBase(CraftBase):
             if CraftCore.debug.verbose() > 0:
                 defines += ["VERBOSE=1", "V=1"]
 
-        if self.subinfo.options.make.supportsMultijob and makeProgram != "nmake" :
-            if makeProgram not in {"ninja", "jom"} or ("Compile", "Jobs") in CraftCore.settings:
-                defines += ["-j", str(CraftCore.settings.get("Compile", "Jobs", multiprocessing.cpu_count()))]
+        if self.subinfo.options.make.supportsMultijob and makeProgram != "nmake":
+            if (
+                makeProgram not in {"ninja", "jom"}
+                or ("Compile", "Jobs") in CraftCore.settings
+            ):
+                defines += [
+                    "-j",
+                    str(
+                        CraftCore.settings.get(
+                            "Compile", "Jobs", multiprocessing.cpu_count()
+                        )
+                    ),
+                ]
 
         if args:
             defines.append(args)
@@ -152,14 +190,18 @@ class BuildSystemBase(CraftBase):
 
     def _fixInstallPrefix(self, prefix=CraftStandardDirs.craftRoot()):
         CraftCore.log.debug(f"Begin: fixInstallPrefix {self}: {prefix}")
+
         def stripPath(path):
             rootPath = os.path.splitdrive(path)[1]
             if rootPath.startswith(os.path.sep) or rootPath.startswith("/"):
                 rootPath = rootPath[1:]
             return rootPath
+
         badPrefix = os.path.join(self.installDir(), stripPath(prefix))
 
-        if os.path.exists(badPrefix) and not os.path.samefile(self.installDir(), badPrefix):
+        if os.path.exists(badPrefix) and not os.path.samefile(
+            self.installDir(), badPrefix
+        ):
             if not utils.mergeTree(badPrefix, self.installDir()):
                 return False
 
@@ -171,7 +213,12 @@ class BuildSystemBase(CraftBase):
         CraftCore.log.debug(f"End: fixInstallPrefix {self}")
         return True
 
-    def patchInstallPrefix(self, files: [str], oldPaths: [Path] = None, newPath: Path = Path(CraftCore.standardDirs.craftRoot())) -> bool:
+    def patchInstallPrefix(
+        self,
+        files: [str],
+        oldPaths: [Path] = None,
+        newPath: Path = Path(CraftCore.standardDirs.craftRoot()),
+    ) -> bool:
         if not isinstance(oldPaths, list):
             oldPaths = [oldPaths]
         elif not oldPaths:
@@ -200,10 +247,14 @@ class BuildSystemBase(CraftBase):
                     oldPath = match[0]
                     newPath = newValue.replace(b"/", match[1])
                     if oldPath != newPath:
-                        CraftCore.log.info(f"Patching {fileName}: replacing {oldPath} with {newPath}")
+                        CraftCore.log.info(
+                            f"Patching {fileName}: replacing {oldPath} with {newPath}"
+                        )
                         content = content.replace(oldPath, newPath)
                     else:
-                        CraftCore.log.debug(f"Skip Patching {fileName}:  prefix is unchanged {newPath}")
+                        CraftCore.log.debug(
+                            f"Skip Patching {fileName}:  prefix is unchanged {newPath}"
+                        )
             if dirty:
                 with utils.makeTemporaryWritable(fileName):
                     with fileName.open("wb") as f:
@@ -214,15 +265,21 @@ class BuildSystemBase(CraftBase):
         if not super().internalPostInstall():
             return False
         # fix absolute symlinks
-        for sym in utils.filterDirectoryContent(self.installDir(), lambda x, root: x.is_symlink(), lambda x, root: True, allowBadSymlinks=True):
+        for sym in utils.filterDirectoryContent(
+            self.installDir(),
+            lambda x, root: x.is_symlink(),
+            lambda x, root: True,
+            allowBadSymlinks=True,
+        ):
             target = Path(os.readlink(sym))
             if target.is_absolute():
                 sym = Path(sym)
-                target = Path(self.imageDir()) / target.relative_to(CraftCore.standardDirs.craftRoot())
+                target = Path(self.imageDir()) / target.relative_to(
+                    CraftCore.standardDirs.craftRoot()
+                )
                 sym.unlink()
                 # we can't use relative_to here
                 sym.symlink_to(os.path.relpath(target, sym.parent))
-
 
         # a post install routine to fix the prefix (make things relocatable)
         newPrefix = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
@@ -230,31 +287,56 @@ class BuildSystemBase(CraftBase):
         if CraftCore.compiler.isWindows:
             oldPrefixes += [OsUtils.toMSysPath(self.subinfo.buildPrefix)]
 
-        files = utils.filterDirectoryContent(self.installDir(),
-                                             whitelist=lambda x, root: Path(x).suffix.lower() in BuildSystemBase.PatchableFile or utils.isScript(x),
-                                             blacklist=lambda x, root: True)
+        files = utils.filterDirectoryContent(
+            self.installDir(),
+            whitelist=lambda x, root: Path(x).suffix.lower()
+            in BuildSystemBase.PatchableFile
+            or utils.isScript(x),
+            blacklist=lambda x, root: True,
+        )
 
         if not self.patchInstallPrefix(files, oldPrefixes, newPrefix):
             return False
 
-        binaryFiles = list(utils.filterDirectoryContent(self.installDir(), lambda x, root: utils.isBinary(x.path), lambda x, root: True))
-        if (CraftCore.compiler.isMacOS
-                and os.path.isdir(self.installDir())):
+        binaryFiles = list(
+            utils.filterDirectoryContent(
+                self.installDir(),
+                lambda x, root: utils.isBinary(x.path),
+                lambda x, root: True,
+            )
+        )
+        if CraftCore.compiler.isMacOS and os.path.isdir(self.installDir()):
             for f in binaryFiles:
                 if os.path.islink(f):
                     continue
                 # replace the old prefix or add it if missing
                 craft_rpath = os.path.join(newPrefix, "lib")
-                if not utils.system(["install_name_tool", "-rpath", os.path.join(self.subinfo.buildPrefix, "lib"), craft_rpath, f], logCommand=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL):
+                if not utils.system(
+                    [
+                        "install_name_tool",
+                        "-rpath",
+                        os.path.join(self.subinfo.buildPrefix, "lib"),
+                        craft_rpath,
+                        f,
+                    ],
+                    logCommand=False,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                ):
                     CraftCore.log.info(f"Adding rpath {craft_rpath} to {f}")
-                    utils.system(["install_name_tool", "-add_rpath", craft_rpath, f], logCommand=False)
+                    utils.system(
+                        ["install_name_tool", "-add_rpath", craft_rpath, f],
+                        logCommand=False,
+                    )
 
                 # update prefix
                 if self.subinfo.buildPrefix != newPrefix:
                     if os.path.splitext(f)[1] in {".dylib", ".so"}:
                         # fix dylib id
                         with io.StringIO() as log:
-                            utils.system(["otool", "-D", f], stdout=log, logCommand=False)
+                            utils.system(
+                                ["otool", "-D", f], stdout=log, logCommand=False
+                            )
                             oldId = log.getvalue().strip().split("\n")
                         # the first line is the file name
                         # the second the id, if we only get one line, there is no id to fix
@@ -262,7 +344,10 @@ class BuildSystemBase(CraftBase):
                             oldId = oldId[1].strip()
                             newId = oldId.replace(self.subinfo.buildPrefix, newPrefix)
                             if newId != oldId:
-                                if not utils.system(["install_name_tool", "-id", newId, f], logCommand=False):
+                                if not utils.system(
+                                    ["install_name_tool", "-id", newId, f],
+                                    logCommand=False,
+                                ):
                                     return False
 
                     # fix dependencies
@@ -270,7 +355,10 @@ class BuildSystemBase(CraftBase):
                         if dep.startswith(self.subinfo.buildPrefix):
                             newDep = dep.replace(self.subinfo.buildPrefix, newPrefix)
                             if newDep != dep:
-                                if not utils.system(["install_name_tool", "-change", dep, newDep, f], logCommand=False):
+                                if not utils.system(
+                                    ["install_name_tool", "-change", dep, newDep, f],
+                                    logCommand=False,
+                                ):
                                     return False
 
         # Install pdb files on MSVC if they are not found next to the dll
@@ -285,11 +373,17 @@ class BuildSystemBase(CraftBase):
                                 CraftCore.log.warning(f"Could not find a PDB for {f}")
                                 continue
                             if not os.path.exists(pdb):
-                                CraftCore.log.warning(f"PDB {pdb} for {f} does not exist")
+                                CraftCore.log.warning(
+                                    f"PDB {pdb} for {f} does not exist"
+                                )
                                 continue
-                            pdbDestination = os.path.join(os.path.dirname(f), os.path.basename(pdb))
+                            pdbDestination = os.path.join(
+                                os.path.dirname(f), os.path.basename(pdb)
+                            )
 
-                            CraftCore.log.info(f"Install pdb: {pdbDestination} for {os.path.basename(f)}")
+                            CraftCore.log.info(
+                                f"Install pdb: {pdbDestination} for {os.path.basename(f)}"
+                            )
                             utils.copyFile(pdb, pdbDestination, linkOnly=False)
                 else:
                     if not self.subinfo.options.package.disableStriping:
@@ -297,7 +391,9 @@ class BuildSystemBase(CraftBase):
                             utils.strip(f)
 
             # sign the binaries if we can
-            if CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
+            if CraftCore.compiler.isWindows and CraftCore.settings.getboolean(
+                "CodeSigning", "SignCache", False
+            ):
                 if not CodeSign.signWindows(binaryFiles):
                     return False
         return True

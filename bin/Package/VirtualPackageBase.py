@@ -21,6 +21,7 @@ class SourceComponentPackageBase(SourceOnlyPackageBase):
 
 class VirtualPackageBase(SourceComponentPackageBase):
     """provides a base class for virtual packages"""
+
     def __init__(self):
         CraftCore.log.debug("VirtualPackageBase.__init__ called")
         SourceComponentPackageBase.__init__(self)
@@ -42,4 +43,3 @@ class VirtualPackageBase(SourceComponentPackageBase):
 
     def sourceRevision(self):
         return ""
-

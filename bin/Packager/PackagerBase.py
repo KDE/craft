@@ -17,7 +17,7 @@ from CraftDebug import deprecated
 
 
 class PackagerBase(CraftBase):
-    """ provides a generic interface for packagers and implements basic package creating stuff """
+    """provides a generic interface for packagers and implements basic package creating stuff"""
 
     @InitGuard.init_once
     def __init__(self):
@@ -27,36 +27,63 @@ class PackagerBase(CraftBase):
         self.defines = {}
         self.ignoredPackages = []
 
-    def setDefaults(self, defines: {str:str}) -> {str:str}:
+    def setDefaults(self, defines: {str: str}) -> {str: str}:
         defines = dict(defines)
-        defines.setdefault("setupname", os.path.join(self.packageDestinationDir(), self.binaryArchiveName(includeRevision=True, fileType="")))
+        defines.setdefault(
+            "setupname",
+            os.path.join(
+                self.packageDestinationDir(),
+                self.binaryArchiveName(includeRevision=True, fileType=""),
+            ),
+        )
         defines.setdefault("shortcuts", "")
         defines.setdefault("architecture", CraftCore.compiler.architecture)
         defines.setdefault("company", "KDE e.V.")
         defines.setdefault("productname", self.subinfo.displayName)
         defines.setdefault("display_name", self.subinfo.displayName)
         defines.setdefault("description", self.subinfo.description)
-        defines.setdefault("icon", os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craft.ico"))
-        defines.setdefault("icon_png", os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craftyBENDER.png"))
+        defines.setdefault(
+            "icon",
+            os.path.join(
+                CraftCore.standardDirs.craftBin(), "data", "icons", "craft.ico"
+            ),
+        )
+        defines.setdefault(
+            "icon_png",
+            os.path.join(
+                CraftCore.standardDirs.craftBin(), "data", "icons", "craftyBENDER.png"
+            ),
+        )
         defines.setdefault("icon_png_44", defines["icon_png"])
         defines.setdefault("license", "")
         defines.setdefault("readme", "")
-        defines.setdefault("version", self.sourceRevision() if self.subinfo.hasSvnTarget() else self.version)
-        defines.setdefault("website",
-                           self.subinfo.webpage if self.subinfo.webpage else "https://community.kde.org/Craft")
+        defines.setdefault(
+            "version",
+            self.sourceRevision() if self.subinfo.hasSvnTarget() else self.version,
+        )
+        defines.setdefault(
+            "website",
+            self.subinfo.webpage
+            if self.subinfo.webpage
+            else "https://community.kde.org/Craft",
+        )
 
         # mac
         defines.setdefault("apppath", "")
         defines.setdefault("appname", self.package.name.lower())
         return defines
 
-    def getMacAppPath(self, defines, lookupPath = None) -> Path:
+    def getMacAppPath(self, defines, lookupPath=None) -> Path:
         lookPath = Path(lookupPath if lookupPath else self.archiveDir())
-        appPath = defines['apppath']
+        appPath = defines["apppath"]
         if not appPath:
-            apps = glob.glob(os.path.join(lookPath, f"**/{defines['appname']}.app"), recursive=True)
+            apps = glob.glob(
+                os.path.join(lookPath, f"**/{defines['appname']}.app"), recursive=True
+            )
             if len(apps) != 1:
-                CraftCore.log.error(f"Failed to detect {defines['appname']}.app for {self}, please provide a correct self.defines['apppath'] or a relative path to the app as self.defines['apppath']")
+                CraftCore.log.error(
+                    f"Failed to detect {defines['appname']}.app for {self}, please provide a correct self.defines['apppath'] or a relative path to the app as self.defines['apppath']"
+                )
                 return None
             appPath = apps[0]
         return lookPath / appPath
@@ -77,17 +104,28 @@ class PackagerBase(CraftBase):
     def createPackage(self):
         utils.abstract()
 
-    def _generateManifest(self, destDir, archiveName, manifestLocation=None, manifestUrls=None):
+    def _generateManifest(
+        self, destDir, archiveName, manifestLocation=None, manifestUrls=None
+    ):
         if not manifestLocation:
             manifestLocation = destDir
         manifestLocation = os.path.join(manifestLocation, "manifest.json")
         archiveFile = os.path.join(destDir, archiveName)
 
-        name = archiveName if not os.path.isabs(archiveName) else os.path.relpath(archiveName, destDir)
+        name = (
+            archiveName
+            if not os.path.isabs(archiveName)
+            else os.path.relpath(archiveName, destDir)
+        )
 
         manifest = CraftManifest.load(manifestLocation, urls=manifestUrls)
         entry = manifest.get(str(self))
-        entry.addFile(name, CraftHash.digestFile(archiveFile, CraftHash.HashAlgorithm.SHA256), version=self.version, config=self.subinfo.options.dynamic)
+        entry.addFile(
+            name,
+            CraftHash.digestFile(archiveFile, CraftHash.HashAlgorithm.SHA256),
+            version=self.version,
+            config=self.subinfo.options.dynamic,
+        )
 
         manifest.dump(manifestLocation)
 
@@ -101,7 +139,9 @@ class PackagerBase(CraftBase):
                 extension = ".tar.7z"
         return extension
 
-    def _createArchive(self, archiveName, sourceDir, destDir, createDigests=True) -> bool:
+    def _createArchive(
+        self, archiveName, sourceDir, destDir, createDigests=True
+    ) -> bool:
         archiveName = Path(destDir) / archiveName
         if archiveName.suffix == ".7z" and not CraftCore.cache.findApplication("7za"):
             if CraftCore.compiler.isUnix:
@@ -112,19 +152,30 @@ class PackagerBase(CraftBase):
             return False
 
         if createDigests:
-            if CraftCore.settings.getboolean("Packager", "CreateCache") and CraftCore.settings.get("Packager", "PackageType") == "SevenZipPackager":
-                if CraftCore.settings.getboolean("ContinuousIntegration", "UpdateRepository", False):
+            if (
+                CraftCore.settings.getboolean("Packager", "CreateCache")
+                and CraftCore.settings.get("Packager", "PackageType")
+                == "SevenZipPackager"
+            ):
+                if CraftCore.settings.getboolean(
+                    "ContinuousIntegration", "UpdateRepository", False
+                ):
                     manifestUrls = [self.cacheRepositoryUrls()[0]]
                 else:
-                    CraftCore.log.warning(f"Creating new cache, if you want to extend an existing cache, set \"[ContinuousIntegration]UpdateRepository = True\"")
+                    CraftCore.log.warning(
+                        f'Creating new cache, if you want to extend an existing cache, set "[ContinuousIntegration]UpdateRepository = True"'
+                    )
                     manifestUrls = None
-                self._generateManifest(destDir, archiveName, manifestLocation=self.cacheLocation(),
-                                       manifestUrls=manifestUrls)
+                self._generateManifest(
+                    destDir,
+                    archiveName,
+                    manifestLocation=self.cacheLocation(),
+                    manifestUrls=manifestUrls,
+                )
             else:
                 self._generateManifest(destDir, archiveName)
                 CraftHash.createDigestFiles(archiveName)
         return True
 
-    def addExecutableFilter(self, pattern : str):
+    def addExecutableFilter(self, pattern: str):
         pass
-

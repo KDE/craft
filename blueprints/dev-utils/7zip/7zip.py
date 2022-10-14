@@ -1,8 +1,12 @@
 import info
+
+
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotFreeBSD & CraftCore.compiler.Platforms.NotAndroid
-
+        self.parent.package.categoryInfo.platforms = (
+            CraftCore.compiler.Platforms.NotFreeBSD
+            & CraftCore.compiler.Platforms.NotAndroid
+        )
 
     def setTargets(self):
         self.targets["latest"] = ""
@@ -16,6 +20,7 @@ class subinfo(info.infoclass):
 
 from Package.BinaryPackageBase import *
 
+
 class Package(BinaryPackageBase):
     def __init__(self):
         BinaryPackageBase.__init__(self)
@@ -23,7 +28,11 @@ class Package(BinaryPackageBase):
 
     def postInstall(self):
         appPath = CraftCore.standardDirs.craftRoot() / "dev-utils/7z"
-        return utils.createShim(self.imageDir() / f"dev-utils/bin/7za{CraftCore.compiler.executableSuffix}" , appPath /  ("7za.exe" if CraftCore.compiler.isWindows else "7zz"), useAbsolutePath=True)
+        return utils.createShim(
+            self.imageDir() / f"dev-utils/bin/7za{CraftCore.compiler.executableSuffix}",
+            appPath / ("7za.exe" if CraftCore.compiler.isWindows else "7zz"),
+            useAbsolutePath=True,
+        )
 
     def postQmerge(self):
         CraftCore.cache.clear()

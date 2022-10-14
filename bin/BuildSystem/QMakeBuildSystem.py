@@ -32,7 +32,9 @@ class QMakeBuildSystem(BuildSystemBase):
                 elif CraftCore.compiler.isIntel():
                     self._platform = "win32-icc"
                 else:
-                    CraftCore.log.critical(f"QMakeBuildSystem: unsupported compiler platform {CraftCore.compiler}")
+                    CraftCore.log.critical(
+                        f"QMakeBuildSystem: unsupported compiler platform {CraftCore.compiler}"
+                    )
             elif OsUtils.isUnix():
                 if OsUtils.isMac():
                     osPart = "macx"
@@ -54,19 +56,38 @@ class QMakeBuildSystem(BuildSystemBase):
 
         proFile = self.configureSourceDir()
         if self.subinfo.options.configure.projectFile:
-            proFile = os.path.join(self.configureSourceDir(), self.subinfo.options.configure.projectFile)
-        return utils.system(Arguments(["qmake", "-makefile", proFile, self.configureOptions(configureDefines)]))
+            proFile = os.path.join(
+                self.configureSourceDir(), self.subinfo.options.configure.projectFile
+            )
+        return utils.system(
+            Arguments(
+                ["qmake", "-makefile", proFile, self.configureOptions(configureDefines)]
+            )
+        )
 
     def make(self):
         """implements the make step for Qt projects"""
         self.enterBuildDir()
-        return utils.system(Arguments([self.makeProgram, self.makeOptions(self.subinfo.options.make.args)]))
+        return utils.system(
+            Arguments(
+                [self.makeProgram, self.makeOptions(self.subinfo.options.make.args)]
+            )
+        )
 
     def install(self, options=None):
         """implements the make step for Qt projects"""
         if not BuildSystemBase.install(self):
             return False
-        return utils.system(Arguments([self.makeProgram, options,self.makeOptions(self.subinfo.options.install.args)]), cwd=self.buildDir())
+        return utils.system(
+            Arguments(
+                [
+                    self.makeProgram,
+                    options,
+                    self.makeOptions(self.subinfo.options.install.args),
+                ]
+            ),
+            cwd=self.buildDir(),
+        )
 
     def runTest(self):
         """running qmake based unittests"""
@@ -74,13 +95,23 @@ class QMakeBuildSystem(BuildSystemBase):
 
     def configureOptions(self, defines=""):
         """returns default configure options"""
-        buildReleaseAndDebug = self.__qtBase.subinfo.options.dynamic.buildReleaseAndDebug
+        buildReleaseAndDebug = (
+            self.__qtBase.subinfo.options.dynamic.buildReleaseAndDebug
+        )
         if self.buildType() == "Release" or self.buildType() == "RelWithDebInfo":
-            defines += ' "CONFIG -= debug"' if not buildReleaseAndDebug else ' "CONFIG += debug"'
+            defines += (
+                ' "CONFIG -= debug"'
+                if not buildReleaseAndDebug
+                else ' "CONFIG += debug"'
+            )
             defines += ' "CONFIG += release"'
         elif self.buildType() == "Debug":
             defines += ' "CONFIG += debug"'
-            defines += ' "CONFIG -= release"' if not buildReleaseAndDebug else ' "CONFIG += release"'
+            defines += (
+                ' "CONFIG -= release"'
+                if not buildReleaseAndDebug
+                else ' "CONFIG += release"'
+            )
 
         return BuildSystemBase.configureOptions(self, defines)
 
@@ -90,4 +121,4 @@ class QMakeBuildSystem(BuildSystemBase):
     def clangOptions(self):
         if OsUtils.isUnix():
             return ' "CONFIG -= precompile_header" '
-        return ''
+        return ""

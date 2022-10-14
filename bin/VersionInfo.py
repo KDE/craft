@@ -41,7 +41,6 @@ class VersionInfo(object):
             self.tarballs = []
             self.info = {}
 
-
     def __init__(self, subinfo=None, fileName=None, package=None):
         self.subinfo = subinfo
         if package:
@@ -62,7 +61,10 @@ class VersionInfo(object):
                 filePath = self.package.filePath
                 while True:
                     if filePath in CraftPackageObject.rootDirectories():
-                        raise BlueprintException("setDefaultValues() called without providing a version.ini", self.package)
+                        raise BlueprintException(
+                            "setDefaultValues() called without providing a version.ini",
+                            self.package,
+                        )
                     ini = filePath / "version.ini"
                     if ini.exists():
                         self._fileName = ini
@@ -81,9 +83,15 @@ class VersionInfo(object):
                     self._data.info = config["General"]
                     for k in ["tags", "branches", "tarballs"]:
                         if k in self._data.info:
-                            setattr(self._data, k, CraftCore.settings._parseList(self._data.info[k]))
+                            setattr(
+                                self._data,
+                                k,
+                                CraftCore.settings._parseList(self._data.info[k]),
+                            )
 
-                    CraftCore.log.debug(f"Found a version info for {self.package} in {self._fileName}")
+                    CraftCore.log.debug(
+                        f"Found a version info for {self.package} in {self._fileName}"
+                    )
         return self._data
 
     @property
@@ -93,7 +101,9 @@ class VersionInfo(object):
                 includePath = Path(self.data.info["include"])
                 if not includePath.is_absolute():
                     includePath = self._fileName.parent / includePath
-                self.__include = VersionInfo(subinfo=self.subinfo, package=self.package, fileName=includePath)
+                self.__include = VersionInfo(
+                    subinfo=self.subinfo, package=self.package, fileName=includePath
+                )
         return self.__include
 
     def tags(self):
@@ -120,7 +130,7 @@ class VersionInfo(object):
             "VERSION": ver,
             "PACKAGE_NAME": name,
             "COMPILER_BITS": CraftCore.compiler.bits,
-            }
+        }
 
         split_ver = ver.split(".")
         if len(split_ver) == 3:
@@ -133,23 +143,38 @@ class VersionInfo(object):
                 text = text.replace(match, replaces[match[2:-1].upper()])
         return text
 
-    def format(self, s : str, ver : str):
+    def format(self, s: str, ver: str):
         return VersionInfo._replaceVar(s, ver, self.package.name)
 
-    def get(self, key : str,  fallback=configparser._UNSET):
+    def get(self, key: str, fallback=configparser._UNSET):
         platformKey = f"{key}_{CraftCore.compiler.platform.name}"
         if platformKey in self.data.info:
             return self.data.info.get(platformKey)
         return self.data.info.get(key, fallback)
 
-    def setDefaultValuesFromFile(self, fileName, tarballUrl=None, tarballDigestUrl=None, tarballInstallSrc=None,
-                                 gitUrl=None):
-        self._fileName = os.path.abspath(os.path.join(os.path.dirname(self.package.source), fileName))
+    def setDefaultValuesFromFile(
+        self,
+        fileName,
+        tarballUrl=None,
+        tarballDigestUrl=None,
+        tarballInstallSrc=None,
+        gitUrl=None,
+    ):
+        self._fileName = os.path.abspath(
+            os.path.join(os.path.dirname(self.package.source), fileName)
+        )
         self._data = None
         self.setDefaultValues(tarballUrl, tarballDigestUrl, tarballInstallSrc, gitUrl)
 
-    def setDefaultValues(self, tarballUrl=None, tarballDigestUrl=None, tarballInstallSrc=None,
-                         gitUrl=None, packageName=None, patchLevel=None):
+    def setDefaultValues(
+        self,
+        tarballUrl=None,
+        tarballDigestUrl=None,
+        tarballInstallSrc=None,
+        gitUrl=None,
+        packageName=None,
+        patchLevel=None,
+    ):
         """
         Set svn and tarball targets based on the settings in the next version.ini
         Parameters may contain ${} Variables which then will be replaces.
@@ -163,7 +188,14 @@ class VersionInfo(object):
 
         """
         if self._include:
-            self._include.setDefaultValues(tarballUrl, tarballDigestUrl, tarballInstallSrc, gitUrl, packageName, patchLevel)
+            self._include.setDefaultValues(
+                tarballUrl,
+                tarballDigestUrl,
+                tarballInstallSrc,
+                gitUrl,
+                packageName,
+                patchLevel,
+            )
 
         if packageName is None:
             packageName = self.subinfo.parent.package.name
@@ -176,36 +208,50 @@ class VersionInfo(object):
         if gitUrl is None:
             gitUrl = self.get("gitUrl", None)
         gitDirSuffix = self.get("gitDirSuffix", None)
-        gitUpdatedRepoUrls = CraftCore.settings._parseList(self.get("gitUpdatedRepoUrl", ""))
+        gitUpdatedRepoUrls = CraftCore.settings._parseList(
+            self.get("gitUpdatedRepoUrl", "")
+        )
         if tarballUrl is not None:
             for target in self.data.tarballs:
-                self.subinfo.targets[target] = self._replaceVar(tarballUrl, target, packageName)
+                self.subinfo.targets[target] = self._replaceVar(
+                    tarballUrl, target, packageName
+                )
                 if patchLevel:
                     self.subinfo.patchLevel[target] = patchLevel
                 if not tarballDigestUrl is None:
-                    self.subinfo.targetDigestUrls[target] = self._replaceVar(tarballDigestUrl, target, packageName)
+                    self.subinfo.targetDigestUrls[target] = self._replaceVar(
+                        tarballDigestUrl, target, packageName
+                    )
                 if not tarballInstallSrc is None:
-                    self.subinfo.targetInstSrc[target] = self._replaceVar(tarballInstallSrc, target, packageName)
+                    self.subinfo.targetInstSrc[target] = self._replaceVar(
+                        tarballInstallSrc, target, packageName
+                    )
 
         if gitUrl:
             for target in self.data.branches:
-                self.subinfo.svnTargets[target] = f"{self._replaceVar(gitUrl, target, packageName)}|{target}|"
+                self.subinfo.svnTargets[
+                    target
+                ] = f"{self._replaceVar(gitUrl, target, packageName)}|{target}|"
                 if patchLevel:
                     self.subinfo.patchLevel[target] = patchLevel
                 if gitDirSuffix:
                     self.subinfo.targetSrcSuffix[target] = gitDirSuffix
 
             for target in self.data.tags:
-                self.subinfo.svnTargets[target] = f"{self._replaceVar(gitUrl, target, packageName)}||{target}"
+                self.subinfo.svnTargets[
+                    target
+                ] = f"{self._replaceVar(gitUrl, target, packageName)}||{target}"
                 if patchLevel:
                     self.subinfo.patchLevel[target] = patchLevel
 
             if len(gitUpdatedRepoUrls) == 2:
                 for target in self.data.tags + self.data.branches:
-                    self.subinfo.targetUpdatedRepoUrl[target] = (self._replaceVar(gitUpdatedRepoUrls[0], target, packageName), self._replaceVar(gitUpdatedRepoUrls[1], target, packageName))
+                    self.subinfo.targetUpdatedRepoUrl[target] = (
+                        self._replaceVar(gitUpdatedRepoUrls[0], target, packageName),
+                        self._replaceVar(gitUpdatedRepoUrls[1], target, packageName),
+                    )
             elif len(gitUpdatedRepoUrls) > 2:
                 raise Exception("gitUpdatedRepoUrls must be a list of the lenght 2")
-
 
         defaultTarget = self.defaultTarget()
         if defaultTarget:

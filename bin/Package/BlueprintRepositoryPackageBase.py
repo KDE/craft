@@ -24,6 +24,7 @@
 
 from Package.SourceOnlyPackageBase import *
 
+
 class BlueprintRepositoryPackageBase(SourceOnlyPackageBase):
     def __init__(self):
         SourceOnlyPackageBase.__init__(self)
@@ -47,4 +48,3 @@ class BlueprintRepositoryPackageBase(SourceOnlyPackageBase):
 
     def checkoutDir(self, index=0):
         return os.path.join(CraftStandardDirs.blueprintRoot(), self.package.name)
-

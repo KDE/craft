@@ -17,6 +17,7 @@ from Utils.Arguments import Arguments
 import os
 import shutil
 
+
 class BashShell(object):
     def __init__(self):
         self._environment = {}
@@ -35,8 +36,11 @@ class BashShell(object):
     def environment(self):
         if not self._environment:
             if OsUtils.isWin():
-                def convertPath(path : str):
-                    return ":".join([str(self.toNativePath(p)) for p in path.split(os.path.pathsep)])
+
+                def convertPath(path: str):
+                    return ":".join(
+                        [str(self.toNativePath(p)) for p in path.split(os.path.pathsep)]
+                    )
 
             mergeroot = self.toNativePath(CraftCore.standardDirs.craftRoot())
             ldflags = f" -L{mergeroot}/lib "
@@ -50,19 +54,27 @@ class BashShell(object):
                 # Ensure that /usr/include comes before /usr/local/include in the header search path to avoid
                 # pulling in headers from /usr/local/include (e.g. installed by homebrew) that will cause
                 # linker errors later.
-                sdkPath = CraftCore.cache.getCommandOutput("xcrun", "--show-sdk-path")[1].strip()
-                deploymentFlag = f"-mmacosx-version-min={os.environ['MACOSX_DEPLOYMENT_TARGET']}"
+                sdkPath = CraftCore.cache.getCommandOutput("xcrun", "--show-sdk-path")[
+                    1
+                ].strip()
+                deploymentFlag = (
+                    f"-mmacosx-version-min={os.environ['MACOSX_DEPLOYMENT_TARGET']}"
+                )
                 cflags = f" -isysroot {sdkPath} {deploymentFlag} {cflags} -isystem /usr/include"
                 ldflags = f" -isysroot {sdkPath} {deploymentFlag} {ldflags}"
 
                 # TODO: well that sounded like a good idea, but is broken with recent xcode
                 # when fixed we probably should also set that flag for the rest too?
                 # See https://github.com/Homebrew/homebrew-core/issues/2674 for the -no_weak_imports flag
-                #ldflags = f" -Wl,-no_weak_imports {ldflags}"
+                # ldflags = f" -Wl,-no_weak_imports {ldflags}"
 
             if CraftCore.compiler.isMSVC():
-                self._environment["INCLUDE"] = f"{mergeroot}/include:{convertPath(os.environ['INCLUDE'])}"
-                self._environment["LIB"] = f"{mergeroot}/lib:{convertPath(os.environ['LIB'])}"
+                self._environment[
+                    "INCLUDE"
+                ] = f"{mergeroot}/include:{convertPath(os.environ['INCLUDE'])}"
+                self._environment[
+                    "LIB"
+                ] = f"{mergeroot}/lib:{convertPath(os.environ['LIB'])}"
 
                 # based on Windows-MSVC.cmake
                 if self.buildType == "Release":
@@ -90,32 +102,46 @@ class BashShell(object):
                     if gcc:
                         path = f"{self.toNativePath(os.path.dirname(gcc))}:{path}"
                 elif CraftCore.compiler.isMSVC():
-                        path = f"{self.toNativePath(os.path.dirname(shutil.which('cl')))}:{path}"
+                    path = f"{self.toNativePath(os.path.dirname(shutil.which('cl')))}:{path}"
                 self._environment["PATH"] = f"{path}:{convertPath(os.environ['PATH'])}"
-                self._environment["PKG_CONFIG_PATH"] = convertPath(os.environ["PKG_CONFIG_PATH"])
+                self._environment["PKG_CONFIG_PATH"] = convertPath(
+                    os.environ["PKG_CONFIG_PATH"]
+                )
 
                 if "make" in self._environment:
                     del self._environment["make"]
                 # MSYSTEM is used by uname
                 if CraftCore.compiler.isMinGW():
-                    self._environment["MSYSTEM"] = f"MINGW{CraftCore.compiler.bits}_CRAFT"
+                    self._environment[
+                        "MSYSTEM"
+                    ] = f"MINGW{CraftCore.compiler.bits}_CRAFT"
                 elif CraftCore.compiler.isMSVC():
-                    self._environment["MSYSTEM"] = f"MSYS{CraftCore.compiler.bits}_CRAFT"
+                    self._environment[
+                        "MSYSTEM"
+                    ] = f"MSYS{CraftCore.compiler.bits}_CRAFT"
 
                 if self.useMSVCCompatEnv and CraftCore.compiler.isMSVC():
 
                     automake = []
-                    for d in os.scandir(os.path.join(os.path.dirname(self._findBash()), "..", "share")):
+                    for d in os.scandir(
+                        os.path.join(os.path.dirname(self._findBash()), "..", "share")
+                    ):
                         if d.name.startswith("automake"):
-                            automake += [(d.name.rsplit("-")[1], os.path.realpath(d.path))]
+                            automake += [
+                                (d.name.rsplit("-")[1], os.path.realpath(d.path))
+                            ]
                     automake.sort(key=lambda x: CraftVersion(x[0]))
                     latestAutomake = automake[-1][1]
                     if False:
                         cl = "clang-cl"
                     else:
                         cl = "cl"
-                    clWrapper = self.toNativePath(os.path.join(latestAutomake, "compile"))
-                    self._environment["AR"] = f"{self.toNativePath(os.path.join(latestAutomake, 'ar-lib'))} lib"
+                    clWrapper = self.toNativePath(
+                        os.path.join(latestAutomake, "compile")
+                    )
+                    self._environment[
+                        "AR"
+                    ] = f"{self.toNativePath(os.path.join(latestAutomake, 'ar-lib'))} lib"
                     self._environment["LD"] = "link -nologo"
                     self._environment["CC"] = f"{clWrapper} {cl} -nologo"
                     self._environment["CXX"] = self._environment["CC"]
@@ -123,8 +149,18 @@ class BashShell(object):
                     self._environment["CXXCPP"] = self._environment["CPP"]
                     self._environment["NM"] = "dumpbin -nologo -symbols"
 
-                    windresArg = " --preprocessor-arg=".join(["", "-nologo", "-EP", "-DRC_INVOKED", "-DWINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP"])
-                    self._environment["WINDRES"] = f"windres --target={'pe-i386' if CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_32 else 'pe-x86-64'} --preprocessor=cl {windresArg}"
+                    windresArg = " --preprocessor-arg=".join(
+                        [
+                            "",
+                            "-nologo",
+                            "-EP",
+                            "-DRC_INVOKED",
+                            "-DWINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP",
+                        ]
+                    )
+                    self._environment[
+                        "WINDRES"
+                    ] = f"windres --target={'pe-i386' if CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_32 else 'pe-x86-64'} --preprocessor=cl {windresArg}"
                     self._environment["RC"] = f"{self._environment['WINDRES']} -O COFF"
 
                     self._environment["STRIP"] = ":"
@@ -132,34 +168,55 @@ class BashShell(object):
                     self._environment["F77"] = "no"
                     self._environment["FC"] = "no"
 
-                    cflags += (" -GR -W3 -EHsc"  # dynamic and exceptions enabled
-                               " -D_USE_MATH_DEFINES -DWIN32_LEAN_AND_MEAN -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS -D_WIN32_WINN=_WIN32_WINNT_WIN7"
-                               " -wd4005"  # don't warn on redefine
-                               " -wd4996"  # The POSIX name for this item is deprecated.
-                               )
+                    cflags += (
+                        " -GR -W3 -EHsc"  # dynamic and exceptions enabled
+                        " -D_USE_MATH_DEFINES -DWIN32_LEAN_AND_MEAN -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS -D_WIN32_WINN=_WIN32_WINNT_WIN7"
+                        " -wd4005"  # don't warn on redefine
+                        " -wd4996"  # The POSIX name for this item is deprecated.
+                    )
                     if CraftCore.compiler.getMsvcPlatformToolset() > 120:
                         cflags += " -FS"
 
             if CraftCore.compiler.isAndroid:
-                toolchainPath = os.path.join(CraftCore.standardDirs.tmpDir(), f"android-{CraftCore.compiler.architecture}-toolchain")
-                utils.system(["python3",
-                              os.path.join(os.environ.get("ANDROID_NDK_ROOT"), "build/tools/make_standalone_toolchain.py"),
-                              "--install-dir", toolchainPath,
-                              "--arch", CraftCore.compiler.architecture.name,
-                              "--api", CraftCore.compiler.androidApiLevel()])
-                self._environment["PATH"] = os.path.join(toolchainPath, "bin") + ":" + os.environ["PATH"]
+                toolchainPath = os.path.join(
+                    CraftCore.standardDirs.tmpDir(),
+                    f"android-{CraftCore.compiler.architecture}-toolchain",
+                )
+                utils.system(
+                    [
+                        "python3",
+                        os.path.join(
+                            os.environ.get("ANDROID_NDK_ROOT"),
+                            "build/tools/make_standalone_toolchain.py",
+                        ),
+                        "--install-dir",
+                        toolchainPath,
+                        "--arch",
+                        CraftCore.compiler.architecture.name,
+                        "--api",
+                        CraftCore.compiler.androidApiLevel(),
+                    ]
+                )
+                self._environment["PATH"] = (
+                    os.path.join(toolchainPath, "bin") + ":" + os.environ["PATH"]
+                )
                 self._environment["AR"] = "ar"
                 self._environment["AS"] = "clang"
                 self._environment["CC"] = "clang"
                 self._environment["CXX"] = "clang++"
-                self._environment["LD" ] = "ld"
+                self._environment["LD"] = "ld"
                 self._environment["STRIP"] = "strip"
                 self._environment["RANLIB"] = "ranlib"
 
-
-            self._environment["CFLAGS"] = os.environ.get("CFLAGS", "").replace("$", "$$") + cflags
-            self._environment["CXXFLAGS"] = os.environ.get("CXXFLAGS", "").replace("$", "$$") + cflags
-            self._environment["LDFLAGS"] = os.environ.get("LDFLAGS", "").replace("$", "$$") + ldflags
+            self._environment["CFLAGS"] = (
+                os.environ.get("CFLAGS", "").replace("$", "$$") + cflags
+            )
+            self._environment["CXXFLAGS"] = (
+                os.environ.get("CXXFLAGS", "").replace("$", "$$") + cflags
+            )
+            self._environment["LDFLAGS"] = (
+                os.environ.get("LDFLAGS", "").replace("$", "$$") + ldflags
+            )
         return self._environment
 
     @property
@@ -176,7 +233,9 @@ class BashShell(object):
     def _findBash(self):
         if OsUtils.isWin():
             msysdir = CraftCore.standardDirs.msysDir()
-            bash = CraftCore.cache.findApplication("bash", os.path.join(msysdir, "usr", "bin"))
+            bash = CraftCore.cache.findApplication(
+                "bash", os.path.join(msysdir, "usr", "bin")
+            )
         else:
             bash = CraftCore.cache.findApplication("bash")
         if not bash:
@@ -192,46 +251,64 @@ class BashShell(object):
             tmp = CraftCore.cache.findApplication(cmd)
             if tmp:
                 cmd = tmp
-            command = Arguments([self._findBash()] +  bashArgs + ["-c", str(Arguments([self.toNativePath(cmd), args]))])
+            command = Arguments(
+                [self._findBash()]
+                + bashArgs
+                + ["-c", str(Arguments([self.toNativePath(cmd), args]))]
+            )
         else:
             command = Arguments(bashArgs + [cmd, args])
         env = dict(os.environ)
         env.update(self.environment)
         env.update(kwargs.get("env", {}))
-        return utils.system(command, cwd=path, env=env,**kwargs)
+        return utils.system(command, cwd=path, env=env, **kwargs)
 
     def login(self):
         if CraftCore.compiler.isMSVC():
             self.useMSVCCompatEnv = True
-        return self.execute(os.curdir, self._findBash(),  "-i", displayProgress=True)
+        return self.execute(os.curdir, self._findBash(), "-i", displayProgress=True)
+
 
 class Powershell(object):
     def __init__(self):
         self.pwsh = CraftCore.cache.findApplication("pwsh")
         if not self.pwsh:
             if platform.architecture()[0] == "32bit":
-                self.pwsh = CraftCore.cache.findApplication("powershell", os.path.join(os.environ["WINDIR"], "sysnative", "WindowsPowerShell", "v1.0" ))
+                self.pwsh = CraftCore.cache.findApplication(
+                    "powershell",
+                    os.path.join(
+                        os.environ["WINDIR"], "sysnative", "WindowsPowerShell", "v1.0"
+                    ),
+                )
             if not self.pwsh:
                 self.pwsh = CraftCore.cache.findApplication("powershell")
         if not self.pwsh:
             CraftCore.log.warning("Failed to detect powershell")
 
-    def quote(self, s : str) -> str:
+    def quote(self, s: str) -> str:
         return f"'{s}'"
 
-    def execute(self, args :[str], **kw) -> bool:
-        return utils.system([self.pwsh, "-NoProfile", "-ExecutionPolicy", "ByPass", "-Command"] + args, **kw)
+    def execute(self, args: [str], **kw) -> bool:
+        return utils.system(
+            [self.pwsh, "-NoProfile", "-ExecutionPolicy", "ByPass", "-Command"] + args,
+            **kw,
+        )
+
 
 def main():
     shell = BashShell()
     shell.login()
 
+
 def testColor():
     shell = BashShell()
-    shell.execute(CraftCore.standardDirs.craftRoot(), os.path.join(CraftCore.standardDirs.craftBin(), "data", "ansi_color.sh"))
+    shell.execute(
+        CraftCore.standardDirs.craftRoot(),
+        os.path.join(CraftCore.standardDirs.craftBin(), "data", "ansi_color.sh"),
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if len(sys.argv) > 1:
         if sys.argv[1] == "color":
             testColor()

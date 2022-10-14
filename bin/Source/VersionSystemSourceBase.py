@@ -15,13 +15,13 @@ class VersionSystemSourceBase(SourceBase):
         """get the url at position 'index' from a ';' separated list of urls"""
         CraftCore.debug.trace("VersionSystemSourceBase getUrl")
         u = self.subinfo.svnTarget()
-        if u.find(';') == -1:
+        if u.find(";") == -1:
             if index == 0:
                 return u
             else:
                 return None
         # urls are a list
-        urls = u.split(';')
+        urls = u.split(";")
         if index >= len(urls):
             return None
 
@@ -29,19 +29,21 @@ class VersionSystemSourceBase(SourceBase):
         return u
 
     def splitUrl(self, url):
-        """ split url into real url and url option. the delimiter is '#'"""
+        """split url into real url and url option. the delimiter is '#'"""
         CraftCore.debug.trace("VersionSystemSourceBase splitUrl")
-        if url.find('#') != -1:
-            return url.split('#')
+        if url.find("#") != -1:
+            return url.split("#")
         return [url, ""]
 
     def __repositoryBaseUrl(self):
-        """ this function return the base url to the KDE repository """
+        """this function return the base url to the KDE repository"""
         CraftCore.debug.trace("VersionSystemSourceBase __repositoryBaseUrl")
         # @todo move to SvnSource
-        server = CraftCore.settings.get("General", "KDESVNSERVER", "svn://anonsvn.kde.org")
+        server = CraftCore.settings.get(
+            "General", "KDESVNSERVER", "svn://anonsvn.kde.org"
+        )
 
-        return server + '/home/kde/'
+        return server + "/home/kde/"
 
     def unpack(self):
         CraftCore.debug.trace("VersionSystemSourceBase unpack")
@@ -60,9 +62,9 @@ class VersionSystemSourceBase(SourceBase):
         if not self.subinfo.hasSvnTarget():
             return 0
         u = self.subinfo.svnTarget()
-        if u.find(';') == -1:
+        if u.find(";") == -1:
             return 1
-        urls = u.split(';')
+        urls = u.split(";")
         return len(urls)
 
     def repositoryUrl(self, index=0):
@@ -79,7 +81,7 @@ class VersionSystemSourceBase(SourceBase):
             else:
                 url = u
             if url.startswith("["):
-                url = url[url.find("]", 1) + 1:]
+                url = url[url.find("]", 1) + 1 :]
             return url
         else:
             return False

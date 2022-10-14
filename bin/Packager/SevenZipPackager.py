@@ -37,6 +37,7 @@ from Packager.PackagerBase import *
 from Utils import CraftHash
 from CraftOS.osutils import OsUtils
 
+
 class SevenZipPackager(PackagerBase):
     """Packager using the 7za command line tool from the dev-utils/7zip package"""
 
@@ -54,8 +55,27 @@ class SevenZipPackager(PackagerBase):
         else:
             dstpath = self.packageDestinationDir()
 
-        if not self._createArchive(self.binaryArchiveName(fileType=self.archiveExtension, includePackagePath=cacheMode, includeTimeStamp=cacheMode), self.imageDir(), dstpath):
+        if not self._createArchive(
+            self.binaryArchiveName(
+                fileType=self.archiveExtension,
+                includePackagePath=cacheMode,
+                includeTimeStamp=cacheMode,
+            ),
+            self.imageDir(),
+            dstpath,
+        ):
             return False
-        if self.subinfo.options.package.packSources and CraftCore.settings.getboolean("Packager", "PackageSrc", "True"):
-            return self._createArchive(self.binaryArchiveName("-src", fileType=self.archiveExtension, includePackagePath=cacheMode, includeTimeStamp=cacheMode), self.sourceDir(), dstpath)
+        if self.subinfo.options.package.packSources and CraftCore.settings.getboolean(
+            "Packager", "PackageSrc", "True"
+        ):
+            return self._createArchive(
+                self.binaryArchiveName(
+                    "-src",
+                    fileType=self.archiveExtension,
+                    includePackagePath=cacheMode,
+                    includeTimeStamp=cacheMode,
+                ),
+                self.sourceDir(),
+                dstpath,
+            )
         return True

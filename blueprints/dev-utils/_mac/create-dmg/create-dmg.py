@@ -1,6 +1,7 @@
 import info
 from Package.MakeFilePackageBase import *
 
+
 class subinfo(info.infoclass):
     def registerOptions(self):
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.MacOS
@@ -10,10 +11,11 @@ class subinfo(info.infoclass):
         self.targetInstallPath["master"] = "dev-utils/create-dmg"
         self.description = "A shell script to build fancy DMGs"
         self.webpage = "https://github.com/andreyvit/create-dmg"
-        self.defaultTarget = 'master'
+        self.defaultTarget = "master"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
+
 
 from Package.BinaryPackageBase import *
 
@@ -26,5 +28,7 @@ class Package(BinaryPackageBase):
         return True
 
     def postInstall(self):
-        return utils.createShim(os.path.join(self.imageDir(), "dev-utils", "bin", "create-dmg"),
-                                os.path.join(self.imageDir(), "dev-utils", "create-dmg", "create-dmg"))
+        return utils.createShim(
+            os.path.join(self.imageDir(), "dev-utils", "bin", "create-dmg"),
+            os.path.join(self.imageDir(), "dev-utils", "create-dmg", "create-dmg"),
+        )

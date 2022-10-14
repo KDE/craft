@@ -30,7 +30,9 @@ class SvnSource(VersionSystemSourceBase):
                 sourcedir = os.path.join(CraftStandardDirs.downloadDir(), "svn-src")
                 sourcedir = os.path.join(sourcedir, self.package.path)
                 _, path = self.__splitPath(url)
-                if path and CraftCore.settings.getboolean("General", "EMERGE_SVN_STDLAYOUT", False):
+                if path and CraftCore.settings.getboolean(
+                    "General", "EMERGE_SVN_STDLAYOUT", False
+                ):
                     sourcedir = os.path.join(sourcedir, path)
         else:
             CraftCore.log.critical("svnTarget property not set for this target")
@@ -44,11 +46,13 @@ class SvnSource(VersionSystemSourceBase):
         """apply a patch to a svn repository checkout"""
         CraftCore.debug.trace("SvnSource.applyPatch")
         if fileName:
-            return utils.applyPatch(self.sourceDir(), os.path.join(self.packageDir(), fileName), patchdepth)
+            return utils.applyPatch(
+                self.sourceDir(), os.path.join(self.packageDir(), fileName), patchdepth
+            )
         return True
 
     def fetch(self):
-        """ checkout or update an existing repository path """
+        """checkout or update an existing repository path"""
         CraftCore.debug.trace("SvnSource.fetch")
         if self.noFetch:
             CraftCore.log.debug("skipping svn fetch (--offline)")
@@ -56,11 +60,13 @@ class SvnSource(VersionSystemSourceBase):
 
         for i in range(self.repositoryUrlCount()):
             url = self.repositoryUrl(i)
-            self.__tryCheckoutFromRoot(url, self.checkoutDir(i), self.repositoryUrlOptions(i) != 'norecursive')
+            self.__tryCheckoutFromRoot(
+                url, self.checkoutDir(i), self.repositoryUrlOptions(i) != "norecursive"
+            )
         return True
 
     def __getCurrentRevision(self):
-        """ return the revision returned by svn info """
+        """return the revision returned by svn info"""
 
         revision = None
 
@@ -71,7 +77,7 @@ class SvnSource(VersionSystemSourceBase):
         n = self.repositoryUrlCount()
         if n > 1:
             for i in range(0, n):
-                if self.repositoryUrlOptions(i) == 'main':
+                if self.repositoryUrlOptions(i) == "main":
                     sourcedir = self.checkoutDir(i)
                     break
             # if not found use the second last one
@@ -100,18 +106,18 @@ class SvnSource(VersionSystemSourceBase):
         return revision
 
     def __splitPath(self, path):
-        """ split a path into a base part and a relative repository url.
+        """split a path into a base part and a relative repository url.
         The delimiters are currently 'trunk', 'branches' and 'tags'.
         """
-        pos = path.find('trunk')
+        pos = path.find("trunk")
         if pos == -1:
-            pos = path.find('branches')
+            pos = path.find("branches")
             if pos == -1:
-                pos = path.find('tags')
+                pos = path.find("tags")
         if pos == -1:
             ret = [path, None]
         else:
-            ret = [path[:pos - 1], path[pos:]]
+            ret = [path[: pos - 1], path[pos:]]
         return ret
 
     def __tryCheckoutFromRoot(self, url, sourcedir, recursive=True):
@@ -130,8 +136,8 @@ class SvnSource(VersionSystemSourceBase):
 
         urlRepo = urlBase
         srcDir = srcBase
-        urlParts = urlPath.split('/')
-        pathSep = '/'
+        urlParts = urlPath.split("/")
+        pathSep = "/"
         srcParts = srcPath.split(pathSep)
 
         # url and source parts not match
@@ -141,10 +147,10 @@ class SvnSource(VersionSystemSourceBase):
         for i in range(0, len(urlParts) - 1):
             urlPart = urlParts[i]
             srcPart = srcParts[i]
-            if (urlPart == ""):
+            if urlPart == "":
                 continue
 
-            urlRepo += '/' + urlPart
+            urlRepo += "/" + urlPart
             srcDir += pathSep + srcPart
 
             if os.path.exists(srcDir):
@@ -159,7 +165,9 @@ class SvnSource(VersionSystemSourceBase):
         if not recursive:
             option = "--depth=files"
 
-        if CraftCore.debug.verbose() < 2 and not CraftCore.settings.getboolean("General", "KDESVNVERBOSE", True):
+        if CraftCore.debug.verbose() < 2 and not CraftCore.settings.getboolean(
+            "General", "KDESVNVERBOSE", True
+        ):
             option += " --quiet"
 
         if self.subinfo.options.fetch.ignoreExternals:
@@ -176,19 +184,25 @@ class SvnSource(VersionSystemSourceBase):
 
     def createPatch(self):
         """create patch file from svn source into the related package dir. The patch file is named autocreated.patch"""
-        cmd = "svn diff %s > %s" % (self.checkoutDir(), os.path.join(self.packageDir(), "%s-%s.patch" % \
-                                                                     (self.package,
-                                                                      str(datetime.date.today()).replace('-', ''))))
+        cmd = "svn diff %s > %s" % (
+            self.checkoutDir(),
+            os.path.join(
+                self.packageDir(),
+                "%s-%s.patch"
+                % (self.package, str(datetime.date.today()).replace("-", "")),
+            ),
+        )
         return utils.system(cmd)
 
     def sourceVersion(self):
-        """ print the revision returned by svn info """
+        """print the revision returned by svn info"""
         return self.__getCurrentRevision()
 
     def getUrls(self):
         """print the url where to check out from"""
         for i in range(self.repositoryUrlCount()):
             url = self.repositoryUrl(i)
-            if self.repositoryUrlOptions(i) == 'norecursive': url = '--depth=files ' + url
+            if self.repositoryUrlOptions(i) == "norecursive":
+                url = "--depth=files " + url
             print(url)
         return True

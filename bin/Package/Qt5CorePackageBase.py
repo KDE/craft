@@ -15,4 +15,3 @@ class Qt5CorePackageBase(PackageBase, MultiSource, Qt5CoreBuildSystem, TypePacka
         MultiSource.__init__(self)
         Qt5CoreBuildSystem.__init__(self)
         TypePackager.__init__(self)
-

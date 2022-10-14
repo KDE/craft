@@ -29,8 +29,8 @@ import utils
 from CraftOS.osutils import OsUtils
 from CraftCore import CraftCore
 
-class PostInstallRoutines(object):
 
+class PostInstallRoutines(object):
     @staticmethod
     def updateSharedMimeInfo(package) -> bool:
         if OsUtils.isWin():

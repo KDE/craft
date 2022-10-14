@@ -12,23 +12,26 @@ class Timer(object):
         self._verbosity = verbosity
         self.hook = None
 
-
     def __enter__(self):
         self.__startTime = datetime.datetime.now()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.stop()
-        if CraftConfig.CraftCore.settings.getboolean("CraftDebug", "MeasureTime", False):
+        if CraftConfig.CraftCore.settings.getboolean(
+            "CraftDebug", "MeasureTime", False
+        ):
             CraftCore.debug.step(f"Task: {self.name} stopped after: {self}")
 
     def __str__(self):
         minutes, seconds = divmod(self.duration.total_seconds(), 60)
         hours, minutes = divmod(minutes, 60)
+
         def format(time, string):
             time = int(time)
             s = "s" if time != 1 else ""
             return f"{time} {string}{s}"
+
         out = []
         if hours:
             out.append(format(hours, "hour"))

@@ -9,7 +9,7 @@ import CraftOS.OsUtilsBase
 from CraftCore import CraftCore
 
 
-class FileAttributes():
+class FileAttributes:
     # https://msdn.microsoft.com/en-us/library/windows/desktop/gg258117(v=vs.85).aspx
     FILE_ATTRIBUTE_READONLY = 0x1
     FILE_ATTRIBUTE_REPARSE_POINT = 0x400
@@ -18,6 +18,7 @@ class FileAttributes():
 
 class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     InDocker = None
+
     @staticmethod
     def rm(path, force=False):
         CraftCore.log.debug("deleting file %s" % path)
@@ -68,8 +69,11 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
 
     @staticmethod
     def isLink(path):
-        return os.path.islink(path) \
-               | OsUtils.getFileAttributes(str(path)) & FileAttributes.FILE_ATTRIBUTE_REPARSE_POINT  # Detect a Junction
+        return (
+            os.path.islink(path)
+            | OsUtils.getFileAttributes(str(path))
+            & FileAttributes.FILE_ATTRIBUTE_REPARSE_POINT
+        )  # Detect a Junction
 
     @staticmethod
     def getFileAttributes(path):
@@ -79,12 +83,21 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     def removeReadOnlyAttribute(path):
         CraftCore.log.debug(f"Remove readonly flag of {path}")
         attributes = OsUtils.getFileAttributes(path)
-        return ctypes.windll.kernel32.SetFileAttributesW(str(path),
-                                                         attributes & ~ FileAttributes.FILE_ATTRIBUTE_READONLY) != 0
+        return (
+            ctypes.windll.kernel32.SetFileAttributesW(
+                str(path), attributes & ~FileAttributes.FILE_ATTRIBUTE_READONLY
+            )
+            != 0
+        )
 
     @staticmethod
     def setWritable(path):
-        return ctypes.windll.kernel32.SetFileAttributesW(str(path), FileAttributes.FILE_ATTRIBUTE_NORMAL) != 0
+        return (
+            ctypes.windll.kernel32.SetFileAttributesW(
+                str(path), FileAttributes.FILE_ATTRIBUTE_NORMAL
+            )
+            != 0
+        )
 
     @staticmethod
     def setConsoleTitle(title):
@@ -94,25 +107,48 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     def supportsSymlinks():
         with tempfile.TemporaryDirectory() as tmp:
             testFile = os.path.join(tmp, "CRAFT_LINK_TEST")
-            return CraftCore.cache.getCommandOutput(f"cmd", f"/C mklink {testFile} {__file__}", testName="CRAFT_LINK_TEST")[0] == 0
+            return (
+                CraftCore.cache.getCommandOutput(
+                    f"cmd",
+                    f"/C mklink {testFile} {__file__}",
+                    testName="CRAFT_LINK_TEST",
+                )[0]
+                == 0
+            )
 
     @staticmethod
-    def toNativePath(path : str) -> str:
+    def toNativePath(path: str) -> str:
         return OsUtils.toWindowsPath(path)
 
     @staticmethod
-    def killProcess(name : str="*", prefix : str=None) -> bool:
+    def killProcess(name: str = "*", prefix: str = None) -> bool:
         import shells
+
         if not prefix:
             prefix = CraftCore.standardDirs.craftRoot()
         prefix = Path(prefix)
         CraftCore.log.info(f"Killing processes {name} in {prefix}")
-        return shells.Powershell().execute([f"Get-Process '{name}' | Where-Object {{$_.Path -like '{prefix}*'}} |"
-                             f" %{{ Write-Output ('\tKilling: {{0}}' -f $_.Path); Stop-Process -Force $_;}}"], logCommand=False)
+        return shells.Powershell().execute(
+            [
+                f"Get-Process '{name}' | Where-Object {{$_.Path -like '{prefix}*'}} |"
+                f" %{{ Write-Output ('\tKilling: {{0}}' -f $_.Path); Stop-Process -Force $_;}}"
+            ],
+            logCommand=False,
+        )
 
     @staticmethod
     def detectDocker():
         if OsUtils.InDocker is None:
             import shells
-            OsUtils.InDocker = shells.Powershell().execute(["Get-Service", "-Name", "cexecsvc", "-ErrorAction", "SilentlyContinue"], logCommand=False)
+
+            OsUtils.InDocker = shells.Powershell().execute(
+                [
+                    "Get-Service",
+                    "-Name",
+                    "cexecsvc",
+                    "-ErrorAction",
+                    "SilentlyContinue",
+                ],
+                logCommand=False,
+            )
         return OsUtils.InDocker

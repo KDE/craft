@@ -34,68 +34,74 @@ from CraftDebug import deprecated
 
 class CraftCompiler(object):
     class Architecture(IntFlag):
-        x86     = 0x1 << 0
-        x86_32  = 0x1 << 1 | x86
-        x86_64  = 0x1 << 2 | x86
-        arm     = 0x1 << 3
-        arm32   = 0x1 << 4 | arm
-        arm64   = 0x1 << 5 | arm
-        arm64e  = 0x1 << 6 | arm64 # Apple
+        x86 = 0x1 << 0
+        x86_32 = 0x1 << 1 | x86
+        x86_64 = 0x1 << 2 | x86
+        arm = 0x1 << 3
+        arm32 = 0x1 << 4 | arm
+        arm64 = 0x1 << 5 | arm
+        arm64e = 0x1 << 6 | arm64  # Apple
         # TODO:...
 
         @classmethod
         def fromString(cls, name):
             if not hasattr(cls, "__sting_map"):
-                cls.__sting_map = dict([(k.lower(), v) for k, v in cls.__members__.items()])
+                cls.__sting_map = dict(
+                    [(k.lower(), v) for k, v in cls.__members__.items()]
+                )
             return cls.__sting_map[name.lower()]
 
     class Platforms(IntFlag):
-        NoPlatform  = 0
-        Windows     = 0x1 << 0
-        Linux       = 0x1 << 1
-        MacOS       = 0x1 << 2
-        FreeBSD     = 0x1 << 3
-        Android     = 0x1 << 4
+        NoPlatform = 0
+        Windows = 0x1 << 0
+        Linux = 0x1 << 1
+        MacOS = 0x1 << 2
+        FreeBSD = 0x1 << 3
+        Android = 0x1 << 4
 
-        Unix        = Linux | MacOS | FreeBSD
-        All         = ~0
+        Unix = Linux | MacOS | FreeBSD
+        All = ~0
 
         # define inverted values to allow usage in info.ini
-        NotLinux     = ~Linux
-        NotMacOS     = ~MacOS
-        NotFreeBSD   = ~FreeBSD
-        NotWindows   = ~Windows
-        NotUnix      = ~Unix
-        NotAndroid   = ~Android
+        NotLinux = ~Linux
+        NotMacOS = ~MacOS
+        NotFreeBSD = ~FreeBSD
+        NotWindows = ~Windows
+        NotUnix = ~Unix
+        NotAndroid = ~Android
 
         @classmethod
         def fromString(cls, name):
             if not hasattr(cls, "__sting_map"):
-                cls.__sting_map = dict([(k.lower(), v) for k, v in cls.__members__.items()])
+                cls.__sting_map = dict(
+                    [(k.lower(), v) for k, v in cls.__members__.items()]
+                )
             return cls.__sting_map[name.lower()]
 
     @unique
     class Compiler(IntFlag):
-        NoCompiler  = 0
-        CL          = 0x1 << 0
-        GCC         = 0x1 << 1
-        CLANG       = 0x1 << 2
+        NoCompiler = 0
+        CL = 0x1 << 0
+        GCC = 0x1 << 1
+        CLANG = 0x1 << 2
 
-        GCCLike     = CLANG | GCC
-        All         = ~0
-
+        GCCLike = CLANG | GCC
+        All = ~0
 
         @classmethod
         def fromString(cls, name):
             if not hasattr(cls, "__sting_map"):
-                cls.__sting_map = dict([(k.lower(), v) for k, v in cls.__members__.items()])
+                cls.__sting_map = dict(
+                    [(k.lower(), v) for k, v in cls.__members__.items()]
+                )
             return cls.__sting_map[name.lower()]
-
 
     def __init__(self):
         split = CraftCore.settings.get("General", "ABI").split("-")
         if len(split) != 3:
-            raise Exception("Invalid compiler: " + CraftCore.settings.get("General", "ABI"))
+            raise Exception(
+                "Invalid compiler: " + CraftCore.settings.get("General", "ABI")
+            )
 
         platform, self._abi, compiler = split
 
@@ -124,13 +130,16 @@ class CraftCompiler(object):
             else:
                 self._architecture = CraftCompiler.Architecture.fromString(arch)
 
-
     def __str__(self):
         return "-".join(self.signature)
 
     @property
     def signature(self):
-        return self.platform.name.lower(), self.compiler.name.lower(), self.architecture.name.lower()
+        return (
+            self.platform.name.lower(),
+            self.compiler.name.lower(),
+            self.architecture.name.lower(),
+        )
 
     @property
     def platform(self) -> Platforms:
@@ -155,7 +164,7 @@ class CraftCompiler(object):
             "amd64": CraftCompiler.Architecture.x86_64,
             "x86_64": CraftCompiler.Architecture.x86_64,
             "arm64": CraftCompiler.Architecture.arm64,
-            }
+        }
         out = arch_map.get(platform.machine().lower())
         if not out:
             print("Unsupported host platform:", platform.machine())
@@ -168,9 +177,15 @@ class CraftCompiler(object):
 
     @property
     def bits(self) -> str:
-        if self.architecture in {CraftCompiler.Architecture.x86_64, CraftCompiler.Architecture.arm64}:
+        if self.architecture in {
+            CraftCompiler.Architecture.x86_64,
+            CraftCompiler.Architecture.arm64,
+        }:
             return "64"
-        if self.architecture in {CraftCompiler.Architecture.x86_32, CraftCompiler.Architecture.arm32}:
+        if self.architecture in {
+            CraftCompiler.Architecture.x86_32,
+            CraftCompiler.Architecture.arm32,
+        }:
             return "32"
         raise Exception("Unsupported architecture")
 
@@ -301,7 +316,7 @@ class CraftCompiler(object):
             "msvc2015": 14,
             "msvc2017": 15,
             "msvc2019": 16,
-            "msvc2022": 17
+            "msvc2022": 17,
         }
         c = self.abi.split("_")[0]
         if c not in versions:
@@ -316,7 +331,7 @@ class CraftCompiler(object):
             "msvc2015": 140,
             "msvc2017": 141,
             "msvc2019": 142,
-            "msvc2022": 143
+            "msvc2022": 143,
         }
         c = self.abi.split("_")[0]
         if c not in versions:
@@ -326,7 +341,8 @@ class CraftCompiler(object):
     def androidApiLevel(self):
         return self._apiLevel
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     print("Testing Compiler.py")
     print(f"Configured compiler (ABI): {CraftCore.compiler}")
     print("Version: %s" % CraftCore.compiler.getVersionWithName())
@@ -335,4 +351,7 @@ if __name__ == '__main__':
     print("HostArchitecture: %s" % CraftCore.compiler.hostArchitecture)
     print("Native compiler: %s" % ("No", "Yes")[CraftCore.compiler.isNative()])
     if CraftCore.compiler.isGCCLike():
-        print("Compiler Version: %s" % CraftCore.compiler.getGCCLikeVersion(CraftCore.compiler.compiler.name))
+        print(
+            "Compiler Version: %s"
+            % CraftCore.compiler.getGCCLikeVersion(CraftCore.compiler.compiler.name)
+        )

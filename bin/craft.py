@@ -40,6 +40,7 @@ from Utils import CraftTimer
 from Utils.CraftTitleUpdater import CraftTitleUpdater
 from options import UserOptions
 
+
 class ActionHandler:
     class StoreTrueAction(argparse._StoreTrueAction):
         def __call__(self, parser, namespace, values, option_string=None):
@@ -55,8 +56,8 @@ class ActionHandler:
 
         @staticmethod
         def _addOrdered(namespace, key, value):
-            if not 'ordered_args' in namespace:
-                setattr(namespace, 'ordered_args', collections.OrderedDict())
+            if not "ordered_args" in namespace:
+                setattr(namespace, "ordered_args", collections.OrderedDict())
             namespace.ordered_args[key] = value
 
     def __init__(self, parser):
@@ -66,8 +67,7 @@ class ActionHandler:
     def _addAction(self, actionName, help="", **kwargs):
         if help is not argparse.SUPPRESS:
             help = f"[Action] {help}"
-        arg = self.parser.add_argument("--%s" % actionName,
-                                       help=help, **kwargs)
+        arg = self.parser.add_argument("--%s" % actionName, help=help, **kwargs)
         self.actions[arg.dest] = actionName
 
     def addAction(self, actionName, **kwargs):
@@ -77,83 +77,193 @@ class ActionHandler:
         self._addAction(actionName, action=ActionHandler.StoreAction, **kwargs)
 
     def parseFinalAction(self, args, defaultAction):
-        '''Returns the list of actions or [defaultAction]'''
-        return [self.actions[x] for x in args.ordered_args.keys()] if hasattr(args, "ordered_args") else [defaultAction]
+        """Returns the list of actions or [defaultAction]"""
+        return (
+            [self.actions[x] for x in args.ordered_args.keys()]
+            if hasattr(args, "ordered_args")
+            else [defaultAction]
+        )
 
 
 def main(timer):
-    parser = argparse.ArgumentParser(prog="Craft",
-                                     description="Craft is an open source meta build system and package manager."
-                                                 "It manages dependencies and builds libraries and applications from source, on Windows, Mac, Linux and FreeBSD.",
-                                     epilog="For more information visit https://community.kde.org/Craft.\n"
-                                            "Send feedback to <kde-windows@kde.org>.")
+    parser = argparse.ArgumentParser(
+        prog="Craft",
+        description="Craft is an open source meta build system and package manager."
+        "It manages dependencies and builds libraries and applications from source, on Windows, Mac, Linux and FreeBSD.",
+        epilog="For more information visit https://community.kde.org/Craft.\n"
+        "Send feedback to <kde-windows@kde.org>.",
+    )
 
-    parser.add_argument("-p", "--probe", action="store_true",
-                        help="probing: craft will only look which files it has to build according to the list of installed files and according to the dependencies of the package.")
-    parser.add_argument("--list-file", action="store",
-                        help=argparse.SUPPRESS, dest="unshelve")
-    parser.add_argument("--shelve",  action="store", help="Generate a an ini with a list of all installed packages and their version")
-    parser.add_argument("--unshelve", action="store",
-                        help="Build all packages from the shelve file provided")
-    parser.add_argument("--options", action="append",
-                        default=CraftCore.settings.getList("General", "Options", ""),
-                        help="Set craft property from string <OPTIONS>. An example for is extragear/kdevelop.version=5.3 or [Compile]MakeProgram=jom.")
-    parser.add_argument("-q", "--stayquiet", action="store_true",
-                        dest="stayQuiet",
-                        help="quiet: there should be no output - The verbose level should be 0")
-    parser.add_argument("--create-cache", action="store_true", dest="createCache",
-                        default=CraftCore.settings.getboolean("Packager", "CreateCache", "False"),
-                        help="Create a binary cache, the setting is overwritten by --no-cache")
-    parser.add_argument("--use-cache", action="store_true", dest="useCache",
-                        default=CraftCore.settings.getboolean("Packager", "UseCache", "False"),
-                        help="Use a binary cache, the setting is overwritten by --no-cache")
-    parser.add_argument("--no-cache", action="store_true", dest="noCache",
-                        default=False, help="Don't create or use the binary cache")
-    parser.add_argument("--kill-craft-root", action="store_true", dest="doKillCraftRoot",
-                        default=False,
-                        help="Kill all processes running in the CraftRoot")
-    parser.add_argument("--destroy-craft-root", action="store_true", dest="doDestroyCraftRoot",
-                        default=False,
-                        help="DANGEROUS: Recursively delete everything in the Craft root directory besides the CraftSettings.ini, the download directory and the craft folder itself")
-    parser.add_argument("--offline", action="store_true",
-                        default=CraftCore.settings.getboolean("General", "WorkOffline", False),
-                        help="do not try to connect to the internet: KDE packages will try to use an existing source tree and other packages would try to use existing packages in the download directory.\
-                          If that doesn't work, the build will fail.")
-    parser.add_argument("--buildtype", choices=["Release", "RelWithDebInfo", "MinSizeRel", "Debug"],
-                        dest="buildType",
-                        default=CraftCore.settings.get("Compile", "BuildType", "RelWithDebInfo"),
-                        help="This will override the build type set in your CraftSettings.ini.")
-    parser.add_argument("-v", "--verbose", action="count",
-                        default=int(CraftCore.settings.get("CraftDebug", "Verbose", "0")),
-                        help=" verbose: increases the verbose level of craft. Default is 1. verbose level 1 contains some notes from craft, all output of cmake, make and other programs that are used.\
-                          verbose level 2a dds an option VERBOSE=1 to make and craft is more verbose highest level is verbose level 3.")
-    parser.add_argument("-i", "--ignoreInstalled", action="store_true",
-                        help="ignore install: using this option will install a package over an existing install. This can be useful if you want to check some new code and your last build isn't that old.")
-    parser.add_argument("--resolve-deps", action="store", help="Similar to -i, all dependencies will be resolved and the action is applied on them")
-    parser.add_argument("--target", action="store",
-                        help="This will override the build of the default target.")
-    parser.add_argument("--search", action="store_true",
-                        help="This will search for a package or a description matching or similar to the search term.")
-    parser.add_argument("--src-dir", action="store", dest="srcDir",
-                        help="This will override the source dir and enable the offline mode")
+    parser.add_argument(
+        "-p",
+        "--probe",
+        action="store_true",
+        help="probing: craft will only look which files it has to build according to the list of installed files and according to the dependencies of the package.",
+    )
+    parser.add_argument(
+        "--list-file", action="store", help=argparse.SUPPRESS, dest="unshelve"
+    )
+    parser.add_argument(
+        "--shelve",
+        action="store",
+        help="Generate a an ini with a list of all installed packages and their version",
+    )
+    parser.add_argument(
+        "--unshelve",
+        action="store",
+        help="Build all packages from the shelve file provided",
+    )
+    parser.add_argument(
+        "--options",
+        action="append",
+        default=CraftCore.settings.getList("General", "Options", ""),
+        help="Set craft property from string <OPTIONS>. An example for is extragear/kdevelop.version=5.3 or [Compile]MakeProgram=jom.",
+    )
+    parser.add_argument(
+        "-q",
+        "--stayquiet",
+        action="store_true",
+        dest="stayQuiet",
+        help="quiet: there should be no output - The verbose level should be 0",
+    )
+    parser.add_argument(
+        "--create-cache",
+        action="store_true",
+        dest="createCache",
+        default=CraftCore.settings.getboolean("Packager", "CreateCache", "False"),
+        help="Create a binary cache, the setting is overwritten by --no-cache",
+    )
+    parser.add_argument(
+        "--use-cache",
+        action="store_true",
+        dest="useCache",
+        default=CraftCore.settings.getboolean("Packager", "UseCache", "False"),
+        help="Use a binary cache, the setting is overwritten by --no-cache",
+    )
+    parser.add_argument(
+        "--no-cache",
+        action="store_true",
+        dest="noCache",
+        default=False,
+        help="Don't create or use the binary cache",
+    )
+    parser.add_argument(
+        "--kill-craft-root",
+        action="store_true",
+        dest="doKillCraftRoot",
+        default=False,
+        help="Kill all processes running in the CraftRoot",
+    )
+    parser.add_argument(
+        "--destroy-craft-root",
+        action="store_true",
+        dest="doDestroyCraftRoot",
+        default=False,
+        help="DANGEROUS: Recursively delete everything in the Craft root directory besides the CraftSettings.ini, the download directory and the craft folder itself",
+    )
+    parser.add_argument(
+        "--offline",
+        action="store_true",
+        default=CraftCore.settings.getboolean("General", "WorkOffline", False),
+        help="do not try to connect to the internet: KDE packages will try to use an existing source tree and other packages would try to use existing packages in the download directory.\
+                          If that doesn't work, the build will fail.",
+    )
+    parser.add_argument(
+        "--buildtype",
+        choices=["Release", "RelWithDebInfo", "MinSizeRel", "Debug"],
+        dest="buildType",
+        default=CraftCore.settings.get("Compile", "BuildType", "RelWithDebInfo"),
+        help="This will override the build type set in your CraftSettings.ini.",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="count",
+        default=int(CraftCore.settings.get("CraftDebug", "Verbose", "0")),
+        help=" verbose: increases the verbose level of craft. Default is 1. verbose level 1 contains some notes from craft, all output of cmake, make and other programs that are used.\
+                          verbose level 2a dds an option VERBOSE=1 to make and craft is more verbose highest level is verbose level 3.",
+    )
+    parser.add_argument(
+        "-i",
+        "--ignoreInstalled",
+        action="store_true",
+        help="ignore install: using this option will install a package over an existing install. This can be useful if you want to check some new code and your last build isn't that old.",
+    )
+    parser.add_argument(
+        "--resolve-deps",
+        action="store",
+        help="Similar to -i, all dependencies will be resolved and the action is applied on them",
+    )
+    parser.add_argument(
+        "--target",
+        action="store",
+        help="This will override the build of the default target.",
+    )
+    parser.add_argument(
+        "--search",
+        action="store_true",
+        help="This will search for a package or a description matching or similar to the search term.",
+    )
+    parser.add_argument(
+        "--src-dir",
+        action="store",
+        dest="srcDir",
+        help="This will override the source dir and enable the offline mode",
+    )
 
-    parser.add_argument("--ci-mode", action="store_true",
-                        default=CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False),
-                        dest="ciMode", help="Enables the ci mode")
+    parser.add_argument(
+        "--ci-mode",
+        action="store_true",
+        default=CraftCore.settings.getboolean(
+            "ContinuousIntegration", "Enabled", False
+        ),
+        dest="ciMode",
+        help="Enables the ci mode",
+    )
 
-    parser.add_argument("--add-blueprint-repository", action="store", help="Installs a blueprint repository", metavar="URL")
+    parser.add_argument(
+        "--add-blueprint-repository",
+        action="store",
+        help="Installs a blueprint repository",
+        metavar="URL",
+    )
 
     actionHandler = ActionHandler(parser)
-    for x in sorted(["fetch", "fetch-binary", "unpack", "configure", ("compile",{"help":"Same as --configure --make"}), "make",
-                     "install", "install-deps", "qmerge", "post-qmerge", "post-install", "package", "unmerge", "test", "createpatch",
-                     ("install-to-desktop", {"help":argparse.SUPPRESS}),
-                     ("create-download-cache", {"help":argparse.SUPPRESS}),
-                     "update",
-                     ("print-installed", {"help":"This will show a list of all packages that are installed currently."}),
-                     ("upgrade", {"help":"Update all installed packages"}),
-                     ("print-files", {"help":"Print the files installed by the package and exit"}),
-                     ("clean-unused", {"help":"Clean unused files of all packages"}),
-                     ], key=lambda x: x[0] if isinstance(x, tuple) else x):
+    for x in sorted(
+        [
+            "fetch",
+            "fetch-binary",
+            "unpack",
+            "configure",
+            ("compile", {"help": "Same as --configure --make"}),
+            "make",
+            "install",
+            "install-deps",
+            "qmerge",
+            "post-qmerge",
+            "post-install",
+            "package",
+            "unmerge",
+            "test",
+            "createpatch",
+            ("install-to-desktop", {"help": argparse.SUPPRESS}),
+            ("create-download-cache", {"help": argparse.SUPPRESS}),
+            "update",
+            (
+                "print-installed",
+                {
+                    "help": "This will show a list of all packages that are installed currently."
+                },
+            ),
+            ("upgrade", {"help": "Update all installed packages"}),
+            (
+                "print-files",
+                {"help": "Print the files installed by the package and exit"},
+            ),
+            ("clean-unused", {"help": "Clean unused files of all packages"}),
+        ],
+        key=lambda x: x[0] if isinstance(x, tuple) else x,
+    ):
         if isinstance(x, tuple):
             actionHandler.addAction(x[0], **x[1])
         else:
@@ -162,13 +272,27 @@ def main(timer):
     # read-only actions
     actionHandler.addActionWithArg("search-file", help="Print packages owning the file")
     actionHandler.addActionWithArg("get", help="Get any value from a Blueprint")
-    actionHandler.addActionWithArg("set", help="Permanently set a config value of a Blueprint")
-    actionHandler.addActionWithArg("run", nargs=argparse.REMAINDER, help="Run an application in the Craft environment")
-    actionHandler.addActionWithArg("run-detached", nargs=argparse.REMAINDER, help="Run an application in the Craft environment and detach")
+    actionHandler.addActionWithArg(
+        "set", help="Permanently set a config value of a Blueprint"
+    )
+    actionHandler.addActionWithArg(
+        "run",
+        nargs=argparse.REMAINDER,
+        help="Run an application in the Craft environment",
+    )
+    actionHandler.addActionWithArg(
+        "run-detached",
+        nargs=argparse.REMAINDER,
+        help="Run an application in the Craft environment and detach",
+    )
 
     # other actions
 
-    parser.add_argument("--version", action="version", version = f"%(prog)s {CraftSetupHelper.SetupHelper.CraftVersion}")
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {CraftSetupHelper.SetupHelper.CraftVersion}",
+    )
     parser.add_argument("packageNames", nargs=argparse.REMAINDER)
 
     args = parser.parse_args()
@@ -178,15 +302,23 @@ def main(timer):
     elif args.verbose:
         CraftCore.debug.setVerbose(args.verbose)
 
-    CraftCore.settings.set("General", "WorkOffline", args.offline or args.srcDir is not None)
+    CraftCore.settings.set(
+        "General", "WorkOffline", args.offline or args.srcDir is not None
+    )
     CraftCore.settings.set("Compile", "BuildType", args.buildType)
     CraftCore.settings.set("General", "Options", ";".join(args.options))
-    CraftCore.settings.set("Packager", "CreateCache", not args.noCache and args.createCache and not args.srcDir)
+    CraftCore.settings.set(
+        "Packager",
+        "CreateCache",
+        not args.noCache and args.createCache and not args.srcDir,
+    )
     CraftCore.settings.set("Packager", "UseCache", not args.noCache and args.useCache)
     CraftCore.settings.set("ContinuousIntegration", "SourceDir", args.srcDir)
     CraftCore.settings.set("ContinuousIntegration", "Enabled", args.ciMode)
 
-    CraftTitleUpdater.instance.start(f"({CraftCore.standardDirs.craftRoot()}) craft " + " ".join(sys.argv[1:]), timer)
+    CraftTitleUpdater.instance.start(
+        f"({CraftCore.standardDirs.craftRoot()}) craft " + " ".join(sys.argv[1:]), timer
+    )
     CraftSetupHelper.SetupHelper.printBanner()
 
     if args.doKillCraftRoot:
@@ -202,10 +334,16 @@ def main(timer):
         run = list(filter(lambda entry: not entry.startswith("-psn"), args.run))
         useShell = len(run) == 1
         if CraftCore.compiler.isMacOS:
-            useShell = not '.app' in run[1] if run[0].endswith("open") else not '.app' in run[0]
+            useShell = (
+                not ".app" in run[1]
+                if run[0].endswith("open")
+                else not ".app" in run[0]
+            )
         return utils.system(run, shell=useShell)
     elif args.run_detached:
-        run_detached = list(filter(lambda entry: not entry.startswith("-psn"), args.run_detached))
+        run_detached = list(
+            filter(lambda entry: not entry.startswith("-psn"), args.run_detached)
+        )
         kwargs = {}
         if CraftCore.compiler.isWindows:
             kwargs["creationflags"] = subprocess.DETACHED_PROCESS
@@ -253,9 +391,17 @@ def main(timer):
         elif action == "set":
             CraftCommands.setOption(packageNames, args.set)
         elif action == "clean-unused":
-            CraftCommands.cleanBuildFiles(cleanArchives=True, cleanImages=True, cleanInstalledImages=False, cleanBuildDir=True, packages=blueprintSearch.packages())
+            CraftCommands.cleanBuildFiles(
+                cleanArchives=True,
+                cleanImages=True,
+                cleanInstalledImages=False,
+                cleanBuildDir=True,
+                packages=blueprintSearch.packages(),
+            )
         else:
-            package = CraftCommands.resolvePackage(packageNames, version=tempArgs.target)
+            package = CraftCommands.resolvePackage(
+                packageNames, version=tempArgs.target
+            )
             if action == "upgrade":
                 return CraftCommands.upgrade(package, tempArgs)
             else:
@@ -266,12 +412,17 @@ def main(timer):
     return True
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if CraftCore.compiler.isMacOS:
         # run craft with arch x86_64 when cross compiling
-        if (CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_64 and
-            CraftCore.compiler.hostArchitecture != CraftCore.compiler.Architecture.x86_64):
-            exit(subprocess.call(["arch", "-arch", "x86_64", sys.executable] + sys.argv))
+        if (
+            CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_64
+            and CraftCore.compiler.hostArchitecture
+            != CraftCore.compiler.Architecture.x86_64
+        ):
+            exit(
+                subprocess.call(["arch", "-arch", "x86_64", sys.executable] + sys.argv)
+            )
 
     success = False
     with CraftTimer.Timer("Craft", 0) as timer:
@@ -284,7 +435,10 @@ if __name__ == '__main__':
             CraftCore.log.error(e)
             blueprintSearch.printSearch(e.packageName)
         except BlueprintException as e:
-            if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) or CraftCore.debug.verbose() >= 2:
+            if (
+                CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
+                or CraftCore.debug.verbose() >= 2
+            ):
                 CraftCore.log.error(e, exc_info=e.exception or e)
             else:
                 CraftCore.log.error(e)
@@ -295,4 +449,3 @@ if __name__ == '__main__':
             CraftTitleUpdater.instance.stop()
     if not success:
         exit(1)
-

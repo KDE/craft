@@ -8,7 +8,7 @@ from BuildSystem.BuildSystemBase import *
 
 
 class MakeFileBuildSystem(BuildSystemBase):
-    """ make file build support """
+    """make file build support"""
 
     def __init__(self):
         """constructor. configureOptions are added to the configure command line and makeOptions are added to the make command line"""
@@ -22,7 +22,11 @@ class MakeFileBuildSystem(BuildSystemBase):
     def make(self):
         """implements the make step for Makefile projects"""
         self.enterBuildDir()
-        return utils.system(Arguments([self.makeProgram, self.makeOptions(self.subinfo.options.make.args)]))
+        return utils.system(
+            Arguments(
+                [self.makeProgram, self.makeOptions(self.subinfo.options.make.args)]
+            )
+        )
 
     def install(self):
         """install the target"""
@@ -30,7 +34,15 @@ class MakeFileBuildSystem(BuildSystemBase):
             return False
 
         self.enterBuildDir()
-        return utils.system(Arguments([self.makeProgram, self.makeOptions(self.subinfo.options.install.args), f"DESTDIR={self.installDir()}"]))
+        return utils.system(
+            Arguments(
+                [
+                    self.makeProgram,
+                    self.makeOptions(self.subinfo.options.install.args),
+                    f"DESTDIR={self.installDir()}",
+                ]
+            )
+        )
 
     def unittest(self):
         """running make tests"""

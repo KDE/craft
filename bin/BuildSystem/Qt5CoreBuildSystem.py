@@ -22,7 +22,12 @@ class Qt5CoreBuildSystem(QMakeBuildSystem):
         # not using  QMakeBuildSystem.configure here due to the special way of passing feature arguments
         # for Qt's configure system in modules other than qtbase
         self.enterBuildDir()
-        args = ["qmake", "-makefile", self.configureSourceDir(), self.configureOptions(configureDefines)]
+        args = [
+            "qmake",
+            "-makefile",
+            self.configureSourceDir(),
+            self.configureOptions(configureDefines),
+        ]
         if self.subinfo.options.dynamic.featureArguments:
             args += ["--", self.subinfo.options.dynamic.featureArguments]
         with utils.ScopedEnv(self._qtCoreEnv()):
@@ -35,13 +40,17 @@ class Qt5CoreBuildSystem(QMakeBuildSystem):
     def install(self, options=""):
         """implements the make step for Qt projects"""
         with utils.ScopedEnv(self._qtCoreEnv()):
-            options = Arguments([options, f"INSTALL_ROOT={os.path.splitdrive(self.imageDir())[1]}"])
+            options = Arguments(
+                [options, f"INSTALL_ROOT={os.path.splitdrive(self.imageDir())[1]}"]
+            )
             if not super().install(options):
                 return False
             self._fixInstallPrefix()
 
             if OsUtils.isWin():
                 if os.path.exists(os.path.join(self.installDir(), "bin", "mkspecs")):
-                    utils.moveFile(os.path.join(self.installDir(), "bin", "mkspecs"),
-                                os.path.join(self.installDir(), "mkspecs"))
+                    utils.moveFile(
+                        os.path.join(self.installDir(), "bin", "mkspecs"),
+                        os.path.join(self.installDir(), "mkspecs"),
+                    )
             return True

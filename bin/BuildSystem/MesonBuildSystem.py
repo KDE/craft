@@ -26,39 +26,60 @@ from BuildSystem.BuildSystemBase import *
 
 
 class MesonBuildSystem(BuildSystemBase):
-    
     def __init__(self):
         BuildSystemBase.__init__(self, "meson")
 
     def __env(self):
-            env = {
-                "LDFLAGS" : self.subinfo.options.configure.ldflags + " " + os.environ.get("LDFLAGS", ""),
-                "CFLAGS" : self.subinfo.options.configure.cflags + " " + os.environ.get("CFLAGS", "")
-            }
-            if CraftCore.compiler.isMSVC():
-                env.update({
-                    "LIB" : f"{os.environ['LIB']};{os.path.join(CraftStandardDirs.craftRoot() , 'lib')}",
-                    "INCLUDE" : f"{os.environ['INCLUDE']};{os.path.join(CraftStandardDirs.craftRoot() , 'include')}"
-                    })
-            else:
-                env["LDFLAGS"] = f"-L{CraftStandardDirs.craftRoot() / 'lib'} {env['LDFLAGS']}"
-                env["CFLAGS"] = f"-I{CraftStandardDirs.craftRoot() / 'include'} {env['CFLAGS']}"
-            return env
+        env = {
+            "LDFLAGS": self.subinfo.options.configure.ldflags
+            + " "
+            + os.environ.get("LDFLAGS", ""),
+            "CFLAGS": self.subinfo.options.configure.cflags
+            + " "
+            + os.environ.get("CFLAGS", ""),
+        }
+        if CraftCore.compiler.isMSVC():
+            env.update(
+                {
+                    "LIB": f"{os.environ['LIB']};{os.path.join(CraftStandardDirs.craftRoot() , 'lib')}",
+                    "INCLUDE": f"{os.environ['INCLUDE']};{os.path.join(CraftStandardDirs.craftRoot() , 'include')}",
+                }
+            )
+        else:
+            env[
+                "LDFLAGS"
+            ] = f"-L{CraftStandardDirs.craftRoot() / 'lib'} {env['LDFLAGS']}"
+            env[
+                "CFLAGS"
+            ] = f"-I{CraftStandardDirs.craftRoot() / 'include'} {env['CFLAGS']}"
+        return env
 
-    
     def configureOptions(self, defines=""):
-        buildType = {"Release": "release", "RelWithDebInfo": "debugoptimized", "MinSizeRel": "minsize", "Debug" : "debug"}.get(self.buildType())
-        return Arguments([defines,
-                             "--prefix", CraftCore.standardDirs.craftRoot(),
-                             "--libdir", "lib",
-                             "--datadir", CraftCore.standardDirs.locations.data,
-                             "--buildtype", buildType,
-                             "--cmake-prefix-path", CraftCore.standardDirs.craftRoot(),
-                             self.buildDir(),
-                             self.sourceDir(),
-                             "-Ddefault_library=shared",
-                             BuildSystemBase.configureOptions(self)
-        ])
+        buildType = {
+            "Release": "release",
+            "RelWithDebInfo": "debugoptimized",
+            "MinSizeRel": "minsize",
+            "Debug": "debug",
+        }.get(self.buildType())
+        return Arguments(
+            [
+                defines,
+                "--prefix",
+                CraftCore.standardDirs.craftRoot(),
+                "--libdir",
+                "lib",
+                "--datadir",
+                CraftCore.standardDirs.locations.data,
+                "--buildtype",
+                buildType,
+                "--cmake-prefix-path",
+                CraftCore.standardDirs.craftRoot(),
+                self.buildDir(),
+                self.sourceDir(),
+                "-Ddefault_library=shared",
+                BuildSystemBase.configureOptions(self),
+            ]
+        )
 
     def configure(self, defines=""):
         with utils.ScopedEnv(self.__env()):
@@ -67,7 +88,18 @@ class MesonBuildSystem(BuildSystemBase):
     def make(self):
         with utils.ScopedEnv(self.__env()):
             # cwd should not be the build dir as it might confuse the dependencie resolution
-            return utils.system(Arguments(["meson", "compile", "-C", self.buildDir(), self.makeOptions(self.subinfo.options.make.args)]), cwd=CraftCore.standardDirs.craftRoot())
+            return utils.system(
+                Arguments(
+                    [
+                        "meson",
+                        "compile",
+                        "-C",
+                        self.buildDir(),
+                        self.makeOptions(self.subinfo.options.make.args),
+                    ]
+                ),
+                cwd=CraftCore.standardDirs.craftRoot(),
+            )
 
     def install(self):
         """install the target"""
@@ -76,7 +108,10 @@ class MesonBuildSystem(BuildSystemBase):
         env = self.__env()
         env["DESTDIR"] = self.installDir()
         with utils.ScopedEnv(env):
-            return utils.system(["meson", "install"], cwd=self.buildDir()) and self._fixInstallPrefix()
+            return (
+                utils.system(["meson", "install"], cwd=self.buildDir())
+                and self._fixInstallPrefix()
+            )
 
     def unittest(self):
         """running make tests"""

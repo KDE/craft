@@ -9,18 +9,24 @@ import subprocess
 import glob
 
 
-class MacBasePackager( CollectionPackagerBase ):
+class MacBasePackager(CollectionPackagerBase):
     @InitGuard.init_once
     def __init__(self, whitelists, blacklists):
         CollectionPackagerBase.__init__(self, whitelists, blacklists)
         self.externalLibs = {}
 
-    def internalCreatePackage(self, defines, seperateSymbolFiles=False, packageSymbols=False):
-        """ create a package """
+    def internalCreatePackage(
+        self, defines, seperateSymbolFiles=False, packageSymbols=False
+    ):
+        """create a package"""
         CraftCore.log.debug("packaging using the MacDMGPackager")
 
         # TODO: provide an image with dbg files
-        if not super().internalCreatePackage(defines, seperateSymbolFiles=seperateSymbolFiles, packageSymbols=packageSymbols):
+        if not super().internalCreatePackage(
+            defines,
+            seperateSymbolFiles=seperateSymbolFiles,
+            packageSymbols=packageSymbols,
+        ):
             return False
 
         appPath = self.getMacAppPath(defines)
@@ -30,9 +36,12 @@ class MacBasePackager( CollectionPackagerBase ):
         CraftCore.log.info(f"Packaging {appPath}")
 
         CraftCore.log.info("Clean up frameworks")
-        for framework in utils.filterDirectoryContent(archive / "lib", handleAppBundleAsFile=True,
-                                            whitelist=lambda x, root: x.name.endswith(".framework"),
-                                            blacklist=lambda x, root: True):
+        for framework in utils.filterDirectoryContent(
+            archive / "lib",
+            handleAppBundleAsFile=True,
+            whitelist=lambda x, root: x.name.endswith(".framework"),
+            blacklist=lambda x, root: True,
+        ):
             rubbish = []
             framework = Path(framework)
             rubbish += framework.rglob("*.prl")
@@ -67,7 +76,12 @@ class MacBasePackager( CollectionPackagerBase ):
         self._addQtConf(appPath)
 
         if archive not in appPath.parents:
-            moveTargets += [(os.path.join(archive, "bin"), os.path.join(appPath, "Contents", "MacOS"))]
+            moveTargets += [
+                (
+                    os.path.join(archive, "bin"),
+                    os.path.join(appPath, "Contents", "MacOS"),
+                )
+            ]
 
         for src, dest in moveTargets:
             if os.path.exists(src):
@@ -76,9 +90,13 @@ class MacBasePackager( CollectionPackagerBase ):
 
         dylibbundler = MacDylibBundler(appPath, self.externalLibs)
         CraftCore.log.info("Bundling main binary dependencies...")
-        binaries = list(utils.filterDirectoryContent(os.path.join(appPath, "Contents"),
-                                                        whitelist=lambda x, root: utils.isBinary(x.path),
-                                                        blacklist=lambda x, root: True))
+        binaries = list(
+            utils.filterDirectoryContent(
+                os.path.join(appPath, "Contents"),
+                whitelist=lambda x, root: utils.isBinary(x.path),
+                blacklist=lambda x, root: True,
+            )
+        )
 
         for binary in binaries:
             CraftCore.log.info(f"Bundling dependencies for {binary}...")
@@ -93,13 +111,17 @@ class MacBasePackager( CollectionPackagerBase ):
             binaryPath = Path(binary)
             if not dylibbundler.areLibraryDepsOkay(binaryPath):
                 found_bad_dylib = True
-                CraftCore.log.error("Found bad library dependency in binary %s", binaryPath)
+                CraftCore.log.error(
+                    "Found bad library dependency in binary %s", binaryPath
+                )
         if found_bad_dylib:
-            CraftCore.log.error("Cannot not create .dmg since the .app contains a bad library depenency!")
+            CraftCore.log.error(
+                "Cannot not create .dmg since the .app contains a bad library depenency!"
+            )
             return False
         return CodeSign.signMacApp(appPath)
 
-    def _addQtConf(self, appFolder : Path):
+    def _addQtConf(self, appFolder: Path):
         parser = configparser.ConfigParser()
         parser.optionxform = str
         parser.add_section("Paths")
@@ -111,8 +133,10 @@ class MacBasePackager( CollectionPackagerBase ):
         with configFile.open("w", encoding="UTF-8") as conf:
             parser.write(conf)
 
+
 class MacDylibBundler(object):
-    """ Bundle all .dylib files that are not provided by the system with the .app """
+    """Bundle all .dylib files that are not provided by the system with the .app"""
+
     def __init__(self, appPath: str, externalLibs: Set[str]):
         # Avoid processing the same file more than once
         self.checkedLibs = set()
@@ -130,16 +154,29 @@ class MacDylibBundler(object):
         # Handle symlinks (such as libgit2.27.dylib -> libgit2.0.27.4.dylib):
         if libPath.is_symlink():
             linkTarget = os.readlink(libPath)
-            CraftCore.log.info("Library dependency %s is a symlink to '%s'", libPath, linkTarget)
+            CraftCore.log.info(
+                "Library dependency %s is a symlink to '%s'", libPath, linkTarget
+            )
             if os.path.isabs(linkTarget):
-                CraftCore.log.error("%s: Cannot handle absolute symlinks: '%s'", libPath, linkTarget)
+                CraftCore.log.error(
+                    "%s: Cannot handle absolute symlinks: '%s'", libPath, linkTarget
+                )
                 return False
             if ".." in linkTarget:
-                CraftCore.log.error("%s: Cannot handle symlinks containing '..': '%s'", libPath, linkTarget)
+                CraftCore.log.error(
+                    "%s: Cannot handle symlinks containing '..': '%s'",
+                    libPath,
+                    linkTarget,
+                )
                 return False
             if libPath.resolve().parent != libPath.parent.resolve():
-                CraftCore.log.error("%s: Cannot handle symlinks to other directories: '%s' (%s vs %s)",
-                                    libPath, linkTarget, libPath.resolve().parent, libPath.parent.resolve())
+                CraftCore.log.error(
+                    "%s: Cannot handle symlinks to other directories: '%s' (%s vs %s)",
+                    libPath,
+                    linkTarget,
+                    libPath.resolve().parent,
+                    libPath.parent.resolve(),
+                )
                 return False
             # If the symlink target was processed, the symlink itself is also fine
             return True
@@ -151,7 +188,11 @@ class MacDylibBundler(object):
         for path in utils.getLibraryDeps(libPath):
             # check there aren't any references to the original location:
             if path == str(libPath):
-                CraftCore.log.error("%s: failed to fix reference to original location for '%s'", libPath, path)
+                CraftCore.log.error(
+                    "%s: failed to fix reference to original location for '%s'",
+                    libPath,
+                    path,
+                )
                 return False
 
         if not self.bundleLibraryDependencies(libPath):
@@ -161,20 +202,32 @@ class MacDylibBundler(object):
         return True
 
     @staticmethod
-    def _updateLibraryReference(fileToFix: Path, oldRef: str, newRef: str = None) -> bool:
+    def _updateLibraryReference(
+        fileToFix: Path, oldRef: str, newRef: str = None
+    ) -> bool:
         if newRef is None:
             newRef = "@executable_path/../Frameworks/" + os.path.basename(oldRef)
         with utils.makeTemporaryWritable(fileToFix):
-            if not utils.system(["install_name_tool", "-change", oldRef, newRef, str(fileToFix)], logCommand=False):
-                CraftCore.log.error("%s: failed to update library dependency path from '%s' to '%s'",
-                                    fileToFix, oldRef, newRef)
+            if not utils.system(
+                ["install_name_tool", "-change", oldRef, newRef, str(fileToFix)],
+                logCommand=False,
+            ):
+                CraftCore.log.error(
+                    "%s: failed to update library dependency path from '%s' to '%s'",
+                    fileToFix,
+                    oldRef,
+                    newRef,
+                )
                 return False
         return True
 
     @staticmethod
     def _getLibraryNameId(fileToFix: Path) -> str:
         libraryIdOutput = io.StringIO(
-            subprocess.check_output(["otool", "-D", str(fileToFix)]).decode("utf-8").strip())
+            subprocess.check_output(["otool", "-D", str(fileToFix)])
+            .decode("utf-8")
+            .strip()
+        )
         lines = libraryIdOutput.readlines()
         if len(lines) == 1:
             return ""
@@ -188,19 +241,37 @@ class MacDylibBundler(object):
         with utils.makeTemporaryWritable(fileToFix):
             if libraryId and os.path.isabs(libraryId):
                 CraftCore.log.debug("Fixing library id name for %s", libraryId)
-                if not utils.system(["install_name_tool", "-id", os.path.basename(libraryId), str(fileToFix)],
-                                    logCommand=False):
-                    CraftCore.log.error("%s: failed to fix absolute library id name for", fileToFix)
+                if not utils.system(
+                    [
+                        "install_name_tool",
+                        "-id",
+                        os.path.basename(libraryId),
+                        str(fileToFix),
+                    ],
+                    logCommand=False,
+                ):
+                    CraftCore.log.error(
+                        "%s: failed to fix absolute library id name for", fileToFix
+                    )
                     return False
             lib = Path(CraftCore.standardDirs.craftRoot()) / "lib"
-            utils.system(["install_name_tool", "-delete_rpath", lib, fileToFix], logCommand=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, acceptableExitCodes=[0,1])
+            utils.system(
+                ["install_name_tool", "-delete_rpath", lib, fileToFix],
+                logCommand=False,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                acceptableExitCodes=[0, 1],
+            )
         return True
 
     def bundleLibraryDependencies(self, fileToFix: Path) -> bool:
         assert not fileToFix.is_symlink(), fileToFix
         if fileToFix.stat().st_nlink > 1:
-            CraftCore.log.error("More than one hard link to library %s found! "
-                                "This might modify another accidentally.", fileToFix)
+            CraftCore.log.error(
+                "More than one hard link to library %s found! "
+                "This might modify another accidentally.",
+                fileToFix,
+            )
         CraftCore.log.info("Fixing library dependencies for %s", fileToFix)
         if not self._fixupLibraryId(fileToFix):
             return False
@@ -216,35 +287,66 @@ class MacDylibBundler(object):
                 #         /System/Library/Frameworks/AppKit.framework/Versions/C/AppKit (compatibility version 45.0.0, current version 1561.40.112)
                 #         @rpath/QtPrintSupport.framework/Versions/5/QtPrintSupport (compatibility version 5.11.0, current version 5.11.1)
                 # ....
-                CraftCore.log.debug("%s: ignoring library name id %s in %s", fileToFix, path,
-                                    os.path.relpath(str(fileToFix), self.appPath))
+                CraftCore.log.debug(
+                    "%s: ignoring library name id %s in %s",
+                    fileToFix,
+                    path,
+                    os.path.relpath(str(fileToFix), self.appPath),
+                )
                 continue
             if path in self.externalLibs:
-                CraftCore.log.debug("%s: allowing dependency on external library '%s'", fileToFix, path)
+                CraftCore.log.debug(
+                    "%s: allowing dependency on external library '%s'", fileToFix, path
+                )
                 continue
             if path.startswith("@executable_path/"):
                 continue  # already fixed
             if path.startswith("@rpath/"):
-                if not self._updateLibraryReference(fileToFix, path, "@executable_path/../Frameworks/" + path[len("@rpath/"):]):
+                if not self._updateLibraryReference(
+                    fileToFix,
+                    path,
+                    "@executable_path/../Frameworks/" + path[len("@rpath/") :],
+                ):
                     return False
-            elif path.startswith("/usr/lib/") or path.startswith("/System/Library/Frameworks/"):
-                CraftCore.log.debug("%s: allowing dependency on system library '%s'", fileToFix, path)
+            elif path.startswith("/usr/lib/") or path.startswith(
+                "/System/Library/Frameworks/"
+            ):
+                CraftCore.log.debug(
+                    "%s: allowing dependency on system library '%s'", fileToFix, path
+                )
             elif path.startswith("@loader_path/"):
                 CraftCore.log.debug(f"{fileToFix}: Accept '{path}' into.")
             else:
                 guessedNewRef = None
                 if path.startswith(str(CraftStandardDirs.craftRoot() / "lib")):
-                    guessedPath = path.replace(str(CraftStandardDirs.craftRoot() / "lib"), os.path.join(self.appPath, "Contents/Frameworks"))
+                    guessedPath = path.replace(
+                        str(CraftStandardDirs.craftRoot() / "lib"),
+                        os.path.join(self.appPath, "Contents/Frameworks"),
+                    )
                     # Update possible new ref for deps in framework
-                    if "{}.framework".format(os.path.basename(guessedPath)) in guessedPath:
-                        guessedNewRef = path.replace(str(CraftStandardDirs.craftRoot() / "lib"), "@executable_path/../Frameworks/")
+                    if (
+                        "{}.framework".format(os.path.basename(guessedPath))
+                        in guessedPath
+                    ):
+                        guessedNewRef = path.replace(
+                            str(CraftStandardDirs.craftRoot() / "lib"),
+                            "@executable_path/../Frameworks/",
+                        )
                 elif not path.startswith("/"):
-                    guessedPath = os.path.join(self.appPath, "Contents/Frameworks", path)
+                    guessedPath = os.path.join(
+                        self.appPath, "Contents/Frameworks", path
+                    )
                 else:
-                    CraftCore.log.error("%s: don't know how to handle otool -L output: '%s'", fileToFix, path)
+                    CraftCore.log.error(
+                        "%s: don't know how to handle otool -L output: '%s'",
+                        fileToFix,
+                        path,
+                    )
                     return False
                 if not self._addLibToAppImage(Path(guessedPath)):
-                    CraftCore.log.error(f"{fileToFix}: Failed to add library dependency '{guessedPath}' into bundle")
+                    CraftCore.log.error(
+                        f"{fileToFix}: Failed to add library dependency '{guessedPath}' into bundle"
+                    )
                     return False
                 if not self._updateLibraryReference(fileToFix, path, guessedNewRef):
                     return False
@@ -259,27 +361,44 @@ class MacDylibBundler(object):
             if dep == libraryId and not os.path.isabs(libraryId):
                 continue  # non-absolute library id is fine
             # @rpath and @executable_path is fine
-            if dep.startswith("@rpath") or dep.startswith("@executable_path") or dep.startswith("@loader_path"):
+            if (
+                dep.startswith("@rpath")
+                or dep.startswith("@executable_path")
+                or dep.startswith("@loader_path")
+            ):
                 continue
             # Also allow /System/Library/Frameworks/ and /usr/lib:
-            if dep.startswith("/usr/lib/") or dep.startswith("/System/Library/Frameworks/") or path in self.externalLibs:
+            if (
+                dep.startswith("/usr/lib/")
+                or dep.startswith("/System/Library/Frameworks/")
+                or path in self.externalLibs
+            ):
                 continue
             if dep.startswith(CraftStandardDirs.craftRoot()):
-                CraftCore.log.error("ERROR: %s references absolute library path from craftroot: %s", relativePath,
-                                    dep)
+                CraftCore.log.error(
+                    "ERROR: %s references absolute library path from craftroot: %s",
+                    relativePath,
+                    dep,
+                )
             elif dep.startswith("/"):
-                CraftCore.log.error("ERROR: %s references absolute library path: %s", relativePath, dep)
+                CraftCore.log.error(
+                    "ERROR: %s references absolute library path: %s", relativePath, dep
+                )
             else:
-                CraftCore.log.error("ERROR: %s has bad dependency: %s", relativePath, dep)
+                CraftCore.log.error(
+                    "ERROR: %s has bad dependency: %s", relativePath, dep
+                )
             found_bad_lib = True
         return not found_bad_lib
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     print("Testing MacDMGPackager.py")
     defaultFile = CraftStandardDirs.craftRoot() + "/lib/libKF5TextEditor.5.dylib"
     sourceFile = defaultFile if len(sys.argv) else sys.argv[1]
     utils.system(["otool", "-L", sourceFile])
     import tempfile
+
     with tempfile.TemporaryDirectory() as td:
         source = os.path.realpath(sourceFile)
         target = os.path.join(td, os.path.basename(source))

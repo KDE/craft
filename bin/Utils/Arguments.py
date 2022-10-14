@@ -1,9 +1,9 @@
-
 from CraftCore import CraftCore
 import subprocess
 
+
 class Arguments(object):
-    def __init__(self, args:[str]=None):
+    def __init__(self, args: [str] = None):
         self.__args = []
         self.__legacyString = None
         if args:
@@ -19,7 +19,7 @@ class Arguments(object):
         return ";".join(self.get())
 
     @staticmethod
-    def fromSetting(data : str):
+    def fromSetting(data: str):
         return Arguments(CraftCore.settings._parseList(data))
 
     def append(self, other):
@@ -31,7 +31,9 @@ class Arguments(object):
                     self.__legacyString += " "
                 self.__legacyString += other
             elif isinstance(other, list):
-                self.__legacyString += " " + subprocess.list2cmdline([str(x) for x in other])
+                self.__legacyString += " " + subprocess.list2cmdline(
+                    [str(x) for x in other]
+                )
             elif isinstance(other, Arguments):
                 if other.__legacyString is not None:
                     self.__legacyString += " " + other.__legacyString
@@ -69,11 +71,11 @@ class Arguments(object):
 
     def get(self):
         if self.__legacyString:
-            return self.__legacyString           
+            return self.__legacyString
         else:
             return self.__args
 
     @staticmethod
-    def formatCommand(command:[str], args):
+    def formatCommand(command: [str], args):
         tmp = Arguments(command) + args
         return tmp.get()

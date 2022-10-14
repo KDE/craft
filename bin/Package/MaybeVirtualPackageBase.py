@@ -13,23 +13,35 @@ class MaybeVirtualPackageBase(object):
         self.__class__.__bases__[0].__init__(self)
 
 
-
 class VirtualIfSufficientVersion(MaybeVirtualPackageBase):
-    def __init__(self, app, version, classA, classB=VirtualPackageBase, pattern=None, versionCommand=None):
+    def __init__(
+        self,
+        app,
+        version,
+        classA,
+        classB=VirtualPackageBase,
+        pattern=None,
+        versionCommand=None,
+    ):
         app = CraftCore.cache.findApplication(app)
         newer = False
         if app and CraftCore.standardDirs.craftRoot() not in Path(app).parents:
             appVersion = CraftCore.cache.getVersion(app, pattern, versionCommand)
             newer = appVersion and appVersion >= CraftVersion(version)
-        self.skipCondition = not newer or not CraftCore.settings.getboolean("CraftDebug", "AllowToSkipPackages", True)
+        self.skipCondition = not newer or not CraftCore.settings.getboolean(
+            "CraftDebug", "AllowToSkipPackages", True
+        )
         self.checkVersion = version
-        MaybeVirtualPackageBase.__init__(self, condition=self.skipCondition, classA=classA, classB=classB)
+        MaybeVirtualPackageBase.__init__(
+            self, condition=self.skipCondition, classA=classA, classB=classB
+        )
 
         if not self.skipCondition:
             # override the install method
             def install():
                 CraftCore.log.info(
-                    f"Skipping installation of {self} as the installed version of {app} {appVersion} >= {self.checkVersion}")
+                    f"Skipping installation of {self} as the installed version of {app} {appVersion} >= {self.checkVersion}"
+                )
                 return self.baseClass.install(self)
 
             def sourceRevision():

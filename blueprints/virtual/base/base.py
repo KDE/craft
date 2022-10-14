@@ -4,8 +4,8 @@ from Package.VirtualPackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.targets['0.2'] = ""
-        self.defaultTarget = '0.2'
+        self.targets["0.2"] = ""
+        self.defaultTarget = "0.2"
 
     def setDependencies(self):
         # The order is important
@@ -34,7 +34,10 @@ class subinfo(info.infoclass):
         if CraftCore.compiler.isMacOS:
             self.buildDependencies["dev-utils/create-dmg"] = None
 
-        if CraftCore.compiler.isMSVC() or CraftCore.settings.get("Compile", "MakeProgram", "") == "jom":
+        if (
+            CraftCore.compiler.isMSVC()
+            or CraftCore.settings.get("Compile", "MakeProgram", "") == "jom"
+        ):
             self.buildDependencies["dev-utils/jom"] = None
         if CraftCore.settings.getboolean("Compile", "UseNinja", False):
             self.buildDependencies["dev-utils/ninja"] = None
@@ -42,7 +45,6 @@ class subinfo(info.infoclass):
         self.buildDependencies["craft/craft-blueprints-kde"] = None
         self.buildDependencies["craft/craft-core"] = None
         self.runtimeDependencies["libs/runtime"] = None
-
 
 
 class Package(VirtualPackageBase):

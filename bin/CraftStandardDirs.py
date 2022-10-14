@@ -7,19 +7,21 @@ from CraftCore import CraftCore
 import CraftConfig
 from CraftOS.OsDetection import OsDetection
 
+
 class Location(object):
     """
     Something like http://doc.qt.io/qt-5/qstandardpaths.html
     """
+
     def __init__(self, standardDirs):
-      self._standardDirs = standardDirs
+        self._standardDirs = standardDirs
 
     @property
     def data(self) -> Path:
-      if CraftCore.compiler.isWindows:
-          return self._standardDirs.craftRoot() / "bin/data"
-      else:
-          return self._standardDirs.craftRoot() / "share"
+        if CraftCore.compiler.isWindows:
+            return self._standardDirs.craftRoot() / "bin/data"
+        else:
+            return self._standardDirs.craftRoot() / "share"
 
 
 class CraftStandardDirs(object):
@@ -27,19 +29,31 @@ class CraftStandardDirs(object):
 
     def __init__(self, craftRoot=None):
         self._craftRoot = Path(craftRoot or CraftCore.settings._craftRoot())
-        self._downloadDir = Path(CraftCore.settings.get("Paths", "DOWNLOADDIR", self._craftRoot / "download"))
-        self._gitDir = Path(CraftCore.settings.get("Paths", "KDEGITDIR", self._downloadDir / "git"))
-        self._junctionDir = Path(CraftCore.settings.get("ShortPath", "JunctionDir", os.path.join(self._craftRoot, "build", "_"))).absolute()
+        self._downloadDir = Path(
+            CraftCore.settings.get("Paths", "DOWNLOADDIR", self._craftRoot / "download")
+        )
+        self._gitDir = Path(
+            CraftCore.settings.get("Paths", "KDEGITDIR", self._downloadDir / "git")
+        )
+        self._junctionDir = Path(
+            CraftCore.settings.get(
+                "ShortPath", "JunctionDir", os.path.join(self._craftRoot, "build", "_")
+            )
+        ).absolute()
         self.locations = Location(self)
 
     @staticmethod
     def downloadDir() -> Path:
-        """ location of directory where fetched files are  stored """
+        """location of directory where fetched files are  stored"""
         return CraftCore.standardDirs._downloadDir
 
     @staticmethod
     def svnDir() -> Path:
-        return Path(CraftCore.settings.get("Paths", "KDESVNDIR", CraftStandardDirs.downloadDir() / "svn"))
+        return Path(
+            CraftCore.settings.get(
+                "Paths", "KDESVNDIR", CraftStandardDirs.downloadDir() / "svn"
+            )
+        )
 
     @staticmethod
     def gitDir() -> Path:
@@ -47,7 +61,11 @@ class CraftStandardDirs(object):
 
     @staticmethod
     def tmpDir() -> Path:
-        return Path(CraftCore.settings.get("Paths", "TMPDIR", CraftStandardDirs.craftRoot() / "tmp"))
+        return Path(
+            CraftCore.settings.get(
+                "Paths", "TMPDIR", CraftStandardDirs.craftRoot() / "tmp"
+            )
+        )
 
     @staticmethod
     def craftRoot() -> Path:
@@ -67,8 +85,13 @@ class CraftStandardDirs(object):
 
     @staticmethod
     def blueprintRoot() -> Path:
-        return Path(CraftCore.settings.get("Blueprints", "BlueprintRoot",
-                                 CraftStandardDirs.etcBlueprintDir() / "locations"))
+        return Path(
+            CraftCore.settings.get(
+                "Blueprints",
+                "BlueprintRoot",
+                CraftStandardDirs.etcBlueprintDir() / "locations",
+            )
+        )
 
     @staticmethod
     def etcBlueprintDir() -> Path:
@@ -80,8 +103,11 @@ class CraftStandardDirs(object):
         if not OsDetection.isWin():
             return Path(CraftCore.settings.get("Paths", "Msys", "/"))
         else:
-            return Path(CraftCore.settings.get("Paths", "Msys",
-                                     CraftStandardDirs.craftRoot() / "msys"))
+            return Path(
+                CraftCore.settings.get(
+                    "Paths", "Msys", CraftStandardDirs.craftRoot() / "msys"
+                )
+            )
 
     @staticmethod
     def junctionsDir() -> Path:
