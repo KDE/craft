@@ -29,8 +29,6 @@ class QMakeBuildSystem(BuildSystemBase):
                         self._platform = f"win32-{_compiler}"
                 elif CraftCore.compiler.isMinGW():
                     self._platform = "win32-g++"
-                elif CraftCore.compiler.isIntel():
-                    self._platform = "win32-icc"
                 else:
                     CraftCore.log.critical(
                         f"QMakeBuildSystem: unsupported compiler platform {CraftCore.compiler}"

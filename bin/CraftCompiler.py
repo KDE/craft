@@ -262,9 +262,6 @@ class CraftCompiler(object):
     def isMSVC2022(self):
         return self.abi.startswith("msvc2022")
 
-    def isIntel(self):
-        return self.compiler == "intel"
-
     def getGCCLikeVersion(self, compilerExecutable):
         _, result = CraftCore.cache.getCommandOutput(compilerExecutable, "--version")
         if result:
@@ -283,8 +280,6 @@ class CraftCompiler(object):
     def getVersionWithName(self):
         if self.isGCCLike():
             return f"{self.getCompilerName()} {self.getVersion()}"
-        elif self.isIntel():
-            return os.getenv("PRODUCT_NAME_FULL")
         elif self.isMSVC():
             return f"Microsoft Visual Studio {self.getVersion()}"
         else:

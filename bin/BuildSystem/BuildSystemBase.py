@@ -93,7 +93,7 @@ class BuildSystemBase(CraftBase):
                 del os.environ["MAKE"]
 
         if OsUtils.isWin():
-            if CraftCore.compiler.isMSVC() or CraftCore.compiler.isIntel():
+            if CraftCore.compiler.isMSVC():
                 if (
                     self.subinfo.options.make.supportsMultijob
                     and CraftCore.cache.findApplication("jom")

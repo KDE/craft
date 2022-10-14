@@ -302,16 +302,6 @@ class SetupHelper(object):
                 CraftCore.compiler.msvcToolset,
                 CraftCore.compiler.isNative(),
             )
-        elif CraftCore.compiler.isIntel():
-            architectures = {"x86": "ia32", "x64": "intel64"}
-            programFiles = os.getenv("ProgramFiles(x86)") or os.getenv("ProgramFiles")
-            status, result = SetupHelper._getOutput(
-                '"%s\\Intel\\Composer XE\\bin\\compilervars.bat" %s > NUL && set'
-                % (programFiles, architectures[CraftCore.compiler.architecture]),
-                shell=True,
-            )
-            if status != 0:
-                log("Failed to setup intel compiler", critical=True)
             return SetupHelper.stringToEnv(result)
         return os.environ
 
