@@ -2,8 +2,7 @@
 # copyright (c) 2011 Hannah von Reth <vonreth@kde.org>
 #
 from .CollectionPackagerBase import *
-from .NullsoftInstallerPackager import *
-from .SevenZipPackager import *
+from .SevenZipPackager import SevenZipPackager
 
 
 class PortablePackager(CollectionPackagerBase, SevenZipPackager):

@@ -16,8 +16,6 @@ from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 from Utils.CraftShortPath import CraftShortPath
 
-from Blueprints import CraftPackageObject
-
 
 class InitGuard(object):
     _initialized = {}

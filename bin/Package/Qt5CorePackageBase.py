@@ -3,7 +3,7 @@
 #
 from BuildSystem.Qt5CoreBuildSystem import *
 from Package.MaybeVirtualPackageBase import *
-from Packager.TypePackager import *
+from Packager.TypePackager import TypePackager
 
 
 class Qt5CorePackageBase(PackageBase, MultiSource, Qt5CoreBuildSystem, TypePackager):

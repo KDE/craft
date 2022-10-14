@@ -28,6 +28,7 @@ AppVersion=@{version}
 WizardStyle=modern
 DefaultDirName={autopf}\@{productname}
 DefaultGroupName=@{productname}
+DisableDirPage=no
 Compression=lzma2
 SolidCompression=yes
 ; LicenseFile=SomeText.txt or .rtf

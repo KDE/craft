@@ -51,7 +51,7 @@ class TestUserOptions(CraftTestBase.CraftTestBase):
 
         self.assertEqual(o.ignored, True)
         self.assertEqual(o.version, "5")
-        self.assertEqual(o.args, "Foo")
+        self.assertEqual(o.args.get(), Arguments(["Foo"]).get())
 
         self.assertEqual(o.not_existing, None)
         o.registerOption("not_existing", True)

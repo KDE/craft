@@ -43,7 +43,6 @@ import tempfile
 from pathlib import Path
 
 import Notifier.NotificationLoader
-from Blueprints.CraftVersion import CraftVersion
 from CraftCore import CraftCore
 from CraftDebug import deprecated
 from CraftOS.osutils import OsUtils

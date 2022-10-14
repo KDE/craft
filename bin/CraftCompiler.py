@@ -22,14 +22,11 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-import platform
 import re
 from enum import IntFlag, unique
 
-import utils
 from CraftConfig import *
 from CraftCore import CraftCore
-from CraftDebug import deprecated
 
 
 class CraftCompiler(object):
@@ -267,14 +264,6 @@ class CraftCompiler(object):
 
     def isIntel(self):
         return self.compiler == "intel"
-
-    @deprecated("CraftCore.compiler")
-    def getCompilerName(self):
-        return str(CraftCore.compiler)
-
-    @deprecated("CraftCore.compiler")
-    def getSimpleCompilerName(self):
-        return str(CraftCore.compiler)
 
     def getGCCLikeVersion(self, compilerExecutable):
         _, result = CraftCore.cache.getCommandOutput(compilerExecutable, "--version")

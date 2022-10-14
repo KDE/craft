@@ -366,7 +366,27 @@ class BuildSystemBase(CraftBase):
         if not self.subinfo.isCachedBuild:
             if self.buildType() in {"RelWithDebInfo", "Debug"}:
                 if CraftCore.compiler.isMSVC():
-                    for f in binaryFiles:
+                    # static libs might also have pdbs
+                    def staticLibsFilter(p: Path):
+                        if p.suffix == ".lib":
+                            dll = p.with_suffix(".dll")
+                            with io.StringIO() as log:
+                                utils.system(
+                                    ["lib", "-list", p], stdout=log, logCommand=False
+                                )
+                                if dll.name in log.getvalue():
+                                    return False
+                                return True
+                        return False
+
+                    staticLibs = list(
+                        utils.filterDirectoryContent(
+                            self.installDir(),
+                            lambda x, root: staticLibsFilter(Path(x.path)),
+                            lambda x, root: True,
+                        )
+                    )
+                    for f in binaryFiles + staticLibs:
                         if not os.path.exists(f"{os.path.splitext(f)[0]}.pdb"):
                             pdb = utils.getPDBForBinary(f)
                             if not pdb:

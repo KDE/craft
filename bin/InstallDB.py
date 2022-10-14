@@ -1,6 +1,6 @@
+import os
 import sqlite3
 
-from CraftConfig import *
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
