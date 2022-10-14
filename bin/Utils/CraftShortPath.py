@@ -1,6 +1,6 @@
 import os
-import zlib
 import subprocess
+import zlib
 
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils

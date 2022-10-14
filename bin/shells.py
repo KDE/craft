@@ -3,19 +3,18 @@
 """
     provides shells
 """
+import os
 import platform
+import shutil
 import subprocess
 import sys
 from pathlib import Path
 
-from CraftCore import CraftCore
-from Blueprints.CraftVersion import CraftVersion
-from CraftOS.osutils import OsUtils
 import utils
+from Blueprints.CraftVersion import CraftVersion
+from CraftCore import CraftCore
+from CraftOS.osutils import OsUtils
 from Utils.Arguments import Arguments
-
-import os
-import shutil
 
 
 class BashShell(object):

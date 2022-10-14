@@ -23,7 +23,7 @@
 # SUCH DAMAGE.
 
 import re
-from enum import unique, IntFlag
+from enum import IntFlag, unique
 
 import utils
 from CraftConfig import *

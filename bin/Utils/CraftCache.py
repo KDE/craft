@@ -5,16 +5,15 @@ import pickle
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 import time
 import urllib.error
 import urllib.request
-import sys
 from pathlib import Path
 
-from CraftCore import CraftCore, AutoImport
-
 from Blueprints.CraftVersion import CraftVersion
+from CraftCore import AutoImport, CraftCore
 from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 from Utils import GetFiles

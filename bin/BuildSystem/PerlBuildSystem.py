@@ -23,6 +23,7 @@
 # SUCH DAMAGE.
 from BuildSystem.MakeFileBuildSystem import *
 
+
 # based on https://wiki.archlinux.org/index.php/Perl_package_guidelines
 class PerlBuildSystem(MakeFileBuildSystem):
     def __init__(self):

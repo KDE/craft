@@ -1,9 +1,8 @@
 import abc
 import os
-from pathlib import Path
 import platform
-
 import sys
+from pathlib import Path
 
 from CraftOS.OsDetection import OsDetection
 

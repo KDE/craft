@@ -25,9 +25,8 @@
 import os
 
 import utils
-
-from CraftOS.osutils import OsUtils
 from CraftCore import CraftCore
+from CraftOS.osutils import OsUtils
 
 
 class PostInstallRoutines(object):

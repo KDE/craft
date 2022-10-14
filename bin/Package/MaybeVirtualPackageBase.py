@@ -1,6 +1,6 @@
-from Package.VirtualPackageBase import *
-from Blueprints.CraftVersion import CraftVersion
 import Utils.CraftCache
+from Blueprints.CraftVersion import CraftVersion
+from Package.VirtualPackageBase import *
 
 
 class MaybeVirtualPackageBase(object):

@@ -1,11 +1,11 @@
 import InstallDB
 import utils
-from Blueprints.CraftPackageObject import *
 from Blueprints.CraftDependencyPackage import *
+from Blueprints.CraftPackageObject import *
 from Blueprints.CraftVersion import CraftVersion
 from Blueprints.MetaInfo import MetaInfo
-from Utils import CraftTimer
 from options import UserOptions
+from Utils import CraftTimer
 
 
 class SeachPackage(object):

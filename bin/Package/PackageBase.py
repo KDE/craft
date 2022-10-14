@@ -1,16 +1,15 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
+import json
 from pathlib import Path
 
+from Blueprints.CraftPackageObject import *
 from CraftBase import *
 from CraftCompiler import *
 from InstallDB import *
-from Blueprints.CraftPackageObject import *
-from Utils import CraftHash, GetFiles, CraftChoicePrompt
+from Utils import CraftChoicePrompt, CraftHash, GetFiles
 from Utils.CraftManifest import CraftManifest
-
-import json
 
 
 class PackageBase(CraftBase):

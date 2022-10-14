@@ -1,14 +1,12 @@
-import os
-
-from Packager.PackagerBase import PackagerBase
-from CraftCore import *
-from CraftBase import InitGuard
-from Utils.Arguments import Arguments
-import utils
-
-
 import glob
+import os
 from xml.etree import ElementTree
+
+import utils
+from CraftBase import InitGuard
+from CraftCore import *
+from Packager.PackagerBase import PackagerBase
+from Utils.Arguments import Arguments
 
 
 class CMakeApkPackager(PackagerBase):

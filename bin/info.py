@@ -2,15 +2,18 @@
 #
 # @package  this module contains the information class
 
+import os
 # the current work here is to access members only
 # by methods to be able to separate the access from
 # the definition
 from enum import Enum, unique
 
 import VersionInfo
-from Utils import CraftHash, CraftManifest
-from options import *
+from Blueprints.CraftPackageObject import CraftPackageObject
+from CraftCore import CraftCore
 from CraftDebug import deprecated
+from options import Options
+from Utils import CraftHash, CraftManifest
 
 
 @unique

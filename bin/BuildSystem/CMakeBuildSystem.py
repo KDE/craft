@@ -5,13 +5,13 @@
 
 """@package provides cmake build system"""
 
+import os
+
 from BuildSystem.BuildSystemBase import *
 from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
-from Utils.PostInstallRoutines import *
 from Utils.Arguments import Arguments
-
-import os
+from Utils.PostInstallRoutines import *
 
 
 class CMakeBuildSystem(BuildSystemBase):

@@ -1,5 +1,6 @@
 from Package.SourceOnlyPackageBase import *
 
+
 # a special package providing source components for another module.
 # see clang
 class SourceComponentPackageBase(SourceOnlyPackageBase):

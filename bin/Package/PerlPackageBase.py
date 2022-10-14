@@ -24,7 +24,7 @@
 
 from BuildSystem.PerlBuildSystem import *
 from Package.PackageBase import *
-from Packager.TypePackager import *
+from Packager.TypePackager import TypePackager
 from Source.MultiSource import *
 
 

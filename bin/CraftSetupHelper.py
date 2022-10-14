@@ -27,13 +27,12 @@ import collections
 import os
 import platform
 import shutil
-import subprocess
 import sqlite3
+import subprocess
 import sys
 
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
-
 from Utils.CaseInsensitiveDict import CaseInsensitiveDict
 
 # The minimum python version for craft please edit here

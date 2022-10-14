@@ -1,9 +1,8 @@
-import CraftTestBase
+import configparser
 
+import CraftTestBase
 from Blueprints.CraftVersion import *
 from options import *
-
-import configparser
 
 
 class TestUserOptions(CraftTestBase.CraftTestBase):

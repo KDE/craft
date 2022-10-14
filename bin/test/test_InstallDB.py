@@ -34,7 +34,6 @@
 """ Functional tests for InstallDB """
 
 import CraftTestBase
-
 import InstallDB
 from Blueprints.CraftPackageObject import *
 

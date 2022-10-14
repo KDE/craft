@@ -1,5 +1,6 @@
-from CraftCore import CraftCore
 import subprocess
+
+from CraftCore import CraftCore
 
 
 class Arguments(object):

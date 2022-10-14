@@ -4,16 +4,14 @@
 # Packager base
 
 import datetime
-import json
 import glob
+import json
 from pathlib import Path
 
 from CraftBase import *
-
+from CraftDebug import deprecated
 from Utils import CraftHash
 from Utils.CraftManifest import *
-
-from CraftDebug import deprecated
 
 
 class PackagerBase(CraftBase):

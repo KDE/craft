@@ -9,7 +9,6 @@ import os
 import shutil
 import sys
 
-
 from CraftCore import CraftCore
 
 

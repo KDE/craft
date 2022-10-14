@@ -25,19 +25,19 @@
 
 ### fetch functions
 
-from genericpath import exists
-from CraftCore import CraftCore
-from CraftDebug import deprecated
-import utils
-from shells import Powershell
-
 import io
 import os
-from pathlib import Path
-import urllib
+import re
 import subprocess
 import sys
-import re
+import urllib
+from pathlib import Path
+
+import utils
+from CraftCore import CraftCore
+from CraftDebug import deprecated
+from genericpath import exists
+from shells import Powershell
 
 
 def getFile(url, destdir, filename="", quiet=None) -> bool:

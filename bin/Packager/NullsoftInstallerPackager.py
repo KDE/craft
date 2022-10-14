@@ -32,9 +32,8 @@ from Blueprints.CraftVersion import CraftVersion
 from CraftBase import InitGuard
 from CraftCore import *
 from CraftOS.osutils import OsUtils
-from Utils import CodeSign, CraftHash
-
 from Packager.PortablePackager import PortablePackager
+from Utils import CodeSign, CraftHash
 
 
 class NullsoftInstallerPackager(PortablePackager):

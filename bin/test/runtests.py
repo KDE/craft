@@ -43,8 +43,8 @@ import unittest
 thisdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(thisdir, os.pardir))
 
-from CraftCore import CraftCore
 import CraftDebug
+from CraftCore import CraftCore
 
 
 def main():

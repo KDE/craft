@@ -24,7 +24,6 @@
 
 import os
 import sys
-
 from collections import OrderedDict
 
 # HACK for direct invocation, better provide a test scrip
@@ -32,9 +31,9 @@ if __name__ == "__main__":
     sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 
-import utils
 import getpass
 
+import utils
 from CraftCore import CraftCore
 
 

@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
 # definitions for the autotools build system
 
+import glob
+import os
+import stat
+from pathlib import Path
+
+import utils
 from BuildSystem.BuildSystemBase import BuildSystemBase
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from shells import BashShell
-import utils
 from Utils.Arguments import Arguments
-
-import os
-import glob
-import stat
-
-from pathlib import Path
 
 
 class AutoToolsBuildSystem(BuildSystemBase):

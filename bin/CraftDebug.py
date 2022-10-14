@@ -8,7 +8,6 @@ import re
 import shutil
 import sys
 
-
 from CraftCore import CraftCore
 
 try:

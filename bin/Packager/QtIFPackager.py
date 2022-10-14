@@ -22,17 +22,16 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-import datetime
 import cgi
+import datetime
 
-from Blueprints.MetaInfo import MetaInfo
 from Blueprints.CraftDependencyPackage import *
-from Packager.SevenZipPackager import *
-
-from Utils import CraftHash
 from Blueprints.CraftVersion import *
-from Package.VirtualPackageBase import VirtualPackageBase
+from Blueprints.MetaInfo import MetaInfo
 from CraftOS.osutils import OsUtils
+from Package.VirtualPackageBase import VirtualPackageBase
+from Packager.SevenZipPackager import *
+from Utils import CraftHash
 
 
 class QtIFPackager(SevenZipPackager):

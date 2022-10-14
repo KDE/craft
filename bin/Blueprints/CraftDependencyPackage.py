@@ -1,11 +1,12 @@
 from collections import OrderedDict
-from enum import unique, Enum, IntFlag
+from enum import Enum, IntFlag, unique
 
-from Blueprints.CraftPackageObject import CraftPackageObject, BlueprintException
+from Blueprints.CraftPackageObject import (BlueprintException,
+                                           CraftPackageObject)
 from Blueprints.CraftVersion import CraftVersion
 from CraftCore import CraftCore
-from Package import VirtualPackageBase
 from info import DependencyRequirementType
+from Package import VirtualPackageBase
 
 
 @unique
