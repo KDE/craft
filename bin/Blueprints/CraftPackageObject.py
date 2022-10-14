@@ -99,7 +99,7 @@ class CategoryPackageObject(object):
             return False
         if not CraftCore.compiler.compiler & self.compiler:
             CraftCore.log.debug(
-                f"{self.localPath}, is not supported on {CraftCore.compiler!r}, supported compiler {self.compiler!r}"
+                f"{self.localPath}, is not supported on {CraftCore.compiler.compiler!r}, supported compiler {self.compiler!r}"
             )
             return False
         return True
@@ -340,7 +340,7 @@ class CraftPackageObject(object):
 
     @property
     def instance(self):
-        if not self._instance:
+        if not self._instance and not self._pattern:
             CraftCore.log.debug(f"module to import: {self.source} {self.path}")
             modulename = os.path.splitext(os.path.basename(self.source))[0].replace(
                 ".", "_"

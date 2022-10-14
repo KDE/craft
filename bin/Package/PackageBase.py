@@ -9,7 +9,7 @@ from CraftBase import *
 from CraftCompiler import *
 from InstallDB import *
 from Utils import CraftChoicePrompt, CraftHash, GetFiles
-from Utils.CraftManifest import CraftManifest
+from Utils.CraftManifest import CraftManifest, FileType
 
 
 class PackageBase(CraftBase):
@@ -96,7 +96,7 @@ class PackageBase(CraftBase):
                 manifest = CraftManifest.fromJson(
                     CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json")
                 )
-            fileEntry = manifest.get(str(self)).files
+            fileEntry = manifest.get(str(self)).build
             files = []
             for f in fileEntry:
                 if f.version == self.version:
@@ -132,61 +132,78 @@ class PackageBase(CraftBase):
                 )
             else:
                 downloadFolder = self.cacheLocation()
-            localArchiveAbsPath = OsUtils.toNativePath(
-                os.path.join(downloadFolder, latest.fileName)
-            )
-            localArchivePath, localArchiveName = os.path.split(localArchiveAbsPath)
 
-            if url != self.cacheLocation():
-                if not os.path.exists(localArchiveAbsPath):
-                    os.makedirs(localArchivePath, exist_ok=True)
-                    fileName = latest.fileName
-                    if CraftCore.compiler.isWindows:
-                        fileName = fileName.replace("\\", "/")
-                    fUrl = f"{url}/{fileName}"
-                    # try it up to 3 times
-                    retries = 3
-                    while True:
-                        if GetFiles.getFile(fUrl, localArchivePath, localArchiveName):
-                            break
-                        msg = f"Failed to fetch {fUrl}"
-                        retries -= 1
-                        if not retries:
-                            if createingCache:
-                                raise BlueprintException(msg, self.package)
-                            else:
-                                CraftCore.log.warning(msg)
-                            return False
-            elif not os.path.isfile(localArchiveAbsPath):
-                continue
+            files = {}  # Dict[FileType, Tuple[str, str]]
+            for type in [FileType.Binary, FileType.Debug]:
+                fileObject = latest.files[type]
+                localArchiveAbsPath = OsUtils.toNativePath(
+                    os.path.join(downloadFolder, fileObject.fileName)
+                )
+                localArchivePath, localArchiveName = os.path.split(localArchiveAbsPath)
+                files[type] = localArchivePath, localArchiveName
 
-            if not CraftHash.checkFilesDigests(
-                localArchivePath,
-                [localArchiveName],
-                digests=latest.checksum,
-                digestAlgorithm=CraftHash.HashAlgorithm.SHA256,
-            ):
-                msg = f"Hash did not match, {localArchiveName} might be corrupted"
-                CraftCore.log.warning(msg)
-                if downloadRetriesLeft and CraftChoicePrompt.promptForChoice(
-                    "Do you want to delete the files and redownload them?",
-                    [("Yes", True), ("No", False)],
-                    default="Yes",
+                if url != self.cacheLocation():
+                    if not os.path.exists(localArchiveAbsPath):
+                        os.makedirs(localArchivePath, exist_ok=True)
+                        fileName = latest.fileName
+                        if CraftCore.compiler.isWindows:
+                            fileName = fileName.replace("\\", "/")
+                        fUrl = f"{url}/{fileName}"
+                        # try it up to 3 times
+                        retries = 3
+                        while True:
+                            if GetFiles.getFile(
+                                fUrl, localArchivePath, localArchiveName
+                            ):
+                                break
+                            msg = f"Failed to fetch {fUrl}"
+                            retries -= 1
+                            if not retries:
+                                if createingCache:
+                                    raise BlueprintException(msg, self.package)
+                                else:
+                                    CraftCore.log.warning(msg)
+                                return False
+                elif not os.path.isfile(localArchiveAbsPath):
+                    continue
+
+                if not CraftHash.checkFilesDigests(
+                    localArchivePath,
+                    [localArchiveName],
+                    digests=fileObject.checksum,
+                    digestAlgorithm=CraftHash.HashAlgorithm.SHA256,
                 ):
-                    return utils.deleteFile(localArchiveAbsPath) and self.fetchBinary(
-                        downloadRetriesLeft=downloadRetriesLeft - 1
-                    )
-                if createingCache:
-                    raise BlueprintException(msg, self.package)
-                return False
+                    msg = f"Hash did not match, {localArchiveName} might be corrupted"
+                    CraftCore.log.warning(msg)
+                    if downloadRetriesLeft and CraftChoicePrompt.promptForChoice(
+                        "Do you want to delete the files and redownload them?",
+                        [("Yes", True), ("No", False)],
+                        default="Yes",
+                    ):
+                        return utils.deleteFile(
+                            localArchiveAbsPath
+                        ) and self.fetchBinary(
+                            downloadRetriesLeft=downloadRetriesLeft - 1
+                        )
+                    if createingCache:
+                        raise BlueprintException(msg, self.package)
+                    return False
             self.subinfo.buildPrefix = latest.buildPrefix
             self.subinfo.isCachedBuild = True
+            if not self.cleanImage():
+                return False
+
+            dest = {
+                FileType.Binary: self.imageDir(),
+                FileType.Debug: self.symbolsImageDir(),
+            }
+            for type, (localArchivePath, localArchiveName) in files.items():
+                if not utils.cleanDirectory(dest[type]) or not utils.unpackFile(
+                    localArchivePath, localArchiveName, dest[type]
+                ):
+                    return False
             if not (
-                self.cleanImage()
-                and utils.unpackFile(
-                    localArchivePath, localArchiveName, self.imageDir()
-                )
-                and self.internalPostInstall()
+                self.internalPostInstall()
                 and self.postInstall()
                 and self.qmerge()
                 and self.internalPostQmerge()

@@ -364,51 +364,68 @@ class BuildSystemBase(CraftBase):
         # Install pdb files on MSVC if they are not found next to the dll
         # skip if we are a release build or from cache
         if not self.subinfo.isCachedBuild:
+            if not utils.cleanDirectory(self.symbolsImageDir()):
+                return False
             if self.buildType() in {"RelWithDebInfo", "Debug"}:
-                if CraftCore.compiler.isMSVC():
-                    # static libs might also have pdbs
-                    def staticLibsFilter(p: Path):
-                        if p.suffix == ".lib":
-                            dll = p.with_suffix(".dll")
-                            with io.StringIO() as log:
-                                utils.system(
-                                    ["lib", "-list", p], stdout=log, logCommand=False
-                                )
-                                if dll.name in log.getvalue():
-                                    return False
-                                return True
-                        return False
+                symbolsPattern = re.compile(
+                    r".*\{0}$".format(CraftCore.compiler.symbolsSuffix), re.IGNORECASE
+                )
 
-                    staticLibs = list(
-                        utils.filterDirectoryContent(
-                            self.installDir(),
-                            lambda x, root: staticLibsFilter(Path(x.path)),
-                            lambda x, root: True,
+                def symFilter(x: os.DirEntry, root):
+                    if CraftCore.compiler.isMacOS:
+                        if x.is_file():
+                            return False
+                    else:
+                        if x.is_dir():
+                            return False
+                    return utils.regexFileFilter(x, root, [symbolsPattern])
+
+                for f in utils.filterDirectoryContent(
+                    self.imageDir(), symFilter, lambda x, root: True
+                ):
+                    dest = self.symbolsImageDir() / Path(f).relative_to(self.imageDir())
+                    if not dest.parent.exists():
+                        if not utils.createDir(dest.parent):
+                            return False
+                    if not utils.moveFile(f, dest):
+                        return False
+                if CraftCore.compiler.isMSVC():
+                    for f in binaryFiles:
+                        pdb = utils.getPDBForBinary(f)
+                        pdbDestination = (
+                            self.symbolsImageDir()
+                            / Path(f).parent.relative_to(self.imageDir())
+                            / os.path.basename(pdb)
                         )
-                    )
-                    for f in binaryFiles + staticLibs:
-                        if not os.path.exists(f"{os.path.splitext(f)[0]}.pdb"):
-                            pdb = utils.getPDBForBinary(f)
-                            if not pdb:
-                                CraftCore.log.warning(f"Could not find a PDB for {f}")
-                                continue
+                        if not pdb:
+                            CraftCore.log.warning(f"Could not find a PDB for {f}")
+                            continue
+                        if not pdbDestination.exists():
                             if not os.path.exists(pdb):
                                 CraftCore.log.warning(
                                     f"PDB {pdb} for {f} does not exist"
                                 )
                                 continue
-                            pdbDestination = os.path.join(
-                                os.path.dirname(f), os.path.basename(pdb)
-                            )
-
                             CraftCore.log.info(
                                 f"Install pdb: {pdbDestination} for {os.path.basename(f)}"
                             )
-                            utils.copyFile(pdb, pdbDestination, linkOnly=False)
+                            if not utils.copyFile(pdb, pdbDestination, linkOnly=False):
+                                return False
                 else:
                     if not self.subinfo.options.package.disableStriping:
                         for f in binaryFiles:
-                            utils.strip(f)
+                            f = Path(f)
+                            destDir = self.symbolsImageDir() / f.parent.relative_to(
+                                self.imageDir()
+                            )
+                            symFileDest = destDir / utils.symFileName(f).name
+                            if symFileDest.exists():
+                                return symFileDest
+
+                            if not destDir.exists() and not utils.createDir(destDir):
+                                return False
+                            if not utils.strip(f, symFileDest):
+                                return False
 
             # sign the binaries if we can
             if CraftCore.compiler.isWindows and CraftCore.settings.getboolean(

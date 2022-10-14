@@ -24,6 +24,8 @@ class PackagerBase(CraftBase):
         self.blacklist_file = []
         self.defines = {}
         self.ignoredPackages = []
+        self._manifest = None
+        self._currentManifestEnty = None
 
     def setDefaults(self, defines: {str: str}) -> {str: str}:
         defines = dict(defines)
@@ -103,7 +105,12 @@ class PackagerBase(CraftBase):
         utils.abstract()
 
     def _generateManifest(
-        self, destDir, archiveName, manifestLocation=None, manifestUrls=None
+        self,
+        destDir,
+        archiveName,
+        manifestLocation=None,
+        manifestUrls=None,
+        fileType: FileType = FileType.Binary,
     ):
         if not manifestLocation:
             manifestLocation = destDir
@@ -115,17 +122,21 @@ class PackagerBase(CraftBase):
             if not os.path.isabs(archiveName)
             else os.path.relpath(archiveName, destDir)
         )
-
-        manifest = CraftManifest.load(manifestLocation, urls=manifestUrls)
-        entry = manifest.get(str(self))
-        entry.addFile(
+        if not self._manifest:
+            self._manifest = manifest = CraftManifest.load(
+                manifestLocation, urls=manifestUrls
+            )
+        if not self._currentManifestEnty:
+            self._currentManifestEnty = manifest.get(str(self)).addBuild(
+                self.version, self.subinfo.options.dynamic
+            )
+        self._currentManifestEnty.addFile(
+            fileType,
             name,
             CraftHash.digestFile(archiveFile, CraftHash.HashAlgorithm.SHA256),
-            version=self.version,
-            config=self.subinfo.options.dynamic,
         )
 
-        manifest.dump(manifestLocation)
+        self._manifest.dump(manifestLocation)
 
     @property
     def archiveExtension(self):
@@ -138,7 +149,12 @@ class PackagerBase(CraftBase):
         return extension
 
     def _createArchive(
-        self, archiveName, sourceDir, destDir, createDigests=True
+        self,
+        archiveName,
+        sourceDir,
+        destDir,
+        createDigests=True,
+        fileType: FileType = FileType.Binary,
     ) -> bool:
         archiveName = Path(destDir) / archiveName
         if archiveName.suffix == ".7z" and not CraftCore.cache.findApplication("7za"):
@@ -150,29 +166,8 @@ class PackagerBase(CraftBase):
             return False
 
         if createDigests:
-            if (
-                CraftCore.settings.getboolean("Packager", "CreateCache")
-                and CraftCore.settings.get("Packager", "PackageType")
-                == "SevenZipPackager"
-            ):
-                if CraftCore.settings.getboolean(
-                    "ContinuousIntegration", "UpdateRepository", False
-                ):
-                    manifestUrls = [self.cacheRepositoryUrls()[0]]
-                else:
-                    CraftCore.log.warning(
-                        f'Creating new cache, if you want to extend an existing cache, set "[ContinuousIntegration]UpdateRepository = True"'
-                    )
-                    manifestUrls = None
-                self._generateManifest(
-                    destDir,
-                    archiveName,
-                    manifestLocation=self.cacheLocation(),
-                    manifestUrls=manifestUrls,
-                )
-            else:
-                self._generateManifest(destDir, archiveName)
-                CraftHash.createDigestFiles(archiveName)
+            self._generateManifest(destDir, archiveName, fileType=fileType)
+            CraftHash.createDigestFiles(archiveName)
         return True
 
     def addExecutableFilter(self, pattern: str):

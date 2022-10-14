@@ -1299,15 +1299,7 @@ def installShortcut(name: str, path: str, workingDir: str, icon: str, desciption
     )
 
 
-def strip(fileName):
-    """strip debugging informations from shared libraries and executables - mingw only!!!"""
-    if CraftCore.compiler.isMSVC() or not CraftCore.compiler.isGCCLike():
-        CraftCore.log.warning(
-            f"Skipping stripping of {fileName} -- either disabled or unsupported with this compiler"
-        )
-        return True
-
-    fileName = Path(fileName)
+def symFileName(fileName: Path) -> Path:
     isBundle = False
     if CraftCore.compiler.isMacOS:
         bundleDir = list(
@@ -1322,29 +1314,52 @@ def strip(fileName):
             if len(bundleDir) > 1:
                 suffix = f"-{'.'.join([x.name for x in reversed(bundleDir[0:-1])])}"
             isBundle = True
-            symFile = Path(f"{bundleDir[-1]}{suffix}.dSYM")
+            symFile = Path(
+                f"{bundleDir[-1]}{suffix}.{CraftCore.compiler.symbolsSuffix}"
+            )
         else:
-            symFile = Path(f"{fileName}.dSYM")
+            symFile = Path(f"{fileName}{CraftCore.compiler.symbolsSuffix}")
     else:
-        symFile = Path(f"{fileName}.debug")
+        symFile = Path(f"{fileName}{CraftCore.compiler.symbolsSuffix}")
 
-    if not isBundle and symFile.exists():
+    if isBundle:
+        # TODO:
+        bundledSymFile = symFile / "Contents/Resources/DWARF" / fileName.name
+        if bundledSymFile.exists():
+            return bundledSymFile
+    return symFile
+
+
+def strip(fileName: Path, destFileName: Path = None) -> Path:
+    """strip debugging informations from shared libraries and executables"""
+    """ Returns the path to the sym file on success, None on error"""
+    if CraftCore.compiler.isMSVC() or not CraftCore.compiler.isGCCLike():
+        CraftCore.log.warning(
+            f"Skipping stripping of {fileName} -- either disabled or unsupported with this compiler"
+        )
         return True
-    elif (symFile / "Contents/Resources/DWARF" / fileName.name).exists():
-        return True
+
+    fileName = Path(fileName)
+    if not destFileName:
+        destFileName = symFileName(fileName)
+    if destFileName.exists():
+        return destFileName
 
     if CraftCore.compiler.isMacOS:
-        return (
-            system(["dsymutil", fileName, "-o", symFile])
+        if not (
+            system(["dsymutil", fileName, "-o", destFileName])
             and system(["strip", "-x", "-S", fileName])
             and system(["codesign", "-f", "-s", "-", fileName])
-        )
+        ):
+            return None
     else:
-        return (
-            system(["objcopy", "--only-keep-debug", fileName, symFile])
+        if not (
+            system(["objcopy", "--only-keep-debug", fileName, destFileName])
             and system(["strip", "--strip-debug", "--strip-unneeded", fileName])
-            and system(["objcopy", "--add-gnu-debuglink", symFile, fileName])
-        )
+            and system(["objcopy", "--add-gnu-debuglink", destFileName, fileName])
+        ):
+            return False
+    return destFileName
 
 
 def urljoin(root, path):

@@ -162,9 +162,7 @@ class CollectionPackagerBase(PackagerBase):
             if isinstance(_package, SourceOnlyPackageBase):
                 CraftCore.log.debug(f"Ignoring package it is source only: {x}")
                 continue
-            imageDirs.append(
-                (x.instance.imageDir(), x.subinfo.options.package.disableStriping)
-            )
+            imageDirs.append(x.instance)
             # this loop collects the files from all image directories
             CraftCore.log.debug(
                 f"__getImageDirectories: package: {x}, version: {x.version}"
@@ -258,47 +256,39 @@ class CollectionPackagerBase(PackagerBase):
                 return False
         return True
 
-    def internalCreatePackage(
-        self, defines=None, seperateSymbolFiles=False, packageSymbols=True
-    ) -> bool:
+    def internalCreatePackage(self, defines=None) -> bool:
         """create a package"""
 
-        seperateSymbolFiles = seperateSymbolFiles and CraftCore.settings.getboolean(
+        packageSymbols = CraftCore.settings.getboolean(
             "Packager", "PackageDebugSymbols", False
         )
         archiveDir = self.archiveDir()
 
-        if CraftCore.compiler.isMacOS:
-            symbolSuffix = ".dSYM"
-        elif CraftCore.compiler.isMSVC():
-            symbolSuffix = ".pdb"
-        else:
-            symbolSuffix = ".debug"
-        if CraftCore.compiler.isGCCLike() and not CraftCore.compiler.isMacOS:
-            # the files where previously called .sym, .debug is how qt calls it
-            symbolPattern = r".*(\{0}|\.sym)$".format(symbolSuffix)
-        elif CraftCore.compiler.isMSVC():
-            # also filter mingw symbols
-            symbolPattern = r".*(\{0}|\.sym|\.debug)$".format(symbolSuffix)
-        else:
-            symbolPattern = r".*\{0}$".format(symbolSuffix)
-        symbolPattern = re.compile(symbolPattern, re.IGNORECASE)
-
-        if not seperateSymbolFiles:
-            self.blacklist.append(symbolPattern)
-
         CraftCore.log.debug("cleaning package dir: %s" % archiveDir)
         utils.cleanDirectory(archiveDir)
-        if seperateSymbolFiles:
+        if packageSymbols:
             utils.cleanDirectory(self.archiveDebugDir())
 
-        for directory, strip in self.__getImageDirectories():
-            if os.path.exists(directory):
-                if not self.copyFiles(directory, archiveDir):
+        for package in self.__getImageDirectories():
+            if package.imageDir().exists():
+                if not self.copyFiles(package.imageDir(), archiveDir):
                     return False
             else:
-                CraftCore.log.critical("image directory %s does not exist!" % directory)
+                CraftCore.log.critical(
+                    "image directory %s does not exist!" % package.imageDir()
+                )
                 return False
+            if packageSymbols:
+                if package.symbolsImageDir().exists():
+                    if not self.copyFiles(
+                        package.symbolsImageDir(), self.archiveDebugDir()
+                    ):
+                        return False
+                else:
+                    CraftCore.log.warning(
+                        "symbols directory %s does not exist!"
+                        % package.symbolsImageDir()
+                    )
 
         pathsToMoveToBinPath = []
         if self.subinfo.options.package.movePluginsToBin:
@@ -325,78 +315,20 @@ class CollectionPackagerBase(PackagerBase):
         if not self.preArchive():
             return False
 
-        if seperateSymbolFiles:
-            CraftCore.log.info(f"Move symbols to {self.archiveDebugDir()}")
-
-            def binaryFilter(x):
-                if CraftCore.compiler.isMacOS:
-                    # TODO:
-                    if Path(x.path).suffix in {".framework", ".app"}:
-                        return True
-                return utils.isBinary(x.path)
-
-            # use a final list and don't scan on demand
-            # the moved folders might cause issues otherwise
-            binaries = list(
-                utils.filterDirectoryContent(
-                    archiveDir,
-                    handleAppBundleAsFile=True,
-                    whitelist=lambda x, root: binaryFilter(x),
-                    blacklist=lambda x, root: True,
-                )
-            )
-            for sym in binaries:
-                if CraftCore.compiler.isWindows:
-                    sym = Path(sym).with_suffix(symbolSuffix)
-                else:
-                    sym = Path(sym + symbolSuffix)
-                if sym.exists():
-                    dest = Path(self.archiveDebugDir()) / os.path.relpath(
-                        sym, archiveDir
-                    )
-                    CraftCore.log.info(f"Move symbols: {sym} {dest}")
-                    if not utils.createDir(dest.parent):
-                        return False
-                    if not utils.moveFile(sym, dest):
-                        return False
-
-            CraftCore.log.info("Remove unused symbols")
-
-            def symFilter(x: os.DirEntry, root):
-                if CraftCore.compiler.isMacOS:
-                    if x.is_file():
-                        return False
-                else:
-                    if x.is_dir():
-                        return False
-                return utils.regexFileFilter(x, root, [symbolPattern])
-
-            for sym in utils.filterDirectoryContent(
-                archiveDir,
-                handleAppBundleAsFile=True,
-                whitelist=symFilter,
-                blacklist=lambda x, root: True,
+        # package symbols if the dir isn't empty
+        if packageSymbols and os.listdir(self.archiveDebugDir()):
+            dbgName = Path("{0}-dbg{1}".format(*os.path.splitext(defines["setupname"])))
+            if not CraftCore.compiler.isWindows:
+                dbgName = dbgName.with_suffix(".tar.7z")
+            if dbgName.exists():
+                dbgName.unlink()
+            if not self._createArchive(
+                dbgName,
+                self.archiveDebugDir(),
+                self.packageDestinationDir(),
+                fileType=FileType.Debug,
             ):
-                CraftCore.log.info(f"Delete symbols: {sym}")
-                if CraftCore.compiler.isMacOS:
-                    if not utils.rmtree(sym):
-                        return False
-                else:
-                    if not utils.deleteFile(sym):
-                        return False
-
-            if packageSymbols and os.listdir(self.archiveDebugDir()):
-                dbgName = Path(
-                    "{0}-dbg{1}".format(*os.path.splitext(defines["setupname"]))
-                )
-                if not CraftCore.compiler.isWindows:
-                    dbgName = dbgName.with_suffix(".tar.7z")
-                if dbgName.exists():
-                    dbgName.unlink()
-                if not self._createArchive(
-                    dbgName, self.archiveDebugDir(), self.packageDestinationDir()
-                ):
-                    return False
+                return False
 
         return True
 

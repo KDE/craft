@@ -15,18 +15,12 @@ class MacBasePackager(CollectionPackagerBase):
         CollectionPackagerBase.__init__(self, whitelists, blacklists)
         self.externalLibs = {}
 
-    def internalCreatePackage(
-        self, defines, seperateSymbolFiles=False, packageSymbols=False
-    ):
+    def internalCreatePackage(self, defines):
         """create a package"""
         CraftCore.log.debug("packaging using the MacDMGPackager")
 
         # TODO: provide an image with dbg files
-        if not super().internalCreatePackage(
-            defines,
-            seperateSymbolFiles=seperateSymbolFiles,
-            packageSymbols=packageSymbols,
-        ):
+        if not super().internalCreatePackage(defines):
             return False
 
         appPath = self.getMacAppPath(defines)

@@ -240,7 +240,6 @@ class CraftCache(object):
                     data = str(fh.read(), "UTF-8")
                     vers = re.findall(pattern, data)
                     if not vers:
-                        print(data)
                         raise Exception("Pattern %s does not match." % pattern)
                     out = list(set(vers))
                     self._nightlyVersions[url] = out

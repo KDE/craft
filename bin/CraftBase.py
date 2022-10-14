@@ -139,6 +139,9 @@ class CraftBase(object):
         utils.createDir(dstpath)
         return dstpath
 
+    def symbolsImageDir(self) -> Path:
+        return self.buildRoot() / f"{self.imageDirPattern()}-dbg"
+
     @property
     def buildTarget(self):
         return self.subinfo.buildTarget
@@ -236,7 +239,7 @@ class CraftBase(object):
     def cacheVersion():
         return CraftCore.settings.get("Packager", "CacheVersion")
 
-    def cacheLocation(self, baseDir=None) -> str:
+    def cacheLocation(self, baseDir=None) -> Path:
         if not baseDir:
             cacheDir = CraftCore.settings.get(
                 "Packager",
@@ -244,13 +247,15 @@ class CraftBase(object):
                 os.path.join(CraftStandardDirs.downloadDir(), "binary"),
             )
         else:
-            cacheDir = baseDir
+            cacheDir = Path(baseDir)
 
         version = self.cacheVersion()
         if not version:
             return None
-        return os.path.join(
-            cacheDir, version, *CraftCore.compiler.signature, self.buildType()
+        return Path(
+            os.path.join(
+                cacheDir, version, *CraftCore.compiler.signature, self.buildType()
+            )
         )
 
     def cacheRepositoryUrls(self) -> [str]:

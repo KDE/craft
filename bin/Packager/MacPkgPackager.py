@@ -40,9 +40,7 @@ class MacPkgPackager(MacBasePackager):
                 "Cannot not create .pkg because no .pkgproj was defined."
             )
             return False
-        if not self.internalCreatePackage(
-            defines, seperateSymbolFiles=True, packageSymbols=True
-        ):
+        if not self.internalCreatePackage(defines):
             return False
 
         packageDest = Path(defines["setupname"])

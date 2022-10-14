@@ -292,9 +292,7 @@ class AppxPackager(CollectionPackagerBase):
         publisherId = CraftCore.settings.get("Packager", "AppxPublisherId", "")
         createStorePackage = bool(publisherId)
         utils.cleanDirectory(self.artifactsDir())
-        if not self.internalCreatePackage(
-            defines, seperateSymbolFiles=createStorePackage, packageSymbols=False
-        ):
+        if not self.internalCreatePackage(defines):
             return False
 
         if not self.__prepareIcons(defines):

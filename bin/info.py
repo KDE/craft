@@ -11,6 +11,7 @@ from enum import Enum, unique
 from typing import *
 
 import VersionInfo
+from CraftCompiler import CraftCompiler, CraftCompilerSignature
 from CraftDebug import deprecated
 from options import *
 from Utils import CraftHash, CraftManifest
@@ -283,18 +284,23 @@ class infoclass(object):
                 )
                 continue
             manifest = CraftManifest.CraftManifest.fromJson(json)
-            if (
-                packageName
-                not in manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"]
-            ):
+            compiler = CraftCompilerSignature(
+                CraftCompiler.Platforms.Windows,
+                CraftCompiler.Compiler.GCC,
+                None,
+                CraftCore.compiler.architecture,
+            )
+            if packageName not in manifest.packages[str(compiler)]:
                 del self.targets[key]
                 CraftCore.log.debug(f"Failed to find {packageName} on {url}")
                 continue
-            data = manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"][
-                packageName
-            ].latest
-            self.targets[key] = f"{url}/{data.fileName}"
-            self.targetDigests[key] = ([data.checksum], CraftHash.HashAlgorithm.SHA256)
+            data = manifest.packages[str(compiler)][packageName].latest
+            binaryFile = data.files[CraftManifest.FileType.Binary]
+            self.targets[key] = f"{url}/{binaryFile.fileName}"
+            self.targetDigests[key] = (
+                [binaryFile.checksum],
+                CraftHash.HashAlgorithm.SHA256,
+            )
             if packageName != self.parent.package:
                 if data.version in package.subinfo.patchLevel:
                     self.patchLevel[key] = package.subinfo.patchLevel[data.version]
@@ -320,12 +326,17 @@ class infoclass(object):
         manifest = CraftManifest.CraftManifest.fromJson(
             CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json")
         )
-        latest = manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"][
-            packagePath
-        ].latest
-        self.targets[latest.version] = f"{url}/{latest.fileName}"
+        compiler = CraftCompilerSignature(
+            CraftCompiler.Platforms.Windows,
+            CraftCompiler.Compiler.GCC,
+            None,
+            CraftCore.compiler.architecture,
+        )
+        latest = manifest.packages[str(compiler)].get(str(packagePath)).latest
+        binaryFile = latest.files[CraftManifest.FileType.Binary]
+        self.targets[latest.version] = f"{url}/{binaryFile.fileName}"
         self.targetDigests[latest.version] = (
-            [latest.checksum],
+            [binaryFile.checksum],
             CraftHash.HashAlgorithm.SHA256,
         )
         self.defaultTarget = latest.version

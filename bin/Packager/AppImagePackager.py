@@ -28,9 +28,7 @@ class AppImagePackager(CollectionPackagerBase):
 
         archiveDir = Path(self.archiveDir())
         defines = self.setDefaults(self.defines)
-        if not self.internalCreatePackage(
-            defines, packageSymbols=True, seperateSymbolFiles=True
-        ):
+        if not self.internalCreatePackage(defines):
             return False
         if not utils.mergeTree(archiveDir, archiveDir / "usr"):
             return False

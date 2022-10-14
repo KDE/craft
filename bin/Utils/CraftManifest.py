@@ -3,17 +3,50 @@ import datetime
 import json
 import os
 import shutil
+from enum import Enum, auto, unique
 from pathlib import Path
 from typing import List
 
 import utils
+from CraftCompiler import CraftCompilerSignature
 from CraftCore import CraftCore
 
 
+@unique
+class FileType(Enum):
+    Binary = auto()
+    Debug = auto()
+    Source = auto()
+
+    @classmethod
+    def fromString(cls, name):
+        if not hasattr(cls, "__sting_map"):
+            cls.__sting_map = dict([(k.lower(), v) for k, v in cls.__members__.items()])
+        return cls.__sting_map[name.lower()]
+
+
 class CraftManifestEntryFile(object):
-    def __init__(self, fileName: str, checksum: str, version: str = "") -> None:
+    def __init__(self, fileType: FileType, fileName: str, checksum: str):
+        self.fileType = fileType
         self.fileName = fileName
         self.checksum = checksum
+
+    @staticmethod
+    def fromJson(data: dict):
+        return CraftManifestEntryFile(
+            FileType.fromString(data["fileType"]), data["fileName"], data["checksum"]
+        )
+
+    def toJson(self) -> dict:
+        return {
+            "fileName": self.fileName,
+            "checksum": self.checksum,
+            "fileType": self.fileType.name,
+        }
+
+
+class CraftManifestBuild(object):
+    def __init__(self, version: str) -> None:
         self.date = datetime.datetime.utcnow()
         self.version = version
         self.buildPrefix = str(CraftCore.standardDirs.craftRoot())
@@ -21,23 +54,37 @@ class CraftManifestEntryFile(object):
         self.configHash = None
         self.config = None
 
-        if CraftCore.compiler.isWindows:
-            self.fileName = self.fileName.replace("\\", "/")
+        self.files = {}  # Dict[FileType, CraftManifestEntryFiles]
+
+    def addFile(
+        self, fileType: FileType, fileName: str, checksum: str
+    ) -> CraftManifestEntryFile:
+        f = CraftManifestEntryFile(
+            fileType=fileType, fileName=fileName, checksum=checksum
+        )
+        self.files[fileType] = f
+        return f
 
     @staticmethod
     def fromJson(data: dict):
-        out = CraftManifestEntryFile(data["fileName"], data["checksum"])
+        out = CraftManifestBuild(data.get("version", ""))
         out.date = CraftManifest._parseTimeStamp(data["date"])
-        out.version = data.get("version", "")
         out.buildPrefix = data.get("buildPrefix", None)
         out.configHash = data.get("configHash", None)
         out.config = collections.OrderedDict(data.get("config", {}))
+
+        for _, v in data["files"].items():
+            f = CraftManifestEntryFile.fromJson(v)
+            out.files[f.fileType] = f
         return out
 
     def toJson(self) -> dict:
+        files = {}
+        # map enum to name
+        for k, v in self.files.items():
+            files[k.name] = v
         data = {
-            "fileName": self.fileName,
-            "checksum": self.checksum,
+            "files": files,
             "date": self.date.strftime(CraftManifest._TIME_FORMAT),
             "version": self.version,
         }
@@ -52,13 +99,13 @@ class CraftManifestEntryFile(object):
 class CraftManifestEntry(object):
     def __init__(self, name: str) -> None:
         self.name = name
-        self.files = []  # type: List[CraftManifestEntryFile]
+        self.build = []  # type: List[CraftManifestBuild]
 
     @staticmethod
     def fromJson(data: dict):
         entry = CraftManifestEntry(data["name"])
-        entry.files = sorted(
-            [CraftManifestEntryFile.fromJson(fileData) for fileData in data["files"]],
+        entry.build = sorted(
+            [CraftManifestBuild.fromJson(fileData) for fileData in data["build"]],
             key=lambda x: x.date,
             reverse=True,
         )
@@ -67,21 +114,19 @@ class CraftManifestEntry(object):
     def toJson(self) -> dict:
         return {
             "name": self.name,
-            "files": [x.toJson() for x in collections.OrderedDict.fromkeys(self.files)],
+            "build": [x.toJson() for x in collections.OrderedDict.fromkeys(self.build)],
         }
 
-    def addFile(
-        self, fileName: str, checksum: str, version: str = "", config=None
-    ) -> CraftManifestEntryFile:
-        f = CraftManifestEntryFile(fileName, checksum, version)
+    def addBuild(self: str, version: str, config) -> CraftManifestBuild:
+        f = CraftManifestBuild(version)
         if config:
             f.config = config.dump()
-        self.files.insert(0, f)
+        self.build.insert(0, f)
         return f
 
     @property
-    def latest(self) -> CraftManifestEntryFile:
-        return self.files[0] if self.files else None
+    def latest(self) -> CraftManifestBuild:
+        return self.build[0] if self.build else None
 
 
 class CraftManifest(object):
@@ -94,26 +139,38 @@ class CraftManifest(object):
 
     @staticmethod
     def version() -> int:
-        return 1
+        return 2
 
     @staticmethod
-    def _migrate0(data: dict):
-        manifest = CraftManifest()
-        packages = manifest.packages[str(CraftCore.compiler)]
-        for name, package in data.items():
-            if not name in packages:
-                packages[name] = CraftManifestEntry(name)
-            p = packages[name]
-            for fileName, pData in data[name].items():
-                f = p.addFile(fileName, pData["checksum"])
-                f.date = datetime.datetime(1, 1, 1)
-        return manifest
+    def _migrate1(data: dict):
+        from Utils import CraftManifestV1
+
+        manifest = CraftManifestV1.CraftManifest.fromJson(data)
+        out = CraftManifest()
+        out.origin = manifest.origin
+        out.date = manifest.date
+        for k, v in manifest.packages.items():
+            signatue = CraftCompilerSignature.parseAbi(k)
+            out.packages[str(signatue)] = {}
+            for name, entry in v.items():
+                out.packages[str(signatue)][name] = e = CraftManifestEntry(name)
+                for f in entry.files:
+                    p = e.addBuild(f.version, None)
+                    p.addFile(FileType.Binary, f.fileName, f.checksum)
+                    p.config = f.config
+                    p.buildPrefix = f.buildPrefix
+                    p.date = f.date
+                # ensure sorting
+                e.build = sorted(e.build, key=lambda x: x.date, reverse=True)
+        return out
 
     @staticmethod
     def fromJson(data: dict):
-        version = data.get("version", 0)
-        if version == 0:
-            return CraftManifest._migrate0(data)
+        if not data:
+            return CraftManifest()
+        version = data.get("version", -1)
+        if version == 1:
+            return CraftManifest._migrate1(data)
         elif version != CraftManifest.version():
             raise Exception("Invalid manifest version detected")
 
@@ -210,7 +267,7 @@ class CraftManifest(object):
                 with open(manifestFileName, "rt") as cacheFile:
                     cache = CraftManifest.fromJson(json.load(cacheFile))
             except Exception as e:
-                CraftCore.log.warning(f"Failed to load {cacheFile}, {e}")
+                CraftCore.log.warning(f"Failed to load {cacheFile}", exc_info=e)
                 pass
         if old:
             if cache:

@@ -278,6 +278,15 @@ class CraftCompiler(object):
     def executableSuffix(self):
         return ".exe" if self.isWindows else ""
 
+    @property
+    def symbolsSuffix(self):
+        if self.isMacOS:
+            return ".dSYM"
+        elif self.isMSVC():
+            return ".pdb"
+        else:
+            return ".debug"
+
     def isNative(self):
         return CraftCore.settings.getboolean("General", "Native", True)
 
