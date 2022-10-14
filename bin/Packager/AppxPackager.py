@@ -22,14 +22,13 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-import os
 import mimetypes
+import os
 
-
-from Utils import CraftHash, CodeSign
+from Blueprints.CraftVersion import CraftVersion
 from Packager.CollectionPackagerBase import *
 from Packager.PortablePackager import *
-from Blueprints.CraftVersion import CraftVersion
+from Utils import CodeSign, CraftHash
 
 
 class AppxPackager(CollectionPackagerBase):

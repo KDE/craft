@@ -6,9 +6,9 @@
 """@package provides boost build system"""
 from Blueprints.CraftVersion import CraftVersion
 from BuildSystem.BuildSystemBase import *
+from CraftCompiler import CraftCompiler
 from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
-from CraftCompiler import CraftCompiler
 
 
 class BoostBuildSystem(BuildSystemBase):

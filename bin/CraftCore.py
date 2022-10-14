@@ -6,11 +6,11 @@ import sys
 # Add imports that cause a cyclic dependency in a not taken branch to make code completion work
 if False:
     from .CraftCompiler import CraftCompiler
+    from .CraftConfig import CraftConfig
     from .CraftDebug import CraftDebug
     from .CraftStandardDirs import CraftStandardDirs
-    from .CraftConfig import CraftConfig
-    from .Utils.CraftCache import CraftCache
     from .InstallDB import InstallDB
+    from .Utils.CraftCache import CraftCache
 
 
 # TODO: a more optimal solution would be to initialize all singletons in a

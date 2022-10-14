@@ -4,7 +4,6 @@
 
 from Source.ArchiveSource import ArchiveSource
 from Source.GitSource import GitSource
-
 from Source.SourceBase import *
 from Source.SvnSource import SvnSource
 

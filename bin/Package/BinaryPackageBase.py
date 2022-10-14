@@ -1,13 +1,13 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
+import stat
+from pathlib import Path
+
 from BuildSystem.BinaryBuildSystem import *
 from Package.PackageBase import *
 from Packager.TypePackager import *
 from Source.MultiSource import *
-
-from pathlib import Path
-import stat
 
 
 class BinaryPackageBase(PackageBase, MultiSource, BinaryBuildSystem, TypePackager):

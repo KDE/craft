@@ -6,8 +6,8 @@ import shutil
 from pathlib import Path
 from typing import List
 
-from CraftCore import CraftCore
 import utils
+from CraftCore import CraftCore
 
 
 class CraftManifestEntryFile(object):

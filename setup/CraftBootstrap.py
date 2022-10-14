@@ -1,7 +1,6 @@
 import argparse
 import configparser
 import os
-from pathlib import Path
 import platform
 import re
 import shutil
@@ -9,6 +8,7 @@ import subprocess
 import sys
 import urllib.parse
 import urllib.request
+from pathlib import Path
 
 if not platform.machine().endswith("64"):
     print(

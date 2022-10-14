@@ -1,5 +1,5 @@
-from CraftCore import CraftCore
 import info
+from CraftCore import CraftCore
 from Package.PipPackageBase import PipPackageBase
 
 

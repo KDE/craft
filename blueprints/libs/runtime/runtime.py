@@ -1,5 +1,6 @@
-import info
 import glob
+
+import info
 
 
 class subinfo(info.infoclass):

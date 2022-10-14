@@ -1,5 +1,4 @@
 import CraftTestBase
-
 from Blueprints.CraftVersion import *
 
 

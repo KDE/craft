@@ -8,14 +8,15 @@ from pathlib import Path
 
 import info
 import utils
+from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftConfig import *
 from CraftCore import CraftCore
-from CraftStandardDirs import CraftStandardDirs
-from Blueprints import CraftPackageObject
 from CraftDebug import deprecated
-from Blueprints.CraftPackageObject import CraftPackageObject
-from Utils.CraftShortPath import CraftShortPath
 from CraftOS.osutils import OsUtils
+from CraftStandardDirs import CraftStandardDirs
+from Utils.CraftShortPath import CraftShortPath
+
+from Blueprints import CraftPackageObject
 
 
 class InitGuard(object):

@@ -33,9 +33,9 @@
 import json
 import subprocess
 
+from CraftOS.osutils import OsUtils
 from Packager.PackagerBase import *
 from Utils import CraftHash
-from CraftOS.osutils import OsUtils
 
 
 class SevenZipPackager(PackagerBase):

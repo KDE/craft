@@ -21,22 +21,22 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
+import glob
 import subprocess
 import tempfile
-import glob
-from pathlib import Path
-from collections import namedtuple, OrderedDict
 import urllib
+from collections import OrderedDict, namedtuple
+from pathlib import Path
 
 import CraftBase
-from Blueprints.CraftDependencyPackage import CraftDependencyPackage, DependencyType
-from Blueprints.CraftVersion import CraftVersion
-from Blueprints.CraftPackageObject import CraftPackageObject
-from Utils.CraftTitleUpdater import CraftTitleUpdater
-from Utils import CraftTimer
-from options import *
-
 import utils
+from Blueprints.CraftDependencyPackage import (CraftDependencyPackage,
+                                               DependencyType)
+from Blueprints.CraftPackageObject import CraftPackageObject
+from Blueprints.CraftVersion import CraftVersion
+from options import *
+from Utils import CraftTimer
+from Utils.CraftTitleUpdater import CraftTitleUpdater
 
 
 def __recurseCraft(command: [str], args: [str]):
@@ -589,8 +589,8 @@ def printFiles(packages):
 
 
 def createArchiveCache(packages: CraftPackageObject):
-    from Source.ArchiveSource import ArchiveSource
     from Package.VirtualPackageBase import SourceComponentPackageBase
+    from Source.ArchiveSource import ArchiveSource
 
     packages = CraftDependencyPackage(packages).getDependencies()
     for p in packages:

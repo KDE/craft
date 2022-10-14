@@ -23,16 +23,16 @@
 # SUCH DAMAGE.
 
 import os
-from pathlib import Path
 import re
-import subprocess
 import secrets
+import subprocess
+from pathlib import Path
 
-from CraftCore import CraftCore
-from CraftOS.osutils import OsUtils, LockFile
-from CraftSetupHelper import SetupHelper
-from Utils import CraftChoicePrompt, CraftCache
 import utils
+from CraftCore import CraftCore
+from CraftOS.osutils import LockFile, OsUtils
+from CraftSetupHelper import SetupHelper
+from Utils import CraftCache, CraftChoicePrompt
 
 
 def signWindows(fileNames: [str]) -> bool:

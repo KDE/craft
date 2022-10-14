@@ -1,10 +1,9 @@
-from pathlib import Path
 import os
 import subprocess
-
-from CraftCore import CraftCore
+from pathlib import Path
 
 import CraftConfig
+from CraftCore import CraftCore
 from CraftOS.OsDetection import OsDetection
 
 

@@ -1,15 +1,15 @@
 import os
 import subprocess
 import tempfile
-import time
 import threading
+import time
 import unittest
 
 import CraftTestBase
 import utils
 from CraftCore import CraftCore
-from CraftOS.osutils import OsUtils, LockFile
 from CraftOS.OsDetection import OsDetection
+from CraftOS.osutils import LockFile, OsUtils
 
 
 class OsUtilsTest(CraftTestBase.CraftTestBase):

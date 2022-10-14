@@ -22,8 +22,8 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-import copy
 import configparser
+import copy
 import importlib
 import os
 import re
@@ -31,8 +31,8 @@ from pathlib import Path
 
 import utils
 from CraftCore import CraftCore
-from CraftStandardDirs import CraftStandardDirs
 from CraftOS.osutils import OsUtils
+from CraftStandardDirs import CraftStandardDirs
 
 
 class CategoryPackageObject(object):

@@ -11,7 +11,7 @@ from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftBase import InitGuard
 from CraftCore import CraftCore
 from Packager.MacBasePackager import MacBasePackager
-from Utils import CraftHash, CodeSign
+from Utils import CodeSign, CraftHash
 
 
 class MacDMGPackager(MacBasePackager):

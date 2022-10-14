@@ -20,8 +20,8 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
-from CraftCore import CraftCore
 import info
+from CraftCore import CraftCore
 from Package.PipPackageBase import PipPackageBase
 
 

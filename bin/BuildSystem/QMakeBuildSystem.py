@@ -3,9 +3,9 @@
 #
 # definitions for the qmake build system
 
-from BuildSystem.BuildSystemBase import *
 from Blueprints.CraftPackageObject import *
 from Blueprints.CraftVersion import CraftVersion
+from BuildSystem.BuildSystemBase import *
 
 
 class QMakeBuildSystem(BuildSystemBase):

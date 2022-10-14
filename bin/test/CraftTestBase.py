@@ -4,8 +4,8 @@ import unittest
 
 import CraftConfig
 import CraftStandardDirs
-from CraftCore import CraftCore
 import InstallDB
+from CraftCore import CraftCore
 
 
 class CraftTestBase(unittest.TestCase):

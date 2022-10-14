@@ -22,9 +22,9 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-import re
-from enum import unique, IntFlag
 import platform
+import re
+from enum import IntFlag, unique
 
 import utils
 from CraftConfig import *

@@ -5,18 +5,18 @@
 #
 #
 
-import utils
-from CraftConfig import *
-from CraftCore import CraftCore
-from Blueprints.CraftPackageObject import *
-from CraftDebug import deprecated
-from Utils.Arguments import Arguments
-
+import atexit
 import collections
 import configparser
-import atexit
 import zlib
 from typing import Dict
+
+import utils
+from Blueprints.CraftPackageObject import *
+from CraftConfig import *
+from CraftCore import CraftCore
+from CraftDebug import deprecated
+from Utils.Arguments import Arguments
 
 
 class RegisteredOption(object):

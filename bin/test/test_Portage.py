@@ -2,7 +2,8 @@ import importlib
 
 import CraftConfig
 import CraftTestBase
-from Blueprints import CraftPackageObject, CraftDependencyPackage
+
+from Blueprints import CraftDependencyPackage, CraftPackageObject
 
 
 class CraftBlueprintTest(CraftTestBase.CraftTestBase):

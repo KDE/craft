@@ -1,12 +1,12 @@
-from Packager.CollectionPackagerBase import *
-from Utils import CodeSign
-
 import configparser
-from pathlib import Path
-from typing import Set
+import glob
 import io
 import subprocess
-import glob
+from pathlib import Path
+from typing import Set
+
+from Packager.CollectionPackagerBase import *
+from Utils import CodeSign
 
 
 class MacBasePackager(CollectionPackagerBase):

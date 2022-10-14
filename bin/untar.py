@@ -22,10 +22,10 @@
 
 import io
 import os
-from pathlib import Path
 import shutil
 import sys
 import tarfile
+from pathlib import Path
 
 symlinks = []
 CraftRoot = Path(__file__).parent.parent.parent

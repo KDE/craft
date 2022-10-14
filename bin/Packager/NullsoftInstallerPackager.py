@@ -30,12 +30,11 @@ from pathlib import Path
 import utils
 from Blueprints.CraftVersion import CraftVersion
 from CraftBase import InitGuard
+from CraftCompiler import CraftCompiler
 from CraftCore import *
 from CraftOS.osutils import OsUtils
-from Utils import CodeSign, CraftHash
-from CraftCompiler import CraftCompiler
-
 from Packager.PortablePackager import PortablePackager
+from Utils import CodeSign, CraftHash
 
 
 class NullsoftInstallerPackager(PortablePackager):

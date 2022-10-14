@@ -1,8 +1,8 @@
-import tempfile
 import ctypes
 import os
 import platform
 import subprocess
+import tempfile
 from pathlib import Path
 
 import CraftOS.OsUtilsBase

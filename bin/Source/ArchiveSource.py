@@ -23,15 +23,14 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-import tempfile
 import io
+import tempfile
 from pathlib import Path
 
-from Source.SourceBase import *
-from Utils import CraftHash, GetFiles, CraftChoicePrompt
-from Utils.CraftManifest import CraftManifest
-
 from CraftCore import CraftCore
+from Source.SourceBase import *
+from Utils import CraftChoicePrompt, CraftHash, GetFiles
+from Utils.CraftManifest import CraftManifest
 
 
 class ArchiveSource(SourceBase):

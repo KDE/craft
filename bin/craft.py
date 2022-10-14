@@ -30,15 +30,15 @@ import collections
 import subprocess
 import sys
 
+import blueprintSearch
 import CraftCommands
 import CraftSetupHelper
 import InstallDB
-import blueprintSearch
 from Blueprints.CraftPackageObject import *
 from CraftCore import CraftCore
+from options import UserOptions
 from Utils import CraftTimer
 from Utils.CraftTitleUpdater import CraftTitleUpdater
-from options import UserOptions
 
 
 class ActionHandler:

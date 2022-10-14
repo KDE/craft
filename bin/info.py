@@ -6,12 +6,12 @@
 # by methods to be able to separate the access from
 # the definition
 from enum import Enum, unique
+from typing import *
 
 import VersionInfo
-from Utils import CraftHash, CraftManifest
-from options import *
 from CraftDebug import deprecated
-from typing import *
+from options import *
+from Utils import CraftHash, CraftManifest
 
 
 @unique

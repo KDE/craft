@@ -24,14 +24,15 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
+import glob
 import inspect
 import types
-import glob
 
-from Packager.PackagerBase import *
-from Blueprints.CraftDependencyPackage import DependencyType, CraftDependencyPackage
+from Blueprints.CraftDependencyPackage import (CraftDependencyPackage,
+                                               DependencyType)
 from Blueprints.CraftPackageObject import *
 from Package.SourceOnlyPackageBase import *
+from Packager.PackagerBase import *
 from Utils import CodeSign
 
 

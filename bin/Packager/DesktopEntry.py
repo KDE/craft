@@ -22,11 +22,9 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 import io
-
 from pathlib import Path
 
 from Packager.PackagerBase import *
-
 from shells import Powershell
 
 

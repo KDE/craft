@@ -23,18 +23,18 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
+from Packager.AppImagePackager import *
+from Packager.AppxPackager import *
+from Packager.CMakeApkPackager import *
 from Packager.CreateArchivePackager import *
+from Packager.DesktopEntry import *
+from Packager.InnoSetupPackager import *
 from Packager.MacDMGPackager import MacDMGPackager
 from Packager.MacPkgPackager import MacPkgPackager
 from Packager.MSIFragmentPackager import *
 from Packager.NullsoftInstallerPackager import *
-from Packager.InnoSetupPackager import *
 from Packager.PortablePackager import *
 from Packager.SevenZipPackager import *
-from Packager.AppxPackager import *
-from Packager.DesktopEntry import *
-from Packager.AppImagePackager import *
-from Packager.CMakeApkPackager import *
 
 
 class TypePackager(PackagerBase):
