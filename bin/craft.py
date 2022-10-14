@@ -247,7 +247,6 @@ def main(timer):
             "test",
             "createpatch",
             ("install-to-desktop", {"help": argparse.SUPPRESS}),
-            ("create-download-cache", {"help": argparse.SUPPRESS}),
             "update",
             (
                 "print-installed",

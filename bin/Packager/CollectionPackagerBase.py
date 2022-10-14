@@ -28,8 +28,7 @@ import glob
 import inspect
 import types
 
-from Blueprints.CraftDependencyPackage import (CraftDependencyPackage,
-                                               DependencyType)
+from Blueprints.CraftDependencyPackage import CraftDependencyPackage, DependencyType
 from Blueprints.CraftPackageObject import *
 from Package.SourceOnlyPackageBase import *
 from Packager.PackagerBase import *

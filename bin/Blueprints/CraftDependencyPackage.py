@@ -1,8 +1,7 @@
 from collections import OrderedDict
 from enum import Enum, IntFlag, unique
 
-from Blueprints.CraftPackageObject import (BlueprintException,
-                                           CraftPackageObject)
+from Blueprints.CraftPackageObject import BlueprintException, CraftPackageObject
 from Blueprints.CraftVersion import CraftVersion
 from CraftCore import CraftCore
 from info import DependencyRequirementType

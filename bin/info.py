@@ -3,6 +3,7 @@
 # @package  this module contains the information class
 
 import os
+
 # the current work here is to access members only
 # by methods to be able to separate the access from
 # the definition

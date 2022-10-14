@@ -30,8 +30,7 @@ from pathlib import Path
 
 import CraftBase
 import utils
-from Blueprints.CraftDependencyPackage import (CraftDependencyPackage,
-                                               DependencyType)
+from Blueprints.CraftDependencyPackage import CraftDependencyPackage, DependencyType
 from Blueprints.CraftPackageObject import CraftPackageObject
 from Blueprints.CraftVersion import CraftVersion
 from options import *
@@ -427,8 +426,6 @@ def run(package: [CraftPackageObject], action: str, args) -> bool:
         return invoke(args.get, directTargets)
     elif action == "install-to-desktop":
         return installToDektop(directTargets)
-    elif action == "create-download-cache":
-        return createArchiveCache(package)
     elif action == "print-files":
         return printFiles(directTargets)
     elif args.resolve_deps or action in ["all", "install-deps", "update"]:
@@ -585,33 +582,4 @@ def printFiles(packages):
             fileList.sort()
             for file in fileList:
                 CraftCore.log.info(file[0])
-    return True
-
-
-def createArchiveCache(packages: CraftPackageObject):
-    from Package.VirtualPackageBase import SourceComponentPackageBase
-    from Source.ArchiveSource import ArchiveSource
-
-    packages = CraftDependencyPackage(packages).getDependencies()
-    for p in packages:
-        if not isinstance(p.instance, ArchiveSource):
-            continue
-        url = p.subinfo.target()
-        if isinstance(url, list):
-            url = url[0]
-        urlInfo = urllib.parse.urlparse(url)
-        if urlInfo.hostname in {"files.kde.org", "download.kde.org"}:
-            CraftCore.log.info(f"Skip mirroring of {url}, host is reliable")
-            continue
-        if p.instance._getFileInfoFromArchiveCache():
-            # already cached
-            continue
-        if isinstance(p.instance, SourceComponentPackageBase):
-            if not p.instance.fetch(noop=False):
-                return False
-        else:
-            if not p.instance.fetch():
-                return False
-        if not (p.instance.checkDigest() and p.instance.generateSrcManifest()):
-            return False
     return True
