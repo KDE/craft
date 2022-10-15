@@ -36,7 +36,6 @@ from Packager.MSIFragmentPackager import MSIFragmentPackager
 from Packager.NullsoftInstallerPackager import NullsoftInstallerPackager
 from Packager.PackagerBase import PackagerBase
 from Packager.PortablePackager import PortablePackager
-from Packager.QtIFPackager import QtIFPackager
 from Packager.SevenZipPackager import SevenZipPackager
 
 
