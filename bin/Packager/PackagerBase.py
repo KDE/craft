@@ -157,11 +157,7 @@ class PackagerBase(CraftBase):
         fileType: FileType = FileType.Binary,
     ) -> bool:
         archiveName = Path(destDir) / archiveName
-        if archiveName.suffix == ".7z" and not CraftCore.cache.findApplication("7za"):
-            if CraftCore.compiler.isUnix:
-                archiveName = archiveName.with_suffix(".xz")
-            else:
-                archiveName = archiveName.with_suffix(".zip")
+
         if not utils.compress(archiveName, sourceDir):
             return False
 

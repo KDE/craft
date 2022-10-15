@@ -230,6 +230,12 @@ class CraftBase(object):
         if fileType:
             if not fileType.startswith("."):
                 fileType = f".{fileType}"
+            if fileType == ".7z" and not CraftCore.cache.findApplication("7za"):
+                # we are bootstrapping and can't use 7z yet
+                if CraftCore.compiler.isUnix:
+                    fileType = ".xz"
+                else:
+                    fileType = ".zip"
         else:
             fileType = ""
         prefix = "" if not includePackagePath else f"{self.package.path}/"
