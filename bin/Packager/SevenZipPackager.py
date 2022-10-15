@@ -70,7 +70,10 @@ class SevenZipPackager(PackagerBase):
             )
         ]
 
-        if CraftCore.settings.getboolean("Packager", "PackageDebugSymbols", False):
+        if (
+            CraftCore.settings.getboolean("Packager", "PackageDebugSymbols", False)
+            and self.symbolsImageDir().exists()
+        ):
             files += [
                 (
                     FileType.Debug,
@@ -84,8 +87,10 @@ class SevenZipPackager(PackagerBase):
                 )
             ]
 
-        if self.subinfo.options.package.packSources and CraftCore.settings.getboolean(
-            "Packager", "PackageSrc", "True"
+        if (
+            self.subinfo.options.package.packSources
+            and CraftCore.settings.getboolean("Packager", "PackageSrc", "True")
+            and self.sourceDir().exists()
         ):
             files += [
                 (
