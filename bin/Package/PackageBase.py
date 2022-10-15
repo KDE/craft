@@ -135,6 +135,8 @@ class PackageBase(CraftBase):
 
             files = {}  # Dict[FileType, Tuple[str, str]]
             for type in [FileType.Binary, FileType.Debug]:
+                if type not in latest.files:
+                    continue
                 fileObject = latest.files[type]
                 localArchiveAbsPath = OsUtils.toNativePath(
                     os.path.join(downloadFolder, fileObject.fileName)
