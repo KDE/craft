@@ -1,4 +1,3 @@
-import InstallDB
 import utils
 from Blueprints.CraftDependencyPackage import *
 from Blueprints.CraftPackageObject import *
