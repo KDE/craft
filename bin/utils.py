@@ -1314,9 +1314,7 @@ def symFileName(fileName: Path) -> Path:
             if len(bundleDir) > 1:
                 suffix = f"-{'.'.join([x.name for x in reversed(bundleDir[0:-1])])}"
             isBundle = True
-            symFile = Path(
-                f"{bundleDir[-1]}{suffix}.{CraftCore.compiler.symbolsSuffix}"
-            )
+            symFile = Path(f"{bundleDir[-1]}{suffix}{CraftCore.compiler.symbolsSuffix}")
         else:
             symFile = Path(f"{fileName}{CraftCore.compiler.symbolsSuffix}")
     else:
