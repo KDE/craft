@@ -1300,7 +1300,6 @@ def installShortcut(name: str, path: str, workingDir: str, icon: str, desciption
 
 
 def symFileName(fileName: Path) -> Path:
-    isBundle = False
     if CraftCore.compiler.isMacOS:
         bundleDir = list(
             filter(
@@ -1313,19 +1312,15 @@ def symFileName(fileName: Path) -> Path:
             # if we are a .app in a .framework we put the smbols in the same location
             if len(bundleDir) > 1:
                 suffix = f"-{'.'.join([x.name for x in reversed(bundleDir[0:-1])])}"
-            isBundle = True
-            symFile = Path(f"{bundleDir[-1]}{suffix}{CraftCore.compiler.symbolsSuffix}")
+            return (
+                Path(f"{bundleDir[-1]}{suffix}{CraftCore.compiler.symbolsSuffix}")
+                / "Contents/Resources/DWARF"
+                / fileName.name
+            )
         else:
-            symFile = Path(f"{fileName}{CraftCore.compiler.symbolsSuffix}")
+            return Path(f"{fileName}{CraftCore.compiler.symbolsSuffix}")
     else:
-        symFile = Path(f"{fileName}{CraftCore.compiler.symbolsSuffix}")
-
-    if isBundle:
-        # TODO:
-        bundledSymFile = symFile / "Contents/Resources/DWARF" / fileName.name
-        if bundledSymFile.exists():
-            return bundledSymFile
-    return symFile
+        return Path(f"{fileName}{CraftCore.compiler.symbolsSuffix}")
 
 
 def strip(fileName: Path, destFileName: Path = None) -> Path:
