@@ -71,10 +71,15 @@ class CraftCompilerSignature(object):
         platform = CraftCompiler.Platforms.fromString(split[0])
 
         try:
-            abi = split[1]
-            compiler = CraftCompiler.Compiler.fromString(split[2])
-            arch = CraftCompiler.Architecture.fromString(split[3])
-        except:
+            if len(split) == 4:
+                abi = split[1]
+                compiler = CraftCompiler.Compiler.fromString(split[2])
+                arch = CraftCompiler.Architecture.fromString(split[3])
+            else:
+                abi = None
+                compiler = CraftCompiler.Compiler.fromString(split[1])
+                arch = CraftCompiler.Architecture.fromString(split[2])
+        except Exception as e:
             # legacy
             try:
                 compiler = CraftCompiler.Compiler.fromString(split[2])
