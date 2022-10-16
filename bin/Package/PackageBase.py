@@ -142,7 +142,7 @@ class PackageBase(CraftBase):
 
                 if url != self.cacheLocation():
                     if not localArchiveAbsPath.exists():
-                        if not utils.createDir(localArchiveAbsPath):
+                        if not utils.createDir(localArchiveAbsPath.parent):
                             return False
                         fileName = fileObject.fileName
                         if CraftCore.compiler.isWindows:
