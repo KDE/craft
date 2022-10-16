@@ -415,14 +415,16 @@ class BuildSystemBase(CraftBase):
                     if not self.subinfo.options.package.disableStriping:
                         for f in binaryFiles:
                             f = Path(f)
-                            destDir = self.symbolsImageDir() / f.parent.relative_to(
+                            symFile = utils.symFileName(f)
+                            symFileDest = self.symbolsImageDir() / symFile.relative_to(
                                 self.imageDir()
                             )
-                            symFileDest = destDir / utils.symFileName(f).name
                             if symFileDest.exists():
                                 return symFileDest
 
-                            if not destDir.exists() and not utils.createDir(destDir):
+                            if not symFileDest.parent.exists() and not utils.createDir(
+                                symFileDest.parent
+                            ):
                                 return False
                             if not utils.strip(f, symFileDest):
                                 return False
