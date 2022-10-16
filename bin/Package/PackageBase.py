@@ -147,7 +147,7 @@ class PackageBase(CraftBase):
                 if url != self.cacheLocation():
                     if not os.path.exists(localArchiveAbsPath):
                         os.makedirs(localArchivePath, exist_ok=True)
-                        fileName = latest.fileName
+                        fileName = fileObject.fileName
                         if CraftCore.compiler.isWindows:
                             fileName = fileName.replace("\\", "/")
                         fUrl = f"{url}/{fileName}"
