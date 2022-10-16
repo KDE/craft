@@ -84,7 +84,7 @@ class PackageBase(CraftBase):
         if self.subinfo.options.package.disableBinaryCache:
             return False
         for url in [self.cacheLocation()] + self.cacheRepositoryUrls():
-            CraftCore.log.debug(f"Trying to restore {self} from cache: {url}.")
+            CraftCore.log.debug(f"Trying to restore {self} from cache: {url}")
             if url == self.cacheLocation():
                 fileUrl = f"{url}/manifest.json"
                 if os.path.exists(fileUrl):
@@ -138,15 +138,12 @@ class PackageBase(CraftBase):
                 if type not in latest.files:
                     continue
                 fileObject = latest.files[type]
-                localArchiveAbsPath = OsUtils.toNativePath(
-                    os.path.join(downloadFolder, fileObject.fileName)
-                )
-                localArchivePath, localArchiveName = os.path.split(localArchiveAbsPath)
-                files[type] = localArchivePath, localArchiveName
+                localArchiveAbsPath = downloadFolder / fileObject.fileName
 
                 if url != self.cacheLocation():
-                    if not os.path.exists(localArchiveAbsPath):
-                        os.makedirs(localArchivePath, exist_ok=True)
+                    if not localArchiveAbsPath.exists():
+                        if not utils.createDir(localArchiveAbsPath):
+                            return False
                         fileName = fileObject.fileName
                         if CraftCore.compiler.isWindows:
                             fileName = fileName.replace("\\", "/")
@@ -155,7 +152,9 @@ class PackageBase(CraftBase):
                         retries = 3
                         while True:
                             if GetFiles.getFile(
-                                fUrl, localArchivePath, localArchiveName
+                                fUrl,
+                                localArchiveAbsPath.parent,
+                                localArchiveAbsPath.name,
                             ):
                                 break
                             msg = f"Failed to fetch {fUrl}"
@@ -166,16 +165,19 @@ class PackageBase(CraftBase):
                                 else:
                                     CraftCore.log.warning(msg)
                                 return False
-                elif not os.path.isfile(localArchiveAbsPath):
+                elif not localArchiveAbsPath.is_file():
                     continue
-
+                # file exist locally was downloaded or already existed
+                files[type] = localArchiveAbsPath
                 if not CraftHash.checkFilesDigests(
-                    localArchivePath,
-                    [localArchiveName],
+                    localArchiveAbsPath.parent,
+                    [localArchiveAbsPath.name],
                     digests=fileObject.checksum,
                     digestAlgorithm=CraftHash.HashAlgorithm.SHA256,
                 ):
-                    msg = f"Hash did not match, {localArchiveName} might be corrupted"
+                    msg = (
+                        f"Hash did not match, {localArchiveAbsPath} might be corrupted"
+                    )
                     CraftCore.log.warning(msg)
                     if downloadRetriesLeft and CraftChoicePrompt.promptForChoice(
                         "Do you want to delete the files and redownload them?",
@@ -190,6 +192,9 @@ class PackageBase(CraftBase):
                     if createingCache:
                         raise BlueprintException(msg, self.package)
                     return False
+            if not files:
+                # try the next url
+                continue
             self.subinfo.buildPrefix = latest.buildPrefix
             self.subinfo.isCachedBuild = True
             if not self.cleanImage():
@@ -199,9 +204,9 @@ class PackageBase(CraftBase):
                 FileType.Binary: self.imageDir(),
                 FileType.Debug: self.symbolsImageDir(),
             }
-            for type, (localArchivePath, localArchiveName) in files.items():
+            for type, localArchivePath in files.items():
                 if not utils.cleanDirectory(dest[type]) or not utils.unpackFile(
-                    localArchivePath, localArchiveName, dest[type]
+                    localArchivePath.parent, localArchivePath.name, dest[type]
                 ):
                     return False
             if not (
