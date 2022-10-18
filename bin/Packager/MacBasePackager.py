@@ -371,7 +371,7 @@ class MacDylibBundler(object):
             if (
                 dep.startswith("/usr/lib/")
                 or dep.startswith("/System/Library/Frameworks/")
-                or path in self.externalLibs
+                or dep in self.externalLibs
             ):
                 continue
             if dep.startswith(CraftStandardDirs.craftRoot()):
