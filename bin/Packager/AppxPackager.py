@@ -27,6 +27,7 @@ import mimetypes
 import os
 import re
 import subprocess
+from pathlib import Path
 
 import utils
 from Blueprints.CraftDependencyPackage import CraftDependencyPackage, DependencyType
