@@ -25,6 +25,7 @@
 import mimetypes
 import os
 
+import utils
 from Blueprints.CraftVersion import CraftVersion
 from CraftBase import InitGuard
 from Packager.CollectionPackagerBase import CollectionPackagerBase
