@@ -3,13 +3,14 @@
 # @package  this module contains the information class
 
 import os
+
 # the current work here is to access members only
 # by methods to be able to separate the access from
 # the definition
 from enum import Enum, unique
 
 import VersionInfo
-from Blueprints.CraftPackageObject import CraftPackageObject
+from Blueprints.CraftPackageObject import BlueprintException, CraftPackageObject
 from CraftCore import CraftCore
 from CraftDebug import deprecated
 from options import Options
