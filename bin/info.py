@@ -11,10 +11,13 @@ from enum import Enum, unique
 from typing import *
 
 import VersionInfo
-from CraftCompiler import CraftCompiler, CraftCompilerSignature
+from Blueprints.CraftPackageObject import BlueprintException, CraftPackageObject
+from CraftCore import CraftCore
 from CraftDebug import deprecated
-from options import *
+from options import Options
 from Utils import CraftHash, CraftManifest
+from CraftCompiler import CraftCompilerSignature, CraftCompiler
+
 
 
 @unique

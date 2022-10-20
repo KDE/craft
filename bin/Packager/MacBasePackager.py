@@ -365,7 +365,7 @@ class MacDylibBundler(object):
             if (
                 dep.startswith("/usr/lib/")
                 or dep.startswith("/System/Library/Frameworks/")
-                or path in self.externalLibs
+                or dep in self.externalLibs
             ):
                 continue
             if dep.startswith(CraftStandardDirs.craftRoot()):
@@ -397,7 +397,7 @@ if __name__ == "__main__":
         source = os.path.realpath(sourceFile)
         target = os.path.join(td, os.path.basename(source))
         utils.copyFile(source, target, linkOnly=False)
-        bundler = MacDylibBundler(td)
+        bundler = MacDylibBundler(td, {})
         bundler.bundleLibraryDependencies(Path(target))
         print("Checked libs:", bundler.checkedLibs)
         utils.system(["find", td])
