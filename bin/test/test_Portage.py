@@ -2,6 +2,7 @@ import importlib
 
 import CraftConfig
 import CraftTestBase
+from options import UserOptions
 
 from Blueprints import CraftDependencyPackage, CraftPackageObject
 
@@ -12,10 +13,9 @@ class CraftBlueprintTest(CraftTestBase.CraftTestBase):
 
         CraftPackageObject.__rootPackage = None
         CraftDependencyPackage._packageCache = dict()
+        UserOptions.UserOptionsSingleton._instance = None
         installable = CraftPackageObject.CraftPackageObject.root().allChildren()
-        CraftDependencyPackage.CraftDependencyPackage(
-            CraftPackageObject.CraftPackageObject.get("/")
-        ).getDependencies()
+        CraftDependencyPackage.CraftDependencyPackage(CraftPackageObject.CraftPackageObject.get("/")).getDependencies()
 
 
 class TestAPI(CraftBlueprintTest):
