@@ -165,7 +165,7 @@ class CraftCompiler(object):
         def fromString(cls, name):
             if not hasattr(cls, "__sting_map"):
                 cls.__sting_map = dict([(k.lower(), v) for k, v in cls.__members__.items()])
-            return cls.__sting_map[name.lower()] or cls.Error
+            return cls.__sting_map[name.lower().replace("-", "_")] or cls.Error
 
     @unique
     class Compiler(IntFlag):
