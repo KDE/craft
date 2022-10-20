@@ -30,9 +30,7 @@ from CraftCore import CraftCore
 
 
 class CraftCompilerSignature(object):
-    def __init__(
-        self, platform, compiler, abiString, architecture, sourceString: str = None
-    ) -> None:
+    def __init__(self, platform, compiler, abiString, architecture, sourceString: str = None) -> None:
         self.platform = platform
         self.compiler = compiler
         self.abiString = abiString
@@ -125,9 +123,7 @@ class CraftCompiler(object):
         @classmethod
         def fromString(cls, name):
             if not hasattr(cls, "__sting_map"):
-                cls.__sting_map = dict(
-                    [(k.lower(), v) for k, v in cls.__members__.items()]
-                )
+                cls.__sting_map = dict([(k.lower(), v) for k, v in cls.__members__.items()])
             return cls.__sting_map[name.lower()]
 
     class Platforms(IntFlag):
@@ -152,9 +148,7 @@ class CraftCompiler(object):
         @classmethod
         def fromString(cls, name):
             if not hasattr(cls, "__sting_map"):
-                cls.__sting_map = dict(
-                    [(k.lower(), v) for k, v in cls.__members__.items()]
-                )
+                cls.__sting_map = dict([(k.lower(), v) for k, v in cls.__members__.items()])
             return cls.__sting_map[name.lower()]
 
     @unique
@@ -170,9 +164,7 @@ class CraftCompiler(object):
         @classmethod
         def fromString(cls, name):
             if not hasattr(cls, "__sting_map"):
-                cls.__sting_map = dict(
-                    [(k.lower(), v) for k, v in cls.__members__.items()]
-                )
+                cls.__sting_map = dict([(k.lower(), v) for k, v in cls.__members__.items()])
             return cls.__sting_map[name.lower()] or cls.Error
 
     @unique
@@ -188,15 +180,11 @@ class CraftCompiler(object):
         @classmethod
         def fromString(cls, name):
             if not hasattr(cls, "__sting_map"):
-                cls.__sting_map = dict(
-                    [(k.lower(), v) for k, v in cls.__members__.items()]
-                )
+                cls.__sting_map = dict([(k.lower(), v) for k, v in cls.__members__.items()])
             return cls.__sting_map[name.lower()]
 
     def __init__(self):
-        self.signature = CraftCompilerSignature.parseAbi(
-            CraftCore.settings.get("General", "ABI")
-        )
+        self.signature = CraftCompilerSignature.parseAbi(CraftCore.settings.get("General", "ABI"))
 
         self._MSVCToolset = None
         self._apiLevel = None
@@ -394,7 +382,4 @@ if __name__ == "__main__":
     print("HostArchitecture: %s" % CraftCore.compiler.hostArchitecture)
     print("Native compiler: %s" % ("No", "Yes")[CraftCore.compiler.isNative()])
     if CraftCore.compiler.isGCCLike():
-        print(
-            "Compiler Version: %s"
-            % CraftCore.compiler.getGCCLikeVersion(CraftCore.compiler.compiler.name)
-        )
+        print("Compiler Version: %s" % CraftCore.compiler.getGCCLikeVersion(CraftCore.compiler.compiler.name))
