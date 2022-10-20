@@ -18,3 +18,11 @@ class TestCompilerSeignature(CraftTestBase.CraftTestBase):
             CraftCompilerSignature.parseAbi("android-arm64-clang").signature,
             CraftCompilerSignature(CraftCompiler.Platforms.Android, CraftCompiler.Compiler.CLANG, "arm64-v8a", CraftCompiler.Architecture.arm64).signature,
         )
+        self.assertEqual(
+            CraftCompilerSignature.parseAbi("linux-64-gcc").signature,
+            CraftCompilerSignature(CraftCompiler.Platforms.Linux, CraftCompiler.Compiler.GCC, None, CraftCompiler.Architecture.x86_64).signature,
+        )
+        self.assertEqual(
+            CraftCompilerSignature.parseAbi("linux-gcc-x86_64").signature,
+            CraftCompilerSignature(CraftCompiler.Platforms.Linux, CraftCompiler.Compiler.GCC, None, CraftCompiler.Architecture.x86_64).signature,
+        )
