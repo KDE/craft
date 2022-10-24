@@ -14,9 +14,10 @@ class AppImagePackager(CollectionPackagerBase):
             [
                 # XDG_DATA_DIRS: to make QStandardPaths::GenericDataLocation look in the AppImage paths too.
                 # necessary, e.g., to make switching languages for KDE (with KConfigWidgets) applications work.
-                "XDG_DATA_DIRS=$this_dir/usr/share/:$XDG_DATA_DIRS",
-                'FONTCONFIG_PATH=`if [ -d /etc/fonts ]; then echo "/etc/fonts"; else echo "${APPDIR}/etc/fonts"; fi`',
-                "PATH=$this_dir/usr/bin:$this_dir/usr/lib:$PATH",
+                'XDG_DATA_DIRS="$this_dir/usr/share/:$XDG_DATA_DIRS"',
+                'FONTCONFIG_PATH="(if [ -d /etc/fonts ]; then echo "/etc/fonts"; else echo "${APPDIR}/etc/fonts"; fi)"',
+                'PATH="$this_dir/usr/bin:$this_dir/usr/lib:$PATH"',
+
             ],
         )
         return defines
