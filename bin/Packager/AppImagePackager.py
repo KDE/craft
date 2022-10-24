@@ -12,7 +12,7 @@ class AppImagePackager(CollectionPackagerBase):
         defines.setdefault(
             "runenv",
             [
-                # XDG_DATA_DIRS: to make QStandardPaths::GenericDataLocation look in the Appimage paths too.
+                # XDG_DATA_DIRS: to make QStandardPaths::GenericDataLocation look in the AppImage paths too.
                 # necessary, e.g., to make switching languages for KDE (with KConfigWidgets) applications work.
                 "XDG_DATA_DIRS=$this_dir/usr/share/:$XDG_DATA_DIRS",
                 "QT_PLUGIN_PATH=$this_dir/usr/plugins/",
