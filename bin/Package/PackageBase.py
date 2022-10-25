@@ -52,19 +52,13 @@ class PackageBase(CraftBase):
         # add package to installed database -> is this not the task of the manifest files ?
 
         revision = self.sourceRevision()
-        package = CraftCore.installdb.addInstalled(
-            self.package, self.version, revision=revision
-        )
+        package = CraftCore.installdb.addInstalled(self.package, self.version, revision=revision)
         if not dbOnly:
-            fileList = self.getFileListFromDirectory(
-                CraftCore.standardDirs.craftRoot(), copiedFiles
-            )
+            fileList = self.getFileListFromDirectory(CraftCore.standardDirs.craftRoot(), copiedFiles)
             package.addFiles(fileList)
         package.install()
 
-        if CraftCore.settings.getboolean(
-            "Packager", "CreateCache"
-        ) or CraftCore.settings.getboolean("Packager", "UseCache"):
+        if CraftCore.settings.getboolean("Packager", "CreateCache") or CraftCore.settings.getboolean("Packager", "UseCache"):
             package.setCacheVersion(self.cacheVersion())
 
         return True
@@ -93,9 +87,7 @@ class PackageBase(CraftBase):
                 else:
                     continue
             else:
-                manifest = CraftManifest.fromJson(
-                    CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json")
-                )
+                manifest = CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json"))
             fileEntry = manifest.get(str(self)).build
             files = []
             for f in fileEntry:
@@ -106,30 +98,20 @@ class PackageBase(CraftBase):
                 continue
             latest = files[0]
 
-            if not self.subinfo.options.dynamic.compatible(
-                latest.config, latest.configHash
-            ):
+            if not self.subinfo.options.dynamic.compatible(latest.config, latest.configHash):
                 CraftCore.log.info("Failed to restore package, configuration missmatch")
                 CraftCore.debug.debug_line()
-                CraftCore.log.info(
-                    "Cached config: {}".format(
-                        ", ".join(f"{k}={v}" for k, v in latest.config.items())
-                    )
-                )
+                CraftCore.log.info("Cached config: {}".format(", ".join(f"{k}={v}" for k, v in latest.config.items())))
                 CraftCore.log.info(f"Local config:  {self.subinfo.options.dynamic}")
                 CraftCore.debug.debug_line()
                 # try next cache
                 continue
 
             # if we are creating the cache, a rebuild on a failed fetch would be suboptimal
-            createingCache = CraftCore.settings.getboolean(
-                "Packager", "CreateCache", False
-            )
+            createingCache = CraftCore.settings.getboolean("Packager", "CreateCache", False)
 
             if url != self.cacheLocation():
-                downloadFolder = self.cacheLocation(
-                    os.path.join(CraftCore.standardDirs.downloadDir(), "cache")
-                )
+                downloadFolder = self.cacheLocation(os.path.join(CraftCore.standardDirs.downloadDir(), "cache"))
             else:
                 downloadFolder = self.cacheLocation()
 
@@ -175,20 +157,14 @@ class PackageBase(CraftBase):
                     digests=fileObject.checksum,
                     digestAlgorithm=CraftHash.HashAlgorithm.SHA256,
                 ):
-                    msg = (
-                        f"Hash did not match, {localArchiveAbsPath} might be corrupted"
-                    )
+                    msg = f"Hash did not match, {localArchiveAbsPath} might be corrupted"
                     CraftCore.log.warning(msg)
                     if downloadRetriesLeft and CraftChoicePrompt.promptForChoice(
                         "Do you want to delete the files and redownload them?",
                         [("Yes", True), ("No", False)],
                         default="Yes",
                     ):
-                        return utils.deleteFile(
-                            localArchiveAbsPath
-                        ) and self.fetchBinary(
-                            downloadRetriesLeft=downloadRetriesLeft - 1
-                        )
+                        return utils.deleteFile(localArchiveAbsPath) and self.fetchBinary(downloadRetriesLeft=downloadRetriesLeft - 1)
                     if createingCache:
                         raise BlueprintException(msg, self.package)
                     return False
@@ -205,17 +181,9 @@ class PackageBase(CraftBase):
                 FileType.Debug: self.symbolsImageDir(),
             }
             for type, localArchivePath in files.items():
-                if not utils.cleanDirectory(dest[type]) or not utils.unpackFile(
-                    localArchivePath.parent, localArchivePath.name, dest[type]
-                ):
+                if not utils.cleanDirectory(dest[type]) or not utils.unpackFile(localArchivePath.parent, localArchivePath.name, dest[type]):
                     return False
-            if not (
-                self.internalPostInstall()
-                and self.postInstall()
-                and self.qmerge()
-                and self.internalPostQmerge()
-                and self.postQmerge()
-            ):
+            if not (self.internalPostInstall() and self.postInstall() and self.qmerge() and self.internalPostQmerge() and self.postQmerge()):
                 return False
             return True
         return False
@@ -228,9 +196,7 @@ class PackageBase(CraftBase):
         algorithm = CraftHash.HashAlgorithm.SHA256
         for filePath in filePaths:
             relativeFilePath = os.path.relpath(filePath, imagedir)
-            digest = algorithm.stringPrefix() + CraftHash.digestFile(
-                filePath, algorithm
-            )
+            digest = algorithm.stringPrefix() + CraftHash.digestFile(filePath, algorithm)
             ret.append((relativeFilePath, digest))
         return ret
 
@@ -242,15 +208,12 @@ class PackageBase(CraftBase):
             if os.path.isfile(fullPath) or os.path.islink(fullPath):
                 if filehash:
                     algorithm = CraftHash.HashAlgorithm.getAlgorithmFromPrefix(filehash)
-                    currentHash = algorithm.stringPrefix() + CraftHash.digestFile(
-                        fullPath, algorithm
-                    )
+                    currentHash = algorithm.stringPrefix() + CraftHash.digestFile(fullPath, algorithm)
                 if not filehash or currentHash == filehash:
                     OsUtils.rm(fullPath, True)
                 else:
                     CraftCore.log.warning(
-                        f"We can't remove {fullPath} as its hash has changed,"
-                        f" that usually implies that the file was modified or replaced"
+                        f"We can't remove {fullPath} as its hash has changed," f" that usually implies that the file was modified or replaced"
                     )
             elif not os.path.isdir(fullPath) and os.path.lexists(fullPath):
                 CraftCore.log.debug(f"Remove a dead symlink {fullPath}")
@@ -274,14 +237,7 @@ class PackageBase(CraftBase):
             if revision == installed.getRevision():
                 return True
         # TODO: handle the internal steps more sane
-        return (
-            self.compile()
-            and self.install()
-            and self.internalPostInstall()
-            and self.postInstall()
-            and self.qmerge()
-            and self.postQmerge()
-        )
+        return self.compile() and self.install() and self.internalPostInstall() and self.postInstall() and self.qmerge() and self.postQmerge()
 
     def runAction(self, command):
         # TODO: handle the internal steps more sane
