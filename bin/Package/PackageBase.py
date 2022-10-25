@@ -116,7 +116,10 @@ class PackageBase(CraftBase):
                 downloadFolder = self.cacheLocation()
 
             files = {}  # Dict[FileType, Tuple[str, str]]
-            for type in [FileType.Binary, FileType.Debug]:
+            fileTypes = [FileType.Binary]
+            if CraftCore.settings.getboolean("Packager", "DownloadDebugSymbolsCache", False):
+                fileTypes += [FileType.Debug]
+            for type in fileTypes:
                 if type not in latest.files:
                     continue
                 fileObject = latest.files[type]

@@ -182,6 +182,9 @@ PackageDebugSymbols = True
 ## See --use-cache and --no-cache in the Craft help.
 UseCache = True
 
+## Enable fetching of debug symbols along with the binaries
+DownloadDebugSymbolsCache = False
+
 [CraftDebug]
 ## If you want to have verbose output, uncomment the following option
 ## and set it to positive integer for verbose output and to 0
