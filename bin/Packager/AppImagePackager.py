@@ -18,7 +18,7 @@ class AppImagePackager(CollectionPackagerBase):
                 # in case it is not set by default, UI frameworks won't be able to find files anymore
                 # this has caused problems in the past when, e.g., trying to open a browser using QDesktopServices
                 'XDG_DATA_DIRS="$this_dir/usr/share/:$XDG_DATA_DIRS:/usr/local/share:/usr/share"',
-                'FONTCONFIG_PATH="$(if [ -d /etc/fonts ]; then echo "/etc/fonts"; else echo "${APPDIR}/etc/fonts"; fi)"',
+                'FONTCONFIG_PATH="$(if [ -d /etc/fonts ]; then echo "/etc/fonts"; else echo "$this_dir/etc/fonts"; fi)"',
                 'PATH="$this_dir/usr/bin:$this_dir/usr/lib:$PATH"',
             ],
         )
