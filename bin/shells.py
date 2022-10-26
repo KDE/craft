@@ -193,9 +193,9 @@ class BashShell(object):
     @staticmethod
     def toNativePath(path) -> Path:
         if OsUtils.isWin():
-            return OsUtils.toMSysPath(path)
+            return OsUtils.toMSysPath(str(path))
         else:
-            return Path(path)
+            return Path(str(path))
 
     def _findBash(self):
         if OsUtils.isWin():
