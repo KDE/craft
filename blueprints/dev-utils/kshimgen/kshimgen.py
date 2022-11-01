@@ -5,22 +5,16 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def registerOptions(self):
         self.options.dynamic.setDefault("buildType", "Release")
-        self.parent.package.categoryInfo.platforms = (
-            CraftCore.compiler.Platforms.NotAndroid
-        )
+        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
         self.svnTargets["master"] = "https://invent.kde.org/vonreth/kshim.git"
 
         for ver in ["0.2.0"]:
-            self.targets[
-                ver
-            ] = f"https://files.kde.org/craft/sources/libs/kshimgn/kshimgen-v{ver}.tar.xz"
+            self.targets[ver] = f"https://files.kde.org/craft/sources/libs/kshimgn/kshimgen-v{ver}.tar.xz"
             self.targetInstSrc[ver] = f"kshimgen-v{ver}"
-        for ver in ["0.3.0", "0.4.0", "0.4.1", "0.4.2", "0.4.3", "0.4.4"]:
-            self.targets[
-                ver
-            ] = f"https://invent.kde.org/vonreth/kshim/-/archive/v{ver}/kshim-v{ver}.tar.gz"
+        for ver in ["0.3.0", "0.4.0", "0.4.1", "0.4.2", "0.4.3", "0.4.4", "0.5.0", "0.5.1"]:
+            self.targets[ver] = f"https://invent.kde.org/vonreth/kshim/-/archive/v{ver}/kshim-v{ver}.tar.gz"
             self.targetInstSrc[ver] = f"kshim-v{ver}"
         self.targetDigests["0.1.0"] = (
             ["1a46c599ca54e112fd37c39a60e5b97b6b20997e2114fe3cd422274c75ebcd22"],
@@ -54,8 +48,16 @@ class subinfo(info.infoclass):
             ["ab88d851e05edc8ee9a1ef71cdb586fd80ab6223b917b5bb930eca75cf758169"],
             CraftHash.HashAlgorithm.SHA256,
         )
+        self.targetDigests["0.5.0"] = (
+            ["140b30e785843c308e3e3f5727e1e889ad03b849cfcd71729d2763c7609357b5"],
+            CraftHash.HashAlgorithm.SHA256,
+        )
+        self.targetDigests["0.5.1"] = (
+            ["c959a6b14d38b531aa8beaa2e73d324765b0dbc24361269b509ba650fe3e2c17"],
+            CraftHash.HashAlgorithm.SHA256,
+        )
         self.patchLevel["0.2.0"] = 1
-        self.defaultTarget = "0.4.4"
+        self.defaultTarget = "0.5.1"
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/cmake-base"] = None
