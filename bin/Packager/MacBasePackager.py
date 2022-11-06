@@ -147,38 +147,48 @@ class MacDylibBundler(object):
         assert libPath.is_absolute(), libPath
         if libPath in self.checkedLibs:
             return True
-        if not libPath.exists():
+        # Consider only real files since symlinks are handled below
+        if not libPath.exists() and not libPath.is_symlink():
             CraftCore.log.error("Library dependency '%s' does not exist", libPath)
             return False
 
         # Handle symlinks (such as libgit2.27.dylib -> libgit2.0.27.4.dylib):
-        if libPath.is_symlink():
-            linkTarget = os.readlink(libPath)
+        # Use a loop because a symlink may point to another symlink
+        currentLibPath = libPath
+        while currentLibPath.is_symlink():
+            linkTarget = Path(os.readlink(currentLibPath))
             CraftCore.log.info(
-                "Library dependency %s is a symlink to '%s'", libPath, linkTarget
+                "Library dependency %s is a symlink to '%s'", currentLibPath, linkTarget
             )
-            if os.path.isabs(linkTarget):
+            # In case of symlink chains, we want to handle this only for the final target
+            if not linkTarget.is_symlink() and not linkTarget.exists():
+                CraftCore.log.error("Link target '%s' does not exist", linkTarget)
+                return False
+            if linkTarget.is_absolute():
                 CraftCore.log.error(
-                    "%s: Cannot handle absolute symlinks: '%s'", libPath, linkTarget
+                    "%s: Cannot handle absolute symlinks: '%s'", currentLibPath, linkTarget
                 )
                 return False
-            if ".." in linkTarget:
+            if ".." in str(linkTarget):
                 CraftCore.log.error(
                     "%s: Cannot handle symlinks containing '..': '%s'",
-                    libPath,
+                    currentLibPath,
                     linkTarget,
                 )
                 return False
-            if libPath.resolve().parent != libPath.parent.resolve():
+            if currentLibPath.resolve().parent != currentLibPath.parent.resolve():
                 CraftCore.log.error(
                     "%s: Cannot handle symlinks to other directories: '%s' (%s vs %s)",
-                    libPath,
+                    currentLibPath,
                     linkTarget,
-                    libPath.resolve().parent,
-                    libPath.parent.resolve(),
+                    currentLibPath.resolve().parent,
+                    currentLibPath.parent.resolve(),
                 )
                 return False
-            # If the symlink target was processed, the symlink itself is also fine
+            currentLibPath = linkTarget
+
+        if libPath.is_symlink():
+            # If the symlink target was succefully processed, the symlink itself is also fine
             return True
 
         CraftCore.log.debug("Handling library dependency '%s'", libPath)
