@@ -73,6 +73,7 @@ class SevenZipPackager(PackagerBase):
         if (
             CraftCore.settings.getboolean("Packager", "PackageDebugSymbols", False)
             and self.symbolsImageDir().exists()
+            and any(self.symbolsImageDir().iterdir())
         ):
             files += [
                 (
@@ -87,11 +88,7 @@ class SevenZipPackager(PackagerBase):
                 )
             ]
 
-        if (
-            self.subinfo.options.package.packSources
-            and CraftCore.settings.getboolean("Packager", "PackageSrc", "True")
-            and self.sourceDir().exists()
-        ):
+        if self.subinfo.options.package.packSources and CraftCore.settings.getboolean("Packager", "PackageSrc", "True") and self.sourceDir().exists():
             files += [
                 (
                     FileType.Source,
@@ -106,20 +103,14 @@ class SevenZipPackager(PackagerBase):
             ]
 
         for _, archive, sourceDir in files:
-            if not self._createArchive(
-                archive, sourceDir, dstpath, createDigests=not cacheMode
-            ):
+            if not self._createArchive(archive, sourceDir, dstpath, createDigests=not cacheMode):
                 return False
 
         if cacheMode:
-            if CraftCore.settings.getboolean(
-                "ContinuousIntegration", "UpdateRepository", False
-            ):
+            if CraftCore.settings.getboolean("ContinuousIntegration", "UpdateRepository", False):
                 manifestUrls = [self.cacheRepositoryUrls()[0]]
             else:
-                CraftCore.log.warning(
-                    f'Creating new cache, if you want to extend an existing cache, set "[ContinuousIntegration]UpdateRepository = True"'
-                )
+                CraftCore.log.warning(f'Creating new cache, if you want to extend an existing cache, set "[ContinuousIntegration]UpdateRepository = True"')
                 manifestUrls = None
 
             manifestLocation = dstpath / "manifest.json"
@@ -130,9 +121,7 @@ class SevenZipPackager(PackagerBase):
                 package.addFile(
                     type,
                     archiveName,
-                    CraftHash.digestFile(
-                        dstpath / archiveName, CraftHash.HashAlgorithm.SHA256
-                    ),
+                    CraftHash.digestFile(dstpath / archiveName, CraftHash.HashAlgorithm.SHA256),
                 )
             manifest.dump(manifestLocation)
         return True
