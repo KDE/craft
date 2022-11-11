@@ -8,10 +8,10 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
-        self.svnTargets["master"] = "https://invent.kde.org/vonreth/kshim.git"
+        self.svnTargets["master"] = "https://invent.kde.org/sdk/kshim.git"
 
         for ver in ["0.5.2"]:
-            self.targets[ver] = f"https://invent.kde.org/vonreth/kshim/-/archive/v{ver}/kshim-v{ver}.tar.gz"
+            self.targets[ver] = f"https://invent.kde.org/sdk/kshim/-/archive/v{ver}/kshim-v{ver}.tar.gz"
             self.targetInstSrc[ver] = f"kshim-v{ver}"
 
         self.targetDigests["0.5.2"] = (
