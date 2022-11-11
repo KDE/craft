@@ -74,6 +74,7 @@ class AppImagePackager(CollectionPackagerBase):
                 "--appdir",
                 self.archiveDir(),
                 "--plugin=qt",
+                "--plugin=craft",
                 "--output=appimage",
                 "--desktop-file",
                 desktopFiles[0],
