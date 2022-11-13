@@ -49,8 +49,8 @@ class CraftCompilerSignature(object):
         if self.abiString:
             return (
                 self.platform.name.lower(),
-                self.abiString,
                 self.compiler.name.lower(),
+                self.abiString,
                 self.architecture.name.lower(),
             )
         else:
