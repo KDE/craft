@@ -11,7 +11,7 @@ class TestCompilerSeignature(CraftTestBase.CraftTestBase):
             CraftCompilerSignature(CraftCompiler.Platforms.Windows, CraftCompiler.Compiler.CL, "msvc2019", CraftCompiler.Architecture.x86_64).signature,
         )
         self.assertEqual(
-            CraftCompilerSignature.parseAbi("windows-msvc2019-cl-x86_64").signature,
+            CraftCompilerSignature.parseAbi("windows-cl-msvc2019-x86_64").signature,
             CraftCompilerSignature(CraftCompiler.Platforms.Windows, CraftCompiler.Compiler.CL, "msvc2019", CraftCompiler.Architecture.x86_64).signature,
         )
         self.assertEqual(

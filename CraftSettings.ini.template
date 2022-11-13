@@ -7,13 +7,13 @@
 ## Here you set the ABI to be used.
 ## #platform-#abi-#compiler
 ## Valid combinations are:
-## windows-msvc[2015, 2017]_[32, 64]-[cl, clang]
-## windows-mingw_[32, 64]-[gcc, clang]
-## linux-[32, 64]-[gcc, clang]
-## macos-[32, 64]-clang
-## freebsd-[32, 64]-clang
-## android-[arm, arm64, x86, x86_64]-clang
-ABI = windows-msvc2015_64-cl
+## windows-cl-msvc[2019, 2022]-[x86_32, x86_64]
+## windows-[gcc, clang]-[x86_32, x86_64]
+## linux-[gcc, clang]-[x86_32, x86_64]
+## macos-[clang]-[x86_64, arm64]
+## freebsd-[gcc, clang]-[x86_32, x86_64]
+## android-[gcc, clang]-[arm, arm64, x86_32, x86_64]
+ABI = windows-cl-msvc2019-x86_64
 ## This option should be set to False if you use the msvc 201X Express Edition 64bit compiler
 ## in all other cases, simply keep this option commented out
 #Native=False

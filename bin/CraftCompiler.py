@@ -71,8 +71,8 @@ class CraftCompilerSignature(object):
 
         try:
             if len(split) == 4:
-                abi = split[1]
-                compiler = CraftCompiler.Compiler.fromString(split[2])
+                compiler = CraftCompiler.Compiler.fromString(split[1])
+                abi = split[2]
                 arch = CraftCompiler.Architecture.fromString(split[3])
             else:
                 abi = None
