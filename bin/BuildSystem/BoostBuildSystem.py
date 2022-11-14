@@ -6,6 +6,7 @@
 """@package provides boost build system"""
 from Blueprints.CraftVersion import CraftVersion
 from BuildSystem.BuildSystemBase import *
+from CraftCompiler import CraftCompiler
 from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 
@@ -54,7 +55,7 @@ class BoostBuildSystem(BuildSystemBase):
             options += ["link=shared", "runtime-link=shared"]
         else:
             options += ["link=static", "runtime-link=shared"]
-        if CraftCore.compiler.isX64():
+        if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64:
             options += ["address-model=64", "architecture=x86"]
         else:
             options += ["address-model=32", "architecture=x86"]

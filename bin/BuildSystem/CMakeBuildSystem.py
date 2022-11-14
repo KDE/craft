@@ -27,7 +27,7 @@ class CMakeBuildSystem(BuildSystemBase):
         if self.makeProgram == "ninja":
             return "Ninja"
         if OsUtils.isWin():
-            if CraftCore.compiler.isMSVC() and not CraftCore.compiler.isIntel():
+            if CraftCore.compiler.isMSVC():
                 return "NMake Makefiles"
             if CraftCore.compiler.isMinGW():
                 return "MinGW Makefiles"
@@ -124,17 +124,6 @@ class CMakeBuildSystem(BuildSystemBase):
             and self.subinfo.options.configure.staticArgs
         ):
             options += self.subinfo.options.configure.staticArgs
-        if CraftCore.compiler.isIntel():
-            # this is needed because otherwise it'll detect the MSVC environment
-            options += ' -DCMAKE_CXX_COMPILER="%s" ' % os.path.join(
-                os.getenv("BIN_ROOT"), os.getenv("ARCH_PATH"), "icl.exe"
-            ).replace("\\", "/")
-            options += ' -DCMAKE_C_COMPILER="%s" ' % os.path.join(
-                os.getenv("BIN_ROOT"), os.getenv("ARCH_PATH"), "icl.exe"
-            ).replace("\\", "/")
-            options += ' -DCMAKE_LINKER="%s" ' % os.path.join(
-                os.getenv("BIN_ROOT"), os.getenv("ARCH_PATH"), "xilink.exe"
-            ).replace("\\", "/")
         options += ["-S", self.configureSourceDir()]
         return options
 

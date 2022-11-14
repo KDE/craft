@@ -2,12 +2,11 @@
 # copyright (c) 2011 Hannah von Reth <vonreth@kde.org>
 #
 from .CollectionPackagerBase import *
-from .SevenZipPackager import SevenZipPackager
+from .SevenZipPackager import *
 
 
 class PortablePackager(CollectionPackagerBase, SevenZipPackager):
-    """
-    Packager for portal 7zip archives"""
+    """Packager for portal 7zip archives"""
 
     @InitGuard.init_once
     def __init__(self, whitelists=None, blacklists=None):
@@ -31,7 +30,7 @@ class PortablePackager(CollectionPackagerBase, SevenZipPackager):
         """create a package"""
 
         defines = self.setDefaults(self.defines)
-        if not self.internalCreatePackage(defines, True):
+        if not self.internalCreatePackage(defines):
             return False
 
         return self.createPortablePackage(defines)

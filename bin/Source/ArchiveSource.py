@@ -52,73 +52,6 @@ class ArchiveSource(SourceBase):
             return func(downloadRetriesLeft=downloadRetriesLeft, **kw)
         return False
 
-    def _getFileInfoFromArchiveCache(self) -> []:
-        out = []
-        for url in CraftCore.settings.getList("Packager", "ArchiveRepositoryUrl"):
-            manifest = CraftManifest.fromJson(
-                CraftCore.cache.cacheJsonFromUrl(utils.urljoin(url, "manifest.json"))
-            )
-            files = manifest.get(str(self), compiler="all").files
-            if files:
-                out.append((url, files))
-        return out
-
-    def __fetchFromArchiveCache(self, downloadRetriesLeft: int = 3):
-        for url, files in self._getFileInfoFromArchiveCache():
-            self.__downloadDir.mkdir(parents=True, exist_ok=True)
-            for entry in files:
-                if entry.version != self.buildTarget:
-                    continue
-                if not GetFiles.getFile(
-                    utils.urljoin(url, entry.fileName),
-                    self.__archiveDir,
-                    entry.fileName,
-                ):
-                    self.__retry(downloadRetriesLeft, self.__fetchFromArchiveCache)
-                if not CraftHash.checkFilesDigests(
-                    self.__archiveDir,
-                    [entry.fileName],
-                    digests=entry.checksum,
-                    digestAlgorithm=CraftHash.HashAlgorithm.SHA256,
-                ):
-                    return self.__retry(
-                        downloadRetriesLeft,
-                        lambda downloadRetriesLeft: utils.deleteFile(
-                            self.__archiveDir / entry.fileName
-                        )
-                        and self.__fetchFromArchiveCache(downloadRetriesLeft),
-                    )
-            if self.__checkFilesPresent(self.localFileNames()):
-                return True
-        return False
-
-    def generateSrcManifest(self) -> bool:
-        archiveNames = self.localFileNames()
-        if self.subinfo.hasTargetDigestUrls():
-            url, alg = self.subinfo.targetDigestUrl()
-            archiveNames.append(
-                self.subinfo.archiveName()[0]
-                + CraftHash.HashAlgorithm.fileEndings().get(alg)
-            )
-        manifestLocation = os.path.join(self.__archiveDir, "manifest.json")
-        manifest = CraftManifest.load(
-            manifestLocation,
-            urls=CraftCore.settings.getList("Packager", "ArchiveRepositoryUrl"),
-        )
-        entry = manifest.get(str(self), compiler="all")
-        entry.files.clear()
-
-        for archiveName in archiveNames:
-            name = (Path(self.package.path) / archiveName).as_posix()
-            archiveFile = self.__downloadDir / archiveName
-            if not archiveFile.is_file():
-                continue
-            digests = CraftHash.digestFile(archiveFile, CraftHash.HashAlgorithm.SHA256)
-
-            entry.addFile(name, digests, version=self.version)
-        manifest.dump(manifestLocation)
-        return True
-
     def localFileNames(self):
         if self.subinfo.archiveName() == [""]:
             urls = self.subinfo.targets[self.buildTarget]
@@ -175,9 +108,6 @@ class ArchiveSource(SourceBase):
                 )
                 return True
             if self.subinfo.target():
-                if self.__fetchFromArchiveCache():
-                    return True
-
                 # compat for scripts that provide multiple files
                 files = (
                     zip(self.subinfo.target(), self.subinfo.archiveName())

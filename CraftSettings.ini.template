@@ -7,13 +7,13 @@
 ## Here you set the ABI to be used.
 ## #platform-#abi-#compiler
 ## Valid combinations are:
-## windows-msvc[2015, 2017]_[32, 64]-[cl, clang]
-## windows-mingw_[32, 64]-[gcc, clang]
-## linux-[32, 64]-[gcc, clang]
-## macos-[32, 64]-clang
-## freebsd-[32, 64]-clang
-## android-[arm, arm64, x86, x86_64]-clang
-ABI = windows-msvc2015_64-cl
+## windows-cl-msvc[2019, 2022]-[x86_32, x86_64]
+## windows-[gcc, clang]-[x86_32, x86_64]
+## linux-[gcc, clang]-[x86_32, x86_64]
+## macos-[clang]-[x86_64, arm64]
+## freebsd-[gcc, clang]-[x86_32, x86_64]
+## android-[gcc, clang]-[arm, arm64, x86_32, x86_64]
+ABI = windows-cl-msvc2019-x86_64
 ## This option should be set to False if you use the msvc 201X Express Edition 64bit compiler
 ## in all other cases, simply keep this option commented out
 #Native=False
@@ -182,6 +182,9 @@ PackageDebugSymbols = True
 ## See --use-cache and --no-cache in the Craft help.
 UseCache = True
 
+## Enable fetching of debug symbols along with the binaries
+DownloadDebugSymbolsCache = False
+
 [CraftDebug]
 ## If you want to have verbose output, uncomment the following option
 ## and set it to positive integer for verbose output and to 0
@@ -211,20 +214,6 @@ LogDeprecated = True
 ## Set the ssh client for git and svn.
 #GIT_SSH = plink
 #SVN_SSH = plink
-
-
-[QtSDK]
-## For advanced users only
-## Whether to use prebuild Qt binaries.
-Enabled = False
-## The path to the Qt sdk.
-Path = D:\Qt
-## The version of Qt.
-Version = 5.11.1
-## The compiler version, if you are not sure what to use, have a look into the directory set in QtSDK/Path.
-## The compiler must be of the same type as General/KDECOMPILER.
-## If you are using mingw please make sure you have installed the mingw using the Qt installer.
-Compiler = mingw482_32
 
 [ContinuousIntegration]
 ## Changes the verbosity of some sub processes.

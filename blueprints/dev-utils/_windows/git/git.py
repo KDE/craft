@@ -28,15 +28,13 @@ from Package.MaybeVirtualPackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        ver = "2.30.2"
+        ver = "2.38.1"
         build = "1"
-        self.targets[
-            ver
-        ] = f"https://github.com/git-for-windows/git/releases/download/v{ver}.windows.{build}/PortableGit-{ver}-64-bit.7z.exe"
+        self.targets[ver] = f"https://github.com/git-for-windows/git/releases/download/v{ver}.windows.{build}/PortableGit-{ver}-64-bit.7z.exe"
         self.archiveNames[ver] = f"PortableGit-{ver}-64-bit.7z"
         self.targetInstallPath[ver] = os.path.join("dev-utils", "git")
         self.targetDigests[ver] = (
-            ["f719f248de3dd7ef234331f8da95762594a388f6aa62f4c0260df18068e5a447"],
+            ["cdcdb268aaed1dd2ac33d1dfdaf105369e3d7bd8d84d641d26d30b34e706b843"],
             CraftHash.HashAlgorithm.SHA256,
         )
         self.defaultTarget = ver
@@ -82,6 +80,4 @@ class GitPackage(BinaryPackageBase):
 
 class Package(VirtualIfSufficientVersion):
     def __init__(self):
-        VirtualIfSufficientVersion.__init__(
-            self, app="git", version="2.27.0", classA=GitPackage
-        )
+        VirtualIfSufficientVersion.__init__(self, app="git", version="2.27.0", classA=GitPackage)

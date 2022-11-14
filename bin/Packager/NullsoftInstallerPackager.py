@@ -30,6 +30,7 @@ from pathlib import Path
 import utils
 from Blueprints.CraftVersion import CraftVersion
 from CraftBase import InitGuard
+from CraftCompiler import CraftCompiler
 from CraftCore import *
 from CraftOS.osutils import OsUtils
 from Packager.PortablePackager import PortablePackager
@@ -81,12 +82,14 @@ class NullsoftInstallerPackager(PortablePackager):
         defines = super().setDefaults(defines)
         defines.setdefault(
             "defaultinstdir",
-            "$PROGRAMFILES64" if CraftCore.compiler.isX64() else "$PROGRAMFILES",
+            "$PROGRAMFILES64"
+            if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64
+            else "$PROGRAMFILES",
         )
         defines.setdefault(
             "multiuser_use_programfiles64",
             "!define MULTIUSER_USE_PROGRAMFILES64"
-            if CraftCore.compiler.isX64()
+            if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64
             else "",
         )
         defines.setdefault("srcdir", self.archiveDir())  # deprecated
@@ -160,13 +163,13 @@ class NullsoftInstallerPackager(PortablePackager):
         if sevenZPath.exists():
             defines["7za"] = (
                 sevenZPath / "7za.exe"
-                if CraftCore.compiler.isX64()
+                if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64
                 else sevenZPath / "7za_32.exe"
             )
         else:  # legacy
             defines["7za"] = (
                 CraftCore.cache.findApplication("7za")
-                if CraftCore.compiler.isX64()
+                if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64
                 else CraftCore.cache.findApplication("7za_32")
             )
         # provide the actual installation size in kb, ignore the 7z size as it gets removed after the install

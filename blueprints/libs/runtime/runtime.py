@@ -26,7 +26,7 @@ class subinfo(info.infoclass):
 from Package.BinaryPackageBase import *
 
 
-class PackageWin(BinaryPackageBase):
+class Package(BinaryPackageBase):
     def __init__(self):
         BinaryPackageBase.__init__(self)
         self.subinfo.options.package.disableBinaryCache = CraftCore.compiler.isMSVC()
@@ -70,18 +70,10 @@ class PackageWin(BinaryPackageBase):
                             f"Could not find Microsoft Visual Studio {flavor}.\n"
                             f"VCTOOLSREDISTDIR does not exist, and likely should point to '*\\Microsoft Visual Studio\\{flavor}\\Community\\VC\\Redist\\MSVC\\xx.xx.xxxxx'."
                         )
-                elif CraftCore.compiler.isMSVC2015():
-                    if "VCINSTALLDIR" in os.environ:
-                        redistDir = os.path.join(os.environ["VCINSTALLDIR"], "redist")
-                    else:
-                        CraftCore.log.error(
-                            "Could not find Microsoft Visual Studio 2015.\n"
-                            + r"VCINSTALLDIR does not exist, and should point to '*\Microsoft Visual Studio\2015\Community\VC\'."
-                        )
                 if redistDir:
                     files = glob.glob(
                         os.path.join(
-                            redistDir, CraftCore.compiler.architecture, "**/*.dll"
+                            redistDir, f"x{CraftCore.compiler.bits}", "**/*.dll"
                         ),
                         recursive=True,
                     )
@@ -95,13 +87,3 @@ class PackageWin(BinaryPackageBase):
                 f, os.path.join(destdir, os.path.basename(f)), linkOnly=False
             )
         return True
-
-
-from Package.Qt5CorePackageBase import *
-
-
-class Package(Qt5CoreSdkPackageBase):
-    def __init__(self):
-        Qt5CoreSdkPackageBase.__init__(
-            self, condition=OsUtils.isWin(), classA=PackageWin
-        )

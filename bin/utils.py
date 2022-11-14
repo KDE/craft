@@ -43,7 +43,6 @@ import tempfile
 from pathlib import Path
 
 import Notifier.NotificationLoader
-from Blueprints.CraftVersion import CraftVersion
 from CraftCore import CraftCore
 from CraftDebug import deprecated
 from CraftOS.osutils import OsUtils
@@ -1262,13 +1261,13 @@ def makeTemporaryWritable(targetPath: Path):
             targetPath.chmod(mode & ~stat.S_IWUSR)
 
 
-def getPDBForBinary(path: str) -> str:
+def getPDBForBinary(path: str) -> Path:
     with open(path, "rb") as f:
         data = f.read()
     pdb = data.rfind(b".pdb")
-    if pdb:
-        return data[data.rfind(0x00, 0, pdb) + 1 : pdb + 4].decode("utf-8")
-    return ""
+    if pdb != -1:
+        return Path(data[data.rfind(0x00, 0, pdb) + 1 : pdb + 4].decode("utf-8"))
+    return None
 
 
 def installShortcut(name: str, path: str, workingDir: str, icon: str, desciption: str):
@@ -1300,16 +1299,7 @@ def installShortcut(name: str, path: str, workingDir: str, icon: str, desciption
     )
 
 
-def strip(fileName):
-    """strip debugging informations from shared libraries and executables - mingw only!!!"""
-    if CraftCore.compiler.isMSVC() or not CraftCore.compiler.isGCCLike():
-        CraftCore.log.warning(
-            f"Skipping stripping of {fileName} -- either disabled or unsupported with this compiler"
-        )
-        return True
-
-    fileName = Path(fileName)
-    isBundle = False
+def symFileName(fileName: Path) -> Path:
     if CraftCore.compiler.isMacOS:
         bundleDir = list(
             filter(
@@ -1322,28 +1312,47 @@ def strip(fileName):
             # if we are a .app in a .framework we put the smbols in the same location
             if len(bundleDir) > 1:
                 suffix = f"-{'.'.join([x.name for x in reversed(bundleDir[0:-1])])}"
-            isBundle = True
-            symFile = Path(f"{bundleDir[-1]}{suffix}.dSYM")
+            return (
+                Path(f"{bundleDir[-1]}{suffix}{CraftCore.compiler.symbolsSuffix}")
+                / "Contents/Resources/DWARF"
+                / fileName.name
+            )
         else:
-            symFile = Path(f"{fileName}.dSYM")
+            return Path(f"{fileName}{CraftCore.compiler.symbolsSuffix}")
     else:
-        symFile = Path(f"{fileName}.debug")
+        return Path(f"{fileName}{CraftCore.compiler.symbolsSuffix}")
 
-    if not isBundle and symFile.exists():
+
+def strip(fileName: Path, destFileName: Path = None) -> Path:
+    """strip debugging informations from shared libraries and executables"""
+    """ Returns the path to the sym file on success, None on error"""
+    if CraftCore.compiler.isMSVC() or not CraftCore.compiler.isGCCLike():
+        CraftCore.log.warning(
+            f"Skipping stripping of {fileName} -- either disabled or unsupported with this compiler"
+        )
         return True
-    elif (symFile / "Contents/Resources/DWARF" / fileName.name).exists():
-        return True
+
+    fileName = Path(fileName)
+    if not destFileName:
+        destFileName = symFileName(fileName)
+    if destFileName.exists():
+        return destFileName
 
     if CraftCore.compiler.isMacOS:
-        return system(["dsymutil", fileName, "-o", symFile]) and system(
-            ["strip", "-x", "-S", fileName]
-        )
+        if not (
+            system(["dsymutil", fileName, "-o", destFileName])
+            and system(["strip", "-x", "-S", fileName])
+            and system(["codesign", "-f", "-s", "-", fileName])
+        ):
+            return None
     else:
-        return (
-            system(["objcopy", "--only-keep-debug", fileName, symFile])
+        if not (
+            system(["objcopy", "--only-keep-debug", fileName, destFileName])
             and system(["strip", "--strip-debug", "--strip-unneeded", fileName])
-            and system(["objcopy", "--add-gnu-debuglink", symFile, fileName])
-        )
+            and system(["objcopy", "--add-gnu-debuglink", destFileName, fileName])
+        ):
+            return False
+    return destFileName
 
 
 def urljoin(root, path):

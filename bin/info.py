@@ -8,6 +8,7 @@ import os
 # by methods to be able to separate the access from
 # the definition
 from enum import Enum, unique
+from typing import *
 
 import VersionInfo
 from Blueprints.CraftPackageObject import BlueprintException, CraftPackageObject
@@ -15,6 +16,8 @@ from CraftCore import CraftCore
 from CraftDebug import deprecated
 from options import Options
 from Utils import CraftHash, CraftManifest
+from CraftCompiler import CraftCompilerSignature, CraftCompiler
+
 
 
 @unique
@@ -46,7 +49,6 @@ class infoclass(object):
         self.targetInstallPath = {}
 
         self.targetDigests = {}
-        self.targetDigestsX64 = {}
         self.targetDigestUrls = {}
         ## \todo prelimary
         self.svnTargets = {}
@@ -153,7 +155,7 @@ class infoclass(object):
             return self.targets[self.buildTarget]
         return ""
 
-    def archiveName(self) -> [str]:
+    def archiveName(self) -> List[str]:
         """returns the archive file name"""
         if self.buildTarget in self.archiveNames:
             name = self.archiveNames[self.buildTarget]
@@ -214,7 +216,7 @@ class infoclass(object):
             self.hasTarget() or self.hasSvnTarget()
         ) and self.buildTarget in self.patchToApply
 
-    def patchesToApply(self) -> [tuple]:
+    def patchesToApply(self) -> List[tuple]:
         """return patch informations for the recent build target"""
         if self.hasPatches():
             out = self.patchToApply[self.buildTarget]
@@ -223,17 +225,12 @@ class infoclass(object):
 
     def hasTargetDigests(self) -> bool:
         """return state if target has digest(s) for the recent build target"""
-        if CraftCore.compiler.isX64() and self.buildTarget in self.targetDigestsX64:
-            return True
         return self.buildTarget in self.targetDigests
 
-    def targetDigest(self) -> ([str], CraftHash.HashAlgorithm):
+    def targetDigest(self) -> Tuple[List[str], CraftHash.HashAlgorithm]:
         """return digest(s) for the recent build target. The return value could be a string or a list"""
         if self.hasTargetDigests():
-            if CraftCore.compiler.isX64() and self.buildTarget in self.targetDigestsX64:
-                out = self.targetDigestsX64[self.buildTarget]
-            else:
-                out = self.targetDigests[self.buildTarget]
+            out = self.targetDigests[self.buildTarget]
             if type(out) == str:
                 out = [out]
             if not type(out) == tuple:
@@ -245,7 +242,7 @@ class infoclass(object):
         """return state if target has digest url(s) for the recent build target"""
         return self.buildTarget in self.targetDigestUrls
 
-    def targetDigestUrl(self) -> ([str], CraftHash.HashAlgorithm):
+    def targetDigestUrl(self) -> Tuple[List[str], CraftHash.HashAlgorithm]:
         """return digest url(s) for the recent build target.  The return value could be a string or a list"""
         if self.hasTargetDigestUrls():
             out = self.targetDigestUrls[self.buildTarget]
@@ -290,18 +287,23 @@ class infoclass(object):
                 )
                 continue
             manifest = CraftManifest.CraftManifest.fromJson(json)
-            if (
-                packageName
-                not in manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"]
-            ):
+            compiler = CraftCompilerSignature(
+                CraftCompiler.Platforms.Windows,
+                CraftCompiler.Compiler.GCC,
+                None,
+                CraftCore.compiler.architecture,
+            )
+            if packageName not in manifest.packages[str(compiler)]:
                 del self.targets[key]
                 CraftCore.log.debug(f"Failed to find {packageName} on {url}")
                 continue
-            data = manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"][
-                packageName
-            ].latest
-            self.targets[key] = f"{url}/{data.fileName}"
-            self.targetDigests[key] = ([data.checksum], CraftHash.HashAlgorithm.SHA256)
+            data = manifest.packages[str(compiler)][packageName].latest
+            binaryFile = data.files[CraftManifest.FileType.Binary]
+            self.targets[key] = f"{url}/{binaryFile.fileName}"
+            self.targetDigests[key] = (
+                [binaryFile.checksum],
+                CraftHash.HashAlgorithm.SHA256,
+            )
             if packageName != self.parent.package:
                 if data.version in package.subinfo.patchLevel:
                     self.patchLevel[key] = package.subinfo.patchLevel[data.version]
@@ -327,12 +329,17 @@ class infoclass(object):
         manifest = CraftManifest.CraftManifest.fromJson(
             CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json")
         )
-        latest = manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"][
-            packagePath
-        ].latest
-        self.targets[latest.version] = f"{url}/{latest.fileName}"
+        compiler = CraftCompilerSignature(
+            CraftCompiler.Platforms.Windows,
+            CraftCompiler.Compiler.GCC,
+            None,
+            CraftCore.compiler.architecture,
+        )
+        latest = manifest.packages[str(compiler)].get(str(packagePath)).latest
+        binaryFile = latest.files[CraftManifest.FileType.Binary]
+        self.targets[latest.version] = f"{url}/{binaryFile.fileName}"
         self.targetDigests[latest.version] = (
-            [latest.checksum],
+            [binaryFile.checksum],
             CraftHash.HashAlgorithm.SHA256,
         )
         self.defaultTarget = latest.version

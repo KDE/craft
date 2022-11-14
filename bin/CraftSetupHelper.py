@@ -220,12 +220,21 @@ class SetupHelper(object):
 
     @staticmethod
     def getMSVCEnv(
-        version: int = 0, architecture="x86", toolset=None, native=True
+        version: int = 0,
+        architecture=CraftCore.compiler.Architecture.x86_64,
+        toolset=None,
+        native=True,
     ) -> str:
         if native:
-            architectures = {"x86": "amd64_x86", "x64": "amd64"}
+            architectures = {
+                CraftCore.compiler.Architecture.x86_32: "amd64_x86",
+                CraftCore.compiler.Architecture.x86_64: "amd64",
+            }
         else:
-            architectures = {"x86": "x86", "x64": "x86_amd64"}
+            architectures = {
+                CraftCore.compiler.Architecture.x86_32: "x86",
+                CraftCore.compiler.Architecture.x86_64: "x86_amd64",
+            }
 
         args = architectures[architecture]
         path = ""
@@ -293,16 +302,6 @@ class SetupHelper(object):
                 CraftCore.compiler.msvcToolset,
                 CraftCore.compiler.isNative(),
             )
-        elif CraftCore.compiler.isIntel():
-            architectures = {"x86": "ia32", "x64": "intel64"}
-            programFiles = os.getenv("ProgramFiles(x86)") or os.getenv("ProgramFiles")
-            status, result = SetupHelper._getOutput(
-                '"%s\\Intel\\Composer XE\\bin\\compilervars.bat" %s > NUL && set'
-                % (programFiles, architectures[CraftCore.compiler.architecture]),
-                shell=True,
-            )
-            if status != 0:
-                log("Failed to setup intel compiler", critical=True)
             return SetupHelper.stringToEnv(result)
         return os.environ
 
@@ -407,72 +406,10 @@ class SetupHelper(object):
             self.addEnvVar("HOME", os.getenv("USERPROFILE"))
 
         if CraftCore.compiler.isMinGW():
-            if not CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
-                if CraftCore.compiler.isX86():
-                    self.prependEnvVar(
-                        "PATH",
-                        os.path.join(
-                            CraftCore.standardDirs.craftRoot(), "mingw", "bin"
-                        ),
-                    )
-                else:
-                    self.prependEnvVar(
-                        "PATH",
-                        os.path.join(
-                            CraftCore.standardDirs.craftRoot(), "mingw64", "bin"
-                        ),
-                    )
-            else:
-                compilerName = CraftCore.settings.get("QtSDK", "Compiler")
-                compilerMap = {"mingw53_32": "mingw530_32"}
-                self.prependEnvVar(
-                    "PATH",
-                    os.path.join(
-                        CraftCore.settings.get("QtSDK", "Path"),
-                        "Tools",
-                        compilerMap.get(compilerName, compilerName),
-                        "bin",
-                    ),
-                )
-        if CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
             self.prependEnvVar(
                 "PATH",
-                os.path.join(
-                    CraftCore.settings.get("QtSDK", "Path"),
-                    CraftCore.settings.get("QtSDK", "Version"),
-                    CraftCore.settings.get("QtSDK", "Compiler"),
-                    "bin",
-                ),
+                os.path.join(CraftCore.standardDirs.craftRoot(), "mingw64", "bin"),
             )
-
-        if CraftCore.compiler.isMinGW():
-            if not CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
-                if CraftCore.compiler.isX86():
-                    self.prependEnvVar(
-                        "PATH",
-                        os.path.join(
-                            CraftCore.standardDirs.craftRoot(), "mingw", "bin"
-                        ),
-                    )
-                else:
-                    self.prependEnvVar(
-                        "PATH",
-                        os.path.join(
-                            CraftCore.standardDirs.craftRoot(), "mingw64", "bin"
-                        ),
-                    )
-            else:
-                compilerName = CraftCore.settings.get("QtSDK", "Compiler")
-                compilerMap = {"mingw53_32": "mingw530_32"}
-                self.prependEnvVar(
-                    "PATH",
-                    os.path.join(
-                        CraftCore.settings.get("QtSDK", "Path"),
-                        "Tools",
-                        compilerMap.get(compilerName, compilerName),
-                        "bin",
-                    ),
-                )
 
     def _setupAndroid(self):
         self.addEnvVar("ANDROID_ARCH", CraftCore.compiler.architecture)
@@ -510,20 +447,6 @@ class SetupHelper(object):
                 ),
             )
 
-        if CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
-            sdkPath = os.path.join(
-                CraftCore.settings.get("QtSDK", "Path"),
-                CraftCore.settings.get("QtSDK", "Version"),
-                CraftCore.settings.get("QtSDK", "Compiler"),
-                "bin",
-            )
-            if not os.path.exists(sdkPath):
-                log(
-                    f"Please ensure that you have installed the Qt SDK in {sdkPath}",
-                    critical=True,
-                )
-            self.prependEnvVar("PATH", sdkPath)
-
         if OsUtils.isWin():
             self._setupWin()
         elif OsUtils.isMac():
@@ -559,16 +482,11 @@ class SetupHelper(object):
         self.prependEnvVar(
             "QT_PLUGIN_PATH",
             [
-                os.path.join(CraftCore.standardDirs.craftRoot(), "plugins"),
-                os.path.join(CraftCore.standardDirs.craftRoot(), "lib", "plugins"),
-                os.path.join(CraftCore.standardDirs.craftRoot(), "lib64", "plugins"),
-                os.path.join(
-                    CraftCore.standardDirs.craftRoot(),
-                    "lib",
-                    "x86_64-linux-gnu",
-                    "plugins",
-                ),
-                os.path.join(CraftCore.standardDirs.craftRoot(), "lib", "plugin"),
+                CraftCore.standardDirs.craftRoot() / "plugins",
+                CraftCore.standardDirs.craftRoot() / "lib/plugins",
+                CraftCore.standardDirs.craftRoot() / "lib64/plugins",
+                CraftCore.standardDirs.craftRoot() / "lib/x86_64-linux-gnu/plugins",
+                CraftCore.standardDirs.craftRoot() / "lib/plugin",
                 CraftCore.standardDirs.craftRoot() / "lib/qt6/plugins",
             ],
         )
@@ -576,12 +494,11 @@ class SetupHelper(object):
         self.prependEnvVar(
             "QML2_IMPORT_PATH",
             [
-                os.path.join(CraftCore.standardDirs.craftRoot(), "qml"),
-                os.path.join(CraftCore.standardDirs.craftRoot(), "lib", "qml"),
-                os.path.join(CraftCore.standardDirs.craftRoot(), "lib64", "qml"),
-                os.path.join(
-                    CraftCore.standardDirs.craftRoot(), "lib", "x86_64-linux-gnu", "qml"
-                ),
+                CraftCore.standardDirs.craftRoot() / "qml",
+                CraftCore.standardDirs.craftRoot() / "lib/qml",
+                CraftCore.standardDirs.craftRoot() / "lib64/qml",
+                CraftCore.standardDirs.craftRoot() / "lib/x86_64-linux-gnu/qml",
+                CraftCore.standardDirs.craftRoot() / "lib/qt6/qml",
             ],
         )
         self.prependEnvVar("QML_IMPORT_PATH", os.environ["QML2_IMPORT_PATH"])
@@ -641,7 +558,11 @@ class SetupHelper(object):
                     self.addDefaultEnvVar("CC", "clang")
                     self.addDefaultEnvVar("CXX", "clang")
         elif CraftCore.compiler.isGCC():
-            if not CraftCore.compiler.isNative() and CraftCore.compiler.isX86():
+            if (
+                not CraftCore.compiler.isNative()
+                and CraftCore.compiler.architecture
+                == CraftCore.compiler.Architecture.x86_32
+            ):
                 self.addEnvVar("CC", "gcc -m32")
                 self.addEnvVar("CXX", "g++ -m32")
                 self.addEnvVar("AS", "gcc -c -m32")

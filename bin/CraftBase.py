@@ -77,13 +77,9 @@ class CraftBase(object):
         """return currently selected build type"""
         return self.subinfo.options.dynamic.buildType
 
-    def buildArchitecture(self):
-        """return the target CPU architecture"""
-        CraftCore.compiler.architecture()
-
     def imageDirPattern(self):
         """return base directory name for package related image directory"""
-        return f"image-{self.buildType()}-{self.buildTarget}"
+        return f"image-{self.buildType()}-{self.buildTarget.replace('/', '_')}"
 
     def sourceDir(self, dummyIndex=0) -> Path:
         utils.abstract()
@@ -142,6 +138,9 @@ class CraftBase(object):
         )
         utils.createDir(dstpath)
         return dstpath
+
+    def symbolsImageDir(self) -> Path:
+        return self.buildRoot() / f"{self.imageDirPattern()}-dbg"
 
     @property
     def buildTarget(self):
@@ -231,6 +230,12 @@ class CraftBase(object):
         if fileType:
             if not fileType.startswith("."):
                 fileType = f".{fileType}"
+            if fileType == ".7z" and not CraftCore.cache.findApplication("7za"):
+                # we are bootstrapping and can't use 7z yet
+                if CraftCore.compiler.isUnix:
+                    fileType = ".xz"
+                else:
+                    fileType = ".zip"
         else:
             fileType = ""
         prefix = "" if not includePackagePath else f"{self.package.path}/"
@@ -238,13 +243,9 @@ class CraftBase(object):
 
     @staticmethod
     def cacheVersion():
-        if CraftCore.settings.getboolean("QtSDK", "Enabled", "False"):
-            version = CraftCore.settings.get("QtSDK", "Version")
-            return f"QtSDK_{version}"
-        else:
-            return CraftCore.settings.get("Packager", "CacheVersion")
+        return CraftCore.settings.get("Packager", "CacheVersion")
 
-    def cacheLocation(self, baseDir=None) -> str:
+    def cacheLocation(self, baseDir=None) -> Path:
         if not baseDir:
             cacheDir = CraftCore.settings.get(
                 "Packager",
@@ -252,13 +253,15 @@ class CraftBase(object):
                 os.path.join(CraftStandardDirs.downloadDir(), "binary"),
             )
         else:
-            cacheDir = baseDir
+            cacheDir = Path(baseDir)
 
         version = self.cacheVersion()
         if not version:
             return None
-        return os.path.join(
-            cacheDir, version, *CraftCore.compiler.signature, self.buildType()
+        return Path(
+            os.path.join(
+                cacheDir, version, *CraftCore.compiler.signature, self.buildType()
+            )
         )
 
     def cacheRepositoryUrls(self) -> [str]:

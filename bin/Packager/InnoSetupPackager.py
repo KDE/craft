@@ -199,7 +199,7 @@ class InnoSetupPackager(PortablePackager):
 
         defines = self.setDefaults(self.defines)
 
-        if not self.internalCreatePackage(defines, True):
+        if not self.internalCreatePackage(defines):
             return False
         if not self.generateInnoInstaller(defines):
             return False

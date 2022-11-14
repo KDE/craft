@@ -63,21 +63,14 @@ class BuildSystemBase(CraftBase):
         """constructor"""
         CraftBase.__init__(self)
         self.supportsNinja = False
-        self.supportsCCACHE = (
-            CraftCore.settings.getboolean("Compile", "UseCCache", False)
-            and CraftCore.compiler.isGCCLike()
-        )
+        self.supportsCCACHE = CraftCore.settings.getboolean("Compile", "UseCCache", False) and CraftCore.compiler.isGCCLike()
         self.supportsClang = True
         self.buildSystemType = typeName
 
     @property
     def makeProgram(self) -> str:
         if self.subinfo.options.make.supportsMultijob:
-            if (
-                self.supportsNinja
-                and CraftCore.settings.getboolean("Compile", "UseNinja", False)
-                and CraftCore.cache.findApplication("ninja")
-            ):
+            if self.supportsNinja and CraftCore.settings.getboolean("Compile", "UseNinja", False) and CraftCore.cache.findApplication("ninja"):
                 return "ninja"
             if ("Compile", "MakeProgram") in CraftCore.settings:
                 makeProgram = CraftCore.settings.get("Compile", "MakeProgram")
@@ -85,19 +78,14 @@ class BuildSystemBase(CraftBase):
                 if CraftCore.cache.findApplication(makeProgram):
                     return makeProgram
                 else:
-                    CraftCore.log.warning(
-                        f"Failed to find {CraftCore.settings.get('Compile', 'MakeProgram')}"
-                    )
+                    CraftCore.log.warning(f"Failed to find {CraftCore.settings.get('Compile', 'MakeProgram')}")
         elif not self.subinfo.options.make.supportsMultijob:
             if "MAKE" in os.environ:
                 del os.environ["MAKE"]
 
         if OsUtils.isWin():
-            if CraftCore.compiler.isMSVC() or CraftCore.compiler.isIntel():
-                if (
-                    self.subinfo.options.make.supportsMultijob
-                    and CraftCore.cache.findApplication("jom")
-                ):
+            if CraftCore.compiler.isMSVC():
+                if self.subinfo.options.make.supportsMultijob and CraftCore.cache.findApplication("jom"):
                     return "jom"
                 else:
                     return "nmake"
@@ -152,17 +140,10 @@ class BuildSystemBase(CraftBase):
                 defines += ["VERBOSE=1", "V=1"]
 
         if self.subinfo.options.make.supportsMultijob and makeProgram != "nmake":
-            if (
-                makeProgram not in {"ninja", "jom"}
-                or ("Compile", "Jobs") in CraftCore.settings
-            ):
+            if makeProgram not in {"ninja", "jom"} or ("Compile", "Jobs") in CraftCore.settings:
                 defines += [
                     "-j",
-                    str(
-                        CraftCore.settings.get(
-                            "Compile", "Jobs", multiprocessing.cpu_count()
-                        )
-                    ),
+                    str(CraftCore.settings.get("Compile", "Jobs", multiprocessing.cpu_count())),
                 ]
 
         if args:
@@ -199,22 +180,9 @@ class BuildSystemBase(CraftBase):
 
         badPrefix = os.path.join(self.installDir(), stripPath(prefix))
 
-        if os.path.exists(badPrefix) and not os.path.samefile(
-            self.installDir(), badPrefix
-        ):
+        if os.path.exists(badPrefix) and not os.path.samefile(self.installDir(), badPrefix):
             if not utils.mergeTree(badPrefix, self.installDir()):
                 return False
-
-        if CraftCore.settings.getboolean("QtSDK", "Enabled", False):
-            qtDir = os.path.join(
-                CraftCore.settings.get("QtSDK", "Path"),
-                CraftCore.settings.get("QtSDK", "Version"),
-                CraftCore.settings.get("QtSDK", "Compiler"),
-            )
-            path = self.installDir() / stripPath(qtDir)
-            if path.exists() and not os.path.samefile(self.installDir(), path):
-                if not utils.mergeTree(path, self.installDir()):
-                    return False
 
         if stripPath(prefix):
             oldPrefix = self.installDir() / Path(stripPath(prefix)).parts[0]
@@ -258,14 +226,10 @@ class BuildSystemBase(CraftBase):
                     oldPath = match[0]
                     newPath = newValue.replace(b"/", match[1])
                     if oldPath != newPath:
-                        CraftCore.log.info(
-                            f"Patching {fileName}: replacing {oldPath} with {newPath}"
-                        )
+                        CraftCore.log.info(f"Patching {fileName}: replacing {oldPath} with {newPath}")
                         content = content.replace(oldPath, newPath)
                     else:
-                        CraftCore.log.debug(
-                            f"Skip Patching {fileName}:  prefix is unchanged {newPath}"
-                        )
+                        CraftCore.log.debug(f"Skip Patching {fileName}:  prefix is unchanged {newPath}")
             if dirty:
                 with utils.makeTemporaryWritable(fileName):
                     with fileName.open("wb") as f:
@@ -285,9 +249,7 @@ class BuildSystemBase(CraftBase):
             target = Path(os.readlink(sym))
             if target.is_absolute():
                 sym = Path(sym)
-                target = Path(self.imageDir()) / target.relative_to(
-                    CraftCore.standardDirs.craftRoot()
-                )
+                target = Path(self.imageDir()) / target.relative_to(CraftCore.standardDirs.craftRoot())
                 sym.unlink()
                 # we can't use relative_to here
                 sym.symlink_to(os.path.relpath(target, sym.parent))
@@ -300,9 +262,7 @@ class BuildSystemBase(CraftBase):
 
         files = utils.filterDirectoryContent(
             self.installDir(),
-            whitelist=lambda x, root: Path(x).suffix.lower()
-            in BuildSystemBase.PatchableFile
-            or utils.isScript(x),
+            whitelist=lambda x, root: Path(x).suffix.lower() in BuildSystemBase.PatchableFile or utils.isScript(x),
             blacklist=lambda x, root: True,
         )
 
@@ -345,9 +305,7 @@ class BuildSystemBase(CraftBase):
                     if os.path.splitext(f)[1] in {".dylib", ".so"}:
                         # fix dylib id
                         with io.StringIO() as log:
-                            utils.system(
-                                ["otool", "-D", f], stdout=log, logCommand=False
-                            )
+                            utils.system(["otool", "-D", f], stdout=log, logCommand=False)
                             oldId = log.getvalue().strip().split("\n")
                         # the first line is the file name
                         # the second the id, if we only get one line, there is no id to fix
@@ -375,56 +333,68 @@ class BuildSystemBase(CraftBase):
         # Install pdb files on MSVC if they are not found next to the dll
         # skip if we are a release build or from cache
         if not self.subinfo.isCachedBuild:
+            if not utils.cleanDirectory(self.symbolsImageDir()):
+                return False
             if self.buildType() in {"RelWithDebInfo", "Debug"}:
+                symbolsPattern = re.compile(r".*\{0}$".format(CraftCore.compiler.symbolsSuffix), re.IGNORECASE)
+
+                def symFilter(x: os.DirEntry, root):
+                    if CraftCore.compiler.isMacOS:
+                        if x.is_file():
+                            return False
+                    else:
+                        if x.is_dir():
+                            return False
+                    return utils.regexFileFilter(x, root, [symbolsPattern])
+
+                for f in utils.filterDirectoryContent(self.imageDir(), symFilter, lambda x, root: True):
+                    dest = self.symbolsImageDir() / Path(f).relative_to(self.imageDir())
+                    if not dest.parent.exists():
+                        if not utils.createDir(dest.parent):
+                            return False
+                    if not utils.moveFile(f, dest):
+                        return False
                 if CraftCore.compiler.isMSVC():
                     # static libs might also have pdbs
                     def staticLibsFilter(p: Path):
                         if p.suffix == ".lib":
-                            dll = p.with_suffix(".dll")
                             with io.StringIO() as log:
-                                utils.system(
-                                    ["lib", "-list", p], stdout=log, logCommand=False
-                                )
-                                if dll.name in log.getvalue():
+                                utils.system(["lib", "-list", "-nologo", p], stdout=log, logCommand=False)
+                                if ".dll" in log.getvalue():
                                     return False
                                 return True
                         return False
 
-                    staticLibs = list(
-                        utils.filterDirectoryContent(
-                            self.installDir(),
-                            lambda x, root: staticLibsFilter(Path(x.path)),
-                            lambda x, root: True,
-                        )
-                    )
+                    staticLibs = list(utils.filterDirectoryContent(self.installDir(), lambda x, root: staticLibsFilter(Path(x.path)), lambda x, root: True))
                     for f in binaryFiles + staticLibs:
-                        if not os.path.exists(f"{os.path.splitext(f)[0]}.pdb"):
-                            pdb = utils.getPDBForBinary(f)
-                            if not pdb:
-                                CraftCore.log.warning(f"Could not find a PDB for {f}")
+                        pdb = utils.getPDBForBinary(f)
+                        if not pdb:
+                            CraftCore.log.warning(f"Could not find a PDB for {f}")
+                            continue
+                        pdbDestination = self.symbolsImageDir() / Path(f).parent.relative_to(self.imageDir()) / os.path.basename(pdb)
+                        if not pdbDestination.exists():
+                            if not pdb.exists():
+                                CraftCore.log.warning(f"PDB {pdb} for {f} does not exist")
                                 continue
-                            if not os.path.exists(pdb):
-                                CraftCore.log.warning(
-                                    f"PDB {pdb} for {f} does not exist"
-                                )
-                                continue
-                            pdbDestination = os.path.join(
-                                os.path.dirname(f), os.path.basename(pdb)
-                            )
-
-                            CraftCore.log.info(
-                                f"Install pdb: {pdbDestination} for {os.path.basename(f)}"
-                            )
-                            utils.copyFile(pdb, pdbDestination, linkOnly=False)
+                            CraftCore.log.info(f"Install pdb: {pdbDestination} for {os.path.basename(f)}")
+                            if not utils.copyFile(pdb, pdbDestination, linkOnly=False):
+                                return False
                 else:
                     if not self.subinfo.options.package.disableStriping:
                         for f in binaryFiles:
-                            utils.strip(f)
+                            f = Path(f)
+                            symFile = utils.symFileName(f)
+                            symFileDest = self.symbolsImageDir() / symFile.relative_to(self.imageDir())
+                            if symFileDest.exists():
+                                return symFileDest
+
+                            if not symFileDest.parent.exists() and not utils.createDir(symFileDest.parent):
+                                return False
+                            if not utils.strip(f, symFileDest):
+                                return False
 
             # sign the binaries if we can
-            if CraftCore.compiler.isWindows and CraftCore.settings.getboolean(
-                "CodeSigning", "SignCache", False
-            ):
+            if CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
                 if not CodeSign.signWindows(binaryFiles):
                     return False
         return True

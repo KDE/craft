@@ -8,6 +8,7 @@ from pathlib import Path
 
 import utils
 from BuildSystem.BuildSystemBase import BuildSystemBase
+from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from shells import BashShell
@@ -22,11 +23,11 @@ class AutoToolsBuildSystem(BuildSystemBase):
         if (
             CraftCore.compiler.isGCC()
             and not CraftCore.compiler.isNative()
-            and CraftCore.compiler.isX86()
+            and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32
         ):
             self.platform = Arguments(["--host=i686-pc-linux-gnu"])
         elif CraftCore.compiler.isWindows:
-            if CraftCore.compiler.isX86():
+            if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
                 self.platform = Arguments(
                     [
                         "--host=i686-w64-mingw32",
@@ -43,9 +44,9 @@ class AutoToolsBuildSystem(BuildSystemBase):
                     ]
                 )
         elif CraftCore.compiler.isAndroid:
-            if CraftCore.compiler.architecture == "arm":
+            if CraftCore.compiler.architecture == CraftCompiler.Architecture.arm32:
                 self.platform = Arguments(["--host=arm-linux-androideabi"])
-            elif CraftCore.compiler.architecture == "arm64":
+            elif CraftCore.compiler.architecture == CraftCompiler.Architecture.arm64:
                 self.platform = Arguments(["--host=aarch64-linux-android"])
             else:
                 self.platform = Arguments(
