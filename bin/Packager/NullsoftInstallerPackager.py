@@ -80,6 +80,7 @@ class NullsoftInstallerPackager(PortablePackager):
 
     def setDefaults(self, defines) -> dict:
         defines = super().setDefaults(defines)
+        defines.setdefault("architecture", CraftCore.compiler.architecture.name.lower())
         defines.setdefault(
             "defaultinstdir",
             "$PROGRAMFILES64" if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64 else "$PROGRAMFILES",
