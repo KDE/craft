@@ -11,9 +11,7 @@ import urllib.request
 from pathlib import Path
 
 if not platform.machine().endswith("64"):
-    print(
-        f"Craft requires a 64bit operating system. You are using: {platform.machine()}"
-    )
+    print(f"Craft requires a 64bit operating system. You are using: {platform.machine()}")
     exit(1)
 
 
@@ -25,9 +23,7 @@ class CraftBootstrap(object):
 
         if not dryRun:
             with open(
-                os.path.join(
-                    craftRoot, f"craft-{branch}", "CraftSettings.ini.template"
-                ),
+                os.path.join(craftRoot, f"craft-{branch}", "CraftSettings.ini.template"),
                 "rt",
                 encoding="UTF-8",
             ) as ini:
@@ -58,22 +54,14 @@ class CraftBootstrap(object):
 
     @staticmethod
     def isLinux():
-        return (
-            CraftBootstrap.isUnix()
-            and platform.system() == "Linux"
-            and not CraftBootstrap.isAndroid()
-        )
+        return CraftBootstrap.isUnix() and platform.system() == "Linux" and not CraftBootstrap.isAndroid()
 
     @staticmethod
     def printProgress(percent):
         width, _ = shutil.get_terminal_size((80, 20))
         width -= 20  # margin
         times = int(width / 100 * percent)
-        sys.stdout.write(
-            "\r[{progress}{space}]{percent}%".format(
-                progress="#" * times, space=" " * (width - times), percent=percent
-            )
-        )
+        sys.stdout.write("\r[{progress}{space}]{percent}%".format(progress="#" * times, space=" " * (width - times), percent=percent))
         sys.stdout.flush()
 
     @staticmethod
@@ -88,12 +76,7 @@ class CraftBootstrap(object):
             return default
 
         selection = ", ".join(
-            [
-                "[{index}] {value}".format(
-                    index=index, value=value[0] if isinstance(value, tuple) else value
-                )
-                for index, value in enumerate(choices)
-            ]
+            ["[{index}] {value}".format(index=index, value=value[0] if isinstance(value, tuple) else value) for index, value in enumerate(choices)]
         )
         promp = "{selection} (Default is {default}): ".format(
             selection=selection,
@@ -171,9 +154,7 @@ class CraftBootstrap(object):
                 sys.stdout.write(("\r%s bytes downloaded" % (count * blockSize)))
                 sys.stdout.flush()
 
-        urllib.request.urlretrieve(
-            url, filename=os.path.join(destdir, filename), reporthook=dlProgress
-        )
+        urllib.request.urlretrieve(url, filename=os.path.join(destdir, filename), reporthook=dlProgress)
         print()
         return os.path.exists(os.path.join(destdir, filename))
 
@@ -206,24 +187,25 @@ def run(args, command):
 
 
 def getABI(args):
+    arch = "x86_64"
+    abi = None
     if CraftBootstrap.isWin():
         platform = "windows"
         abi, compiler = CraftBootstrap.promptForChoice(
             "Select compiler",
             [
-                ("Mingw-w64", ("mingw", "gcc")),
+                ("Mingw-w64", (None, "gcc")),
                 ("Microsoft Visual Studio 2019", ("msvc2019", "cl")),
                 # ("Microsoft Visual Studio 2022", ("msvc2022", "cl")),
             ],
             "Microsoft Visual Studio 2019",
             returnDefaultWithoutPrompt=args.use_defaults,
         )
-        abi += f"_x86_64"
 
     elif CraftBootstrap.isAndroid():
         platform = "android"
         compiler = "clang"
-        abi = CraftBootstrap.promptForChoice(
+        arch = CraftBootstrap.promptForChoice(
             "Select target architecture",
             ["arm32", "arm64", "x86_32", "x86_64"],
             "arm64",
@@ -233,6 +215,12 @@ def getABI(args):
         if CraftBootstrap.isMac():
             platform = "macos"
             compiler = "clang"
+            arch = CraftBootstrap.promptForChoice(
+                "Select target architecture",
+                ["x86_64", "arm64"],
+                "x86_64",
+                returnDefaultWithoutPrompt=args.use_defaults,
+            )
         else:
             if CraftBootstrap.isLinux():
                 platform = "linux"
@@ -243,22 +231,17 @@ def getABI(args):
                 ["gcc", "clang"],
                 returnDefaultWithoutPrompt=args.use_defaults,
             )
-        abi = "x86_64"
-
-    return f"{platform}-{abi}-{compiler}"
+    if abi:
+        return f"{platform}-{compiler}-{abi}-{arch}"
+    else:
+        return f"{platform}-{compiler}-{arch}"
 
 
 def setUp(args):
     while not args.prefix:
         print("Where do you want us to install Craft")
         prefix = Path("C:/CraftRoot/" if CraftBootstrap.isWin() else "~/CraftRoot")
-        args.prefix = (
-            prefix
-            if args.use_defaults
-            else os.path.expanduser(
-                input(f"Craft install root: [{prefix}]: ") or prefix
-            )
-        )
+        args.prefix = prefix if args.use_defaults else os.path.expanduser(input(f"Craft install root: [{prefix}]: ") or prefix)
 
     if not args.dry_run and not os.path.exists(args.prefix):
         os.makedirs(args.prefix)
@@ -314,16 +297,12 @@ def setUp(args):
     boot.setSettignsValue("General", "AllowAnsiColor", useANSIColor)
     py = shutil.which("py")
     if py:
-        py2 = subprocess.getoutput(
-            f"""{py} -2 -c "import sys; print(sys.executable)" """
-        )
+        py2 = subprocess.getoutput(f"""{py} -2 -c "import sys; print(sys.executable)" """)
         if os.path.isfile(py2):
             boot.setSettignsValue("Paths", "Python27", os.path.dirname(py2))
 
     if CraftBootstrap.isWin():
-        boot.setSettignsValue(
-            "Compile", "MakeProgram", "mingw32-make" if "mingw" in abi else "jom"
-        )
+        boot.setSettignsValue("Compile", "MakeProgram", "mingw32-make" if "mingw" in abi else "jom")
     else:
         boot.setSettignsValue("Compile", "MakeProgram", "make")
 
@@ -361,13 +340,9 @@ def setUp(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="CraftSetupHelper")
-    parser.add_argument(
-        "--root", action="store", help="Deprecated: use prefix instead."
-    )
+    parser.add_argument("--root", action="store", help="Deprecated: use prefix instead.")
     parser.add_argument("--prefix", action="store", help="The installation directory.")
-    parser.add_argument(
-        "--branch", action="store", default="master", help="The branch to install"
-    )
+    parser.add_argument("--branch", action="store", default="master", help="The branch to install")
     parser.add_argument("--verbose", action="store_true", help="The verbosity.")
     parser.add_argument(
         "--dry-run",
