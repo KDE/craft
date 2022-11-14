@@ -1265,7 +1265,7 @@ def getPDBForBinary(path: str) -> Path:
     with open(path, "rb") as f:
         data = f.read()
     pdb = data.rfind(b".pdb")
-    if pdb:
+    if pdb != -1:
         return Path(data[data.rfind(0x00, 0, pdb) + 1 : pdb + 4].decode("utf-8"))
     return None
 

@@ -369,10 +369,10 @@ class BuildSystemBase(CraftBase):
                     staticLibs = list(utils.filterDirectoryContent(self.installDir(), lambda x, root: staticLibsFilter(Path(x.path)), lambda x, root: True))
                     for f in binaryFiles + staticLibs:
                         pdb = utils.getPDBForBinary(f)
-                        pdbDestination = self.symbolsImageDir() / Path(f).parent.relative_to(self.imageDir()) / os.path.basename(pdb)
                         if not pdb:
                             CraftCore.log.warning(f"Could not find a PDB for {f}")
                             continue
+                        pdbDestination = self.symbolsImageDir() / Path(f).parent.relative_to(self.imageDir()) / os.path.basename(pdb)
                         if not pdbDestination.exists():
                             if not pdb.exists():
                                 CraftCore.log.warning(f"PDB {pdb} for {f} does not exist")
