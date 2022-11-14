@@ -160,14 +160,15 @@ class MacDylibBundler(object):
             CraftCore.log.info(
                 "Library dependency %s is a symlink to '%s'", currentLibPath, linkTarget
             )
-            # In case of symlink chains, we want to handle this only for the final target
-            if not linkTarget.is_symlink() and not linkTarget.exists():
-                CraftCore.log.error("Link target '%s' does not exist", linkTarget)
-                return False
-            if linkTarget.is_absolute():
+            if linkTarget.is_symlink() and linkTarget.is_absolute():
                 CraftCore.log.error(
                     "%s: Cannot handle absolute symlinks: '%s'", currentLibPath, linkTarget
                 )
+                return False
+            absLinkTarget = Path(os.path.join(currentLibPath.parent, linkTarget))
+            # In case of symlink chains, we want to handle this only for the final target
+            if not absLinkTarget.is_symlink() and not absLinkTarget.exists():
+                CraftCore.log.error("Link target '%s' does not exist", linkTarget)
                 return False
             if ".." in str(linkTarget):
                 CraftCore.log.error(
