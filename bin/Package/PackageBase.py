@@ -41,13 +41,15 @@ class PackageBase(CraftBase):
             self.unmerge(dbOnly=dbOnly)
 
         copiedFiles = []  # will be populated by the next call
-        if not dbOnly and Path(self.imageDir()).exists():
-            if not utils.copyDir(
-                self.imageDir(),
-                CraftCore.standardDirs.craftRoot(),
-                copiedFiles=copiedFiles,
-            ):
-                return False
+        if not dbOnly:
+            for imageDir in [self.imageDir(), self.symbolsImageDir()]:
+                if imageDir:
+                    if not utils.copyDir(
+                        imageDir,
+                        CraftCore.standardDirs.craftRoot(),
+                        copiedFiles=copiedFiles,
+                    ):
+                        return False
 
         # add package to installed database -> is this not the task of the manifest files ?
 
