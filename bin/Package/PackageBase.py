@@ -43,7 +43,7 @@ class PackageBase(CraftBase):
         copiedFiles = []  # will be populated by the next call
         if not dbOnly:
             for imageDir in [self.imageDir(), self.symbolsImageDir()]:
-                if imageDir:
+                if imageDir.exists():
                     if not utils.copyDir(
                         imageDir,
                         CraftCore.standardDirs.craftRoot(),
