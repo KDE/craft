@@ -130,7 +130,7 @@ SilentInstall normal
 
 Function .onInit
     !insertmacro MULTIUSER_INIT
-    !if "@{architecture}" == "x64"
+    !if "@{architecture}" == "x86_64"
         ${IfNot} ${RunningX64}
             MessageBox MB_OK|MB_ICONEXCLAMATION "This installer can only be run on 64-bit Windows."
             Abort

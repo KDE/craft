@@ -37,7 +37,7 @@ class PackagerBase(CraftBase):
             ),
         )
         defines.setdefault("shortcuts", "")
-        defines.setdefault("architecture", CraftCore.compiler.architecture)
+        defines.setdefault("architecture", CraftCore.compiler.architecture.name.lower)
         defines.setdefault("company", "KDE e.V.")
         defines.setdefault("productname", self.subinfo.displayName)
         defines.setdefault("display_name", self.subinfo.displayName)

@@ -33,6 +33,7 @@ import utils
 from Blueprints.CraftDependencyPackage import CraftDependencyPackage, DependencyType
 from Blueprints.CraftVersion import CraftVersion
 from CraftBase import InitGuard
+from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from Packager.CollectionPackagerBase import CollectionPackagerBase
 from Packager.PortablePackager import PortablePackager
@@ -124,6 +125,13 @@ class AppxPackager(CollectionPackagerBase):
     def setDefaults(self, defines: dict) -> dict:
         defines = super().setDefaults(defines)
         defines.setdefault("additional_xmlns", "")
+        architectures = {
+            CraftCompiler.Architecture.x86_32: "x86",
+            CraftCompiler.Architecture.x86_64: "x64",
+            CraftCompiler.Architecture.arm32: "arm",
+            CraftCompiler.Architecture.arm64: "arm64",
+        }
+        defines.setdefault("architecture", architectures[CraftCore.compiler.architecture])
         version = [int(x) for x in CraftVersion(defines.get("version", self.version)).normalizedVersion.versionstr.split(".")]
         # we require a version of the format 1.2.3.4
         version += [0] * (4 - len(version))
