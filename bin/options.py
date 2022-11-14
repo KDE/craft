@@ -569,4 +569,6 @@ class Options(object):
     def isActive(self, package):
         if isinstance(package, str):
             package = CraftPackageObject.get(package)
+        # init the subinfo
+        package.instance
         return not package.isIgnored()
