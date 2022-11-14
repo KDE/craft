@@ -376,7 +376,7 @@ class SetupHelper(object):
             )
 
     def _setupAndroid(self):
-        self.addEnvVar("ANDROID_ARCH", CraftCore.compiler.architecture)
+        self.addEnvVar("ANDROID_ARCH", CraftCore.compiler.architecture.name.lower)
         self.addEnvVar("ANDROID_ARCH_ABI", CraftCore.compiler.abi)
 
     def setupEnvironment(self):
