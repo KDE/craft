@@ -358,10 +358,9 @@ class BuildSystemBase(CraftBase):
                     # static libs might also have pdbs
                     def staticLibsFilter(p: Path):
                         if p.suffix == ".lib":
-                            dll = p.with_suffix(".dll")
                             with io.StringIO() as log:
-                                utils.system(["lib", "-list", p], stdout=log, logCommand=False)
-                                if dll.name in log.getvalue():
+                                utils.system(["lib", "-list", "-nologo", p], stdout=log, logCommand=False)
+                                if ".dll" in log.getvalue():
                                     return False
                                 return True
                         return False
