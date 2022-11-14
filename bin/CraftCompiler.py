@@ -372,6 +372,16 @@ class CraftCompiler(object):
     def androidApiLevel(self):
         return self._apiLevel
 
+    @property
+    def androidArchitecture(self):
+        architectures = {
+            CraftCompiler.Architecture.x86_32: "x86",
+            CraftCompiler.Architecture.x86_64: "x86_64",
+            CraftCompiler.Architecture.arm32: "arm",
+            CraftCompiler.Architecture.arm64: "arm64",
+        }
+        return architectures[self.architecture]
+
 
 if __name__ == "__main__":
     print("Testing Compiler.py")
