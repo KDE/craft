@@ -73,24 +73,17 @@ class InnoSetupPackager(PortablePackager):
         defines = super().setDefaults(defines)
         defines.setdefault("srcdir", self.archiveDir())  # deprecated
         defines.setdefault("registry_keys", [])
-        defines.setdefault(
-            "file_types", []
-        )  # extension -> label pair would be better, but trying to be compatible with existing AppxPackager
+        defines.setdefault("file_types", [])  # extension -> label pair would be better, but trying to be compatible with existing AppxPackager
 
         if not self.scriptname:
-            self.scriptname = os.path.join(
-                os.path.dirname(__file__), "InnoSetupTemplate.iss"
-            )
+            self.scriptname = os.path.join(os.path.dirname(__file__), "InnoSetupTemplate.iss")
         return defines
 
     def isInnoInstalled(self):
         if not self._isInstalled:
             self._isInstalled = self.__isInstalled()
             if not self._isInstalled:
-                CraftCore.log.critical(
-                    "Craft requires InnoSetup to create a package, please install InnoSetup\n"
-                    "\t'craft innosetup'"
-                )
+                CraftCore.log.critical("Craft requires InnoSetup to create a package, please install InnoSetup\n" "\t'craft innosetup'")
                 return False
         return True
 
@@ -101,9 +94,7 @@ class InnoSetupPackager(PortablePackager):
             return False
         return True
 
-    def _createShortcut(
-        self, name, target, icon="", parameter="", description="", workingDirectory=None
-    ) -> str:
+    def _createShortcut(self, name, target, icon="", parameter="", description="", workingDirectory=None) -> str:
         return f"""Name: "{{group}}\\{name}" ; Filename: "{{app}}\\{OsUtils.toNativePath(target)}" ; WorkingDir: "{workingDirectory}" ; Parameters: "{parameter}" ; IconFileName: "{icon}" ; Comment : "{description}"\n"""
 
     def generateInnoInstaller(self, defines):
@@ -116,9 +107,7 @@ class InnoSetupPackager(PortablePackager):
 
         shortcuts = []
         if "executable" in defines:
-            shortcuts.append(
-                self._createShortcut(defines["productname"], defines["executable"])
-            )
+            shortcuts.append(self._createShortcut(defines["productname"], defines["executable"]))
         else:
             # Needed below, for registering file associations
             # This will error out, if neither executable, nor any shortcuts have been set, but that is certainly an error, anyway
@@ -132,15 +121,11 @@ class InnoSetupPackager(PortablePackager):
         tasks = []
         registry_keys = []
         for key in defines["registry_keys"]:
-            registry_keys.append(
-                f"""Root: HKA; Subkey: ; ValueType: string; ValueName: "{key["name"]}"; ValueData: "{key["value"]}" """
-            )
+            registry_keys.append(f"""Root: HKA; Subkey: ; ValueType: string; ValueName: "{key["name"]}"; ValueData: "{key["value"]}" """)
         for ftype in defines["file_types"]:
             ftype_id = self.subinfo.displayName + ftype
             ftype_id = ftype_id.replace(".", "_")
-            tasks.append(
-                f"""Name: "{ftype_id}"; Description: "{{cm:AssocFileExtension,{self.subinfo.displayName},{ftype}}}";"""
-            )
+            tasks.append(f"""Name: "{ftype_id}"; Description: "{{cm:AssocFileExtension,{self.subinfo.displayName},{ftype}}}";""")
 
             registry_keys.append(
                 f"""Root: HKA; Subkey: "Software\\Classes\\{ftype}\\OpenWithProgids"; ValueType: string; ValueName: "{ftype_id}"; ValueData: ""; Flags: uninsdeletevalue ; Tasks: {ftype_id}"""
@@ -176,9 +161,7 @@ class InnoSetupPackager(PortablePackager):
 
         cmdDefines = []
         cmdDefines.append(f"""/O{os.path.dirname(defines["setupname"])}""")
-        cmdDefines.append(
-            f"""/F{str(Path(os.path.basename(defines["setupname"])).with_suffix(""))}"""
-        )
+        cmdDefines.append(f"""/F{str(Path(os.path.basename(defines["setupname"])).with_suffix(""))}""")
         configuredScrip = os.path.join(self.workDir(), f"{self.package.name}.iss")
         utils.configureFile(self.scriptname, configuredScrip, defines)
 

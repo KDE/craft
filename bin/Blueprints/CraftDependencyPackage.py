@@ -50,39 +50,15 @@ class CraftDependencyPackage(CraftPackageObject):
         if not self.isCategory():
             subinfo = self.subinfo
             if self.depenendencyType & DependencyType.Runtime:
-                self.dependencies.extend(
-                    self.__readDependenciesForChildren(
-                        [(x, None) for x in self.categoryInfo.runtimeDependencies]
-                    )
-                )
-                self.dependencies.extend(
-                    self.__readDependenciesForChildren(
-                        subinfo.runtimeDependencies.items()
-                    )
-                )
+                self.dependencies.extend(self.__readDependenciesForChildren([(x, None) for x in self.categoryInfo.runtimeDependencies]))
+                self.dependencies.extend(self.__readDependenciesForChildren(subinfo.runtimeDependencies.items()))
             if self.depenendencyType & DependencyType.Buildtime:
-                self.dependencies.extend(
-                    self.__readDependenciesForChildren(
-                        [(x, None) for x in self.categoryInfo.buildDependencies]
-                    )
-                )
-                self.dependencies.extend(
-                    self.__readDependenciesForChildren(
-                        subinfo.buildDependencies.items()
-                    )
-                )
+                self.dependencies.extend(self.__readDependenciesForChildren([(x, None) for x in self.categoryInfo.buildDependencies]))
+                self.dependencies.extend(self.__readDependenciesForChildren(subinfo.buildDependencies.items()))
             if self.depenendencyType & DependencyType.Packaging:
-                self.dependencies.extend(
-                    self.__readDependenciesForChildren(
-                        subinfo.packagingDependencies.items()
-                    )
-                )
+                self.dependencies.extend(self.__readDependenciesForChildren(subinfo.packagingDependencies.items()))
         else:
-            self.dependencies.extend(
-                self.__readDependenciesForChildren(
-                    [(x, None) for x in self.children.values()]
-                )
-            )
+            self.dependencies.extend(self.__readDependenciesForChildren([(x, None) for x in self.children.values()]))
 
     def __readDependenciesForChildren(self, deps: [(str, str)]) -> []:
         children = []
@@ -101,36 +77,23 @@ class CraftDependencyPackage(CraftPackageObject):
                     if isinstance(requiredVersion, tuple):
                         requiredVersion, type = requiredVersion
                         if type == DependencyRequirementType.Required:
-                            if not bool(
-                                package.categoryInfo.compiler
-                                & CraftCore.compiler.compiler
-                            ):
+                            if not bool(package.categoryInfo.compiler & CraftCore.compiler.compiler):
                                 raise BlueprintException(
                                     f"{self} requries {package}, but it is not supported on {CraftCore.compiler.compiler}",
                                     self,
                                 )
-                            if not bool(
-                                package.categoryInfo.platforms
-                                & CraftCore.compiler.platform
-                            ):
+                            if not bool(package.categoryInfo.platforms & CraftCore.compiler.platform):
                                 raise BlueprintException(
                                     f"{self} requries {package}, but it is not supported on {CraftCore.compiler.platform}",
                                     self,
                                 )
-                            if package.isIgnored() or isinstance(
-                                package.instance, VirtualPackageBase.VirtualPackageBase
-                            ):
+                            if package.isIgnored() or isinstance(package.instance, VirtualPackageBase.VirtualPackageBase):
                                 raise BlueprintException(
                                     f"{self} requries {package}, but it is ignored",
                                     self,
                                 )
 
-                    if (
-                        requiredVersion
-                        and requiredVersion != None
-                        and CraftVersion(package.version)
-                        < CraftVersion(requiredVersion)
-                    ):
+                    if requiredVersion and requiredVersion != None and CraftVersion(package.version) < CraftVersion(requiredVersion):
                         raise BlueprintException(
                             f"{self} requries {package} version {requiredVersion!r} but {package.version!r} is installed",
                             self,
@@ -138,14 +101,10 @@ class CraftDependencyPackage(CraftPackageObject):
 
                     p = CraftDependencyPackage(package)
                     CraftCore.log.debug(f"adding package {packaheName}")
-                    CraftDependencyPackage._packageCache[
-                        (packaheName, self.depenendencyType)
-                    ] = p
+                    CraftDependencyPackage._packageCache[(packaheName, self.depenendencyType)] = p
                     p.depenendencyType = self.depenendencyType
                 else:
-                    p = CraftDependencyPackage._packageCache[
-                        (packaheName, self.depenendencyType)
-                    ]
+                    p = CraftDependencyPackage._packageCache[(packaheName, self.depenendencyType)]
                 children.append(p)
         return children
 
@@ -161,18 +120,10 @@ class CraftDependencyPackage(CraftPackageObject):
         for p in self.dependencies:
             if p.state != CraftDependencyPackage.State.Unvisited:
                 continue
-            if not p.isIgnored() and (
-                not ignoredPackages or p.path not in ignoredPackages
-            ):
-                depList.extend(
-                    p.__getDependencies(
-                        depenendencyType & ~DependencyType.Packaging, ignoredPackages
-                    )
-                )
+            if not p.isIgnored() and (not ignoredPackages or p.path not in ignoredPackages):
+                depList.extend(p.__getDependencies(depenendencyType & ~DependencyType.Packaging, ignoredPackages))
                 if depenendencyType & DependencyType.Packaging:
-                    depList.extend(
-                        p.__getDependencies(depenendencyType, ignoredPackages)
-                    )
+                    depList.extend(p.__getDependencies(depenendencyType, ignoredPackages))
 
         if self.state != CraftDependencyPackage.State.Visited:
             self.state = CraftDependencyPackage.State.Visited

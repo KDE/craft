@@ -33,9 +33,7 @@ class CraftManifestEntryFile(object):
 
     @staticmethod
     def fromJson(data: dict):
-        return CraftManifestEntryFile(
-            FileType.fromString(data["fileType"]), data["fileName"], data["checksum"]
-        )
+        return CraftManifestEntryFile(FileType.fromString(data["fileType"]), data["fileName"], data["checksum"])
 
     def toJson(self) -> dict:
         return {
@@ -56,12 +54,8 @@ class CraftManifestBuild(object):
 
         self.files = {}  # Dict[FileType, CraftManifestEntryFiles]
 
-    def addFile(
-        self, fileType: FileType, fileName: str, checksum: str
-    ) -> CraftManifestEntryFile:
-        f = CraftManifestEntryFile(
-            fileType=fileType, fileName=fileName, checksum=checksum
-        )
+    def addFile(self, fileType: FileType, fileName: str, checksum: str) -> CraftManifestEntryFile:
+        f = CraftManifestEntryFile(fileType=fileType, fileName=fileName, checksum=checksum)
         self.files[fileType] = f
         return f
 
@@ -198,9 +192,7 @@ class CraftManifest(object):
             "version": CraftManifest.version(),
         }
         for compiler, packages in self.packages.items():
-            out["packages"][compiler] = [
-                x.toJson() for x in self.packages[compiler].values()
-            ]
+            out["packages"][compiler] = [x.toJson() for x in self.packages[compiler].values()]
         return out
 
     def get(self, package: str, compiler: str = None) -> CraftManifestEntry:
@@ -214,22 +206,15 @@ class CraftManifest(object):
 
     def dump(self, cacheFilePath):
         cacheFilePath = Path(cacheFilePath)
-        cacheFilePathTimed = (
-            cacheFilePath.parent
-            / f"{cacheFilePath.stem}-{self.date.strftime('%Y%m%dT%H%M%S')}{cacheFilePath.suffix}"
-        )
+        cacheFilePathTimed = cacheFilePath.parent / f"{cacheFilePath.stem}-{self.date.strftime('%Y%m%dT%H%M%S')}{cacheFilePath.suffix}"
         self.date = datetime.datetime.utcnow()
         if self.origin:
-            CraftCore.log.info(
-                f"Updating cache manifest from: {self.origin} in: {cacheFilePath}"
-            )
+            CraftCore.log.info(f"Updating cache manifest from: {self.origin} in: {cacheFilePath}")
         else:
             CraftCore.log.info(f"Create new cache manifest: {cacheFilePath}")
         cacheFilePath.parent.mkdir(parents=True, exist_ok=True)
         with open(cacheFilePath, "wt") as cacheFile:
-            json.dump(
-                self, cacheFile, sort_keys=True, indent=2, default=lambda x: x.toJson()
-            )
+            json.dump(self, cacheFile, sort_keys=True, indent=2, default=lambda x: x.toJson())
         shutil.copy2(cacheFilePath, cacheFilePathTimed)
 
     @staticmethod
@@ -240,23 +225,12 @@ class CraftManifest(object):
         TODO: in that case we are merging all repositories so we should also merge the cache files
         """
         old = None
-        if (
-            not urls
-            and ("ContinuousIntegration", "RepositoryUrl") in CraftCore.settings
-        ):
-            urls = [
-                CraftCore.settings.get("ContinuousIntegration", "RepositoryUrl").rstrip(
-                    "/"
-                )
-            ]
+        if not urls and ("ContinuousIntegration", "RepositoryUrl") in CraftCore.settings:
+            urls = [CraftCore.settings.get("ContinuousIntegration", "RepositoryUrl").rstrip("/")]
         if urls:
             old = CraftManifest()
             for url in urls:
-                new = CraftManifest.fromJson(
-                    CraftCore.cache.cacheJsonFromUrl(
-                        utils.urljoin(url, "manifest.json")
-                    )
-                )
+                new = CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(utils.urljoin(url, "manifest.json")))
                 if new:
                     new.origin = url
                     old.update(new)

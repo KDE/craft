@@ -150,13 +150,7 @@ class CraftBase(object):
     def version(self):
         ver = self.subinfo.buildTarget
         patchLevel = 0
-        if (
-            CraftCore.settings.getboolean(
-                "BlueprintVersions", "EnableDailyUpdates", True
-            )
-            and self.subinfo.options.dailyUpdate
-            and self.subinfo.hasSvnTarget()
-        ):
+        if CraftCore.settings.getboolean("BlueprintVersions", "EnableDailyUpdates", True) and self.subinfo.options.dailyUpdate and self.subinfo.hasSvnTarget():
             ver += "-" + str(datetime.date.today()).replace("-", ".")
         elif self.subinfo.buildTarget in self.subinfo.patchLevel:
             patchLevel = int(self.subinfo.patchLevel[self.subinfo.buildTarget])
@@ -186,12 +180,7 @@ class CraftBase(object):
         CraftCore.log.debug("entering: %s" % self.sourceDir())
 
     def buildNumber(self):
-        return (
-            os.environ.get("APPVEYOR_BUILD_VERSION")
-            or os.environ.get("BUILD_NUMBER")
-            or os.environ.get("DRONE_BUILD_NUMBER")
-            or ""
-        )
+        return os.environ.get("APPVEYOR_BUILD_VERSION") or os.environ.get("BUILD_NUMBER") or os.environ.get("DRONE_BUILD_NUMBER") or ""
 
     def formatVersion(self, includeRevision, includeTimeStamp) -> str:
         buildVersion = self.buildNumber()
@@ -209,9 +198,7 @@ class CraftBase(object):
         version = "-".join(filter(None, version))
         return version.replace("/", "_")
 
-    def binaryArchiveBaseName(
-        self, pkgSuffix, includeRevision, includeTimeStamp
-    ) -> str:
+    def binaryArchiveBaseName(self, pkgSuffix, includeRevision, includeTimeStamp) -> str:
         return f"{self.package.name}-{self.formatVersion(includeRevision=includeRevision, includeTimeStamp=includeTimeStamp)}-{CraftCore.compiler}{pkgSuffix}"
 
     def binaryArchiveName(
@@ -223,9 +210,7 @@ class CraftBase(object):
         includeTimeStamp=False,
     ) -> str:
 
-        archiveBaseName = self.binaryArchiveBaseName(
-            pkgSuffix, includeRevision, includeTimeStamp
-        )
+        archiveBaseName = self.binaryArchiveBaseName(pkgSuffix, includeRevision, includeTimeStamp)
 
         if fileType:
             if not fileType.startswith("."):
@@ -258,11 +243,7 @@ class CraftBase(object):
         version = self.cacheVersion()
         if not version:
             return None
-        return Path(
-            os.path.join(
-                cacheDir, version, *CraftCore.compiler.signature, self.buildType()
-            )
-        )
+        return Path(os.path.join(cacheDir, version, *CraftCore.compiler.signature, self.buildType()))
 
     def cacheRepositoryUrls(self) -> [str]:
         version = self.cacheVersion()

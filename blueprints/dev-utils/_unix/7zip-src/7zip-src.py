@@ -5,9 +5,7 @@ from Package.MaybeVirtualPackageBase import *
 class subinfo(info.infoclass):
     def setTargets(self):
         for ver in ["16.02"]:
-            self.targets[
-                ver
-            ] = f"https://downloads.sourceforge.net/sourceforge/p7zip/p7zip_{ver}_src_all.tar.bz2"
+            self.targets[ver] = f"https://downloads.sourceforge.net/sourceforge/p7zip/p7zip_{ver}_src_all.tar.bz2"
             self.targetInstSrc[ver] = f"p7zip_{ver}"
             self.targetConfigurePath[ver] = "CPP/7zip/CMAKE"
             self.targetInstallPath[ver] = "dev-utils"

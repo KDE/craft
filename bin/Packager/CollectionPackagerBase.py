@@ -40,9 +40,7 @@ def toRegExp(fname, targetName) -> re:
     assert os.path.isabs(fname)
 
     if not os.path.isfile(fname):
-        CraftCore.log.critical(
-            "%s not found at: %s" % (targetName.capitalize(), os.path.abspath(fname))
-        )
+        CraftCore.log.critical("%s not found at: %s" % (targetName.capitalize(), os.path.abspath(fname)))
     regex = []
     with open(fname, "rt+") as f:
         for line in f:
@@ -108,9 +106,7 @@ class CollectionPackagerBase(PackagerBase):
     def addExecutableFilter(self, pattern: str):
         # TODO: move to parent?
         self.addBlacklistFilter(
-            lambda fileName, root: utils.regexFileFilter(
-                fileName, root, [re.compile(pattern, re.IGNORECASE)]
-            )
+            lambda fileName, root: utils.regexFileFilter(fileName, root, [re.compile(pattern, re.IGNORECASE)])
             and utils.isExecuatable(fileName, includeShellScripts=True)
         )
 
@@ -164,9 +160,7 @@ class CollectionPackagerBase(PackagerBase):
                 continue
             imageDirs.append(x.instance)
             # this loop collects the files from all image directories
-            CraftCore.log.debug(
-                f"__getImageDirectories: package: {x}, version: {x.version}"
-            )
+            CraftCore.log.debug(f"__getImageDirectories: package: {x}, version: {x.version}")
         return imageDirs
 
     def read_whitelist(self, fname: str) -> re:
@@ -187,15 +181,11 @@ class CollectionPackagerBase(PackagerBase):
         except Exception as e:
             raise BlueprintException(str(e), self.package)
 
-    def whitelisted(
-        self, filename: os.DirEntry, root: str, whiteList: [re] = None
-    ) -> bool:
+    def whitelisted(self, filename: os.DirEntry, root: str, whiteList: [re] = None) -> bool:
         """return True if pathname is included in the pattern, and False if not"""
         if whiteList is None:
             whiteList = self.whitelist
-        return self.blacklisted(
-            filename, root=root, blackList=whiteList, message="whitelisted"
-        )
+        return self.blacklisted(filename, root=root, blackList=whiteList, message="whitelisted")
 
     def blacklisted(
         self,
@@ -208,9 +198,7 @@ class CollectionPackagerBase(PackagerBase):
         if blackList is None:
             blackList = self.blacklist
         CraftCore.log.debug(f"Start filtering: {message}")
-        _blacklists = set(
-            [lambda filename, root: utils.regexFileFilter(filename, root, blackList)]
-        )
+        _blacklists = set([lambda filename, root: utils.regexFileFilter(filename, root, blackList)])
         if message == "blacklisted":
             _blacklists.update(self._blacklist_filters)
         elif message == "whitelisted":
@@ -229,16 +217,12 @@ class CollectionPackagerBase(PackagerBase):
 
         filesToSign = []
         # Only sign all files on Windows. On MacOS we recursively sign the whole .app Folder
-        doSign = CraftCore.compiler.isWindows and CraftCore.settings.getboolean(
-            "CodeSigning", "Enabled", False
-        )
+        doSign = CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "Enabled", False)
         if doSign and CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
             # files from the cache are already signed
             doSign = os.path.samefile(srcDir, self.imageDir())
 
-        for entry in utils.filterDirectoryContent(
-            srcDir, self.whitelisted, self.blacklisted, handleAppBundleAsFile=True
-        ):
+        for entry in utils.filterDirectoryContent(srcDir, self.whitelisted, self.blacklisted, handleAppBundleAsFile=True):
             entry_target = os.path.join(destDir, os.path.relpath(entry, srcDir))
             if os.path.isfile(entry) or os.path.islink(entry):
                 if not utils.copyFile(entry, entry_target, linkOnly=False):
@@ -259,9 +243,7 @@ class CollectionPackagerBase(PackagerBase):
     def internalCreatePackage(self, defines=None) -> bool:
         """create a package"""
 
-        packageSymbols = CraftCore.settings.getboolean(
-            "Packager", "PackageDebugSymbols", False
-        )
+        packageSymbols = CraftCore.settings.getboolean("Packager", "PackageDebugSymbols", False)
         archiveDir = self.archiveDir()
 
         CraftCore.log.debug("cleaning package dir: %s" % archiveDir)
@@ -274,21 +256,14 @@ class CollectionPackagerBase(PackagerBase):
                 if not self.copyFiles(package.imageDir(), archiveDir):
                     return False
             else:
-                CraftCore.log.critical(
-                    "image directory %s does not exist!" % package.imageDir()
-                )
+                CraftCore.log.critical("image directory %s does not exist!" % package.imageDir())
                 return False
             if packageSymbols:
                 if package.symbolsImageDir().exists():
-                    if not self.copyFiles(
-                        package.symbolsImageDir(), self.archiveDebugDir()
-                    ):
+                    if not self.copyFiles(package.symbolsImageDir(), self.archiveDebugDir()):
                         return False
                 else:
-                    CraftCore.log.warning(
-                        "symbols directory %s does not exist!"
-                        % package.symbolsImageDir()
-                    )
+                    CraftCore.log.warning("symbols directory %s does not exist!" % package.symbolsImageDir())
 
         pathsToMoveToBinPath = []
         if self.subinfo.options.package.movePluginsToBin:
@@ -307,9 +282,7 @@ class CollectionPackagerBase(PackagerBase):
             # Qt expects translations directory below bin, on the target system
             translationsPath = os.path.join(archiveDir, "translations")
             if os.path.isdir(translationsPath):
-                if not utils.mergeTree(
-                    translationsPath, os.path.join(binPath, "translations")
-                ):
+                if not utils.mergeTree(translationsPath, os.path.join(binPath, "translations")):
                     return False
 
         if not self.preArchive():

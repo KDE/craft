@@ -11,9 +11,7 @@ from Notifier.NotificationInterface import *
 class Snore(NotificationInterface):
     def __init__(self):
         NotificationInterface.__init__(self, "Snore")
-        self.icon = os.path.join(
-            CraftCore.standardDirs.craftBin(), "data", "icons", "craftyBENDER.png"
-        )
+        self.icon = os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craftyBENDER.png")
 
     def notify(self, title, message, alertClass):
         try:

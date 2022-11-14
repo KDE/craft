@@ -4,9 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         for ver in ["2021-09-30", "2021-10-26", "2022-04-26"]:
-            self.targets[
-                ver
-            ] = f"https://files.kde.org/craft/curl.haxx.se/cacert-{ver}.zip"
+            self.targets[ver] = f"https://files.kde.org/craft/curl.haxx.se/cacert-{ver}.zip"
             self.targetInstallPath[ver] = "etc"
         self.targetDigests["2021-09-30"] = (
             ["ad2045d0aa58d1fd9d5b46bf66496065184437f5fe5597e962c2051464a84e3e"],

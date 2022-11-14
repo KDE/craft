@@ -88,11 +88,7 @@ class GitSource(VersionSystemSourceBase):
         """executes a git command in a shell.
         Default for cwd is self.checkoutDir()"""
         parts = ["git"]
-        if (
-            "stdout" not in kwargs
-            and "stderr" not in kwargs
-            and CraftCore.settings.getboolean("General", "AllowAnsiColor", True)
-        ):
+        if "stdout" not in kwargs and "stderr" not in kwargs and CraftCore.settings.getboolean("General", "AllowAnsiColor", True):
             parts += ["-c", "color.ui=always"]
         if command in ("clone", "checkout", "fetch", "pull", "submodule"):
             if CraftCore.debug.verbose() < 0:
@@ -131,9 +127,7 @@ class GitSource(VersionSystemSourceBase):
             repoBranch = self.subinfo.options.dynamic.branch
 
         if repoTag and repoBranch:
-            CraftCore.log.error(
-                f"Your not allowed to specify a branch and a tag: branch -> {repoBranch},  tag -> {repoTag}"
-            )
+            CraftCore.log.error(f"Your not allowed to specify a branch and a tag: branch -> {repoBranch},  tag -> {repoTag}")
             return False
 
         if not repoBranch and not repoTag:
@@ -148,20 +142,11 @@ class GitSource(VersionSystemSourceBase):
             checkoutDir = self.checkoutDir()
             # if we only have the checkoutdir but no .git within,
             # clean this up first
-            if os.path.exists(checkoutDir) and not os.path.exists(
-                os.path.join(checkoutDir, ".git")
-            ):
+            if os.path.exists(checkoutDir) and not os.path.exists(os.path.join(checkoutDir, ".git")):
                 os.rmdir(checkoutDir)
             if os.path.isdir(checkoutDir):
-                if (
-                    self.subinfo.buildTarget in self.subinfo.targetUpdatedRepoUrl
-                    and CraftCore.cache.checkCommandOutputFor(
-                        "git", "get-url", "remote -h"
-                    )
-                ):
-                    oldUrls, newUrl = self.subinfo.targetUpdatedRepoUrl[
-                        self.subinfo.buildTarget
-                    ]
+                if self.subinfo.buildTarget in self.subinfo.targetUpdatedRepoUrl and CraftCore.cache.checkCommandOutputFor("git", "get-url", "remote -h"):
+                    oldUrls, newUrl = self.subinfo.targetUpdatedRepoUrl[self.subinfo.buildTarget]
                     if isinstance(oldUrls, str):
                         oldUrls = [oldUrls]
                     with io.StringIO() as tmp:
@@ -169,16 +154,10 @@ class GitSource(VersionSystemSourceBase):
                         currentUrl = tmp.getvalue().strip()
                     for oldUrl in oldUrls:
                         if currentUrl.startswith(oldUrl):
-                            CraftCore.log.info(
-                                f"Updating remote url from {currentUrl} to {newUrl}"
-                            )
+                            CraftCore.log.info(f"Updating remote url from {currentUrl} to {newUrl}")
                             self.__git("remote", ["set-url", "origin", newUrl])
                 if not repoTag:
-                    ret = (
-                        self.__git("fetch")
-                        and self.__git("checkout", [repoBranch or "master"])
-                        and self.__git("merge")
-                    )
+                    ret = self.__git("fetch") and self.__git("checkout", [repoBranch or "master"]) and self.__git("merge")
             else:
                 args = []
                 # it doesn't exist so clone the repo
@@ -221,10 +200,7 @@ class GitSource(VersionSystemSourceBase):
             with os.scandir(patchfile) as scan:
                 for patch in scan:
                     if patch.is_file() and not patch.name.startswith("."):
-                        out = (
-                            self.applyPatch(patchfile / patch, patchdepth=patchdepth)
-                            and out
-                        )
+                        out = self.applyPatch(patchfile / patch, patchdepth=patchdepth) and out
             return out
         return self.__git(
             "apply",
@@ -238,8 +214,7 @@ class GitSource(VersionSystemSourceBase):
         CraftCore.debug.trace("GitSource createPatch")
         patchFileName = os.path.join(
             self.packageDir(),
-            "%s-%s.patch"
-            % (self.package.name, str(datetime.date.today()).replace("-", "")),
+            "%s-%s.patch" % (self.package.name, str(datetime.date.today()).replace("-", "")),
         )
         CraftCore.log.debug("git diff %s" % patchFileName)
         with open(patchFileName, "wt+") as patchFile:

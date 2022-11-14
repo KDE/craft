@@ -4,9 +4,7 @@ import info
 class subinfo(info.infoclass):
     def registerOptions(self):
         self.parent.package.categoryInfo.platforms = (
-            CraftCore.compiler.Platforms.Windows
-            | CraftCore.compiler.Platforms.MacOS
-            | CraftCore.compiler.Platforms.Linux
+            CraftCore.compiler.Platforms.Windows | CraftCore.compiler.Platforms.MacOS | CraftCore.compiler.Platforms.Linux
         )
 
     def setTargets(self):
@@ -44,9 +42,7 @@ class Package(BinaryPackageBase):
                 f"{name}{CraftCore.compiler.executableSuffix}",
             )
             if os.path.exists(sourceBinary):
-                if not utils.createShim(
-                    targetBinary, sourceBinary, useAbsolutePath=True
-                ):
+                if not utils.createShim(targetBinary, sourceBinary, useAbsolutePath=True):
                     return False
         return True
 

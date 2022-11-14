@@ -127,14 +127,10 @@ def curlFile(url, destdir, filename, quiet):
     if CraftCore.debug.verbose() < 1:
         if quiet:
             with io.StringIO() as tmp:
-                ciMode = CraftCore.settings.getboolean(
-                    "ContinuousIntegration", "Enabled", False
-                )
+                ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
                 if ciMode:
                     command += ["-v"]
-                if not utils.system(
-                    command, logCommand=ciMode, stdout=tmp, stderr=subprocess.STDOUT
-                ):
+                if not utils.system(command, logCommand=ciMode, stdout=tmp, stderr=subprocess.STDOUT):
                     CraftCore.log.warning(tmp.getvalue())
                     return False
                 if ciMode:
@@ -142,14 +138,10 @@ def curlFile(url, destdir, filename, quiet):
                     if loc:
                         CraftCore.log.info(f"Downloaded from: {loc[-1]}")
                 return True
-        elif CraftCore.cache.checkCommandOutputFor(
-            curl, "--progress-bar", helpCommand="--help all"
-        ):
+        elif CraftCore.cache.checkCommandOutputFor(curl, "--progress-bar", helpCommand="--help all"):
             command += ["--progress-bar"]
         CraftCore.log.info(f"curl {url}")
-        return utils.system(
-            command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT
-        )
+        return utils.system(command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT)
     command += ["-v"]
     return utils.system(command)
 
@@ -174,12 +166,8 @@ def wgetFile(url, destdir, filename, quiet):
     if CraftCore.debug.verbose() < 1:
         if quiet:
             with io.StringIO() as tmp:
-                ciMode = CraftCore.settings.getboolean(
-                    "ContinuousIntegration", "Enabled", False
-                )
-                if not utils.system(
-                    command, logCommand=ciMode, stdout=tmp, stderr=subprocess.STDOUT
-                ):
+                ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
+                if not utils.system(command, logCommand=ciMode, stdout=tmp, stderr=subprocess.STDOUT):
                     CraftCore.log.warning(tmp.getvalue())
                     return False
                 if ciMode:
@@ -202,9 +190,7 @@ def wgetFile(url, destdir, filename, quiet):
 def s3File(url: str, destdir: str, filename: str) -> bool:
     aws = CraftCore.cache.findApplication("aws")
     if not aws:
-        CraftCore.log.critical(
-            'aws not found, please install awscli. "pip install awscli" '
-        )
+        CraftCore.log.critical('aws not found, please install awscli. "pip install awscli" ')
         return False
     return utils.system([aws, "s3", "cp", url, os.path.join(destdir, filename)])
 

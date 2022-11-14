@@ -9,9 +9,7 @@ class subinfo(info.infoclass):
 
     def setTargets(self):
         for ver in ["1_0_14", "1_0_15", "1_0_16", "1_1_2", "1_1_3"]:
-            self.targets[ver] = (
-                "http://download.qt.io/official_releases/jom/jom_" + ver + ".zip"
-            )
+            self.targets[ver] = "http://download.qt.io/official_releases/jom/jom_" + ver + ".zip"
             self.targetDigestUrls[ver] = (
                 ["http://download.qt.io/official_releases/jom/md5sums.txt"],
                 CraftHash.HashAlgorithm.MD5,

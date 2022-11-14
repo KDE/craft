@@ -28,9 +28,7 @@ class CraftHashTest(CraftTestBase.CraftTestBase):
 
     def hashTest(self, hash, algorithm):
         path, name = os.path.split(self.tmpFile)
-        self.assertEquals(
-            CraftHash.checkFilesDigests(path, [name], hash, algorithm), True
-        )
+        self.assertEquals(CraftHash.checkFilesDigests(path, [name], hash, algorithm), True)
 
 
 class TestAPI(CraftHashTest):
@@ -38,9 +36,7 @@ class TestAPI(CraftHashTest):
         self.hashTest("953700da7dfea74714b08f8a7cf69151", CraftHash.HashAlgorithm.MD5)
 
     def test_SHA1(self):
-        self.hashTest(
-            "25f0187fc5e189518dc489bcc97daa93973d7d1e", CraftHash.HashAlgorithm.SHA1
-        )
+        self.hashTest("25f0187fc5e189518dc489bcc97daa93973d7d1e", CraftHash.HashAlgorithm.SHA1)
 
     def test_SHA224(self):
         self.hashTest(
@@ -65,9 +61,7 @@ class TestAPI(CraftHashTest):
         log = io.StringIO()
         oldLog = CraftCore.debug._handler.stream
         CraftCore.debug._handler.stream = log
-        CraftHash.printFilesDigests(
-            path, [name], "test", CraftHash.HashAlgorithm.SHA256
-        )
+        CraftHash.printFilesDigests(path, [name], "test", CraftHash.HashAlgorithm.SHA256)
         self.assertEquals(
             "Digests for test: (['4fc1e96dc5ecf625efe228fce1b0964b6302cfa4d4fb2bb8d16c665d23f6ff30'], CraftHash.HashAlgorithm.SHA256)\n",
             log.getvalue(),
@@ -79,6 +73,4 @@ class TestAPI(CraftHashTest):
         algorithms = CraftHash.HashAlgorithm.__members__.values()
         CraftHash.createDigestFiles(self.tmpFile, algorithms=algorithms)
         for algorithm in algorithms:
-            self.assertEquals(
-                os.path.exists(self.tmpFile + algorithm.fileEnding()), True
-            )
+            self.assertEquals(os.path.exists(self.tmpFile + algorithm.fileEnding()), True)

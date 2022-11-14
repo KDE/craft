@@ -82,15 +82,11 @@ class NullsoftInstallerPackager(PortablePackager):
         defines = super().setDefaults(defines)
         defines.setdefault(
             "defaultinstdir",
-            "$PROGRAMFILES64"
-            if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64
-            else "$PROGRAMFILES",
+            "$PROGRAMFILES64" if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64 else "$PROGRAMFILES",
         )
         defines.setdefault(
             "multiuser_use_programfiles64",
-            "!define MULTIUSER_USE_PROGRAMFILES64"
-            if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64
-            else "",
+            "!define MULTIUSER_USE_PROGRAMFILES64" if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64 else "",
         )
         defines.setdefault("srcdir", self.archiveDir())  # deprecated
         defines.setdefault("registry_hook", "")
@@ -101,19 +97,14 @@ class NullsoftInstallerPackager(PortablePackager):
         defines.setdefault("SnoreToastExe", "$INSTDIR\\bin\\SnoreToast.exe")
 
         if not self.scriptname:
-            self.scriptname = os.path.join(
-                os.path.dirname(__file__), "Nsis", "NullsoftInstaller.nsi"
-            )
+            self.scriptname = os.path.join(os.path.dirname(__file__), "Nsis", "NullsoftInstaller.nsi")
         return defines
 
     def isNsisInstalled(self):
         if not self._isInstalled:
             self._isInstalled = self.__isInstalled()
             if not self._isInstalled:
-                CraftCore.log.critical(
-                    "Craft requires Nsis to create a package, please install Nsis\n"
-                    "\t'craft nsis'"
-                )
+                CraftCore.log.critical("Craft requires Nsis to create a package, please install Nsis\n" "\t'craft nsis'")
                 return False
         return True
 
@@ -122,9 +113,7 @@ class NullsoftInstallerPackager(PortablePackager):
         self.nsisExe = CraftCore.cache.findApplication("makensis")
         if not self.nsisExe:
             return False
-        return CraftCore.cache.getVersion(
-            self.nsisExe, versionCommand="/VERSION"
-        ) >= CraftVersion("3.03")
+        return CraftCore.cache.getVersion(self.nsisExe, versionCommand="/VERSION") >= CraftVersion("3.03")
 
     def _createShortcut(
         self,
@@ -161,11 +150,7 @@ class NullsoftInstallerPackager(PortablePackager):
         defines["setupname"] = str(Path(defines["setupname"]).with_suffix(".exe"))
         sevenZPath = CraftCore.standardDirs.craftRoot() / "dev-utils/7z"
         if sevenZPath.exists():
-            defines["7za"] = (
-                sevenZPath / "7za.exe"
-                if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64
-                else sevenZPath / "7za_32.exe"
-            )
+            defines["7za"] = sevenZPath / "7za.exe" if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64 else sevenZPath / "7za_32.exe"
         else:  # legacy
             defines["7za"] = (
                 CraftCore.cache.findApplication("7za")
@@ -173,43 +158,25 @@ class NullsoftInstallerPackager(PortablePackager):
                 else CraftCore.cache.findApplication("7za_32")
             )
         # provide the actual installation size in kb, ignore the 7z size as it gets removed after the install
-        defines["installSize"] = str(
-            int(
-                (
-                    self.folderSize(self.archiveDir())
-                    - os.path.getsize(defines["dataPath"])
-                )
-                / 1000
-            )
-        )
-        defines["estimated_size"] = str(
-            int(int(os.path.getsize(defines["dataPath"])) / 1000)
-        )
+        defines["installSize"] = str(int((self.folderSize(self.archiveDir()) - os.path.getsize(defines["dataPath"])) / 1000))
+        defines["estimated_size"] = str(int(int(os.path.getsize(defines["dataPath"])) / 1000))
 
         defines["installerIcon"] = f"""!define MUI_ICON "{defines["icon"]}" """
         defines["iconname"] = os.path.basename(defines["icon"])
         if not defines["license"] == "":
-            defines[
-                "license"
-            ] = f"""!insertmacro MUI_PAGE_LICENSE "{defines["license"]}" """
+            defines["license"] = f"""!insertmacro MUI_PAGE_LICENSE "{defines["license"]}" """
         if not defines["readme"] == "":
-            defines[
-                "readme"
-            ] = f"""!insertmacro MUI_FINISHPAGE_SHOWREADME "{defines["readme"]}" """
+            defines["readme"] = f"""!insertmacro MUI_FINISHPAGE_SHOWREADME "{defines["readme"]}" """
 
         shortcuts = []
         if "executable" in defines:
-            shortcuts.append(
-                self._createShortcut(defines["productname"], defines["executable"])
-            )
+            shortcuts.append(self._createShortcut(defines["productname"], defines["executable"]))
             del defines["executable"]
 
         for short in defines["shortcuts"]:
             shortcuts.append(self._createShortcut(**short))
         if shortcuts:
-            defines["shortcuts"] = NullsoftInstallerPackager.SHORTCUT_SECTION.format(
-                shortcuts="".join(shortcuts)
-            )
+            defines["shortcuts"] = NullsoftInstallerPackager.SHORTCUT_SECTION.format(shortcuts="".join(shortcuts))
 
         if defines.get("sections", None):
             defines["sections_page"] = "!insertmacro MUI_PAGE_COMPONENTS"
@@ -224,24 +191,16 @@ class NullsoftInstallerPackager(PortablePackager):
                 uninstallDirs.add(d)
                 d = d.parent
 
-        defines["uninstallFiles"] = "\n".join(
-            [f'Delete "$INSTDIR\\{f}"' for f in uninstallFiles]
-        )
-        defines["uninstallDirs"] = "\n".join(
-            [f'RMDir "$INSTDIR\\{x}"' for x in sorted(uninstallDirs, reverse=True)]
-        )
+        defines["uninstallFiles"] = "\n".join([f'Delete "$INSTDIR\\{f}"' for f in uninstallFiles])
+        defines["uninstallDirs"] = "\n".join([f'RMDir "$INSTDIR\\{x}"' for x in sorted(uninstallDirs, reverse=True)])
 
         CraftCore.debug.new_line()
         CraftCore.log.debug(f"generating installer {defines['setupname']}")
 
         verboseString = "/V4" if CraftCore.debug.verbose() > 0 else "/V3"
 
-        defines.setdefault(
-            "nsis_include", f"!addincludedir {os.path.dirname(self.scriptname)}"
-        )
-        defines[
-            "nsis_include_internal"
-        ] = f"!addincludedir {os.path.join(os.path.dirname(__file__), 'Nsis')}"
+        defines.setdefault("nsis_include", f"!addincludedir {os.path.dirname(self.scriptname)}")
+        defines["nsis_include_internal"] = f"!addincludedir {os.path.join(os.path.dirname(__file__), 'Nsis')}"
         cmdDefines = []
         configuredScrip = os.path.join(self.workDir(), f"{self.package.name}.nsi")
         if not utils.configureFile(self.scriptname, configuredScrip, defines):

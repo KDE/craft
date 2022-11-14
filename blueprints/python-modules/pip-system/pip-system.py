@@ -25,9 +25,7 @@ class Package(PipPackageBase):
         for ver, python in self._pythons:
             # if its installed we get the help text if not we get an empty string
             with io.StringIO() as tmp:
-                utils.system(
-                    [python, "-m", "pip"], stdout=tmp, stderr=subprocess.DEVNULL
-                )
+                utils.system([python, "-m", "pip"], stdout=tmp, stderr=subprocess.DEVNULL)
                 if not tmp.getvalue():
                     if not utils.system([python, "-m", "ensurepip", "--user"]):
                         return False

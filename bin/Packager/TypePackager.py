@@ -67,9 +67,7 @@ class TypePackager(PackagerBase):
         if isinstance(packager, str):
             if packager == "MultiCollectionPackager":
                 packager = "NullsoftInstallerPackager"
-                CraftCore.log.warning(
-                    "MultiCollectionPackager is deprecated, please use NullsoftInstallerPackager"
-                )
+                CraftCore.log.warning("MultiCollectionPackager is deprecated, please use NullsoftInstallerPackager")
             packager = eval(packager)
 
         if self.__packager:

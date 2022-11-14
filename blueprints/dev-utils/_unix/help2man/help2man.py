@@ -4,9 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         for ver in ["1.47.6"]:
-            self.targets[
-                ver
-            ] = f"http://mirror.netcologne.de/gnu/help2man/help2man-{ver}.tar.xz"
+            self.targets[ver] = f"http://mirror.netcologne.de/gnu/help2man/help2man-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"help2man-{ver}"
             self.targetInstallPath[ver] = "dev-utils"
 
@@ -32,6 +30,4 @@ class Package(AutoToolsPackageBase):
 
     def postInstall(self):
         hardCoded = [os.path.join(self.installDir(), x) for x in ["bin/help2man"]]
-        return self.patchInstallPrefix(
-            hardCoded, self.subinfo.buildPrefix, CraftCore.standardDirs.craftRoot()
-        )
+        return self.patchInstallPrefix(hardCoded, self.subinfo.buildPrefix, CraftCore.standardDirs.craftRoot())

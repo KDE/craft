@@ -20,15 +20,10 @@ class PipBuildSystem(BuildSystemBase):
             if os.path.exists("C:/python27/python.exe"):
                 python2 = "C:/python27/python.exe"
             if not python2 and ("Paths", "PYTHON27") in CraftCore.settings:
-                python2 = CraftCore.cache.findApplication(
-                    "python", CraftCore.settings.get("Paths", "PYTHON27")
-                )
+                python2 = CraftCore.cache.findApplication("python", CraftCore.settings.get("Paths", "PYTHON27"))
         if not python2:
             CraftCore.log.critical(
-                f"Please have a look on {CraftCore.settings.iniPath} and make sure that\n"
-                "\t[Paths]\n"
-                "\tPYTHON27\n"
-                "Points to a valid Python installation."
+                f"Please have a look on {CraftCore.settings.iniPath} and make sure that\n" "\t[Paths]\n" "\tPYTHON27\n" "Points to a valid Python installation."
             )
             return None
         return python2
@@ -53,9 +48,7 @@ class PipBuildSystem(BuildSystemBase):
     def make(self):
         if self.subinfo.svnTarget():
             for ver, python in self._pythons:
-                if not utils.system(
-                    [python, "setup.py", "sdist"], cwd=self.sourceDir()
-                ):
+                if not utils.system([python, "setup.py", "sdist"], cwd=self.sourceDir()):
                     return False
         return True
 

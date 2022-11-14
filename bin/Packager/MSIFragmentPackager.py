@@ -45,9 +45,7 @@ class MSIFragmentPackager(PackagerBase):
         wxs.appendChild(wix)
         fragmentElement = wxs.createElement("Fragment")
         componentGroup = wxs.createElement("ComponentGroup")
-        componentGroup.setAttribute(
-            "Id", "%sComponentGroup" % self.package.replace("-", "_")
-        )
+        componentGroup.setAttribute("Id", "%sComponentGroup" % self.package.replace("-", "_"))
         wix.appendChild(fragmentElement)
         fragmentElement.appendChild(componentGroup)
 
@@ -86,10 +84,7 @@ class MSIFragmentPackager(PackagerBase):
         out.close()
         objfile = outfile.replace(".wxs", ".wixobj")
 
-        utils.system(
-            "candle -o %s -d%sImageDir=%s %s"
-            % (objfile, self.package, self.imageDir(), outfile)
-        )
+        utils.system("candle -o %s -d%sImageDir=%s %s" % (objfile, self.package, self.imageDir(), outfile))
         self.objectFiles.append(objfile)
 
     def createPackage(self):

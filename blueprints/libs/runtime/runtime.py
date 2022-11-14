@@ -5,9 +5,7 @@ import info
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = (
-            CraftCore.compiler.Platforms.Windows
-        )
+        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.Windows
 
     def setTargets(self):
         # not used  yet only for reference
@@ -72,9 +70,7 @@ class Package(BinaryPackageBase):
                         )
                 if redistDir:
                     files = glob.glob(
-                        os.path.join(
-                            redistDir, f"x{CraftCore.compiler.bits}", "**/*.dll"
-                        ),
+                        os.path.join(redistDir, f"x{CraftCore.compiler.bits}", "**/*.dll"),
                         recursive=True,
                     )
                 else:
@@ -83,7 +79,5 @@ class Package(BinaryPackageBase):
         for f in files:
             if not os.path.isabs(f):
                 f = os.path.join(srcdir, f)
-            utils.copyFile(
-                f, os.path.join(destdir, os.path.basename(f)), linkOnly=False
-            )
+            utils.copyFile(f, os.path.join(destdir, os.path.basename(f)), linkOnly=False)
         return True

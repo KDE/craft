@@ -57,9 +57,7 @@ class DesktopEntry(PackagerBase):
                 useAbsolutePath=True,
             ):
                 return False
-            targetShimBundle = Path(
-                "/Applications/Craft", f"{craftName} {defines['display_name']}.app"
-            )
+            targetShimBundle = Path("/Applications/Craft", f"{craftName} {defines['display_name']}.app")
             shim = targetShimBundle / "Contents/MacOS" / targetBinary
             if not utils.createDir(targetShimBundle / "Contents/MacOS"):
                 return False
@@ -76,9 +74,7 @@ class DesktopEntry(PackagerBase):
                 useAbsolutePath=True,
             ):
                 return False
-            if not utils.copyFile(
-                targetPlist, targetShimBundle / "Contents/Info.plist", linkOnly=False
-            ):
+            if not utils.copyFile(targetPlist, targetShimBundle / "Contents/Info.plist", linkOnly=False):
                 return False
             if targetIcon and not utils.copyFile(
                 targetBundle / "Contents/Resources" / targetIcon,
@@ -89,9 +85,7 @@ class DesktopEntry(PackagerBase):
         elif CraftCore.compiler.isWindows:
             shortcuts = defines["shortcuts"] or []
             if "executable" in defines:
-                shortcuts.append(
-                    {"name": defines["productname"], "target": defines["executable"]}
-                )
+                shortcuts.append({"name": defines["productname"], "target": defines["executable"]})
                 del defines["executable"]
             for shortcut in shortcuts:
                 shim = CraftCore.standardDirs.craftRoot() / "wrapper" / shortcut["name"]
@@ -111,9 +105,7 @@ class DesktopEntry(PackagerBase):
                     f"{craftName}/{shortcut['name']} {craftName}",
                     shim,
                     target.parent,
-                    os.path.join(
-                        CraftCore.standardDirs.craftRoot(), shortcut["target"]
-                    ),
+                    os.path.join(CraftCore.standardDirs.craftRoot(), shortcut["target"]),
                     shortcut.get(
                         "desciption",
                         f"{shortcut['name']} from {CraftCore.standardDirs.craftRoot()}",

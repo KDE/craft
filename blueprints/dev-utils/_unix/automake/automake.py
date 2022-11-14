@@ -4,9 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         for ver in ["1.16.1", "1.16.3"]:
-            self.targets[
-                ver
-            ] = f"https://ftp.gnu.org/gnu/automake/automake-{ver}.tar.xz"
+            self.targets[ver] = f"https://ftp.gnu.org/gnu/automake/automake-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"automake-{ver}"
 
         self.targetDigests["1.16.1"] = (
@@ -41,9 +39,7 @@ class Package(AutoToolsPackageBase):
                 os.path.join(self.installDir(), "bin", "aclocal-1.16"),
                 os.path.join(self.installDir(), "bin", "automake"),
                 os.path.join(self.installDir(), "bin", "automake-1.16"),
-                os.path.join(
-                    self.installDir(), "share", "automake-1.16", "Automake/Config.pm"
-                ),
+                os.path.join(self.installDir(), "share", "automake-1.16", "Automake/Config.pm"),
             ],
             self.subinfo.buildPrefix,
             CraftCore.standardDirs.craftRoot(),

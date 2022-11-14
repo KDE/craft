@@ -28,13 +28,9 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         for ver in ["3.0.2"]:
-            self.targets[
-                ver
-            ] = f"http://download.qt.io/online/qtsdkrepository/windows_x86/desktop/tools_ifw/qt.tools.ifw.30/{ver}ifw-win-x86.7z"
+            self.targets[ver] = f"http://download.qt.io/online/qtsdkrepository/windows_x86/desktop/tools_ifw/qt.tools.ifw.30/{ver}ifw-win-x86.7z"
             self.targetInstSrc[ver] = f"Tools/QtInstallerFramework/3.0"
-            self.targetDigestUrls[
-                ver
-            ] = "http://download.qt.io/online/qtsdkrepository/windows_x86/desktop/tools_ifw/qt.tools.ifw.30/3.0.2ifw-win-x86.7z.sha1"
+            self.targetDigestUrls[ver] = "http://download.qt.io/online/qtsdkrepository/windows_x86/desktop/tools_ifw/qt.tools.ifw.30/3.0.2ifw-win-x86.7z.sha1"
             self.targetInstallPath[ver] = "dev-utils"
 
         self.description = "The Qt Installer Framework provides a set of tools and utilities to create installers for the supported desktop Qt platforms: Linux, Microsoft Windows, and Mac OS X."
@@ -77,9 +73,7 @@ class Package(BinaryPackageBase):
             "TARGET_DIR": self.subinfo.options.dynamic.targetDir,
             "START_MENU_DIR": self.subinfo.options.dynamic.startMenuDir,
             "TITLE": self.subinfo.options.dynamic.title,
-            "REPO_ENABLED": "0"
-            if self.subinfo.options.dynamic.offlineInstaller
-            else "1",
+            "REPO_ENABLED": "0" if self.subinfo.options.dynamic.offlineInstaller else "1",
             "REPO_URL": self.subinfo.options.dynamic.repositoryURL
             if self.subinfo.options.dynamic.repositoryURL
             else f"file:///{OsUtils.toUnixPath(qtifDir)}/repo",
@@ -101,8 +95,7 @@ class Package(BinaryPackageBase):
                 os.path.join(qtifDir, "image"),
                 os.path.join(
                     qtifDir,
-                    self.subinfo.options.dynamic.installerName
-                    + CraftCore.compiler.executableSuffix,
+                    self.subinfo.options.dynamic.installerName + CraftCore.compiler.executableSuffix,
                 ),
             ]
         ):

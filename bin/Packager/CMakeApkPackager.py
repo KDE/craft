@@ -26,16 +26,9 @@ class CMakeApkPackager(PackagerBase):
         """Android APK parameter auto-detection,
         see https://invent.kde.org/sysadmin/ci-tooling/-/blob/master/system-images/android/sdk/get-apk-args.py"""
         if not self.__androidApkTargets:
-            files = glob.iglob(
-                f"{self.sourceDir()}/**/AndroidManifest.xml*", recursive=True
-            )
+            files = glob.iglob(f"{self.sourceDir()}/**/AndroidManifest.xml*", recursive=True)
             for file in files:
-                if (
-                    "3rdparty" in file
-                    or "examples" in file
-                    or "tests" in file
-                    or "templates" in file
-                ):
+                if "3rdparty" in file or "examples" in file or "tests" in file or "templates" in file:
                     continue
                 tree = ElementTree.parse(file)
                 prefix = "{http://schemas.android.com/apk/res/android}"

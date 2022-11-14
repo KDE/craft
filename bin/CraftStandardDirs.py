@@ -28,17 +28,9 @@ class CraftStandardDirs(object):
 
     def __init__(self, craftRoot=None):
         self._craftRoot = Path(craftRoot or CraftCore.settings._craftRoot())
-        self._downloadDir = Path(
-            CraftCore.settings.get("Paths", "DOWNLOADDIR", self._craftRoot / "download")
-        )
-        self._gitDir = Path(
-            CraftCore.settings.get("Paths", "KDEGITDIR", self._downloadDir / "git")
-        )
-        self._junctionDir = Path(
-            CraftCore.settings.get(
-                "ShortPath", "JunctionDir", os.path.join(self._craftRoot, "build", "_")
-            )
-        ).absolute()
+        self._downloadDir = Path(CraftCore.settings.get("Paths", "DOWNLOADDIR", self._craftRoot / "download"))
+        self._gitDir = Path(CraftCore.settings.get("Paths", "KDEGITDIR", self._downloadDir / "git"))
+        self._junctionDir = Path(CraftCore.settings.get("ShortPath", "JunctionDir", os.path.join(self._craftRoot, "build", "_"))).absolute()
         self.locations = Location(self)
 
     @staticmethod
@@ -48,11 +40,7 @@ class CraftStandardDirs(object):
 
     @staticmethod
     def svnDir() -> Path:
-        return Path(
-            CraftCore.settings.get(
-                "Paths", "KDESVNDIR", CraftStandardDirs.downloadDir() / "svn"
-            )
-        )
+        return Path(CraftCore.settings.get("Paths", "KDESVNDIR", CraftStandardDirs.downloadDir() / "svn"))
 
     @staticmethod
     def gitDir() -> Path:
@@ -60,11 +48,7 @@ class CraftStandardDirs(object):
 
     @staticmethod
     def tmpDir() -> Path:
-        return Path(
-            CraftCore.settings.get(
-                "Paths", "TMPDIR", CraftStandardDirs.craftRoot() / "tmp"
-            )
-        )
+        return Path(CraftCore.settings.get("Paths", "TMPDIR", CraftStandardDirs.craftRoot() / "tmp"))
 
     @staticmethod
     def craftRoot() -> Path:
@@ -102,11 +86,7 @@ class CraftStandardDirs(object):
         if not OsDetection.isWin():
             return Path(CraftCore.settings.get("Paths", "Msys", "/"))
         else:
-            return Path(
-                CraftCore.settings.get(
-                    "Paths", "Msys", CraftStandardDirs.craftRoot() / "msys"
-                )
-            )
+            return Path(CraftCore.settings.get("Paths", "Msys", CraftStandardDirs.craftRoot() / "msys"))
 
     @staticmethod
     def junctionsDir() -> Path:

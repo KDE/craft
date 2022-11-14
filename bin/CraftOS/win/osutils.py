@@ -69,11 +69,7 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
 
     @staticmethod
     def isLink(path):
-        return (
-            os.path.islink(path)
-            | OsUtils.getFileAttributes(str(path))
-            & FileAttributes.FILE_ATTRIBUTE_REPARSE_POINT
-        )  # Detect a Junction
+        return os.path.islink(path) | OsUtils.getFileAttributes(str(path)) & FileAttributes.FILE_ATTRIBUTE_REPARSE_POINT  # Detect a Junction
 
     @staticmethod
     def getFileAttributes(path):
@@ -83,21 +79,11 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     def removeReadOnlyAttribute(path):
         CraftCore.log.debug(f"Remove readonly flag of {path}")
         attributes = OsUtils.getFileAttributes(path)
-        return (
-            ctypes.windll.kernel32.SetFileAttributesW(
-                str(path), attributes & ~FileAttributes.FILE_ATTRIBUTE_READONLY
-            )
-            != 0
-        )
+        return ctypes.windll.kernel32.SetFileAttributesW(str(path), attributes & ~FileAttributes.FILE_ATTRIBUTE_READONLY) != 0
 
     @staticmethod
     def setWritable(path):
-        return (
-            ctypes.windll.kernel32.SetFileAttributesW(
-                str(path), FileAttributes.FILE_ATTRIBUTE_NORMAL
-            )
-            != 0
-        )
+        return ctypes.windll.kernel32.SetFileAttributesW(str(path), FileAttributes.FILE_ATTRIBUTE_NORMAL) != 0
 
     @staticmethod
     def setConsoleTitle(title):

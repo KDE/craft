@@ -68,9 +68,7 @@ def packages():
             for p in packages:
                 package = SeachPackage(p)
                 CraftCore.cache.availablePackages.append(package)
-                progress.print(
-                    int(len(CraftCore.cache.availablePackages) / total * 100)
-                )
+                progress.print(int(len(CraftCore.cache.availablePackages) / total * 100))
     return CraftCore.cache.availablePackages
 
 
@@ -94,16 +92,12 @@ def printSearch(search_package, maxDist=2):
             elif len(packageString) > maxDist and levDist <= maxDist:
                 similar.append((levDist, searchPackage))
             else:
-                if package_re.match(searchPackage.description) or package_re.match(
-                    searchPackage.tags
-                ):
+                if package_re.match(searchPackage.description) or package_re.match(searchPackage.tags):
                     similar.append((100, searchPackage))
 
         if match is None:
             if len(similar) > 0:
-                CraftCore.log.info(
-                    f"Craft was unable to find {search_package}, similar packages are:"
-                )
+                CraftCore.log.info(f"Craft was unable to find {search_package}, similar packages are:")
                 similar.sort(key=lambda x: x[0])
             else:
                 CraftCore.log.info(f"Craft was unable to find {search_package}")

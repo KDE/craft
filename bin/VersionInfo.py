@@ -89,9 +89,7 @@ class VersionInfo(object):
                                 CraftCore.settings._parseList(self._data.info[k]),
                             )
 
-                    CraftCore.log.debug(
-                        f"Found a version info for {self.package} in {self._fileName}"
-                    )
+                    CraftCore.log.debug(f"Found a version info for {self.package} in {self._fileName}")
         return self._data
 
     @property
@@ -101,9 +99,7 @@ class VersionInfo(object):
                 includePath = Path(self.data.info["include"])
                 if not includePath.is_absolute():
                     includePath = self._fileName.parent / includePath
-                self.__include = VersionInfo(
-                    subinfo=self.subinfo, package=self.package, fileName=includePath
-                )
+                self.__include = VersionInfo(subinfo=self.subinfo, package=self.package, fileName=includePath)
         return self.__include
 
     def tags(self):
@@ -160,9 +156,7 @@ class VersionInfo(object):
         tarballInstallSrc=None,
         gitUrl=None,
     ):
-        self._fileName = os.path.abspath(
-            os.path.join(os.path.dirname(self.package.source), fileName)
-        )
+        self._fileName = os.path.abspath(os.path.join(os.path.dirname(self.package.source), fileName))
         self._data = None
         self.setDefaultValues(tarballUrl, tarballDigestUrl, tarballInstallSrc, gitUrl)
 
@@ -208,39 +202,27 @@ class VersionInfo(object):
         if gitUrl is None:
             gitUrl = self.get("gitUrl", None)
         gitDirSuffix = self.get("gitDirSuffix", None)
-        gitUpdatedRepoUrls = CraftCore.settings._parseList(
-            self.get("gitUpdatedRepoUrl", "")
-        )
+        gitUpdatedRepoUrls = CraftCore.settings._parseList(self.get("gitUpdatedRepoUrl", ""))
         if tarballUrl is not None:
             for target in self.data.tarballs:
-                self.subinfo.targets[target] = self._replaceVar(
-                    tarballUrl, target, packageName
-                )
+                self.subinfo.targets[target] = self._replaceVar(tarballUrl, target, packageName)
                 if patchLevel:
                     self.subinfo.patchLevel[target] = patchLevel
                 if not tarballDigestUrl is None:
-                    self.subinfo.targetDigestUrls[target] = self._replaceVar(
-                        tarballDigestUrl, target, packageName
-                    )
+                    self.subinfo.targetDigestUrls[target] = self._replaceVar(tarballDigestUrl, target, packageName)
                 if not tarballInstallSrc is None:
-                    self.subinfo.targetInstSrc[target] = self._replaceVar(
-                        tarballInstallSrc, target, packageName
-                    )
+                    self.subinfo.targetInstSrc[target] = self._replaceVar(tarballInstallSrc, target, packageName)
 
         if gitUrl:
             for target in self.data.branches:
-                self.subinfo.svnTargets[
-                    target
-                ] = f"{self._replaceVar(gitUrl, target, packageName)}|{target}|"
+                self.subinfo.svnTargets[target] = f"{self._replaceVar(gitUrl, target, packageName)}|{target}|"
                 if patchLevel:
                     self.subinfo.patchLevel[target] = patchLevel
                 if gitDirSuffix:
                     self.subinfo.targetSrcSuffix[target] = gitDirSuffix
 
             for target in self.data.tags:
-                self.subinfo.svnTargets[
-                    target
-                ] = f"{self._replaceVar(gitUrl, target, packageName)}||{target}"
+                self.subinfo.svnTargets[target] = f"{self._replaceVar(gitUrl, target, packageName)}||{target}"
                 if patchLevel:
                     self.subinfo.patchLevel[target] = patchLevel
 

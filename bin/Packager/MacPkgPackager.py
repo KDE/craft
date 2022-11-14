@@ -29,16 +29,13 @@ class MacPkgPackager(MacBasePackager):
         CraftCore.log.debug("packaging using the MacDMGPackager")
         if not CraftCore.cache.findApplication("packagesutil"):
             CraftCore.log.critical(
-                "Craft requires dev-utils/packagesdev to create a package, please install dev-utils/packagesdev\n"
-                "\t'craft dev-utils/packagesdev'"
+                "Craft requires dev-utils/packagesdev to create a package, please install dev-utils/packagesdev\n" "\t'craft dev-utils/packagesdev'"
             )
             return False
 
         defines = self.setDefaults(self.defines)
         if not "pkgproj" in defines:
-            CraftCore.log.error(
-                "Cannot not create .pkg because no .pkgproj was defined."
-            )
+            CraftCore.log.error("Cannot not create .pkg because no .pkgproj was defined.")
             return False
         if not self.internalCreatePackage(defines):
             return False

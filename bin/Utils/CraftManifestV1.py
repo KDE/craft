@@ -70,9 +70,7 @@ class CraftManifestEntry(object):
             "files": [x.toJson() for x in collections.OrderedDict.fromkeys(self.files)],
         }
 
-    def addFile(
-        self, fileName: str, checksum: str, version: str = "", config=None
-    ) -> CraftManifestEntryFile:
+    def addFile(self, fileName: str, checksum: str, version: str = "", config=None) -> CraftManifestEntryFile:
         f = CraftManifestEntryFile(fileName, checksum, version)
         if config:
             f.config = config.dump()
@@ -126,9 +124,7 @@ class CraftManifest(object):
             "version": CraftManifest.version(),
         }
         for compiler, packages in self.packages.items():
-            out["packages"][compiler] = [
-                x.toJson() for x in self.packages[compiler].values()
-            ]
+            out["packages"][compiler] = [x.toJson() for x in self.packages[compiler].values()]
         return out
 
     def get(self, package: str, compiler: str = None) -> CraftManifestEntry:

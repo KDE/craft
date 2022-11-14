@@ -74,13 +74,9 @@ class CraftCore(object):
     debug = AutoImport("debug", "CraftDebug")  # type: CraftDebug
     # log will be replaced once debug is loaded
     log = AutoImport("debug", "CraftDebug", member="log")  # type: logging.Logger
-    standardDirs = AutoImport(
-        "standardDirs", "CraftStandardDirs"
-    )  # type: CraftStandardDirs
+    standardDirs = AutoImport("standardDirs", "CraftStandardDirs")  # type: CraftStandardDirs
     settings = AutoImport("settings", "CraftConfig")  # type: CraftConfig
-    cache = AutoImport(
-        "cache", "Utils.CraftCache", "CraftCache", "_loadInstance"
-    )  # type: CraftCache
+    cache = AutoImport("cache", "Utils.CraftCache", "CraftCache", "_loadInstance")  # type: CraftCache
     compiler = AutoImport("compiler", "CraftCompiler")  # type: CraftCompiler
     installdb = AutoImport("installdb", "InstallDB")  # type: InstallDB
 

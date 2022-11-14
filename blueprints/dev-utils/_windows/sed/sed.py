@@ -5,10 +5,8 @@ class subinfo(info.infoclass):
     def setTargets(self):
         for ver in ["4.1.5", "4.2.1"]:
             self.targets[ver] = [
-                "http://downloads.sourceforge.net/sourceforge/gnuwin32/sed-%s-bin.zip"
-                % ver,
-                "http://downloads.sourceforge.net/sourceforge/gnuwin32/sed-%s-dep.zip"
-                % ver,
+                "http://downloads.sourceforge.net/sourceforge/gnuwin32/sed-%s-bin.zip" % ver,
+                "http://downloads.sourceforge.net/sourceforge/gnuwin32/sed-%s-dep.zip" % ver,
             ]
             self.targetInstallPath[ver] = "dev-utils"
         self.targetDigests["4.1.5"] = [

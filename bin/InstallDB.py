@@ -49,18 +49,14 @@ class InstallPackage(object):
     def getFilesWithHashes(self):
         """get the list of files (filename, fileHash tuples) for the given package"""
         cmd = """SELECT filename, fileHash FROM fileList WHERE packageId=?;"""
-        InstallDB.log(
-            "executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId))
-        )
+        InstallDB.log("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)))
         self.cursor.execute(cmd, (self.packageId,))
         return self.cursor.fetchall()
 
     def getFiles(self):
         """get the list of files for the given package"""
         cmd = """SELECT filename FROM fileList WHERE packageId=?;"""
-        InstallDB.log(
-            "executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId))
-        )
+        InstallDB.log("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)))
         self.cursor.execute(cmd, (self.packageId,))
         return self.cursor.fetchall()
 
@@ -76,14 +72,10 @@ class InstallPackage(object):
     def uninstall(self):
         """really uninstall that package"""
         cmd = """DELETE FROM fileList WHERE packageId=?;"""
-        InstallDB.log(
-            "executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId))
-        )
+        InstallDB.log("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)))
         self.cursor.execute(cmd, (self.packageId,))
         cmd = """DELETE FROM packageList WHERE packageId=?;"""
-        InstallDB.log(
-            "executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId))
-        )
+        InstallDB.log("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)))
         self.cursor.execute(cmd, (self.packageId,))
         self.cursor.connection.commit()
 
@@ -111,15 +103,11 @@ class InstallPackage(object):
         self.cursor.connection.commit()
 
     def getRevision(self):
-        self.cursor.execute(
-            "SELECT revision FROM packageList WHERE packageId == ?", (self.packageId,)
-        )
+        self.cursor.execute("SELECT revision FROM packageList WHERE packageId == ?", (self.packageId,))
         return self.cursor.fetchall()[0][0]
 
     def getVersion(self):
-        self.cursor.execute(
-            "SELECT version FROM packageList WHERE packageId == ?", (self.packageId,)
-        )
+        self.cursor.execute("SELECT version FROM packageList WHERE packageId == ?", (self.packageId,))
         return self.cursor.fetchall()[0][0]
 
     def getCacheVersion(self):
@@ -184,14 +172,10 @@ class InstallDB(object):
     def isInstalled(self, package, version=None):
         """returns whether a package is installed. If version is empty, all versions will be checked."""
         cmd = """SELECT * FROM packageList"""
-        stmt, params = self.__constructWhereStmt(
-            {"prefix": None, "packagePath": package, "version": version}
-        )
+        stmt, params = self.__constructWhereStmt({"prefix": None, "packagePath": package, "version": version})
         cmd += stmt
         cmd += """;"""
-        InstallDB.log(
-            "executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params))
-        )
+        InstallDB.log("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
 
         cursor = self.connection.cursor()
         cursor.execute(cmd, tuple(params))
@@ -202,9 +186,7 @@ class InstallDB(object):
                             version '{version}'."""
             )
         else:
-            InstallDB.log(
-                f"""Couldn't find a trace that the package {package} has been installed with version '{version}'"""
-            )
+            InstallDB.log(f"""Couldn't find a trace that the package {package} has been installed with version '{version}'""")
         cursor.close()
         return bool(installedPackage)
 
@@ -213,14 +195,10 @@ class InstallDB(object):
         package.
         """
         cmd = """SELECT DISTINCT packagePath, version, revision FROM packageList"""
-        stmt, params = self.__constructWhereStmt(
-            {"prefix": None, "packagePath": package}
-        )
+        stmt, params = self.__constructWhereStmt({"prefix": None, "packagePath": package})
         cmd += stmt
         cmd += """;"""
-        InstallDB.log(
-            "executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params))
-        )
+        InstallDB.log("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
 
         cursor = self.connection.cursor()
         cursor.execute(cmd, tuple(params))
@@ -233,14 +211,10 @@ class InstallDB(object):
         package.
         """
         cmd = """SELECT packageId FROM packageList"""
-        stmt, params = self.__constructWhereStmt(
-            {"prefix": None, "packagePath": package.path}
-        )
+        stmt, params = self.__constructWhereStmt({"prefix": None, "packagePath": package.path})
         cmd += stmt
         cmd += """;"""
-        InstallDB.log(
-            "executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params))
-        )
+        InstallDB.log("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
 
         cursor = self.connection.cursor()
         cursor.execute(cmd, tuple(params))
@@ -259,9 +233,7 @@ class InstallDB(object):
         rows = cursor.fetchall()
         return [(InstallPackage(cursor, row[0]), row[1]) for row in rows]
 
-    def addInstalled(
-        self, package, version, ignoreInstalled=False, revision="", cacheVersion=None
-    ):
+    def addInstalled(self, package, version, ignoreInstalled=False, revision="", cacheVersion=None):
         """adds an installed package"""
         cursor = self.connection.cursor()
         if self.isInstalled(package, version) and not ignoreInstalled:
@@ -278,9 +250,7 @@ class InstallDB(object):
         out = [InstallPackage(cursor, pId) for pId in self.getPackageIds(package)]
         # TODO: we always just have 1 package installed so don't return a list
         if len(out) > 1:
-            CraftCore.log.error(
-                f"Database corruption: Found multiple packages for {package}"
-            )
+            CraftCore.log.error(f"Database corruption: Found multiple packages for {package}")
         return out
 
     def _prepareDatabase(self):

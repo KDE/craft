@@ -117,9 +117,7 @@ class UserOptions(object):
     @staticmethod
     def instance():
         if not UserOptions.UserOptionsSingleton._instance:
-            UserOptions.UserOptionsSingleton._instance = (
-                UserOptions.UserOptionsSingleton()
-            )
+            UserOptions.UserOptionsSingleton._instance = UserOptions.UserOptionsSingleton()
         return UserOptions.UserOptionsSingleton._instance
 
     def __init__(self, package):
@@ -158,9 +156,7 @@ class UserOptions(object):
 
     def dump(self) -> collections.OrderedDict:
         out = []
-        for key, option in (
-            UserOptions.instance().registeredOptions[self._package.path].items()
-        ):
+        for key, option in UserOptions.instance().registeredOptions[self._package.path].items():
             value = option.value
             atr = getattr(self, key)
             if atr is None:
@@ -176,20 +172,14 @@ class UserOptions(object):
         tmp = []
         for key, _ in self.dump().items():
             # ignore flags that have no influence on the archive
-            if (
-                not UserOptions.instance()
-                .registeredOptions[self._package.path][key]
-                .compatible
-            ):
+            if not UserOptions.instance().registeredOptions[self._package.path][key].compatible:
                 atr = getattr(self, key)
                 if atr is not None:
                     if key == "buildType":
                         # Releaseand and RelWithDebInfo are compatible
                         atr = 1 if atr in {"Release", "RelWithDebInfo"} else 0
                     tmp.append(key.encode())
-                    tmp.append(
-                        bytes(atr, "UTF-8") if isinstance(atr, str) else bytes([atr])
-                    )
+                    tmp.append(bytes(atr, "UTF-8") if isinstance(atr, str) else bytes([atr]))
         return zlib.adler32(b"".join(tmp))
 
     def __isUserSet(self, key):
@@ -200,30 +190,20 @@ class UserOptions(object):
             return self.__configHash() == hash
         for key, value in self.dump().items():
             # ignore flags that have no influence on the archive
-            if (
-                not UserOptions.instance()
-                .registeredOptions[self._package.path][key]
-                .compatible
-            ):
+            if not UserOptions.instance().registeredOptions[self._package.path][key].compatible:
                 if key not in other:
                     # a new key but is empty, False is a new value and needs to be handled
                     if not value and value != False:
                         continue
-                    CraftCore.log.info(
-                        f"Config is not compatible: {key} is a new option"
-                    )
+                    CraftCore.log.info(f"Config is not compatible: {key} is a new option")
                     return False
                 elif key == "buildType":
                     # Releaseand and RelWithDebInfo are compatible
                     if value == "Debug" and other[key] != "Debug":
-                        CraftCore.log.info(
-                            f"Config is not compatible: {key} {value} != {other[key]}"
-                        )
+                        CraftCore.log.info(f"Config is not compatible: {key} {value} != {other[key]}")
                         return False
                 elif value != other[key]:
-                    CraftCore.log.info(
-                        f"Config is not compatible: {key} {value} != {other[key]}"
-                    )
+                    CraftCore.log.info(f"Config is not compatible: {key} {value} != {other[key]}")
                     return False
         return True
 
@@ -280,9 +260,7 @@ class UserOptions(object):
                 packageObject = CraftPackageObject.get(package)
                 if packageObject:
                     UserOptions.addPackageOption(packageObject, key, value)
-                    CraftCore.log.info(
-                        f"setOptions: BlueprintSettings.ini [{package}]{key} = {value}"
-                    )
+                    CraftCore.log.info(f"setOptions: BlueprintSettings.ini [{package}]{key} = {value}")
                 else:
                     raise BlueprintNotFoundException(
                         package,
@@ -301,17 +279,13 @@ class UserOptions(object):
     def setOption(self, key, value, persist: bool = True) -> bool:
         _instance = UserOptions.instance()  # type: UserOptions.UserOptionsSingleton
         package = self._package
-        if (
-            package.path not in _instance.registeredOptions
-        ):  # actually that can only happen if package is invalid
+        if package.path not in _instance.registeredOptions:  # actually that can only happen if package is invalid
             CraftCore.log.error(f"{package} has no options")
             return False
         if key not in _instance.registeredOptions[package.path]:
             CraftCore.log.error(f"{package} unknown option {key}")
             CraftCore.log.error(f"Valid options are")
-            for optionKey, defaultOption in _instance.registeredOptions[
-                package.path
-            ].items():
+            for optionKey, defaultOption in _instance.registeredOptions[package.path].items():
                 default = defaultOption.value
                 default = default if callable(default) else type(default)
                 CraftCore.log.error(f"\t{default.__name__} : {optionKey}")
@@ -325,9 +299,7 @@ class UserOptions(object):
             if not settings.keys():
                 del _instance.settings[self._package.path]
         else:
-            value = self._convert(
-                _instance.registeredOptions[package.path][key].value, value
-            )
+            value = self._convert(_instance.registeredOptions[package.path][key].value, value)
             if persist:
                 if hasattr(value, "toSetting"):
                     settings[key] = value.toSetting()
@@ -336,9 +308,7 @@ class UserOptions(object):
             setattr(self, key, value)
         return True
 
-    def registerOption(
-        self, key: str, default, persist: bool = True, compatible: bool = False
-    ) -> bool:
+    def registerOption(self, key: str, default, persist: bool = True, compatible: bool = False) -> bool:
         _instance = UserOptions.instance()
         package = self._package
         if package.path not in _instance.registeredOptions:
@@ -349,9 +319,7 @@ class UserOptions(object):
                 package,
             )
             return False
-        _instance.registeredOptions[package.path][key] = RegisteredOption(
-            default, compatible
-        )
+        _instance.registeredOptions[package.path][key] = RegisteredOption(default, compatible)
         if persist:
             settings = _instance.initPackage(self)
             if key and key not in settings:
@@ -406,17 +374,9 @@ class UserOptions(object):
         _instance = UserOptions.instance()
         _package = self._package
         _packagePath = _package.path
-        if (
-            _packagePath in _instance.packageOptions
-            and name in _instance.packageOptions[_packagePath]
-        ):
-            if (
-                _packagePath not in _instance.registeredOptions
-                or name not in _instance.registeredOptions[_packagePath]
-            ):
-                raise BlueprintException(
-                    f"Package {_package} has no registered option {name}", _package
-                )
+        if _packagePath in _instance.packageOptions and name in _instance.packageOptions[_packagePath]:
+            if _packagePath not in _instance.registeredOptions or name not in _instance.registeredOptions[_packagePath]:
+                raise BlueprintException(f"Package {_package} has no registered option {name}", _package)
             out = self._convert(
                 _instance.registeredOptions[_packagePath][name].value,
                 _instance.packageOptions[_packagePath][name],
@@ -431,10 +391,7 @@ class UserOptions(object):
 
         if out is None:
             # name is a registered option and not a type but a default value
-            if (
-                _packagePath in _instance.registeredOptions
-                and name in _instance.registeredOptions[_packagePath]
-            ):
+            if _packagePath in _instance.registeredOptions and name in _instance.registeredOptions[_packagePath]:
                 default = _instance.registeredOptions[_packagePath][name].value
                 if not callable(default):
                     out = default

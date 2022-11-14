@@ -9,8 +9,6 @@ def load(modules):
         _NOTIFICATION_BACKENDS = dict()
         for backend in modules:
             backend = backend.strip()
-            backend = getattr(
-                importlib.import_module("Notifier.Backends.%s" % backend), backend
-            )()
+            backend = getattr(importlib.import_module("Notifier.Backends.%s" % backend), backend)()
             _NOTIFICATION_BACKENDS[backend.name] = backend
     return _NOTIFICATION_BACKENDS

@@ -39,9 +39,7 @@ class VersionSystemSourceBase(SourceBase):
         """this function return the base url to the KDE repository"""
         CraftCore.debug.trace("VersionSystemSourceBase __repositoryBaseUrl")
         # @todo move to SvnSource
-        server = CraftCore.settings.get(
-            "General", "KDESVNSERVER", "svn://anonsvn.kde.org"
-        )
+        server = CraftCore.settings.get("General", "KDESVNSERVER", "svn://anonsvn.kde.org")
 
         return server + "/home/kde/"
 

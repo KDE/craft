@@ -4,9 +4,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         for ver in ["2.69", "2.71"]:
-            self.targets[
-                ver
-            ] = f"https://ftp.gnu.org/gnu/autoconf/autoconf-{ver}.tar.xz"
+            self.targets[ver] = f"https://ftp.gnu.org/gnu/autoconf/autoconf-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"autoconf-{ver}"
 
         self.targetDigests["2.69"] = (
@@ -58,6 +56,4 @@ class Package(AutoToolsPackageBase):
                 "share/autoconf/autom4te.cfg",
             ]
         ]
-        return self.patchInstallPrefix(
-            hardCoded, self.subinfo.buildPrefix, CraftCore.standardDirs.craftRoot()
-        )
+        return self.patchInstallPrefix(hardCoded, self.subinfo.buildPrefix, CraftCore.standardDirs.craftRoot())

@@ -114,12 +114,7 @@ class AppxPackager(CollectionPackagerBase):
             CraftCore.log.info("The package will support the following file types:")
             CraftCore.log.info(defines["file_types"])
             defines["file_types"] = "\n".join(
-                [
-                    f"""<uap:FileType>{t}</uap:FileType>"""
-                    if t != "*"
-                    else f"""<uap10:FileType>{t}</uap10:FileType>"""
-                    for t in set(defines["file_types"])
-                ]
+                [f"""<uap:FileType>{t}</uap:FileType>""" if t != "*" else f"""<uap10:FileType>{t}</uap10:FileType>""" for t in set(defines["file_types"])]
             )
             defines.setdefault("extensions", AppxPackager.Extensions)
         else:
@@ -129,12 +124,7 @@ class AppxPackager(CollectionPackagerBase):
     def setDefaults(self, defines: dict) -> dict:
         defines = super().setDefaults(defines)
         defines.setdefault("additional_xmlns", "")
-        version = [
-            int(x)
-            for x in CraftVersion(
-                defines.get("version", self.version)
-            ).normalizedVersion.versionstr.split(".")
-        ]
+        version = [int(x) for x in CraftVersion(defines.get("version", self.version)).normalizedVersion.versionstr.split(".")]
         # we require a version of the format 1.2.3.4
         version += [0] * (4 - len(version))
         version[1] = version[1] * 100 + version[2]
@@ -147,26 +137,18 @@ class AppxPackager(CollectionPackagerBase):
         version[3] = 0
         defines["version"] = ".".join([str(x) for x in version])
 
-        defines.setdefault(
-            "name", f"{defines['company']}{defines['display_name']}".replace(" ", "")
-        )
+        defines.setdefault("name", f"{defines['company']}{defines['display_name']}".replace(" ", ""))
 
         utils.createDir(self.artifactsDir())
-        defines["setupname"] = self.artifactsDir() / os.path.basename(
-            f"{defines['setupname']}.appx"
-        )
+        defines["setupname"] = self.artifactsDir() / os.path.basename(f"{defines['setupname']}.appx")
         defines.setdefault("craft_id", self.package.path.replace("/", "."))
 
         self._setupFileTypes(defines)
 
-        if "dev-utils/snoretoast" in CraftDependencyPackage(
-            self.package
-        ).getDependencies(DependencyType.Runtime):
+        if "dev-utils/snoretoast" in CraftDependencyPackage(self.package).getDependencies(DependencyType.Runtime):
             # versions < 0.9 did not print the clsi, use the one from 0.8
             clsid = "eb1fdd5b-8f70-4b5a-b230-998a2dc19303"
-            result = subprocess.run(
-                ["snoretoast.exe", "-v"], capture_output=True, encoding="UTF-8"
-            )
+            result = subprocess.run(["snoretoast.exe", "-v"], capture_output=True, encoding="UTF-8")
             if result.returncode == 0:
                 clsidPattern = re.compile(r"\{(.*?)\}")
                 clsids = clsidPattern.findall(result.stderr)
@@ -181,14 +163,10 @@ class AppxPackager(CollectionPackagerBase):
             if not defines["alias"].endswith(CraftCore.compiler.executableSuffix):
                 defines["alias"] += CraftCore.compiler.executableSuffix
             defines["extensions"] += AppxPackager.Aliases
-            defines[
-                "additional_xmlns"
-            ] += """xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"\n"""
+            defines["additional_xmlns"] += """xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"\n"""
             defines.setdefault(
                 "alias_executable",
-                self.defines["executable"]
-                if "executable" in self.defines
-                else self.defines["shortcuts"][0]["target"],
+                self.defines["executable"] if "executable" in self.defines else self.defines["shortcuts"][0]["target"],
             )
 
         extensions = defines["extensions"]
@@ -207,9 +185,7 @@ class AppxPackager(CollectionPackagerBase):
         desktop_extensions = defines["desktop_extensions"]
 
         if desktop_extensions:
-            defines[
-                "desktop_extensions"
-            ] = f"<Extensions>{desktop_extensions}</Extensions>"
+            defines["desktop_extensions"] = f"<Extensions>{desktop_extensions}</Extensions>"
 
         defines.setdefault("xml_namespaces", AppxPackager.XMLNamespaces)
         xml_namespaces = defines["xml_namespaces"]
@@ -240,17 +216,13 @@ class AppxPackager(CollectionPackagerBase):
                     continue
 
             icon = defines[define]
-            defines[
-                define
-            ] = f"{propertyName}=\"{os.path.join('Assets', os.path.basename(icon))}\""
+            defines[define] = f"{propertyName}=\"{os.path.join('Assets', os.path.basename(icon))}\""
             names = glob.glob("{0}*{1}".format(*os.path.splitext(icon)))
             if not names:
                 CraftCore.log.error(f"Failed to find {icon}")
                 return False
             for n in names:
-                if not utils.copyFile(
-                    n, os.path.join(self.archiveDir(), "Assets", os.path.basename(n))
-                ):
+                if not utils.copyFile(n, os.path.join(self.archiveDir(), "Assets", os.path.basename(n))):
                     return False
         return True
 
@@ -281,9 +253,7 @@ class AppxPackager(CollectionPackagerBase):
         defines["publisher"] = ", ".join(publisher)
         setupName = os.path.join(
             self.packageDestinationDir(),
-            "{0}-sideload{1}".format(
-                *os.path.splitext(os.path.basename(defines["setupname"]))
-            ),
+            "{0}-sideload{1}".format(*os.path.splitext(os.path.basename(defines["setupname"]))),
         )
         defines["setupname"] = setupName
         return self.__createAppX(defines) and CodeSign.signWindows([setupName])
@@ -315,10 +285,7 @@ class AppxPackager(CollectionPackagerBase):
                 appxSym.unlink()
             if not utils.compress(appxSym, self.archiveDebugDir()):
                 return False
-            appxUpload = (
-                Path(self.packageDestinationDir())
-                / os.path.basename(defines["setupname"])
-            ).with_suffix(".appxupload")
+            appxUpload = (Path(self.packageDestinationDir()) / os.path.basename(defines["setupname"])).with_suffix(".appxupload")
             if appxUpload.exists():
                 appxUpload.unlink()
             if not utils.compress(appxUpload, self.artifactsDir()):

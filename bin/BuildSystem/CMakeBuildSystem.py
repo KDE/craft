@@ -41,12 +41,8 @@ class CMakeBuildSystem(BuildSystemBase):
         craftRoot = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
         options = Arguments([defines])
         options += [
-            "-DBUILD_TESTING={testing}".format(
-                testing="ON" if self.buildTests else "OFF"
-            ),
-            "-DBUILD_SHARED_LIBS={shared}".format(
-                shared="OFF" if self.subinfo.options.buildStatic else "ON"
-            ),
+            "-DBUILD_TESTING={testing}".format(testing="ON" if self.buildTests else "OFF"),
+            "-DBUILD_SHARED_LIBS={shared}".format(shared="OFF" if self.subinfo.options.buildStatic else "ON"),
             BuildSystemBase.configureOptions(self),
             f"-DCMAKE_INSTALL_PREFIX={craftRoot}",
             f"-DCMAKE_PREFIX_PATH={craftRoot}",
@@ -78,9 +74,7 @@ class CMakeBuildSystem(BuildSystemBase):
             # use the same lib dir on all distributions
             options += ["-DCMAKE_INSTALL_LIBDIR:PATH=lib"]
         elif CraftCore.compiler.isAndroid:
-            nativeToolingRoot = CraftCore.settings.get(
-                "General", "KF5HostToolingRoot", "/opt/nativetooling"
-            )
+            nativeToolingRoot = CraftCore.settings.get("General", "KF5HostToolingRoot", "/opt/nativetooling")
             nativeToolingCMake = CraftCore.settings.get(
                 "General",
                 "KF5HostToolingCMakePath",
@@ -90,9 +84,7 @@ class CMakeBuildSystem(BuildSystemBase):
                 filter(
                     None,
                     [
-                        CraftCore.settings.get(
-                            "General", "AndroidAdditionalFindRootPath", ""
-                        ),
+                        CraftCore.settings.get("General", "AndroidAdditionalFindRootPath", ""),
                         craftRoot,
                     ],
                 )
@@ -119,10 +111,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
         if self.subinfo.options.buildTools:
             options += self.subinfo.options.configure.toolsDefine
-        if (
-            self.subinfo.options.buildStatic
-            and self.subinfo.options.configure.staticArgs
-        ):
+        if self.subinfo.options.buildStatic and self.subinfo.options.configure.staticArgs:
             options += self.subinfo.options.configure.staticArgs
         options += ["-S", self.configureSourceDir()]
         return options
@@ -133,11 +122,7 @@ class CMakeBuildSystem(BuildSystemBase):
         self.enterBuildDir()
         env = {}
         if self.supportsCCACHE:
-            cxx = (
-                CraftCore.standardDirs.craftRoot()
-                / "dev-utils/ccache/bin"
-                / Path(os.environ["CXX"]).name
-            )
+            cxx = CraftCore.standardDirs.craftRoot() / "dev-utils/ccache/bin" / Path(os.environ["CXX"]).name
             if CraftCore.compiler.isWindows and not cxx.suffix:
                 cxx = Path(str(cxx) + CraftCore.compiler.executableSuffix)
             if cxx.exists():
@@ -155,9 +140,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
         self.enterBuildDir()
 
-        command = Arguments.formatCommand(
-            [self.makeProgram], self.makeOptions(self.subinfo.options.make.args)
-        )
+        command = Arguments.formatCommand([self.makeProgram], self.makeOptions(self.subinfo.options.make.args))
         return utils.system(command)
 
     def install(self):
@@ -168,28 +151,20 @@ class CMakeBuildSystem(BuildSystemBase):
         self.enterBuildDir()
 
         with utils.ScopedEnv({"DESTDIR": self.installDir()}):
-            command = Arguments.formatCommand(
-                [self.makeProgram], self.makeOptions(self.subinfo.options.install.args)
-            )
+            command = Arguments.formatCommand([self.makeProgram], self.makeOptions(self.subinfo.options.install.args))
             return utils.system(command) and self._fixInstallPrefix()
 
     def unittest(self):
         """running cmake based unittests"""
         self.enterBuildDir()
-        with utils.ScopedEnv(
-            {"QT_FORCE_STDERR_LOGGING": 1, "QT_ASSUME_STDERR_HAS_CONSOLE": 1}
-        ):
+        with utils.ScopedEnv({"QT_FORCE_STDERR_LOGGING": 1, "QT_ASSUME_STDERR_HAS_CONSOLE": 1}):
             command = [
                 "ctest",
                 "--output-on-failure",
                 "--timeout",
                 "300",
                 "-j",
-                str(
-                    CraftCore.settings.get(
-                        "Compile", "Jobs", multiprocessing.cpu_count()
-                    )
-                ),
+                str(CraftCore.settings.get("Compile", "Jobs", multiprocessing.cpu_count())),
             ]
             if CraftCore.debug.verbose() == 1:
                 command += ["-V"]

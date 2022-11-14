@@ -3,12 +3,8 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.targets[
-            "2.5.9"
-        ] = "http://downloads.sourceforge.net/sourceforge/gnuwin32/patch-2.5.9-7-bin.zip"
-        self.targets[
-            "2.7.6"
-        ] = "https://files.kde.org/craft/3rdparty/patch/msys-patch-2.7.6.7z"
+        self.targets["2.5.9"] = "http://downloads.sourceforge.net/sourceforge/gnuwin32/patch-2.5.9-7-bin.zip"
+        self.targets["2.7.6"] = "https://files.kde.org/craft/3rdparty/patch/msys-patch-2.7.6.7z"
         self.targetInstallPath["2.5.9"] = "dev-utils"
         self.targetInstallPath["2.7.6"] = "dev-utils/patch"
         self.targetDigests["2.5.9"] = "7b2ec738881f4e962e54e0f330b67c42635266b7"
@@ -39,6 +35,4 @@ class Package(BinaryPackageBase):
             patch = os.path.join(self.installDir(), "bin", "patch.exe")
             return utils.embedManifest(patch, manifest)
         else:
-            return utils.createShim(
-                self.imageDir() / "bin/patch.exe", self.installDir() / "patch.exe"
-            )
+            return utils.createShim(self.imageDir() / "bin/patch.exe", self.installDir() / "patch.exe")

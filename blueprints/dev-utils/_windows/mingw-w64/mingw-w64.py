@@ -4,9 +4,7 @@ import info
 class subinfo(info.infoclass):
     def registerOptions(self):
         if not CraftCore.compiler.isMinGW():
-            self.parent.package.categoryInfo.platforms = (
-                CraftCore.compiler.Platforms.NoPlatform
-            )
+            self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NoPlatform
 
     def setTargets(self):
         for ver, rev, rt in [("11.2.0", "4", "9")]:

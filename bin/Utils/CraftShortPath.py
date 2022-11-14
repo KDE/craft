@@ -45,23 +45,16 @@ class CraftShortPath(object):
 
         utils.createDir(CraftCore.standardDirs.junctionsDir())
         longPath = OsUtils.toNativePath(longPath)
-        path = (
-            CraftCore.standardDirs.junctionsDir()
-            / hex(zlib.crc32(bytes(str(longPath), "UTF-8")))[2:]
-        )
+        path = CraftCore.standardDirs.junctionsDir() / hex(zlib.crc32(bytes(str(longPath), "UTF-8")))[2:]
         delta = len(str(longPath)) - len(str(path))
         if delta <= 0:
-            CraftCore.debug.log.debug(
-                f"Using junctions for {longPath} wouldn't save characters returning original path"
-            )
+            CraftCore.debug.log.debug(f"Using junctions for {longPath} wouldn't save characters returning original path")
             CraftCore.debug.log.debug(f"{longPath}\n" f"{path}, gain: {delta}")
             return longPath
         utils.createDir(longPath)
         if not os.path.isdir(path):
             if OsUtils.isUnix():
-                ok = utils.createSymlink(
-                    longPath, path, useAbsolutePath=True, targetIsDirectory=True
-                )
+                ok = utils.createSymlink(longPath, path, useAbsolutePath=True, targetIsDirectory=True)
             else:
                 # note: mklink is a CMD command => needs shell
                 ok = utils.system(
@@ -72,17 +65,11 @@ class CraftShortPath(object):
                 )
 
             if not ok:
-                CraftCore.debug.log.critical(
-                    f"Could not create shortpath {path}, for {longPath}"
-                )
+                CraftCore.debug.log.critical(f"Could not create shortpath {path}, for {longPath}")
                 return longPath
         else:
             if not os.path.samefile(path, longPath):
-                CraftCore.debug.log.critical(
-                    f"Existing short path {path}, did not match {longPath}"
-                )
+                CraftCore.debug.log.critical(f"Existing short path {path}, did not match {longPath}")
                 return longPath
-        CraftCore.debug.log.debug(
-            f"Mapped \n" f"{longPath} to\n" f"{path}, gained {delta}"
-        )
+        CraftCore.debug.log.debug(f"Mapped \n" f"{longPath} to\n" f"{path}, gained {delta}")
         return path

@@ -15,9 +15,7 @@ class subinfo(info.infoclass):
             ["63aede5c6d33b6d9b13511cd0be2cac046f2e70fd0a07aa9573a04a82783af96"],
             CraftHash.HashAlgorithm.SHA256,
         )
-        self.description = (
-            "GNU M4 is an implementation of the traditional Unix macro processor."
-        )
+        self.description = "GNU M4 is an implementation of the traditional Unix macro processor."
         self.defaultTarget = "1.4.19"
 
         self.patchToApply["1.4.18"] = [

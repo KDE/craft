@@ -16,9 +16,7 @@ class CraftConfig(object):
     __CraftBin = None
 
     def __init__(self, iniPath=None):
-        self._config = configparser.ConfigParser(
-            interpolation=configparser.ExtendedInterpolation()
-        )
+        self._config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
         if iniPath:
             self.iniPath = iniPath
         else:
@@ -59,9 +57,7 @@ class CraftConfig(object):
         else:
             dir = os.path.abspath(os.path.dirname(sys.argv[0]))
         # TODO: was there a reason to look for craaftenv.ps1 and not just for craft.py
-        while dir.count(os.path.sep) > 1 and not os.path.isfile(
-            os.path.join(dir, "craftenv.ps1")
-        ):
+        while dir.count(os.path.sep) > 1 and not os.path.isfile(os.path.join(dir, "craftenv.ps1")):
             dir = os.path.dirname(dir)
         if not os.path.join(dir, "craftenv.ps1"):
             print("Failed to find the craft root", file=sys.stderr)
@@ -88,13 +84,8 @@ class CraftConfig(object):
         if not (deprecatedSection, deprecatedKey) in self._warned:
             self._warned.add((deprecatedSection, deprecatedKey))
             print(
-                f"Warning: {deprecatedSection}/{deprecatedKey} is deprecated and has been renamed to "
-                f"{section}/{key}, please update your CraftSettings.ini",
-                file=sys.stderr
-                if not CraftCore.settings.getboolean(
-                    "ContinuousIntegration", "Enabled", False
-                )
-                else sys.stdout,
+                f"Warning: {deprecatedSection}/{deprecatedKey} is deprecated and has been renamed to " f"{section}/{key}, please update your CraftSettings.ini",
+                file=sys.stderr if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) else sys.stdout,
             )
 
     def _readSettings(self):
@@ -104,9 +95,7 @@ class CraftConfig(object):
 
         craftDir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
         # read defaults
-        self._config.read(
-            os.path.join(craftDir, "etc", "CraftCoreSettings.ini"), encoding="utf-8"
-        )
+        self._config.read(os.path.join(craftDir, "etc", "CraftCoreSettings.ini"), encoding="utf-8")
         #####
         if not "Variables" in self._config.sections():
             self._config.add_section("Variables")
@@ -122,18 +111,11 @@ class CraftConfig(object):
         return (
             self.__contains_no_alias(key)
             or (key in self._alias and self.__contains__(self._alias[key]))
-            or (
-                key[0] in self._groupAlias
-                and self.__contains__((self._groupAlias[key[0]], key[1]))
-            )
+            or (key[0] in self._groupAlias and self.__contains__((self._groupAlias[key[0]], key[1])))
         )
 
     def __contains_no_alias(self, key):
-        return (
-            self._config
-            and self._config.has_section(key[0])
-            and key[1] in self._config[key[0]]
-        )
+        return self._config and self._config.has_section(key[0]) and key[1] in self._config[key[0]]
 
     @property
     def version(self):

@@ -20,11 +20,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         BuildSystemBase.__init__(self, "autotools")
         self._shell = BashShell()
         self.platform = ""  # hope for auto detection
-        if (
-            CraftCore.compiler.isGCC()
-            and not CraftCore.compiler.isNative()
-            and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32
-        ):
+        if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative() and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
             self.platform = Arguments(["--host=i686-pc-linux-gnu"])
         elif CraftCore.compiler.isWindows:
             if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
@@ -49,9 +45,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
             elif CraftCore.compiler.architecture == CraftCompiler.Architecture.arm64:
                 self.platform = Arguments(["--host=aarch64-linux-android"])
             else:
-                self.platform = Arguments(
-                    [f"--host={CraftCore.compiler.architecture}-linux-android"]
-                )
+                self.platform = Arguments([f"--host={CraftCore.compiler.architecture}-linux-android"])
 
     @property
     def makeProgram(self):
@@ -74,36 +68,15 @@ class AutoToolsBuildSystem(BuildSystemBase):
         """configure the target"""
         self.enterBuildDir()
 
-        configure = Arguments(
-            [
-                self.sourceDir()
-                / (self.subinfo.options.configure.projectFile or "configure")
-            ]
-        )
-        self.shell.environment["CFLAGS"] = (
-            self.subinfo.options.configure.cflags
-            + " "
-            + self.shell.environment["CFLAGS"]
-        )
-        self.shell.environment["CXXFLAGS"] = (
-            self.subinfo.options.configure.cxxflags
-            + " "
-            + self.shell.environment["CXXFLAGS"]
-        )
-        self.shell.environment["LDFLAGS"] = (
-            self.subinfo.options.configure.ldflags
-            + " "
-            + self.shell.environment["LDFLAGS"]
-        )
+        configure = Arguments([self.sourceDir() / (self.subinfo.options.configure.projectFile or "configure")])
+        self.shell.environment["CFLAGS"] = self.subinfo.options.configure.cflags + " " + self.shell.environment["CFLAGS"]
+        self.shell.environment["CXXFLAGS"] = self.subinfo.options.configure.cxxflags + " " + self.shell.environment["CXXFLAGS"]
+        self.shell.environment["LDFLAGS"] = self.subinfo.options.configure.ldflags + " " + self.shell.environment["LDFLAGS"]
         self.shell.environment["MAKE"] = self.makeProgram
 
         env = {"CLICOLOR_FORCE": None}
         if self.supportsCCACHE:
-            cxx = (
-                CraftCore.standardDirs.craftRoot()
-                / "dev-utils/ccache/bin"
-                / Path(os.environ["CXX"]).name
-            )
+            cxx = CraftCore.standardDirs.craftRoot() / "dev-utils/ccache/bin" / Path(os.environ["CXX"]).name
             if CraftCore.compiler.isWindows and not cxx.suffix:
                 cxx = Path(str(cxx) + CraftCore.compiler.executableSuffix)
             if cxx.exists():
@@ -117,16 +90,11 @@ class AutoToolsBuildSystem(BuildSystemBase):
                 if mode & stat.S_IEXEC == 0:
                     os.chmod(autogen, mode | stat.S_IEXEC)
                 self.shell.execute(self.sourceDir(), autogen)
-            elif self.subinfo.options.configure.autoreconf and (
-                (self.sourceDir() / "configure.ac").exists()
-                or (self.sourceDir() / "configure.in").exists()
-            ):
+            elif self.subinfo.options.configure.autoreconf and ((self.sourceDir() / "configure.ac").exists() or (self.sourceDir() / "configure.in").exists()):
                 includesArgs = Arguments()
                 if self.subinfo.options.configure.useDefaultAutoreconfIncludes:
                     includes = []
-                    dataDirs = [
-                        CraftCore.standardDirs.craftRoot() / "dev-utils/cmake/share"
-                    ]
+                    dataDirs = [CraftCore.standardDirs.craftRoot() / "dev-utils/cmake/share"]
                     if CraftCore.compiler.isWindows:
                         # on Windows data location lies outside of the autotools prefix (msys)
                         dataDirs.append(CraftCore.standardDirs.locations.data)
@@ -138,14 +106,11 @@ class AutoToolsBuildSystem(BuildSystemBase):
                 if not self.shell.execute(
                     self.sourceDir(),
                     "autoreconf",
-                    Arguments(self.subinfo.options.configure.autoreconfArgs)
-                    + includesArgs,
+                    Arguments(self.subinfo.options.configure.autoreconfArgs) + includesArgs,
                 ):
                     return False
 
-            return self.shell.execute(
-                self.buildDir(), configure, self.configureOptions(self)
-            )
+            return self.shell.execute(self.buildDir(), configure, self.configureOptions(self))
 
     def make(self, dummyBuildType=None):
         """Using the *make program"""
@@ -183,9 +148,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
             return False
         if CraftCore.compiler.isMSVC():
             # libtool produces intl.dll.lib while we expect intl.lib
-            lib = glob.glob(
-                os.path.join(self.imageDir(), "lib/**/*.dll.lib"), recursive=True
-            )
+            lib = glob.glob(os.path.join(self.imageDir(), "lib/**/*.dll.lib"), recursive=True)
             for src in lib:
                 src = Path(src)
                 dest = src.with_suffix("").with_suffix(".lib")
@@ -196,9 +159,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
     def unittest(self):
         """running unittests"""
-        return self.shell.execute(
-            self.buildDir(), self.makeProgram, self.makeOptions("check")
-        )
+        return self.shell.execute(self.buildDir(), self.makeProgram, self.makeOptions("check"))
 
     def configureOptions(self, defines=""):
         """returns default configure options"""
@@ -208,8 +169,6 @@ class AutoToolsBuildSystem(BuildSystemBase):
         if not self.subinfo.options.configure.noLibDir:
             options += [f"--libdir={prefix}/lib"]
         if OsUtils.isWin() and not self.subinfo.options.configure.noDataRootDir:
-            options += [
-                f"--datarootdir={self.shell.toNativePath(CraftCore.standardDirs.locations.data)}"
-            ]
+            options += [f"--datarootdir={self.shell.toNativePath(CraftCore.standardDirs.locations.data)}"]
         options += self.platform
         return options

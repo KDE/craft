@@ -12,12 +12,11 @@ from typing import *
 
 import VersionInfo
 from Blueprints.CraftPackageObject import BlueprintException, CraftPackageObject
+from CraftCompiler import CraftCompiler, CraftCompilerSignature
 from CraftCore import CraftCore
 from CraftDebug import deprecated
 from options import Options
 from Utils import CraftHash, CraftManifest
-from CraftCompiler import CraftCompilerSignature, CraftCompiler
-
 
 
 @unique
@@ -74,9 +73,7 @@ class infoclass(object):
         # a url to the projects webpage
         self.webpage = ""
 
-        self.patchToApply = (
-            {}
-        )  # key: target. Value: list(['patchname', patchdepth]) or ('patchname',patchdepth)
+        self.patchToApply = {}  # key: target. Value: list(['patchname', patchdepth]) or ('patchname',patchdepth)
         self.svnTargets = {}
         self.svnServer = None  # this will result in the use of the default server (either anonsvn.kde.org or svn.kde.org)
         self._defaultTarget = None
@@ -100,9 +97,7 @@ class infoclass(object):
         target = self.options.dynamic.version
         # TODO: legacy behaviour
         if ("BlueprintVersions", self.parent.package.path) in CraftCore.settings:
-            target = CraftCore.settings.get(
-                "BlueprintVersions", self.parent.package.path
-            )
+            target = CraftCore.settings.get("BlueprintVersions", self.parent.package.path)
             CraftCore.log.warning(
                 f"You are using the depreaced:\n"
                 f"[BlueprintVersions]\n"
@@ -195,9 +190,7 @@ class infoclass(object):
 
     def configurePath(self) -> str:
         """return relative path appendable to local source path for the recent target"""
-        if (
-            self.hasTarget() or self.hasSvnTarget()
-        ) and self.buildTarget in self.targetConfigurePath:
+        if (self.hasTarget() or self.hasSvnTarget()) and self.buildTarget in self.targetConfigurePath:
             return self.targetConfigurePath[self.buildTarget]
 
     def hasInstallPath(self) -> bool:
@@ -212,9 +205,7 @@ class infoclass(object):
 
     def hasPatches(self) -> bool:
         """return state for having patches for the recent target"""
-        return (
-            self.hasTarget() or self.hasSvnTarget()
-        ) and self.buildTarget in self.patchToApply
+        return (self.hasTarget() or self.hasSvnTarget()) and self.buildTarget in self.patchToApply
 
     def patchesToApply(self) -> List[tuple]:
         """return patch informations for the recent build target"""
@@ -255,9 +246,7 @@ class infoclass(object):
             return out
         return None
 
-    def addCachedAutotoolsBuild(
-        self, packageName=None, targetInstallPath=None, versionInfo=None
-    ):
+    def addCachedAutotoolsBuild(self, packageName=None, targetInstallPath=None, versionInfo=None):
         if not CraftCore.compiler.isMSVC():
             return
         # disable binary cache, always serve the latest from the mingw cache
@@ -282,9 +271,7 @@ class infoclass(object):
             manifestUrl = f"{url}/manifest.json"
             json = CraftCore.cache.cacheJsonFromUrl(manifestUrl)
             if not json:
-                CraftCore.log.error(
-                    f"Failed to load manifest for {self.package} {manifestUrl}"
-                )
+                CraftCore.log.error(f"Failed to load manifest for {self.package} {manifestUrl}")
                 continue
             manifest = CraftManifest.CraftManifest.fromJson(json)
             compiler = CraftCompilerSignature(
@@ -308,13 +295,9 @@ class infoclass(object):
                 if data.version in package.subinfo.patchLevel:
                     self.patchLevel[key] = package.subinfo.patchLevel[data.version]
             if targetInstallPath:
-                self.targetInstallPath[key] = os.path.join(
-                    targetInstallPath, self.parent.package.name
-                )
+                self.targetInstallPath[key] = os.path.join(targetInstallPath, self.parent.package.name)
 
-    def addCachedBuild(
-        self, url, packageName=None, packagePath=None, targetInstallPath=None
-    ):
+    def addCachedBuild(self, url, packageName=None, packagePath=None, targetInstallPath=None):
         if packageName:
             package = CraftPackageObject._allLeaves.get(packageName, None)
             if not package:
@@ -326,9 +309,7 @@ class infoclass(object):
 
         if url.endswith("/"):
             url = url[:-1]
-        manifest = CraftManifest.CraftManifest.fromJson(
-            CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json")
-        )
+        manifest = CraftManifest.CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json"))
         compiler = CraftCompilerSignature(
             CraftCompiler.Platforms.Windows,
             CraftCompiler.Compiler.GCC,
@@ -344,6 +325,4 @@ class infoclass(object):
         )
         self.defaultTarget = latest.version
         if targetInstallPath:
-            self.targetInstallPath[latest.version] = os.path.join(
-                targetInstallPath, self.parent.package.name
-            )
+            self.targetInstallPath[latest.version] = os.path.join(targetInstallPath, self.parent.package.name)

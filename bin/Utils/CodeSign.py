@@ -45,9 +45,7 @@ def signWindows(fileNames: [str]) -> bool:
     signTool = CraftCore.cache.findApplication("signtool", forceCache=True)
     if not signTool:
         env = SetupHelper.getMSVCEnv()
-        signTool = CraftCore.cache.findApplication(
-            "signtool", env["PATH"], forceCache=True
-        )
+        signTool = CraftCore.cache.findApplication("signtool", env["PATH"], forceCache=True)
     if not signTool:
         CraftCore.log.warning("Code signing requires a VisualStudio installation")
         return False
@@ -98,12 +96,8 @@ class _MacSignScope(LockFile, utils.ScopedEnv):
             user = subprocess.getoutput("id -un")
             _MacSignScope.__REAL_HOME = Path("/Users") / user
         utils.ScopedEnv.__init__(self, {"HOME": str(_MacSignScope.__REAL_HOME)})
-        self.certFileApplication = CraftCore.settings.get(
-            "CodeSigning", "MacCertificateApplication", ""
-        )
-        self.certFilesInstaller = CraftCore.settings.get(
-            "CodeSigning", "MacCertificateInstaller", ""
-        )
+        self.certFileApplication = CraftCore.settings.get("CodeSigning", "MacCertificateApplication", "")
+        self.certFilesInstaller = CraftCore.settings.get("CodeSigning", "MacCertificateInstaller", "")
 
         # FIXME: loginKeychain is misleading - it doesn't need to be login.keychain
         if self._useCertFile:
@@ -160,14 +154,10 @@ class _MacSignScope(LockFile, utils.ScopedEnv):
                 )
 
             if self.certFileApplication:
-                if not importCert(
-                    self.certFileApplication, "MAC_CERTIFICATE_APPLICATION_PASSWORD"
-                ):
+                if not importCert(self.certFileApplication, "MAC_CERTIFICATE_APPLICATION_PASSWORD"):
                     return False
             if self.certFilesInstaller:
-                if not importCert(
-                    self.certFilesInstaller, "MAC_CERTIFICATE_INSTALLER_PASSWORD"
-                ):
+                if not importCert(self.certFilesInstaller, "MAC_CERTIFICATE_INSTALLER_PASSWORD"):
                     return False
             if not utils.system(
                 [
@@ -231,9 +221,7 @@ def __signMacApp(appPath: Path, scope: _MacSignScope):
             return False
 
     # all files in the bundle
-    bundeFilter = lambda x, root: not Path(
-        x.path
-    ).is_symlink() and not bundlePattern.match(x.path)
+    bundeFilter = lambda x, root: not Path(x.path).is_symlink() and not bundlePattern.match(x.path)
     filter = bundeFilter
 
     # we can only sign non binary files in Resources, else they get stored in the
@@ -277,9 +265,7 @@ def __signMacApp(appPath: Path, scope: _MacSignScope):
     if not utils.system(["codesign", "--display", "--verbose", appPath]):
         return False
 
-    if not utils.system(
-        ["codesign", "--verify", "--verbose", "--strict", "--deep", appPath]
-    ):
+    if not utils.system(["codesign", "--verify", "--verbose", "--strict", "--deep", appPath]):
         return False
 
     # TODO: this step might require notarisation

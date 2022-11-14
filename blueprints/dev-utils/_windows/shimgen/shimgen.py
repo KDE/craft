@@ -6,9 +6,7 @@ import info
 class subinfo(info.infoclass):
     def setTargets(self):
         for ver in ["1.0"]:
-            self.targets[
-                ver
-            ] = f"https://files.kde.org/craft/3rdparty/shimgenerator/shimgenerator.KDECraft-{ver}.7z"
+            self.targets[ver] = f"https://files.kde.org/craft/3rdparty/shimgenerator/shimgenerator.KDECraft-{ver}.7z"
             self.targetInstSrc[ver] = "shimgenerator.KDECraft/shimgenerator"
             self.targetInstallPath[ver] = os.path.join("dev-utils", "bin")
         self.targetDigests["1.0"] = (

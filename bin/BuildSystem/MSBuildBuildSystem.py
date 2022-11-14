@@ -49,26 +49,20 @@ class MSBuildBuildSystem(BuildSystemBase):
         }
         with utils.ScopedEnv(env):
             self.enterSourceDir()
-            msbuildVersion = CraftCore.cache.getVersion(
-                "msbuild", versionCommand="-ver", pattern=re.compile(r"(\d+\.\d+)")
-            )
+            msbuildVersion = CraftCore.cache.getVersion("msbuild", versionCommand="-ver", pattern=re.compile(r"(\d+\.\d+)"))
             buildType = self.buildTypes[self.buildType()]
             if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
                 platform = " /p:Platform=win32"
             else:
                 platform = ""
             if "WINDOWSSDKVERSION" in os.environ:
-                sdkVer = " /p:WindowsTargetPlatformVersion={0}".format(
-                    os.environ["WINDOWSSDKVERSION"].replace("\\", "")
-                )
+                sdkVer = " /p:WindowsTargetPlatformVersion={0}".format(os.environ["WINDOWSSDKVERSION"].replace("\\", ""))
             else:
                 sdkVer = ""
             toolsVersion = f"{CraftCore.compiler.getInternalVersion()}.0"
             if toolsVersion == "15.0" and msbuildVersion >= "16":
                 toolsVersion = f" /toolsversion:Current"
-            elif os.path.exists(
-                r"C:\Program Files (x86)\MSBuild\{0}".format(toolsVersion)
-            ):
+            elif os.path.exists(r"C:\Program Files (x86)\MSBuild\{0}".format(toolsVersion)):
                 toolsVersion = f" /toolsversion:{toolsVersion}"
             else:
                 toolsVersion = ""
@@ -95,18 +89,14 @@ class MSBuildBuildSystem(BuildSystemBase):
         def globCopy(sourceDir: str, destDir: str, patterns: [str]):
             for pattern in patterns:
                 for f in glob.glob(os.path.join(sourceDir, pattern), recursive=True):
-                    if not utils.copyFile(
-                        f, os.path.join(destDir, os.path.basename(f)), linkOnly=False
-                    ):
+                    if not utils.copyFile(f, os.path.join(destDir, os.path.basename(f)), linkOnly=False):
                         return False
             return True
 
         for root in buildDirs:
             if not globCopy(root, os.path.join(self.imageDir(), "lib"), ["**/*.lib"]):
                 return False
-            if not globCopy(
-                root, os.path.join(self.imageDir(), "bin"), ["**/*.exe", "**/*.dll"]
-            ):
+            if not globCopy(root, os.path.join(self.imageDir(), "bin"), ["**/*.exe", "**/*.dll"]):
                 return False
             if installHeaders:
                 if not globCopy(

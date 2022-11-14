@@ -3,10 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = (
-            CraftCore.compiler.Platforms.NotFreeBSD
-            & CraftCore.compiler.Platforms.NotAndroid
-        )
+        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotFreeBSD & CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
         self.targets["latest"] = ""

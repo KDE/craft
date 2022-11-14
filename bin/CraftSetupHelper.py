@@ -41,9 +41,7 @@ MIN_PY_VERSION = (3, 6, 0)
 
 
 def log(msg, critical=False):
-    if critical or not CraftCore.settings.getboolean(
-        "ContinuousIntegration", "Enabled", False
-    ):
+    if critical or not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
         CraftCore.debug.print(msg, sys.stderr)
     else:
         CraftCore.log.debug(msg)
@@ -53,9 +51,7 @@ def log(msg, critical=False):
 
 if sys.version_info[0:3] < MIN_PY_VERSION:
     log(
-        "Error: Python too old!\n"
-        "Craft needs at least Python Version %s.%s.%s\n"
-        "Please install it and adapt your CraftSettings.ini" % MIN_PY_VERSION,
+        "Error: Python too old!\n" "Craft needs at least Python Version %s.%s.%s\n" "Please install it and adapt your CraftSettings.ini" % MIN_PY_VERSION,
         critical=True,
     )
 
@@ -108,9 +104,7 @@ class SetupHelper(object):
             default = ""
             if len(args.rest) == 3:
                 default = args.rest[2]
-            CraftCore.log.info(
-                CraftCore.settings.get(args.rest[0], args.rest[1], default)
-            )
+            CraftCore.log.info(CraftCore.settings.get(args.rest[0], args.rest[1], default))
         elif args.print_banner:
             self.printBanner()
         elif args.getenv:
@@ -127,9 +121,7 @@ class SetupHelper(object):
             location = shutil.which(app)
             if location:
                 location = os.path.dirname(location)
-                if not CraftCore.settings.getboolean(
-                    "ContinuousIntegration", "Enabled", False
-                ):
+                if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
                     log(
                         f'Found "{app}" in your PATH: "{location}"\n'
                         f"This application is known to cause problems with your configuration of Craft.\n"
@@ -140,9 +132,7 @@ class SetupHelper(object):
                         f"\n"
                     )
                 else:
-                    path = collections.OrderedDict.fromkeys(
-                        os.environ["Path"].split(os.path.pathsep)
-                    )
+                    path = collections.OrderedDict.fromkeys(os.environ["Path"].split(os.path.pathsep))
                     del path[location]
                     self.addEnvVar("Path", os.path.pathsep.join(path))
 
@@ -192,14 +182,10 @@ class SetupHelper(object):
         return env
 
     @staticmethod
-    def _callVCVER(
-        version: int, args: [] = None, native: bool = True, prerelease: bool = False
-    ) -> str:
+    def _callVCVER(version: int, args: [] = None, native: bool = True, prerelease: bool = False) -> str:
         if not args:
             args = []
-        vswhere = os.path.join(
-            CraftCore.standardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe"
-        )
+        vswhere = os.path.join(CraftCore.standardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")
         command = [vswhere, "-property", "installationPath", "-nologo", "-latest"]
         if prerelease:
             command += ["-prerelease"]
@@ -248,14 +234,10 @@ class SetupHelper(object):
                 if version == 14:
                     component += str(CraftCore.compiler.getMsvcPlatformToolset())
                 else:
-                    component += (
-                        f"v{CraftCore.compiler.getMsvcPlatformToolset()}.x86.x64"
-                    )
+                    component += f"v{CraftCore.compiler.getMsvcPlatformToolset()}.x86.x64"
             # todo directly get the correct version
             for v in [17, 16, 15]:
-                path = SetupHelper._callVCVER(
-                    v, args=["-products", "*", "-requires", component], native=native
-                )
+                path = SetupHelper._callVCVER(v, args=["-products", "*", "-requires", component], native=native)
                 if path:
                     if not toolset:
                         toolset = str(CraftCore.compiler.getMsvcPlatformToolset() / 10)
@@ -285,13 +267,9 @@ class SetupHelper(object):
                 f"Failed to setup msvc compiler.\n" f"{path} does not exist.",
                 critical=True,
             )
-        status, result = SetupHelper._getOutput(
-            f'"{path}" {args} > NUL && set', shell=True
-        )
+        status, result = SetupHelper._getOutput(f'"{path}" {args} > NUL && set', shell=True)
         if status != 0:
-            log(
-                f"Failed to setup msvc compiler.\n" f"Command: {result} ", critical=True
-            )
+            log(f"Failed to setup msvc compiler.\n" f"Command: {result} ", critical=True)
         return SetupHelper.stringToEnv(result)
 
     def getEnv(self):
@@ -323,32 +301,22 @@ class SetupHelper(object):
             )
             self.addEnvVar(
                 "XDG_DATA_HOME",
-                os.path.join(
-                    CraftCore.standardDirs.craftRoot(), "home", user, ".local5", "share"
-                ),
+                os.path.join(CraftCore.standardDirs.craftRoot(), "home", user, ".local5", "share"),
             )
             self.addEnvVar(
                 "XDG_CONFIG_HOME",
-                os.path.join(
-                    CraftCore.standardDirs.craftRoot(), "home", user, ".config"
-                ),
+                os.path.join(CraftCore.standardDirs.craftRoot(), "home", user, ".config"),
             )
             self.addEnvVar(
                 "XDG_CACHE_HOME",
-                os.path.join(
-                    CraftCore.standardDirs.craftRoot(), "home", user, ".cache"
-                ),
+                os.path.join(CraftCore.standardDirs.craftRoot(), "home", user, ".cache"),
             )
 
     def _setupUnix(self):
         libraryPaths = [os.path.join(CraftCore.standardDirs.craftRoot(), "lib")]
 
         if CraftCore.compiler.isLinux:
-            libraryPaths.append(
-                os.path.join(
-                    CraftCore.standardDirs.craftRoot(), "lib", "x86_64-linux-gnu"
-                )
-            )
+            libraryPaths.append(os.path.join(CraftCore.standardDirs.craftRoot(), "lib", "x86_64-linux-gnu"))
 
         self.prependEnvVar("LD_LIBRARY_PATH", libraryPaths)
         if CraftCore.compiler.isLinux or CraftCore.compiler.isFreeBSD:
@@ -357,9 +325,7 @@ class SetupHelper(object):
             "BISON_PKGDATADIR",
             os.path.join(CraftCore.standardDirs.craftRoot(), "share", "bison"),
         )
-        self.prependEnvVar(
-            "M4", os.path.join(CraftCore.standardDirs.craftRoot(), "bin", "m4")
-        )
+        self.prependEnvVar("M4", os.path.join(CraftCore.standardDirs.craftRoot(), "bin", "m4"))
         self.prependEnvVar(
             "FONTCONFIG_PATH",
             os.path.join(CraftCore.standardDirs.craftRoot(), "etc", "fonts"),
@@ -377,9 +343,7 @@ class SetupHelper(object):
             "BISON_PKGDATADIR",
             os.path.join(CraftCore.standardDirs.craftRoot(), "share", "bison"),
         )
-        self.prependEnvVar(
-            "M4", os.path.join(CraftCore.standardDirs.craftRoot(), "bin", "m4")
-        )
+        self.prependEnvVar("M4", os.path.join(CraftCore.standardDirs.craftRoot(), "bin", "m4"))
         self.addEnvVar(
             "MACOSX_DEPLOYMENT_TARGET",
             CraftCore.settings.get("General", "MacDeploymentTarget", "10.15"),
@@ -421,17 +385,13 @@ class SetupHelper(object):
         # don't propagate a possibly set mkspec from the outside
         self.removeEnvVar("QMAKESPEC")
 
-        for var, value in CraftCore.settings.getSection(
-            "Environment"
-        ):  # set and override existing values
+        for var, value in CraftCore.settings.getSection("Environment"):  # set and override existing values
             # the ini is case insensitive so sections are lowercase....
             self.addEnvVar(var.upper(), value)
         os.environ.update(self.getEnv())
 
         self.addEnvVar("KDEROOT", CraftCore.standardDirs.craftRoot())
-        self.addEnvVar(
-            "SSL_CERT_FILE", os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem")
-        )
+        self.addEnvVar("SSL_CERT_FILE", os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem"))
         self.addEnvVar(
             "REQUESTS_CA_BUNDLE",
             os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem"),
@@ -456,28 +416,16 @@ class SetupHelper(object):
         else:
             self._setupUnix()
 
-        PKG_CONFIG_PATH = collections.OrderedDict.fromkeys(
-            [os.path.join(CraftCore.standardDirs.craftRoot(), "lib", "pkgconfig")]
-        )
+        PKG_CONFIG_PATH = collections.OrderedDict.fromkeys([os.path.join(CraftCore.standardDirs.craftRoot(), "lib", "pkgconfig")])
         if "PKG_CONFIG_PATH" in originaleEnv:
-            PKG_CONFIG_PATH.update(
-                collections.OrderedDict.fromkeys(
-                    originaleEnv["PKG_CONFIG_PATH"].split(os.path.pathsep)
-                )
-            )
+            PKG_CONFIG_PATH.update(collections.OrderedDict.fromkeys(originaleEnv["PKG_CONFIG_PATH"].split(os.path.pathsep)))
         else:
             pkgCOnfig = shutil.which("pkg-config", path=originaleEnv["PATH"])
             if pkgCOnfig:
-                out = self._getOutput(
-                    "pkg-config --variable pc_path pkg-config", shell=True
-                )
+                out = self._getOutput("pkg-config --variable pc_path pkg-config", shell=True)
                 if out[0] == 0:
-                    PKG_CONFIG_PATH.update(
-                        collections.OrderedDict.fromkeys(out[1].split(os.path.pathsep))
-                    )
-        self.prependEnvVar(
-            "PKG_CONFIG_PATH", os.path.pathsep.join(PKG_CONFIG_PATH.keys())
-        )
+                    PKG_CONFIG_PATH.update(collections.OrderedDict.fromkeys(out[1].split(os.path.pathsep)))
+        self.prependEnvVar("PKG_CONFIG_PATH", os.path.pathsep.join(PKG_CONFIG_PATH.keys()))
 
         self.prependEnvVar(
             "QT_PLUGIN_PATH",
@@ -537,17 +485,11 @@ class SetupHelper(object):
         )
 
         # make sure that craftroot bin is the first to look for dlls etc
-        self.prependEnvVar(
-            "PATH", os.path.join(CraftCore.standardDirs.craftRoot(), "bin")
-        )
-        self.prependEnvVar(
-            "PATH", os.path.join(CraftCore.standardDirs.craftRoot(), "dev-utils", "bin")
-        )
+        self.prependEnvVar("PATH", os.path.join(CraftCore.standardDirs.craftRoot(), "bin"))
+        self.prependEnvVar("PATH", os.path.join(CraftCore.standardDirs.craftRoot(), "dev-utils", "bin"))
 
         if CraftCore.compiler.isClang() and not CraftCore.compiler.isAndroid:
-            if OsUtils.isUnix() and CraftCore.settings.getboolean(
-                "General", "UseSystemClang", True
-            ):
+            if OsUtils.isUnix() and CraftCore.settings.getboolean("General", "UseSystemClang", True):
                 self.addEnvVar("CC", "/usr/bin/clang")
                 self.addEnvVar("CXX", "/usr/bin/clang++")
             else:
@@ -558,11 +500,7 @@ class SetupHelper(object):
                     self.addDefaultEnvVar("CC", "clang")
                     self.addDefaultEnvVar("CXX", "clang")
         elif CraftCore.compiler.isGCC():
-            if (
-                not CraftCore.compiler.isNative()
-                and CraftCore.compiler.architecture
-                == CraftCore.compiler.Architecture.x86_32
-            ):
+            if not CraftCore.compiler.isNative() and CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_32:
                 self.addEnvVar("CC", "gcc -m32")
                 self.addEnvVar("CXX", "g++ -m32")
                 self.addEnvVar("AS", "gcc -c -m32")
@@ -576,29 +514,21 @@ class SetupHelper(object):
         if CraftCore.settings.getboolean(
             "General",
             "AllowAnsiColor",
-            not CraftCore.settings.getboolean(
-                "ContinuousIntegration", "Enabled", False
-            ),
+            not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False),
         ):
             # different non standard env switches
             self.addEnvVar("CLICOLOR_FORCE", "1")
             self.addEnvVar("CLICOLOR", "1")
             self.addEnvVar("ANSICON", "1")
             if CraftCore.compiler.isClang() and CraftCore.compiler.isMSVC():
-                self.prependEnvVar(
-                    "CFLAGS", "-fcolor-diagnostics -fansi-escape-codes", sep=" "
-                )
-                self.prependEnvVar(
-                    "CXXFLAGS", "-fcolor-diagnostics -fansi-escape-codes", sep=" "
-                )
+                self.prependEnvVar("CFLAGS", "-fcolor-diagnostics -fansi-escape-codes", sep=" ")
+                self.prependEnvVar("CXXFLAGS", "-fcolor-diagnostics -fansi-escape-codes", sep=" ")
             elif CraftCore.compiler.isGCCLike():
                 self.prependEnvVar("CFLAGS", "-fdiagnostics-color=always", sep=" ")
                 self.prependEnvVar("CXXFLAGS", "-fdiagnostics-color=always", sep=" ")
 
             if OsUtils.isWin():
-                self.addEnvVar(
-                    "TERM", "xterm-256color"
-                )  # pretend to be a common smart terminal
+                self.addEnvVar("TERM", "xterm-256color")  # pretend to be a common smart terminal
 
     def printEnv(self):
         self.setupEnvironment()
@@ -606,10 +536,7 @@ class SetupHelper(object):
             if key.startswith("BASH_FUNC_"):
                 continue
             if "\n" in val:
-                log(
-                    f"Not adding ${key} to environment since it contains "
-                    "a newline character and that breaks craftenv.sh"
-                )
+                log(f"Not adding ${key} to environment since it contains " "a newline character and that breaks craftenv.sh")
                 continue
             # weird protected env vars
             if key in {"PROFILEREAD"}:

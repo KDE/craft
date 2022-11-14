@@ -32,9 +32,7 @@ class Arguments(object):
                     self.__legacyString += " "
                 self.__legacyString += other
             elif isinstance(other, list):
-                self.__legacyString += " " + subprocess.list2cmdline(
-                    [str(x) for x in other]
-                )
+                self.__legacyString += " " + subprocess.list2cmdline([str(x) for x in other])
             elif isinstance(other, Arguments):
                 if other.__legacyString is not None:
                     self.__legacyString += " " + other.__legacyString

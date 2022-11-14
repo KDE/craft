@@ -78,11 +78,7 @@ class ActionHandler:
 
     def parseFinalAction(self, args, defaultAction):
         """Returns the list of actions or [defaultAction]"""
-        return (
-            [self.actions[x] for x in args.ordered_args.keys()]
-            if hasattr(args, "ordered_args")
-            else [defaultAction]
-        )
+        return [self.actions[x] for x in args.ordered_args.keys()] if hasattr(args, "ordered_args") else [defaultAction]
 
 
 def main(timer):
@@ -90,8 +86,7 @@ def main(timer):
         prog="Craft",
         description="Craft is an open source meta build system and package manager."
         "It manages dependencies and builds libraries and applications from source, on Windows, Mac, Linux and FreeBSD.",
-        epilog="For more information visit https://community.kde.org/Craft.\n"
-        "Send feedback to <kde-windows@kde.org>.",
+        epilog="For more information visit https://community.kde.org/Craft.\n" "Send feedback to <kde-windows@kde.org>.",
     )
 
     parser.add_argument(
@@ -100,9 +95,7 @@ def main(timer):
         action="store_true",
         help="probing: craft will only look which files it has to build according to the list of installed files and according to the dependencies of the package.",
     )
-    parser.add_argument(
-        "--list-file", action="store", help=argparse.SUPPRESS, dest="unshelve"
-    )
+    parser.add_argument("--list-file", action="store", help=argparse.SUPPRESS, dest="unshelve")
     parser.add_argument(
         "--shelve",
         action="store",
@@ -214,9 +207,7 @@ def main(timer):
     parser.add_argument(
         "--ci-mode",
         action="store_true",
-        default=CraftCore.settings.getboolean(
-            "ContinuousIntegration", "Enabled", False
-        ),
+        default=CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False),
         dest="ciMode",
         help="Enables the ci mode",
     )
@@ -250,9 +241,7 @@ def main(timer):
             "update",
             (
                 "print-installed",
-                {
-                    "help": "This will show a list of all packages that are installed currently."
-                },
+                {"help": "This will show a list of all packages that are installed currently."},
             ),
             ("upgrade", {"help": "Update all installed packages"}),
             (
@@ -271,9 +260,7 @@ def main(timer):
     # read-only actions
     actionHandler.addActionWithArg("search-file", help="Print packages owning the file")
     actionHandler.addActionWithArg("get", help="Get any value from a Blueprint")
-    actionHandler.addActionWithArg(
-        "set", help="Permanently set a config value of a Blueprint"
-    )
+    actionHandler.addActionWithArg("set", help="Permanently set a config value of a Blueprint")
     actionHandler.addActionWithArg(
         "run",
         nargs=argparse.REMAINDER,
@@ -301,9 +288,7 @@ def main(timer):
     elif args.verbose:
         CraftCore.debug.setVerbose(args.verbose)
 
-    CraftCore.settings.set(
-        "General", "WorkOffline", args.offline or args.srcDir is not None
-    )
+    CraftCore.settings.set("General", "WorkOffline", args.offline or args.srcDir is not None)
     CraftCore.settings.set("Compile", "BuildType", args.buildType)
     CraftCore.settings.set("General", "Options", ";".join(args.options))
     CraftCore.settings.set(
@@ -315,9 +300,7 @@ def main(timer):
     CraftCore.settings.set("ContinuousIntegration", "SourceDir", args.srcDir)
     CraftCore.settings.set("ContinuousIntegration", "Enabled", args.ciMode)
 
-    CraftTitleUpdater.instance.start(
-        f"({CraftCore.standardDirs.craftRoot()}) craft " + " ".join(sys.argv[1:]), timer
-    )
+    CraftTitleUpdater.instance.start(f"({CraftCore.standardDirs.craftRoot()}) craft " + " ".join(sys.argv[1:]), timer)
     CraftSetupHelper.SetupHelper.printBanner()
 
     if args.doKillCraftRoot:
@@ -333,16 +316,10 @@ def main(timer):
         run = list(filter(lambda entry: not entry.startswith("-psn"), args.run))
         useShell = len(run) == 1
         if CraftCore.compiler.isMacOS:
-            useShell = (
-                not ".app" in run[1]
-                if run[0].endswith("open")
-                else not ".app" in run[0]
-            )
+            useShell = not ".app" in run[1] if run[0].endswith("open") else not ".app" in run[0]
         return utils.system(run, shell=useShell)
     elif args.run_detached:
-        run_detached = list(
-            filter(lambda entry: not entry.startswith("-psn"), args.run_detached)
-        )
+        run_detached = list(filter(lambda entry: not entry.startswith("-psn"), args.run_detached))
         kwargs = {}
         if CraftCore.compiler.isWindows:
             kwargs["creationflags"] = subprocess.DETACHED_PROCESS
@@ -398,9 +375,7 @@ def main(timer):
                 packages=blueprintSearch.packages(),
             )
         else:
-            package = CraftCommands.resolvePackage(
-                packageNames, version=tempArgs.target
-            )
+            package = CraftCommands.resolvePackage(packageNames, version=tempArgs.target)
             if action == "upgrade":
                 return CraftCommands.upgrade(package, tempArgs)
             else:
@@ -416,12 +391,9 @@ if __name__ == "__main__":
         # run craft with arch x86_64 when cross compiling
         if (
             CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_64
-            and CraftCore.compiler.hostArchitecture
-            != CraftCore.compiler.Architecture.x86_64
+            and CraftCore.compiler.hostArchitecture != CraftCore.compiler.Architecture.x86_64
         ):
-            exit(
-                subprocess.call(["arch", "-arch", "x86_64", sys.executable] + sys.argv)
-            )
+            exit(subprocess.call(["arch", "-arch", "x86_64", sys.executable] + sys.argv))
 
     success = False
     with CraftTimer.Timer("Craft", 0) as timer:
@@ -434,10 +406,7 @@ if __name__ == "__main__":
             CraftCore.log.error(e)
             blueprintSearch.printSearch(e.packageName)
         except BlueprintException as e:
-            if (
-                CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
-                or CraftCore.debug.verbose() >= 2
-            ):
+            if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) or CraftCore.debug.verbose() >= 2:
                 CraftCore.log.error(e, exc_info=e.exception or e)
             else:
                 CraftCore.log.error(e)

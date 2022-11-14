@@ -44,15 +44,11 @@ class PackagerBase(CraftBase):
         defines.setdefault("description", self.subinfo.description)
         defines.setdefault(
             "icon",
-            os.path.join(
-                CraftCore.standardDirs.craftBin(), "data", "icons", "craft.ico"
-            ),
+            os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craft.ico"),
         )
         defines.setdefault(
             "icon_png",
-            os.path.join(
-                CraftCore.standardDirs.craftBin(), "data", "icons", "craftyBENDER.png"
-            ),
+            os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craftyBENDER.png"),
         )
         defines.setdefault("icon_png_44", defines["icon_png"])
         defines.setdefault("license", "")
@@ -63,9 +59,7 @@ class PackagerBase(CraftBase):
         )
         defines.setdefault(
             "website",
-            self.subinfo.webpage
-            if self.subinfo.webpage
-            else "https://community.kde.org/Craft",
+            self.subinfo.webpage if self.subinfo.webpage else "https://community.kde.org/Craft",
         )
 
         # mac
@@ -77,9 +71,7 @@ class PackagerBase(CraftBase):
         lookPath = Path(lookupPath if lookupPath else self.archiveDir())
         appPath = defines["apppath"]
         if not appPath:
-            apps = glob.glob(
-                os.path.join(lookPath, f"**/{defines['appname']}.app"), recursive=True
-            )
+            apps = glob.glob(os.path.join(lookPath, f"**/{defines['appname']}.app"), recursive=True)
             if len(apps) != 1:
                 CraftCore.log.error(
                     f"Failed to detect {defines['appname']}.app for {self}, please provide a correct self.defines['apppath'] or a relative path to the app as self.defines['apppath']"
@@ -117,19 +109,11 @@ class PackagerBase(CraftBase):
         manifestLocation = os.path.join(manifestLocation, "manifest.json")
         archiveFile = os.path.join(destDir, archiveName)
 
-        name = (
-            archiveName
-            if not os.path.isabs(archiveName)
-            else os.path.relpath(archiveName, destDir)
-        )
+        name = archiveName if not os.path.isabs(archiveName) else os.path.relpath(archiveName, destDir)
         if not self._manifest:
-            self._manifest = manifest = CraftManifest.load(
-                manifestLocation, urls=manifestUrls
-            )
+            self._manifest = manifest = CraftManifest.load(manifestLocation, urls=manifestUrls)
         if not self._currentManifestEnty:
-            self._currentManifestEnty = manifest.get(str(self)).addBuild(
-                self.version, self.subinfo.options.dynamic
-            )
+            self._currentManifestEnty = manifest.get(str(self)).addBuild(self.version, self.subinfo.options.dynamic)
         self._currentManifestEnty.addFile(
             fileType,
             name,

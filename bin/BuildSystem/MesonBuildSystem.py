@@ -31,12 +31,8 @@ class MesonBuildSystem(BuildSystemBase):
 
     def __env(self):
         env = {
-            "LDFLAGS": self.subinfo.options.configure.ldflags
-            + " "
-            + os.environ.get("LDFLAGS", ""),
-            "CFLAGS": self.subinfo.options.configure.cflags
-            + " "
-            + os.environ.get("CFLAGS", ""),
+            "LDFLAGS": self.subinfo.options.configure.ldflags + " " + os.environ.get("LDFLAGS", ""),
+            "CFLAGS": self.subinfo.options.configure.cflags + " " + os.environ.get("CFLAGS", ""),
         }
         if CraftCore.compiler.isMSVC():
             env.update(
@@ -46,12 +42,8 @@ class MesonBuildSystem(BuildSystemBase):
                 }
             )
         else:
-            env[
-                "LDFLAGS"
-            ] = f"-L{CraftStandardDirs.craftRoot() / 'lib'} {env['LDFLAGS']}"
-            env[
-                "CFLAGS"
-            ] = f"-I{CraftStandardDirs.craftRoot() / 'include'} {env['CFLAGS']}"
+            env["LDFLAGS"] = f"-L{CraftStandardDirs.craftRoot() / 'lib'} {env['LDFLAGS']}"
+            env["CFLAGS"] = f"-I{CraftStandardDirs.craftRoot() / 'include'} {env['CFLAGS']}"
         return env
 
     def configureOptions(self, defines=""):
@@ -108,10 +100,7 @@ class MesonBuildSystem(BuildSystemBase):
         env = self.__env()
         env["DESTDIR"] = self.installDir()
         with utils.ScopedEnv(env):
-            return (
-                utils.system(["meson", "install"], cwd=self.buildDir())
-                and self._fixInstallPrefix()
-            )
+            return utils.system(["meson", "install"], cwd=self.buildDir()) and self._fixInstallPrefix()
 
     def unittest(self):
         """running make tests"""

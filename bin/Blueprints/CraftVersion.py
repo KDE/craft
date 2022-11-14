@@ -13,9 +13,7 @@ class CraftVersion(Version):
     def __init__(self, version):
         Version.__init__(self, version)
         self.versionstr = version
-        self.isBranch = (
-            CraftVersion.isBranch_re.match(self.versionstr) if version else None
-        )
+        self.isBranch = CraftVersion.isBranch_re.match(self.versionstr) if version else None
 
     def __str__(self):
         return self.versionstr
@@ -29,20 +27,8 @@ class CraftVersion(Version):
         elif not isinstance(other, CraftVersion):
             raise TypeError("Can't compare CraftVersion with %s" % type(other))
         if self.isBranch or other.isBranch:
-            return (
-                0
-                if self.versionstr == other.versionstr
-                else -1
-                if self.isBranch and not other.isBranch
-                else 1
-            )
-        return (
-            0
-            if self.version == other.version
-            else -1
-            if self.version < other.version
-            else 1
-        )
+            return 0 if self.versionstr == other.versionstr else -1 if self.isBranch and not other.isBranch else 1
+        return 0 if self.version == other.version else -1 if self.version < other.version else 1
 
     # allow to use % for a comparison of major versions
     def __mod__(self, other):
@@ -55,10 +41,7 @@ class CraftVersion(Version):
     def normalizedVersion(self):
         v = CraftVersion.invalid_re.sub("", self.versionstr)
         if self.isBranch or not re.match(r"^\d+.*", v):
-            CraftCore.log.warning(
-                "Can't convert %s to StrictVersion, please use release versions for packaging"
-                % self.versionstr
-            )
+            CraftCore.log.warning("Can't convert %s to StrictVersion, please use release versions for packaging" % self.versionstr)
             return CraftVersion("0")
         loose = LooseVersion(re.sub("-|_", ".", v))
         out = []

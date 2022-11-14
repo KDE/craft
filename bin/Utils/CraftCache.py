@@ -63,10 +63,7 @@ class CraftCache(object):
                     CraftCore.log.warning(f"Cache corrupted: {e}")
                     return utilsCache
 
-            if (
-                data.version != CraftCache._version
-                or (time.time() - data.cacheCreationTime) > CraftCache._cacheLifetime
-            ):
+            if data.version != CraftCache._version or (time.time() - data.cacheCreationTime) > CraftCache._cacheLifetime:
                 CraftCore.log.debug("Clear cache")
             else:
                 utilsCache = data
@@ -88,9 +85,7 @@ class CraftCache(object):
                 pick = pickle.Pickler(f, protocol=pickle.HIGHEST_PROTOCOL)
                 pick.dump(CraftCore.cache)
         except Exception as e:
-            CraftCore.log.warning(
-                f"Failed to save cache {e}", exc_info=e, stack_info=True
-            )
+            CraftCore.log.warning(f"Failed to save cache {e}", exc_info=e, stack_info=True)
             os.remove(CraftCache._cacheFile())
 
     def clear(self):
@@ -116,10 +111,7 @@ class CraftCache(object):
                 # prettify command
                 path, ext = os.path.splitext(appLocation)
                 appLocation = path + ext.lower()
-            if (
-                forceCache
-                or Path(CraftCore.standardDirs.craftRoot()) in Path(appLocation).parents
-            ):
+            if forceCache or Path(CraftCore.standardDirs.craftRoot()) in Path(appLocation).parents:
                 CraftCore.log.debug(f"Adding {app} to app cache {appLocation}")
                 self._nonPersistentCache.applicationLocations[app] = appLocation
         else:
@@ -127,9 +119,7 @@ class CraftCache(object):
             return None
         return appLocation
 
-    def getCommandOutput(
-        self, app: str, command: str, testName: str = None
-    ) -> (int, str):
+    def getCommandOutput(self, app: str, command: str, testName: str = None) -> (int, str):
         if not testName:
             testName = f'"{app}" {command}'
         app = self.findApplication(app)
@@ -146,9 +136,7 @@ class CraftCache(object):
                 universal_newlines=True,
                 errors="backslashreplace",
             )
-            CraftCore.log.debug(
-                f"{testName} Result: ExitedCode: {completeProcess.returncode} Output: {completeProcess.stdout}"
-            )
+            CraftCore.log.debug(f"{testName} Result: ExitedCode: {completeProcess.returncode} Output: {completeProcess.stdout}")
             self._outputCache[testName] = (
                 completeProcess.returncode,
                 completeProcess.stdout,
@@ -166,10 +154,7 @@ class CraftCache(object):
             else:
                 supports = command.match(output) is not None
             self._helpCache[(app, command)] = supports
-            CraftCore.log.debug(
-                "%s %s %s"
-                % (app, "supports" if supports else "does not support", command)
-            )
+            CraftCore.log.debug("%s %s %s" % (app, "supports" if supports else "does not support", command))
         return self._helpCache[(app, command)]
 
     def getVersion(self, app, pattern=None, versionCommand=None) -> CraftVersion:
@@ -183,17 +168,13 @@ class CraftCache(object):
         if not versionCommand:
             versionCommand = "--version"
         if not isinstance(pattern, CraftCache.RE_TYPE):
-            raise Exception(
-                "getVersion can only handle a compiled regular expression as pattern"
-            )
+            raise Exception("getVersion can only handle a compiled regular expression as pattern")
         _, output = self.getCommandOutput(app, versionCommand)
         if not output:
             return None
         match = pattern.search(output)
         if not match:
-            CraftCore.log.warning(
-                f"Could not detect pattern: {pattern.pattern} in {output}"
-            )
+            CraftCore.log.warning(f"Could not detect pattern: {pattern.pattern} in {output}")
             return None
         appVersion = CraftVersion(match.group(1))
         self._versionCache[app] = appVersion
@@ -213,9 +194,7 @@ class CraftCache(object):
                         # TODO: provide the error code and only cache 404...
                         self._jsonCache[url] = {}
                         return {}
-                    with open(
-                        os.path.join(tmp, "manifest.json"), "rt", encoding="UTF-8"
-                    ) as jsonFile:
+                    with open(os.path.join(tmp, "manifest.json"), "rt", encoding="UTF-8") as jsonFile:
                         data = jsonFile.read()
                         self._jsonCache[url] = json.loads(data)
                         CraftCore.log.debug(f"cacheJsonFromUrl: {url}\n{data}")
@@ -231,9 +210,7 @@ class CraftCache(object):
         """
         if url not in self._nightlyVersions:
             if CraftCore.settings.getboolean("General", "WorkOffline"):
-                CraftCore.debug.step(
-                    "Nightly builds unavailable for %s in offline mode." % url
-                )
+                CraftCore.debug.step("Nightly builds unavailable for %s in offline mode." % url)
                 return []
             try:
                 with urllib.request.urlopen(url, timeout=timeout) as fh:
@@ -246,7 +223,5 @@ class CraftCache(object):
                     CraftCore.log.debug(f"Found nightlies for {url}: {out}")
                     return out
             except Exception as e:
-                CraftCore.log.warning(
-                    "Nightly builds unavailable for %s: %s" % (url, e)
-                )
+                CraftCore.log.warning("Nightly builds unavailable for %s: %s" % (url, e))
         return self._nightlyVersions.get(url, [])

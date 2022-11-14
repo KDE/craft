@@ -59,9 +59,7 @@ class MSInstallerPackager(CollectionPackagerBase):
         if not "componentuid" in self.defines or not self.defines["componentuid"]:
             self.defines["componentuid"] = str(uuid.uuid4())
         if not self.scriptname:
-            self.scriptname = os.path.join(
-                os.path.dirname(__file__), "MSInstaller.wxs.template"
-            )
+            self.scriptname = os.path.join(os.path.dirname(__file__), "MSInstaller.wxs.template")
 
         # make absolute path for output file
         if not os.path.isabs(self.defines["setupname"]):
@@ -79,9 +77,7 @@ class MSInstallerPackager(CollectionPackagerBase):
 
         objectDict = dict()
         objectDict[self.imageDir()] = rootObject
-        rootObject.setAttribute(
-            "Id", self.__getUniqueIdString(self.defines["productname"])
-        )
+        rootObject.setAttribute("Id", self.__getUniqueIdString(self.defines["productname"]))
         rootObject.setAttribute("Name", self.defines["productname"])
 
         componentRoot.setAttribute("Id", "DefaultFeature")
@@ -93,9 +89,7 @@ class MSInstallerPackager(CollectionPackagerBase):
                 continue
             if files or dirs:
                 currentDirectory = wxs.createElement("Directory")
-                currentDirectory.setAttribute(
-                    "Id", self.__getUniqueIdString(os.path.basename(root))
-                )
+                currentDirectory.setAttribute("Id", self.__getUniqueIdString(os.path.basename(root)))
                 currentDirectory.setAttribute("Name", os.path.basename(root))
 
                 objectDict[os.path.dirname(root)].appendChild(currentDirectory)
@@ -118,16 +112,12 @@ class MSInstallerPackager(CollectionPackagerBase):
                     currentFile.setAttribute("Id", _fileId)
                     currentFile.setAttribute(
                         "Source",
-                        os.path.join(
-                            "SourceDir", os.path.relpath(root, self.imageDir()), _f
-                        ),
+                        os.path.join("SourceDir", os.path.relpath(root, self.imageDir()), _f),
                     )
                     currentComponent.appendChild(currentFile)
 
         if self.scriptname.endswith(".template"):
-            outName = os.path.join(
-                self.buildDir(), os.path.basename(self.scriptname)[:-9]
-            )
+            outName = os.path.join(self.buildDir(), os.path.basename(self.scriptname)[:-9])
         else:
             outName = os.path.join(self.buildDir(), self.scriptname)
         out = open(outName, "w")

@@ -22,11 +22,7 @@ class MakeFileBuildSystem(BuildSystemBase):
     def make(self):
         """implements the make step for Makefile projects"""
         self.enterBuildDir()
-        return utils.system(
-            Arguments(
-                [self.makeProgram, self.makeOptions(self.subinfo.options.make.args)]
-            )
-        )
+        return utils.system(Arguments([self.makeProgram, self.makeOptions(self.subinfo.options.make.args)]))
 
     def install(self):
         """install the target"""
