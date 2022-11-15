@@ -1,2 +1,4 @@
 # we are using the icon.rcc on mac
 share/icons/.*
+# buildsystem stuff
+lib/icu/.*
