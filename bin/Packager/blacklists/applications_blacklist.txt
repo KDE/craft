@@ -19,6 +19,7 @@ include/.*
 lib/cmake/.*
 lib/charset\.alias
 share/ECM/.*
+lib/icu/.*
 
 # multiple docs
 (bin/data|share)/man/.*
