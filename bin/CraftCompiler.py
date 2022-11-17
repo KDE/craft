@@ -102,7 +102,7 @@ class CraftCompilerSignature(object):
                 raise Exception(f"Invalid compiler: {s}")
 
         if platform == CraftCompiler.Platforms.Android:
-            if arch == CraftCompiler.Architecture.arm:
+            if arch == CraftCompiler.Architecture.arm32:
                 abi = "armeabi-v7a"
             elif arch == CraftCompiler.Architecture.arm64:
                 abi = "arm64-v8a"

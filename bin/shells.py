@@ -167,7 +167,7 @@ class BashShell(object):
                         "--install-dir",
                         toolchainPath,
                         "--arch",
-                        CraftCore.compiler.architecture.name,
+                        CraftCore.compiler.androidArchitecture,
                         "--api",
                         CraftCore.compiler.androidApiLevel(),
                     ]
