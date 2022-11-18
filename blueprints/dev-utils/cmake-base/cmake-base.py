@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
         )
 
     def setTargets(self):
-        for ver in ["3.23.3"]:
+        for ver in ["3.19.2", "3.23.3"]:
             majorMinorStr = ".".join(ver.split(".")[0:2])
             if CraftCore.compiler.isWindows:
                 self.targets[ver] = f"https://cmake.org/files/v{majorMinorStr}/cmake-{ver}-windows-x86_64.zip"
