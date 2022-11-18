@@ -30,7 +30,7 @@ class subinfo(info.infoclass):
 
         self.patchLevel["3.13.2"] = 1
 
-        self.defaultTarget = "3.23.3"
+        self.defaultTarget = "3.19.2"
 
 
 from Package.BinaryPackageBase import *
