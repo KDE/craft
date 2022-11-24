@@ -106,6 +106,10 @@ class CraftCompilerSignature(object):
                 abi = "armeabi-v7a"
             elif arch == CraftCompiler.Architecture.arm64:
                 abi = "arm64-v8a"
+            elif arch == CraftCompiler.Architecture.x86_32:
+                abi = "x86"
+            elif arch == CraftCompiler.Architecture.x86_64:
+                abi = "x86_64"
         return CraftCompilerSignature(platform, compiler, abi, arch, sourceString=s)
 
 
