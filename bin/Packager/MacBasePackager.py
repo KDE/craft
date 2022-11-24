@@ -312,7 +312,7 @@ class MacDylibBundler(object):
                             "@executable_path/../Frameworks/",
                         )
                 elif not path.startswith("/"):
-                    guessedPath = os.path.join(self.appPath, "Contents/Frameworks", path)
+                    guessedPath = os.path.join(self.appPath, "Contents/Frameworks", os.path.basename(path))
                 else:
                     CraftCore.log.error(
                         "%s: don't know how to handle otool -L output: '%s'",
