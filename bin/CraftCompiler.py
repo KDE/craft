@@ -33,7 +33,6 @@ class CraftCompilerSignature(object):
     def __init__(self, platform, compiler, abiString, architecture, sourceString: str = None) -> None:
         self.platform = platform
         self.compiler = compiler
-        self.abiString = abiString
         self.abi = CraftCompiler.Abi.fromString(abiString) if abiString else None
         self.architecture = architecture
         self._sourceString = sourceString
@@ -46,11 +45,11 @@ class CraftCompilerSignature(object):
 
     @property
     def signature(self):
-        if self.abiString:
+        if self.abi:
             return (
                 self.platform.name.lower(),
                 self.compiler.name.lower(),
-                self.abiString,
+                self.abi.name.lower(),
                 self.architecture.name.lower(),
             )
         else:
@@ -100,12 +99,6 @@ class CraftCompilerSignature(object):
                     abi = None
             except:
                 raise Exception(f"Invalid compiler: {s}")
-
-        if platform == CraftCompiler.Platforms.Android:
-            if arch == CraftCompiler.Architecture.arm32:
-                abi = "armeabi-v7a"
-            elif arch == CraftCompiler.Architecture.arm64:
-                abi = "arm64-v8a"
         return CraftCompilerSignature(platform, compiler, abi, arch, sourceString=s)
 
 
@@ -158,9 +151,6 @@ class CraftCompiler(object):
         msvc2019 = auto()
         msvc2022 = auto()
 
-        armeabi_v7a = auto()
-        arm64_v8a = auto()
-
         @classmethod
         def fromString(cls, name):
             if not hasattr(cls, "__sting_map"):
@@ -199,10 +189,6 @@ class CraftCompiler(object):
     @property
     def platform(self) -> Platforms:
         return self.signature.platform
-
-    @property
-    def abi(self):
-        return self.signature.abiString
 
     @property
     def compiler(self) -> Compiler:
@@ -349,25 +335,23 @@ class CraftCompiler(object):
         if not self.isMSVC():
             return self.getVersion()
         versions = {
-            "msvc2017": 15,
-            "msvc2019": 16,
-            "msvc2022": 17,
+            CraftCompiler.Abi.msvc2017: 15,
+            CraftCompiler.Abi.msvc2019: 16,
+            CraftCompiler.Abi.msvc2022: 17,
         }
-        c = self.abi.split("_")[0]
-        if c not in versions:
-            CraftCore.log.critical(f"Unknown MSVC Compiler {self.abi}")
-        return versions[c]
+        if self.signature.abi not in versions:
+            CraftCore.log.critical(f"Unknown MSVC Compiler {self.signature.abi}")
+        return versions[self.signature.abi]
 
     def getMsvcPlatformToolset(self):
         versions = {
-            "msvc2017": 141,
-            "msvc2019": 142,
-            "msvc2022": 143,
+            CraftCompiler.Abi.msvc2017: 141,
+            CraftCompiler.Abi.msvc2019: 142,
+            CraftCompiler.Abi.msvc2022: 143,
         }
-        c = self.abi.split("_")[0]
-        if c not in versions:
-            CraftCore.log.critical(f"Unknown MSVC Compiler {self.abi}")
-        return versions[c]
+        if self.signature.abi not in versions:
+            CraftCore.log.critical(f"Unknown MSVC Compiler {self.signature.abi}")
+        return versions[self.signature.abi]
 
     def androidApiLevel(self):
         return self._apiLevel
@@ -391,6 +375,7 @@ class CraftCompiler(object):
             CraftCompiler.Architecture.arm64: "arm64-v8a",
         }
         return architectures[self.architecture]
+
 
 if __name__ == "__main__":
     print("Testing Compiler.py")

@@ -24,15 +24,19 @@ class TestCompilerSeignature(CraftTestBase.CraftTestBase):
         )
         self.assertEqual(
             CraftCompilerSignature.parseAbi("android-arm64-clang").signature,
-            CraftCompilerSignature(CraftCompiler.Platforms.Android, CraftCompiler.Compiler.CLANG, "arm64-v8a", CraftCompiler.Architecture.arm64).signature,
+            CraftCompilerSignature(CraftCompiler.Platforms.Android, CraftCompiler.Compiler.CLANG, None, CraftCompiler.Architecture.arm64).signature,
         )
         self.assertEqual(
             CraftCompilerSignature.parseAbi("android-clang-arm").signature,
-            CraftCompilerSignature(CraftCompiler.Platforms.Android, CraftCompiler.Compiler.CLANG, "armeabi-v7a", CraftCompiler.Architecture.arm).signature,
+            CraftCompilerSignature(CraftCompiler.Platforms.Android, CraftCompiler.Compiler.CLANG, None, CraftCompiler.Architecture.arm).signature,
         )
         self.assertEqual(
             CraftCompilerSignature.parseAbi("android-clang-arm64").signature,
-            CraftCompilerSignature(CraftCompiler.Platforms.Android, CraftCompiler.Compiler.CLANG, "arm64-v8a", CraftCompiler.Architecture.arm64).signature,
+            CraftCompilerSignature(CraftCompiler.Platforms.Android, CraftCompiler.Compiler.CLANG, None, CraftCompiler.Architecture.arm64).signature,
+        )
+        self.assertEqual(
+            CraftCompilerSignature.parseAbi("android-clang-x86_64").signature,
+            CraftCompilerSignature(CraftCompiler.Platforms.Android, CraftCompiler.Compiler.CLANG, None, CraftCompiler.Architecture.x86_64).signature,
         )
         self.assertEqual(
             CraftCompilerSignature.parseAbi("linux-64-gcc").signature,
