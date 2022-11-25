@@ -106,10 +106,6 @@ class CraftCompilerSignature(object):
                 abi = "armeabi-v7a"
             elif arch == CraftCompiler.Architecture.arm64:
                 abi = "arm64-v8a"
-            elif arch == CraftCompiler.Architecture.x86_32:
-                abi = "x86"
-            elif arch == CraftCompiler.Architecture.x86_64:
-                abi = "x86_64"
         return CraftCompilerSignature(platform, compiler, abi, arch, sourceString=s)
 
 
@@ -386,6 +382,15 @@ class CraftCompiler(object):
         }
         return architectures[self.architecture]
 
+    @property
+    def androidAbi(self):
+        architectures = {
+            CraftCompiler.Architecture.x86_32: "x86",
+            CraftCompiler.Architecture.x86_64: "x86_64",
+            CraftCompiler.Architecture.arm32: "armeabi-v7a",
+            CraftCompiler.Architecture.arm64: "arm64-v8a",
+        }
+        return architectures[self.architecture]
 
 if __name__ == "__main__":
     print("Testing Compiler.py")

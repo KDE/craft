@@ -377,7 +377,7 @@ class SetupHelper(object):
 
     def _setupAndroid(self):
         self.addEnvVar("ANDROID_ARCH", CraftCore.compiler.androidArchitecture)
-        self.addEnvVar("ANDROID_ARCH_ABI", CraftCore.compiler.abi)
+        self.addEnvVar("ANDROID_ARCH_ABI", CraftCore.compiler.androidAbi)
 
     def setupEnvironment(self):
         originaleEnv = CaseInsensitiveDict(os.environ)
