@@ -40,12 +40,10 @@ class AutoToolsBuildSystem(BuildSystemBase):
                     ]
                 )
         elif CraftCore.compiler.isAndroid:
-            if CraftCore.compiler.architecture == CraftCompiler.Architecture.arm32:
-                self.platform = Arguments(["--host=arm-linux-androideabi"])
-            elif CraftCore.compiler.architecture == CraftCompiler.Architecture.arm64:
+            if CraftCore.compiler.architecture == CraftCompiler.Architecture.arm64:
                 self.platform = Arguments(["--host=aarch64-linux-android"])
             else:
-                self.platform = Arguments([f"--host={CraftCore.compiler.architecture}-linux-android"])
+                self.platform = Arguments([f"--host={CraftCore.compiler.androidArchitecture}-linux-android"])
 
     @property
     def makeProgram(self):
