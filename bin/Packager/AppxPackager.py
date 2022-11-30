@@ -296,7 +296,7 @@ class AppxPackager(CollectionPackagerBase):
             appxUpload = (Path(self.packageDestinationDir()) / os.path.basename(defines["setupname"])).with_suffix(".appxupload")
             if appxUpload.exists():
                 appxUpload.unlink()
-            if not utils.compress(appxUpload, self.artifactsDir()):
+            if not utils.compress(appxUpload, [defines["setupname"], appxSym]):
                 return False
 
         return self.__createSideloadAppX(defines)
