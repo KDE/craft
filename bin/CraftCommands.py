@@ -485,7 +485,7 @@ def cleanBuildFiles(cleanArchives, cleanImages, cleanInstalledImages, cleanBuild
         if cleanImages:
             for dir in glob.glob(imageGlob):
                 if package.isInstalled and not cleanInstalledImages:
-                    if Path(dir) == instance.imageDir():
+                    if Path(dir) in [instance.imageDir(), instance.symbolsImageDir()]:
                         continue
                 cleanDir(dir)
 
