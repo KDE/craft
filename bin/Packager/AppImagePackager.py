@@ -114,6 +114,7 @@ class AppImagePackager(CollectionPackagerBase):
             "LDNP_META_DEB_ARCHITECTURE": CraftCore.compiler.debArchitecture,
             "LDNP_META_RPM_BUILD_ARCH": CraftCore.compiler.rpmArchitecture,
             "NO_STRIP": "1",  # our binaries are already stripped
+            "QMAKE": CraftCore.standardDirs.craftRoot() / "bin/qmake"
         }
 
         if "website" in defines:
