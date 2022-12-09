@@ -45,3 +45,6 @@ class subinfo(info.infoclass):
 class Package(CMakePackageBase):
     def __init__(self, **args):
         CMakePackageBase.__init__(self)
+        if CraftCore.compiler.isWindows:
+            # building ninja with jom is broken
+            self.subinfo.options.make.supportsMultijob = self.makeProgram != "jom"
