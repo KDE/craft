@@ -297,7 +297,7 @@ class infoclass(object):
             if targetInstallPath:
                 self.targetInstallPath[key] = os.path.join(targetInstallPath, self.parent.package.name)
 
-    def addCachedBuild(self, url, packageName=None, packagePath=None, targetInstallPath=None):
+    def addCachedBuild(self, url, packageName=None, packagePath=None, targetInstallPath=None, architecture=None):
         if packageName:
             package = CraftPackageObject._allLeaves.get(packageName, None)
             if not package:
@@ -314,7 +314,7 @@ class infoclass(object):
             CraftCompiler.Platforms.Windows,
             CraftCompiler.Compiler.GCC,
             None,
-            CraftCore.compiler.architecture,
+            architecture or CraftCore.compiler.architecture,
         )
         latest = manifest.packages[str(compiler)].get(str(packagePath)).latest
         binaryFile = latest.files[CraftManifest.FileType.Binary]
