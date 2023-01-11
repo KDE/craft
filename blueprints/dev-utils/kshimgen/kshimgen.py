@@ -10,15 +10,15 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.svnTargets["master"] = "https://invent.kde.org/sdk/kshim.git"
 
-        for ver in ["0.5.2"]:
+        for ver in ["0.5.3"]:
             self.targets[ver] = f"https://invent.kde.org/sdk/kshim/-/archive/v{ver}/kshim-v{ver}.tar.gz"
             self.targetInstSrc[ver] = f"kshim-v{ver}"
 
-        self.targetDigests["0.5.2"] = (
-            ["2b8c0aab9f3eedade289b0bda1c63116c6eb1063144e963d22a8690eb5837aac"],
+        self.targetDigests["0.5.3"] = (
+            ["7037c0d009240f1a20d6197e4d3a50195740837c3d851347b3da974742d64a39"],
             CraftHash.HashAlgorithm.SHA256,
         )
-        self.defaultTarget = "0.5.2"
+        self.defaultTarget = "0.5.3"
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/cmake-base"] = None
