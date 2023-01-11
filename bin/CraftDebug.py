@@ -1,6 +1,7 @@
 import functools
 import gzip
 import inspect
+import json
 import logging
 import logging.handlers
 import os
@@ -142,11 +143,12 @@ class CraftDebug(object):
         if CraftCore.settings.getboolean("CraftDebug", "LogEnvironment", True):
             if not env:
                 env = os.environ
-            self.log.debug("Environment:")
-            for key, value in sorted(env.items()):
+            out = {}
+            for key, value in env.items():
                 if key.startswith("CRAFT_SECRET_"):
                     value = "***"
-                self.log.debug(f"\t{key}={value}")
+                out[key] = value
+            self.log.debug("Environment: " + json.dumps(out, sort_keys=True))
 
     def trace(self, message):
         self.log.debug("craft trace: %s" % message)
