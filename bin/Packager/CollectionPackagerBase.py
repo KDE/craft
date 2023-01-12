@@ -293,6 +293,8 @@ class CollectionPackagerBase(PackagerBase):
             dbgName = Path("{0}-dbg{1}".format(*os.path.splitext(defines["setupname"])))
             if not CraftCore.compiler.isWindows:
                 dbgName = dbgName.with_suffix(".tar.7z")
+            else:
+                dbgName = dbgName.with_suffix(".7z")
             if dbgName.exists():
                 dbgName.unlink()
             if not self._createArchive(
