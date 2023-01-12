@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
             self.targets[ver] = f"https://invent.kde.org/sdk/kshim/-/archive/v{ver}/kshim-v{ver}.tar.gz"
             self.targetInstSrc[ver] = f"kshim-v{ver}"
 
-        self.targetDigests["0.5.3"] = (
+        self.targetDigests["0.5.4"] = (
             ["f0df8b089c8464335c9599c73b83704798ff1adbe18707e7e91fc058345dbb4e"],
             CraftHash.HashAlgorithm.SHA256,
         )
