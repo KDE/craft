@@ -76,6 +76,10 @@ class Package(BinaryPackageBase):
                 else:
                     CraftCore.log.error("Unsupported Compiler")
                     return False
+
+        if not files:
+            CraftCore.log.error("No runtime files found")
+            return False
         for f in files:
             if not os.path.isabs(f):
                 f = os.path.join(srcdir, f)
