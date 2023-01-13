@@ -73,13 +73,12 @@ class Package(BinaryPackageBase):
                         os.path.join(redistDir, f"x{CraftCore.compiler.bits}", "**/*.dll"),
                         recursive=True,
                     )
+                    if not files:
+                        CraftCore.log.error(f"No runtime files found in {redistDir}")
+                        return False
                 else:
                     CraftCore.log.error("Unsupported Compiler")
                     return False
-
-        if not files:
-            CraftCore.log.error("No runtime files found")
-            return False
         for f in files:
             if not os.path.isabs(f):
                 f = os.path.join(srcdir, f)
