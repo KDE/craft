@@ -79,5 +79,8 @@ class Package(BinaryPackageBase):
         for f in files:
             if not os.path.isabs(f):
                 f = os.path.join(srcdir, f)
-            utils.copyFile(f, os.path.join(destdir, os.path.basename(f)), linkOnly=False)
+            dest = os.path.join(destdir, os.path.basename(f))
+            CraftCore.log.info(f"Installing: {dest}")
+            if not utils.copyFile(f, dest, linkOnly=False):
+                return False
         return True
