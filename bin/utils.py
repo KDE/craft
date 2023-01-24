@@ -118,7 +118,7 @@ def un7zip(fileName, destdir, flag=None):
     progressFlags = []
     type = []
     app = __locate7z()
-    env = {}
+    resolveSymlinks = False
     if not ciMode and CraftCore.cache.checkCommandOutputFor(app, "-bs"):
         progressFlags = ["-bso2", "-bsp1"]
         kw["stderr"] = subprocess.PIPE
@@ -137,19 +137,10 @@ def un7zip(fileName, destdir, flag=None):
                 progressFlags = ["-bsp2"]
         kw["pipeProcess"] = subprocess.Popen([app, "x", fileName, "-so"] + progressFlags, stdout=subprocess.PIPE)
         if OsUtils.isWin():
+            resolveSymlinks = True
             if progressFlags:
                 progressFlags = ["-bsp0"]
-            command = [
-                sys.executable,
-                "-u",
-                Path(__file__).parent / "untar.py",
-                destdir,
-            ]
-            # don't fail on non printable log messages
-            env["PYTHONIOENCODING"] = ":replace"
-            # we don't have progress, diesplay error messages
-            if "stderr" in kw:
-                del kw["stderr"]
+            command = [app, "x", "-si", f"-o{destdir}", "-ttar"] + progressFlags
             kw["stdout"] = subprocess.DEVNULL
         else:
             tar = CraftCore.cache.findApplication("tar")
@@ -158,8 +149,7 @@ def un7zip(fileName, destdir, flag=None):
         command = [app, "x", "-r", "-y", f"-o{destdir}", fileName] + type + progressFlags
 
     # While 7zip supports symlinks cmake 3.8.0 does not support symlinks
-    with ScopedEnv(env):
-        return system(command, **kw)
+    return system(command, **kw) and (not resolveSymlinks or replaceSymlinksWithCopies(destdir))
 
 
 def compress(archive: Path, source: str) -> bool:
@@ -865,6 +855,50 @@ def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False, env
         command.append("--env")
         command += [f"{k}={v}" for k, v in env.items()]
     return system(command + ["--"] + args, **kw)
+
+
+def replaceSymlinksWithCopies(path, _replaceDirs=False):
+    def resolveLink(path):
+        while os.path.islink(path):
+            toReplace = os.readlink(path)
+            if not os.path.isabs(toReplace):
+                path = os.path.join(os.path.dirname(path), toReplace)
+            else:
+                path = toReplace
+        return path
+
+    # symlinks to dirs are resolved after we resolved the files
+    dirsToResolve = []
+    ok = True
+    for root, _, files in os.walk(path):
+        for svg in files:
+            if not ok:
+                return False
+            path = os.path.join(root, svg)
+            if os.path.islink(path):
+                toReplace = resolveLink(path)
+                if not os.path.exists(toReplace):
+                    CraftCore.log.error(f"Resolving {path} failed: {toReplace} does not exists.")
+                    continue
+                if toReplace != path:
+                    if os.path.isdir(toReplace):
+                        if not _replaceDirs:
+                            dirsToResolve.append(path)
+                        else:
+                            os.unlink(path)
+                            ok = copyDir(toReplace, path)
+                    else:
+                        os.unlink(path)
+                        ok = copyFile(toReplace, path)
+    while dirsToResolve:
+        d = dirsToResolve.pop()
+        if not os.path.exists(resolveLink(d)):
+            CraftCore.log.warning(f"Delay replacement of {d}")
+            dirsToResolve.append(d)
+            continue
+        if not replaceSymlinksWithCopies(os.path.dirname(d), _replaceDirs=True):
+            return False
+    return True
 
 
 class ProgressBar(object):
