@@ -30,7 +30,7 @@ class CraftStandardDirs(object):
         self._craftRoot = Path(craftRoot or CraftCore.settings._craftRoot())
         self._downloadDir = Path(CraftCore.settings.get("Paths", "DOWNLOADDIR", self._craftRoot / "download"))
         self._gitDir = Path(CraftCore.settings.get("Paths", "KDEGITDIR", self._downloadDir / "git"))
-        self._junctionDir = Path(CraftCore.settings.get("ShortPath", "JunctionDir", os.path.join(self._craftRoot, "build", "_"))).absolute()
+        self._junctionDir = Path(CraftCore.settings.get("ShortPath", "JunctionDir", f"{self._craftRoot.drive}/_")).absolute()
         self.locations = Location(self)
 
     @staticmethod

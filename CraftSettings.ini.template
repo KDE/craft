@@ -126,7 +126,9 @@ UseNinja = True
 KDE_L10N_AUTO_TRANSLATIONS = OFF
 
 [ShortPath]
+## Windows only
 ## The directory where the junctions are created.
+## Defaults to CurrentDirve:\_
 #JunctionDir=
 
 [Blueprints]

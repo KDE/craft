@@ -66,6 +66,7 @@ class CraftBootstrap(object):
 
     @staticmethod
     def promptForChoice(title, choices, default=None, returnDefaultWithoutPrompt=False):
+        CraftBootstrap.startSection()
         if not default:
             if isinstance(choices[0], tuple):
                 default, _ = choices[0]
@@ -104,6 +105,11 @@ class CraftBootstrap(object):
                     return choices[choiceInt][1]
                 else:
                     return choices[choiceInt]
+
+    @staticmethod
+    def startSection():
+        width, _ = shutil.get_terminal_size((80, 20))
+        print("-" * width)
 
     def setSettignsValue(self, section, key, value):
         reKey = re.compile(r"^[\#;]?\s*{key}\s*=.*$".format(key=key), re.IGNORECASE)
@@ -255,6 +261,23 @@ def setUp(args):
     print(f"Craft will be installed to: {args.prefix}")
     abi = getABI(args)
 
+    installShortCut = False
+    # Used on Windows to generate shorter paths in order to workaround issues with some tools
+    shortPath = Path(Path(args.prefix).drive) / "/_"
+    if CraftBootstrap.isWin():
+        CraftBootstrap.startSection()
+        shortPath = (
+            shortPath
+            if args.use_defaults
+            else input(f"Craft will use {shortPath} to create shorter path during builds.\n" f"Specify short path root: [{shortPath}]: ") or shortPath
+        )
+        installShortCut = CraftBootstrap.promptForChoice(
+            "Do you want to install a StartMenu entry",
+            [("Yes", True), ("No", False)],
+            default="Yes",
+            returnDefaultWithoutPrompt=args.use_defaults,
+        )
+
     useANSIColor = CraftBootstrap.promptForChoice(
         "Do you want to enable the support for colored logs",
         [("Yes", True), ("No", False)],
@@ -264,14 +287,6 @@ def setUp(args):
     if useANSIColor:
         CraftBootstrap.enableANSISupport()
 
-    installShortCut = False
-    if CraftBootstrap.isWin():
-        installShortCut = CraftBootstrap.promptForChoice(
-            "Do you want to install a StartMenu entry",
-            [("Yes", True), ("No", False)],
-            default="Yes",
-            returnDefaultWithoutPrompt=args.use_defaults,
-        )
     if not args.dry_run:
         if args.localDev:
             shutil.copytree(
@@ -309,6 +324,8 @@ def setUp(args):
     if CraftBootstrap.isAndroid():
         # default to MinSizeRel on Android, as that's what we have cached there
         boot.setSettignsValue("Compile", "BuildType", "MinSizeRel")
+
+    boot.setSettignsValue("ShortPath", "JunctionDir", shortPath)
 
     boot.writeSettings()
 
