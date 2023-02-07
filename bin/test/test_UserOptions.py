@@ -58,14 +58,16 @@ class TestUserOptions(CraftTestBase.CraftTestBase):
         self.assertEqual(o.not_existing, None)
 
     def testOptions(self):
-        UserOptions.setOptions(
-            [
-                "qt-apps/gammaray.gammarayProbeOnly = True",
-                "qt-apps/gammaray.disableGammarayBuildCliInjector = True",
-            ]
-        )
-        package = CraftPackageObject.get("qt-apps/gammaray")
+        package = CraftPackageObject.get("test-blueprint")
         package.subinfo.registerOptions()
         option = UserOptions.get(package)
-        self.assertEqual(option.gammarayProbeOnly, True)
-        self.assertEqual(option.disableGammarayBuildCliInjector, True)
+        self.assertEqual(option.thetruth, False)
+        self.assertEqual(option.name, "Something")
+        UserOptions.setOptions(
+            [
+                "test-blueprint.thetruth = True",
+                "test-blueprint.name = TestTitle",
+            ]
+        )
+        self.assertEqual(option.thetruth, True)
+        self.assertEqual(option.name, "TestTitle")
