@@ -42,7 +42,7 @@ class CraftDebug(object):
                     os.makedirs(logDir)
                 logfileName = os.path.join(
                     logDir,
-                    "log-%s.txt" % re.compile(r":?\\+|/+|:|;").sub("_", CraftCore.settings._craftRoot()),
+                    "log-%s.txt" % re.compile(r":?\\+|/+|:|;").sub("_", str(CraftCore.settings._craftRoot())),
                 )
             else:
                 logfileName = os.environ["CRAFT_LOG_FILE"]

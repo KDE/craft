@@ -43,6 +43,8 @@ import unittest
 thisdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(thisdir, os.pardir))
 
+# allow fallback to settings template
+os.environ["CRAFT_TEST"] = "True"
 from CraftCore import CraftCore
 
 

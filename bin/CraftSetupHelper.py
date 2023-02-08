@@ -207,10 +207,12 @@ class SetupHelper(object):
     @staticmethod
     def getMSVCEnv(
         version: int = 0,
-        architecture=CraftCore.compiler.Architecture.x86_64,
+        architecture=None,
         toolset=None,
         native=True,
     ) -> str:
+        if not architecture:
+            architecture = CraftCore.compiler.Architecture.x86_64
         if native:
             architectures = {
                 CraftCore.compiler.Architecture.x86_32: "amd64_x86",

@@ -6,8 +6,8 @@
 import atexit
 import configparser
 import os
-import shutil
 import sys
+from pathlib import Path
 
 from CraftCore import CraftCore
 
@@ -18,13 +18,13 @@ class CraftConfig(object):
     def __init__(self, iniPath=None):
         self._config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
         if iniPath:
-            self.iniPath = iniPath
+            self.iniPath = Path(iniPath)
         else:
-            oldPath = os.path.join(CraftConfig._craftRoot(), "etc", "kdesettings.ini")
-            newPath = os.path.join(CraftConfig._craftRoot(), "etc", "CraftSettings.ini")
-            if os.path.isfile(oldPath):
-                shutil.move(oldPath, newPath)
-            self.iniPath = os.path.join(newPath)
+            self.iniPath = CraftConfig._craftRoot() / "etc/CraftSettings.ini"
+        if not self.iniPath.exists() and "CRAFT_TEST" in os.environ:
+            # this should only happen in ci
+            self.iniPath = CraftConfig._craftBin() / "../CraftSettings.ini.template"
+
         self._alias = {}
         self._groupAlias = {}
         self._readSettings()
@@ -62,12 +62,12 @@ class CraftConfig(object):
         if not os.path.join(dir, "craftenv.ps1"):
             print("Failed to find the craft root", file=sys.stderr)
             exit(-1)
-        CraftConfig.__CraftBin = os.path.join(dir, "bin")
+        CraftConfig.__CraftBin = Path(os.path.join(dir, "bin"))
         return CraftConfig.__CraftBin
 
     @staticmethod
     def _craftRoot():
-        return os.path.abspath(os.path.join(CraftConfig._craftBin(), "..", ".."))
+        return Path(os.path.abspath(os.path.join(CraftConfig._craftBin(), "..", "..")))
 
     def _setAliasesV6(self):
         self.addAlias("CodeSigning", "CommonName", "CodeSigning", "SubjectName")
@@ -103,7 +103,7 @@ class CraftConfig(object):
             "CraftRoot": CraftConfig._craftRoot(),
             "CraftDir": craftDir,
         }.items():
-            self._config["Variables"][key] = value
+            self._config["Variables"][key] = str(value)
         # read user settings
         self._config.read(self.iniPath, encoding="utf-8")
 
