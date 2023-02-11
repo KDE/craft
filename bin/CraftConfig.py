@@ -11,7 +11,6 @@ from pathlib import Path
 
 from CraftCore import CraftCore
 
-
 class CraftConfig(object):
     __CraftBin = None
 
@@ -22,12 +21,16 @@ class CraftConfig(object):
         else:
             self.iniPath = CraftConfig._craftRoot() / "etc/CraftSettings.ini"
         if not self.iniPath.exists() and "CRAFT_TEST" in os.environ:
-            # this should only happen in ci
+            # this should only happen when running test outside of a craft setup (eg. CI)
             self.iniPath = CraftConfig._craftBin() / "../CraftSettings.ini.template"
 
         self._alias = {}
         self._groupAlias = {}
         self._readSettings()
+
+        if str(self.iniPath).endswith("CraftSettings.ini.template") and "CRAFT_TEST_ABI" in os.environ:
+            # this should only happen when running test outside of a craft setup (eg. CI)
+            self.set("General", "ABI", os.environ["CRAFT_TEST_ABI"])
 
         if self.version < 4:
             print(

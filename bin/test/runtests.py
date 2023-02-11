@@ -39,14 +39,28 @@ import optparse
 import os
 import sys
 import unittest
+import platform
+
+def fallbackTestAbi():
+    if os.name == "posix":
+        if platform.system() == "Darwin":
+            return 'macos-clang-x86_64'
+        elif platform.system() == "FreeBSD":
+            return 'freebsd-gcc-x86_64'
+        else:
+            return 'linux-gcc-x86_64'
+    else:
+        return 'windows-cl-msvc2019-x86_64'
 
 thisdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(thisdir, os.pardir))
 
 # allow fallback to settings template
 os.environ["CRAFT_TEST"] = "True"
+# also set fallback ABI for that case
+if not "CRAFT_TEST_ABI" in os.environ:
+    os.environ["CRAFT_TEST_ABI"] = fallbackTestAbi()
 from CraftCore import CraftCore
-
 
 def main():
     """Run all the tests in the craft test suite"""
