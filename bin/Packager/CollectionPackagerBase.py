@@ -264,7 +264,9 @@ class CollectionPackagerBase(PackagerBase):
                         return False
                 else:
                     CraftCore.log.warning("symbols directory %s does not exist!" % package.symbolsImageDir())
-
+        # TODO: find a better name for the hooks
+        if not self.preArchiveMove():
+            return False
         pathsToMoveToBinPath = []
         if self.subinfo.options.package.movePluginsToBin:
             # Qt expects plugins and qml files below bin, on the target system
@@ -308,4 +310,7 @@ class CollectionPackagerBase(PackagerBase):
         return True
 
     def preArchive(self):
+        return True
+
+    def preArchiveMove(self):
         return True
