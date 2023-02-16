@@ -332,7 +332,7 @@ def systemWithoutShell(
             elif stdout == subprocess.DEVNULL:
                 pass
             elif isinstance(stdout, io.StringIO) or "IORedirector" in stdout.__class__.__name__:
-                stdout.write(line.decode("UTF-8"))
+                stdout.write(line.decode("utf-8", errors="backslashreplace"))
             else:
                 stdout.write(line)
 
