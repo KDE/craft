@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
             ["f14c83cfebcc9427f2c3cea7258bd90df972d92eb26752da4ddad81c87a0faa4"],
             CraftHash.HashAlgorithm.SHA256,
         )
+        self.patchLevel["2.71"] = 1
         self.description = "Autoconf is an extensible package of M4 macros that produce shell scripts to automatically configure software source code packages."
         self.defaultTarget = "2.71"
 
