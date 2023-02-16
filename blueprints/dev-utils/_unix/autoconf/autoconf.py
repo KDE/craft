@@ -21,7 +21,6 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/m4"] = None
-        self.runtimeDependencies["dev-utils/perl"] = None
 
 
 from Package.AutoToolsPackageBase import *
