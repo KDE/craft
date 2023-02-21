@@ -5,6 +5,8 @@ class AppImagePackager(CollectionPackagerBase):
     @InitGuard.init_once
     def __init__(self, whitelists=None, blacklists=None):
         CollectionPackagerBase.__init__(self, whitelists, blacklists)
+        self.linuxdeployExe = None
+        self._isInstalled = False
 
     def setDefaults(self, defines: {str: str}) -> {str: str}:
         defines = super().setDefaults(defines)
@@ -24,8 +26,26 @@ class AppImagePackager(CollectionPackagerBase):
         )
         return defines
 
+    def isLinuxdeployInstalled(self):
+        if not self._isInstalled:
+            self._isInstalled = self.__isInstalled()
+            if not self._isInstalled:
+                CraftCore.log.critical("Craft requires linuxdeploy to create an AppImage, please install linuxdeploy\n" "\t'craft linuxdeploy'")
+                return False
+        return True
+
+    def __isInstalled(self):
+        """check if linuxdeploy is installed somewhere"""
+        self.linuxdeployExe = CraftCore.cache.findApplication("linuxdeploy-x86_64.AppImage")
+        if not self.linuxdeployExe:
+            return False
+        return True
+
     def createPackage(self):
         """create a package"""
+        if not self.isLinuxdeployInstalled():
+            return False
+
         CraftCore.log.debug("packaging using the AppImagePackager")
 
         archiveDir = Path(self.archiveDir())
@@ -70,4 +90,4 @@ class AppImagePackager(CollectionPackagerBase):
             ]
             if CraftCore.debug.verbose() > 0:
                 args += ["-v0"]
-            return utils.system(["linuxdeploy-x86_64.AppImage"] + args, cwd=self.packageDestinationDir())
+            return utils.system([self.linuxdeployExe] + args, cwd=self.packageDestinationDir())
