@@ -142,9 +142,7 @@ class GitSource(VersionSystemSourceBase):
             checkoutDir = self.checkoutDir()
             # if we only have the checkoutdir but no .git within,
             # clean this up first
-            if os.path.exists(checkoutDir) and not os.path.exists(os.path.join(checkoutDir, ".git")):
-                os.rmdir(checkoutDir)
-            if os.path.isdir(checkoutDir):
+            if os.path.isdir(checkoutDir) and os.path.exists(os.path.join(checkoutDir, ".git")):
                 if self.subinfo.buildTarget in self.subinfo.targetUpdatedRepoUrl and CraftCore.cache.checkCommandOutputFor("git", "get-url", "remote -h"):
                     oldUrls, newUrl = self.subinfo.targetUpdatedRepoUrl[self.subinfo.buildTarget]
                     if isinstance(oldUrls, str):
@@ -161,7 +159,7 @@ class GitSource(VersionSystemSourceBase):
             else:
                 args = []
                 # it doesn't exist so clone the repo
-                os.makedirs(checkoutDir)
+                os.makedirs(checkoutDir, exist_ok=True)
                 # first try to replace with a repo url from etc/blueprints/crafthosts.conf
                 if self.subinfo.options.fetch.checkoutSubmodules:
                     args += ["--recursive"]
