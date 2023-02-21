@@ -15,12 +15,14 @@ class subinfo(info.infoclass):
             ["ff2bf7656c4d1c6fdda3b8bebb21f09153a736bcba169aaf65eab25fa113bf3a"],
             CraftHash.HashAlgorithm.SHA256,
         )
+        self.patchLevel["1.16.3"] = 1
         self.description = "Automake is a tool for automatically generating Makefile.in files compliant with the GNU Coding Standards."
         self.defaultTarget = "1.16.3"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
         self.buildDependencies["dev-utils/autoconf"] = None
+        self.buildDependencies["dev-utils/perl"] = None
 
 
 from Package.AutoToolsPackageBase import *
