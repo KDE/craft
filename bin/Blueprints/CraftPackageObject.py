@@ -101,7 +101,7 @@ class CraftPackageObject(object):
     # list of all leaves, unaffected by overrides etc
     _allLeaves = {}
     _recipes = {}  # all recipes, for lookup by package name
-    IgnoredDirectories = {"__pycache__"}
+    IgnoredDirectories = {"__pycache__", "LICENSES"}
 
     @staticmethod
     def _isDirIgnored(d):
