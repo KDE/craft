@@ -41,6 +41,13 @@ import sys
 import unittest
 import platform
 
+xml_report = True
+try:
+    import xmlrunner
+except ImportError:
+    xml_report = False
+
+
 def fallbackTestAbi():
     if os.name == "posix":
         if platform.system() == "Darwin":
@@ -62,10 +69,11 @@ if not "CRAFT_TEST_ABI" in os.environ:
     os.environ["CRAFT_TEST_ABI"] = fallbackTestAbi()
 from CraftCore import CraftCore
 
+
 def main():
     """Run all the tests in the craft test suite"""
 
-    parser = optparse.OptionParser()
+    parser = optparse.OptionParser(epilog='A "JUnitTestResults.xml" file will be generated (only) if unittest-xml-reporting is installed.')
     parser.set_defaults(verbosity=1)
     parser.add_option("-v", "--verbose", action="store_const", const=3, dest="verbosity")
     parser.add_option("-t", "--target", action="store", dest="target", default=None)
@@ -79,8 +87,13 @@ def main():
         suite = loader.discover(start_dir=thisdir)
     else:
         suite = loader.loadTestsFromName(opts.target)
-    runner = unittest.TextTestRunner(verbosity=opts.verbosity + 1)
-    result = runner.run(suite)
+    if xml_report:
+        with open('JUnitTestResults.xml', "wb") as output:
+            runner = xmlrunner.XMLTestRunner(verbosity=opts.verbosity + 1, output=output)
+            result = runner.run(suite)
+    else:
+        runner = unittest.TextTestRunner(verbosity=opts.verbosity + 1)
+        result = runner.run(suite)
 
     sys.exit(not result.wasSuccessful())
 

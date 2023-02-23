@@ -25,5 +25,11 @@ test.outlog
 *.kdev4
 *.kdev5
 
+# kate
+*.kate-swp
+
 # vscode
 .vscode
+
+# test reports
+JUnitTestResults.xml
