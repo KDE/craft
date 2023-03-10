@@ -462,12 +462,7 @@ def run(package: [CraftPackageObject], action: str, args) -> bool:
 
 
 def cleanBuildFiles(cleanArchives, cleanImages, cleanInstalledImages, cleanBuildDir, packages):
-    def cleanDir(dir):
-        if os.path.isdir(dir):
-            CraftCore.log.info(f"Cleaning: {Path(dir).resolve()}")
-            utils.cleanDirectory(dir)
-            utils.rmtree(dir)
-
+    cleanupDirs = []
     for p in packages:
         package = CraftPackageObject.get(p.path)
         if not package or package.isCategory():
@@ -487,15 +482,20 @@ def cleanBuildFiles(cleanArchives, cleanImages, cleanInstalledImages, cleanBuild
                 if package.isInstalled and not cleanInstalledImages:
                     if Path(dir) in [instance.imageDir(), instance.symbolsImageDir()]:
                         continue
-                cleanDir(dir)
+                cleanupDirs.append(dir)
 
         # archive directory
         if cleanArchives and os.path.exists(instance.archiveDir()):
-            cleanDir(instance.archiveDir())
+            cleanupDirs.append(instance.archiveDir())
 
         # build directory
         if cleanBuildDir:
-            cleanDir(instance.buildDir())
+            cleanupDirs.append(instance.buildDir())
+
+    for dir in cleanupDirs:
+        if os.path.isdir(dir):
+            CraftCore.log.info(f"Cleaning: {Path(dir).resolve()}")
+            utils.cleanDirectory(dir)
 
 
 def upgrade(packages, args) -> bool:
