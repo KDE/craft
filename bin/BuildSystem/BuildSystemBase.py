@@ -401,6 +401,6 @@ class BuildSystemBase(CraftBase):
             # resign files after they are modified
             # we use a local certificate, for distribution the files are properly signed in the package step
             for f in binaryFiles:
-                if not utils.system(["codesign", "-s", "-", "-f", "--deep", "--preserve-metadata=identifier,entitlements", f]):
+                if not utils.system(["codesign", "-s", "-", "-f", "--deep", "--preserve-metadata=identifier,entitlements", "--verbose=99", f]):
                     return False
         return True
