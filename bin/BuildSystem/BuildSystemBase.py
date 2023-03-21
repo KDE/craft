@@ -392,15 +392,17 @@ class BuildSystemBase(CraftBase):
                                 return False
                             if not utils.strip(f, symFileDest):
                                 return False
+        else:
+            # restoring from cache
+            if CraftCore.compiler.isMacOS:
+                # resign files after they are modified
+                # we use a local certificate, for distribution the files are properly signed in the package step
+                if not utils.localSignMac(binaryFiles):
+                    return False
 
             # sign the binaries if we can
             if CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
                 if not CodeSign.signWindows(binaryFiles):
                     return False
-        if CraftCore.compiler.isMacOS:
-            # resign files after they are modified
-            # we use a local certificate, for distribution the files are properly signed in the package step
-            for f in binaryFiles:
-                if not utils.system(["codesign", "-s", "-", "-f", "--deep", "--preserve-metadata=identifier,entitlements", "--verbose=99", f]):
-                    return False
+
         return True

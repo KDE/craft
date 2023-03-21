@@ -1263,9 +1263,7 @@ def strip(fileName: Path, destFileName: Path = None) -> Path:
         return destFileName
 
     if CraftCore.compiler.isMacOS:
-        if not (
-            system(["dsymutil", fileName, "-o", destFileName]) and system(["strip", "-x", "-S", fileName]) and system(["codesign", "-f", "-s", "-", fileName])
-        ):
+        if not (system(["dsymutil", fileName, "-o", destFileName]) and system(["strip", "-x", "-S", fileName]) and localSignMac([fileName])):
             return None
     else:
         if not (
@@ -1294,3 +1292,12 @@ def redact(input: str, secrests: {str}):
             for s in secrests:
                 out.append(var.replace(s, "***"))
         return out
+
+
+def localSignMac(binaries):
+    # TODO: this rather fits to CodeSign.py but we would end up with circular import in utils.strip
+    signCommand = ["codesign", "-s", "-", "-f", "--deep", "--preserve-metadata=identifier,entitlements", "--verbose=99"]
+    for command in limitCommandLineLength(signCommand, binaries):
+        if not system(command):
+            return False
+    return True
