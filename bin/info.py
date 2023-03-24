@@ -81,7 +81,6 @@ class infoclass(object):
         self.registerOptions()
 
         self.setTargets()
-        self.setBuildOptions()
 
         # do this after buildTarget is set so that some dependencies can be set depending on self.buildTarget
         self.setDependencies()
@@ -135,10 +134,6 @@ class infoclass(object):
 
     def setTargets(self):
         """default method for setting targets, override to set individual targets"""
-
-    def setBuildOptions(self):
-        """default method for setting build options, override to set individual targets"""
-        return
 
     def hasTarget(self) -> bool:
         """return true if archive targets for the currently selected build target is available"""
