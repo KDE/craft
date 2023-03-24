@@ -8,6 +8,7 @@ import os
 # by methods to be able to separate the access from
 # the definition
 from enum import Enum, unique
+from pathlib import Path
 from typing import *
 
 import VersionInfo
@@ -311,13 +312,14 @@ class infoclass(object):
             None,
             architecture or CraftCore.compiler.architecture,
         )
-        latest = manifest.packages[str(compiler)].get(str(packagePath)).latest
-        binaryFile = latest.files[CraftManifest.FileType.Binary]
-        self.targets[latest.version] = f"{url}/{binaryFile.fileName}"
-        self.targetDigests[latest.version] = (
-            [binaryFile.checksum],
-            CraftHash.HashAlgorithm.SHA256,
-        )
-        self.defaultTarget = latest.version
-        if targetInstallPath:
-            self.targetInstallPath[latest.version] = os.path.join(targetInstallPath, self.parent.package.name)
+        if str(compiler) in manifest.packages:
+            latest = manifest.packages[str(compiler)].get(str(packagePath)).latest
+            binaryFile = latest.files[CraftManifest.FileType.Binary]
+            self.targets[latest.version] = f"{url}/{binaryFile.fileName}"
+            self.targetDigests[latest.version] = (
+                [binaryFile.checksum],
+                CraftHash.HashAlgorithm.SHA256,
+            )
+            self.defaultTarget = latest.version
+            if targetInstallPath:
+                self.targetInstallPath[latest.version] = Path(targetInstallPath) / self.parent.package.name
