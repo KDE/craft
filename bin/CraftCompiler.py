@@ -104,6 +104,7 @@ class CraftCompilerSignature(object):
 
 class CraftCompiler(object):
     class Architecture(IntFlag):
+        NoArchitecture = 0
         x86 = 0x1 << 0
         x86_32 = 0x1 << 1 | x86
         x86_64 = 0x1 << 2 | x86
@@ -111,6 +112,8 @@ class CraftCompiler(object):
         arm32 = 0x1 << 4 | arm
         arm64 = 0x1 << 5 | arm
         arm64e = 0x1 << 6 | arm64  # Apple
+
+        All = ~0
         # TODO:...
 
         @classmethod

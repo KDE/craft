@@ -2,6 +2,9 @@ import info
 
 
 class subinfo(info.infoclass):
+    def registerOptions(self):
+        self.parent.package.categoryInfo.architecture = CraftCore.compiler.Architecture.x86_64
+
     def setTargets(self):
         for ver in ["1.21.2-18"]:
             self.targets[ver] = f"https://files.kde.org/craft/prebuilt/packages/wget-{ver}-macos-64-clang.tar.7z"

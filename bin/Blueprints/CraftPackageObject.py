@@ -44,6 +44,7 @@ class CategoryPackageObject(object):
         self.tags = ""
         self.platforms = CraftCore.compiler.Platforms.All
         self.compiler = CraftCore.compiler.Compiler.All
+        self.architecture = CraftCore.compiler.Architecture.All
         self.pathOverride = None
         self.valid = False
         self.patchLevel = 0
@@ -68,19 +69,24 @@ class CategoryPackageObject(object):
             self.patchLevel = int(general.get("patchLevel", "0"))
             self.runtimeDependencies = CraftCore.settings._parseList(general.get("runtimeDependencies", ""))
             self.buildDependencies = CraftCore.settings._parseList(general.get("buildDependencies", ""))
-            platform = set(CraftCore.settings._parseList(general.get("platforms", "")))
 
+            platform = set(CraftCore.settings._parseList(general.get("platforms", "")))
             if platform:
                 self.platforms = CraftCore.compiler.Platforms.NoPlatform
                 for p in platform:
                     self.platforms |= CraftCore.compiler.Platforms.fromString(p)
 
             compiler = set(CraftCore.settings._parseList(general.get("compiler", "")))
-
             if compiler:
                 self.compiler = CraftCore.compiler.Compiler.NoCompiler
                 for c in compiler:
                     self.compiler |= CraftCore.compiler.Compiler.fromString(c)
+
+            architecture = set(CraftCore.settings._parseList(general.get("architecture", "")))
+            if architecture:
+                self.architecture = CraftCore.compiler.architecture.NoArchitecture
+                for c in architecture:
+                    self.architecture |= CraftCore.compiler.Architecture.fromString(c)
             self.pathOverride = general.get("pathOverride", None)
             self.forceOverride = general.get("forceOverride", False)
 
@@ -91,6 +97,9 @@ class CategoryPackageObject(object):
             return False
         if not CraftCore.compiler.compiler & self.compiler:
             CraftCore.log.debug(f"{self.localPath}, is not supported on {CraftCore.compiler.compiler!r}, supported compiler {self.compiler!r}")
+            return False
+        if not CraftCore.compiler.architecture & self.architecture:
+            CraftCore.log.debug(f"{self.localPath}, is not supported on {CraftCore.compiler.architecture!r}, supported architecture {self.architecture!r}")
             return False
         return True
 
