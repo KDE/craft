@@ -89,24 +89,27 @@ class AutoToolsBuildSystem(BuildSystemBase):
                     os.chmod(autogen, mode | stat.S_IEXEC)
                 self.shell.execute(self.sourceDir(), autogen)
             elif self.subinfo.options.configure.autoreconf and ((self.sourceDir() / "configure.ac").exists() or (self.sourceDir() / "configure.in").exists()):
-                includesArgs = Arguments()
-                if self.subinfo.options.configure.useDefaultAutoreconfIncludes:
-                    includes = []
-                    dataDirs = [CraftCore.standardDirs.craftRoot() / "dev-utils/cmake/share"]
-                    if CraftCore.compiler.isWindows:
-                        # on Windows data location lies outside of the autotools prefix (msys)
-                        dataDirs.append(CraftCore.standardDirs.locations.data)
-                    for i in dataDirs:
-                        aclocalDir = i / "aclocal"
-                        if aclocalDir.is_dir():
-                            includes += [f"-I{self.shell.toNativePath(aclocalDir)}"]
-                    includesArgs += includes
-                if not self.shell.execute(
-                    self.sourceDir(),
-                    "autoreconf",
-                    Arguments(self.subinfo.options.configure.autoreconfArgs) + includesArgs,
-                ):
-                    return False
+                if self.shell.automakePath is None:
+                    CraftCore.log.warning("autoreconf is enabled but autotools are not installed, skipping autoreconf")
+                else:
+                    includesArgs = Arguments()
+                    if self.subinfo.options.configure.useDefaultAutoreconfIncludes:
+                        includes = []
+                        dataDirs = [CraftCore.standardDirs.craftRoot() / "dev-utils/cmake/share"]
+                        if CraftCore.compiler.isWindows:
+                            # on Windows data location lies outside of the autotools prefix (msys)
+                            dataDirs.append(CraftCore.standardDirs.locations.data)
+                        for i in dataDirs:
+                            aclocalDir = i / "aclocal"
+                            if aclocalDir.is_dir():
+                                includes += [f"-I{self.shell.toNativePath(aclocalDir)}"]
+                        includesArgs += includes
+                    if not self.shell.execute(
+                        self.sourceDir(),
+                        "autoreconf",
+                        Arguments(self.subinfo.options.configure.autoreconfArgs) + includesArgs,
+                    ):
+                        return False
 
             return self.shell.execute(self.buildDir(), configure, self.configureOptions(self))
 

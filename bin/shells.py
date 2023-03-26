@@ -20,6 +20,7 @@ from Utils.Arguments import Arguments
 class BashShell(object):
     def __init__(self):
         self._environment = {}
+        self._latestAutomake = None
         self._useMSVCCompatEnv = False
 
     @property
@@ -30,6 +31,18 @@ class BashShell(object):
     def useMSVCCompatEnv(self, b):
         self._useMSVCCompatEnv = b
         self._environment = {}
+
+    @property
+    def automakePath(self):
+        if not self._latestAutomake:
+            automake = []
+            for d in os.scandir(os.path.join(os.path.dirname(self._findBash()), "..", "share")):
+                if d.name.startswith("automake"):
+                    automake += [(d.name.rsplit("-")[1], os.path.realpath(d.path))]
+            automake.sort(key=lambda x: CraftVersion(x[0]))
+            if automake:
+                self._latestAutomake = automake[-1][1]
+        return self._latestAutomake
 
     @property
     def environment(self):
@@ -104,21 +117,19 @@ class BashShell(object):
                     self._environment["MSYSTEM"] = f"MSYS{CraftCore.compiler.bits}_CRAFT"
 
                 if self.useMSVCCompatEnv and CraftCore.compiler.isMSVC():
-
-                    automake = []
-                    for d in os.scandir(os.path.join(os.path.dirname(self._findBash()), "..", "share")):
-                        if d.name.startswith("automake"):
-                            automake += [(d.name.rsplit("-")[1], os.path.realpath(d.path))]
-                    automake.sort(key=lambda x: CraftVersion(x[0]))
-                    latestAutomake = automake[-1][1]
                     if False:
                         cl = "clang-cl"
                     else:
                         cl = "cl"
-                    clWrapper = self.toNativePath(os.path.join(latestAutomake, "compile"))
-                    self._environment["AR"] = f"{self.toNativePath(os.path.join(latestAutomake, 'ar-lib'))} lib"
+                    latestAutomake = self.automakePath
+                    if latestAutomake:
+                        clWrapper = self.toNativePath(os.path.join(latestAutomake, "compile"))
+                        self._environment["CC"] = f"{clWrapper} {cl} -nologo"
+                        self._environment["AR"] = f"{self.toNativePath(os.path.join(latestAutomake, 'ar-lib'))} lib"
+                    else:
+                        self._environment["CC"] = f"{cl} -nologo"
+                        self._environment["AR"] = "lib"
                     self._environment["LD"] = "link -nologo"
-                    self._environment["CC"] = f"{clWrapper} {cl} -nologo"
                     self._environment["CXX"] = self._environment["CC"]
                     self._environment["CPP"] = f"{cl} -nologo -E"
                     self._environment["CXXCPP"] = self._environment["CPP"]
