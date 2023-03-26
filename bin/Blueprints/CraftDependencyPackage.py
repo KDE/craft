@@ -87,7 +87,7 @@ class CraftDependencyPackage(CraftPackageObject):
                                     f"{self} requries {package}, but it is not supported on {CraftCore.compiler.platform}",
                                     self,
                                 )
-                            if not bool(package.categoryInfo.architecute & CraftCore.compiler.architecture):
+                            if not bool(package.categoryInfo.architecture & CraftCore.compiler.architecture):
                                 raise BlueprintException(
                                     f"{self} requries {package}, but it is not supported on {CraftCore.compiler.architecture}",
                                     self,
