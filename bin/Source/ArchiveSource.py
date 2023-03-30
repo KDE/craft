@@ -187,6 +187,8 @@ class ArchiveSource(SourceBase):
             return False
 
         for filename in filenames:
+            if not filename:
+                continue
             ext = Path(filename).suffix
             if not ext or ext in {".exe", ".bat", ".msi", ".AppImage"}:
                 filePath = os.path.abspath(os.path.join(self.__downloadDir, filename))
