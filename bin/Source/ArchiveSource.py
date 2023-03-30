@@ -186,12 +186,11 @@ class ArchiveSource(SourceBase):
         if not self.checkDigest(3):
             return False
 
-        binEndings = (".exe", ".bat", ".msi", ".AppImage")
         for filename in filenames:
-            if filename.endswith(binEndings):
+            ext = Path(filename).suffix
+            if not ext or ext in {".exe", ".bat", ".msi", ".AppImage"}:
                 filePath = os.path.abspath(os.path.join(self.__downloadDir, filename))
                 if self.subinfo.options.unpack.runInstaller:
-                    _, ext = os.path.splitext(filename)
                     if ext == ".exe":
                         return utils.system("%s %s" % (filePath, self.subinfo.options.configure.args))
                     elif ext == ".msi":
