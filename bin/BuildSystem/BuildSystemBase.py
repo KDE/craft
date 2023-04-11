@@ -398,6 +398,11 @@ class BuildSystemBase(CraftBase):
             if self.buildType() in {"RelWithDebInfo", "Debug"}:
                 if not self.__internalPostInstallHandleSymbols(binaryFiles):
                     return False
+
+            # sign the binaries before we add them to the cache
+            if CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
+                if not CodeSign.signWindows(binaryFiles):
+                    return False
         else:
             # restoring from cache
             if CraftCore.compiler.isMacOS:
@@ -406,8 +411,9 @@ class BuildSystemBase(CraftBase):
                 if not utils.localSignMac(binaryFiles):
                     return False
 
-            # sign the binaries if we can
-            if CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
+            # sign the binaries if we can.
+            # only needed if the cache was not signed
+            if CraftCore.compiler.isWindows and not CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
                 if not CodeSign.signWindows(binaryFiles):
                     return False
 
