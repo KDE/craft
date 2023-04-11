@@ -75,7 +75,7 @@ class MesonBuildSystem(BuildSystemBase):
 
     def configure(self, defines=""):
         with utils.ScopedEnv(self.__env()):
-            return utils.system(Arguments(["meson", self.configureOptions(defines)]))
+            return utils.system(Arguments(["meson", "setup", self.configureOptions(defines)]))
 
     def make(self):
         with utils.ScopedEnv(self.__env()):
@@ -105,3 +105,17 @@ class MesonBuildSystem(BuildSystemBase):
     def unittest(self):
         """running make tests"""
         return utils.system(["meson", "test"], cwd=self.buildDir())
+
+    def makeOptions(self, args):
+        defines = Arguments()
+        if CraftCore.debug.verbose() > 0:
+            defines.append("-v")
+        if self.subinfo.options.make.supportsMultijob:
+            if ("Compile", "Jobs") in CraftCore.settings:
+                defines += [
+                    "-j",
+                    str(CraftCore.settings.get("Compile", "Jobs", multiprocessing.cpu_count())),
+                ]
+        if args:
+            defines.append(args)
+        return defines
