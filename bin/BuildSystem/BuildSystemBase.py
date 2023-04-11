@@ -236,7 +236,7 @@ class BuildSystemBase(CraftBase):
                         f.write(content)
         return True
 
-    def __internalPostInstallHandleSymbols(self, binaryFiles: list[str]):
+    def __internalPostInstallHandleSymbols(self, binaryFiles):
         symbolsPattern = re.compile(r".*\{0}$".format(CraftCore.compiler.symbolsSuffix), re.IGNORECASE)
 
         def symFilter(x: os.DirEntry, root):
