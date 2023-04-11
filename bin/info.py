@@ -58,6 +58,7 @@ class infoclass(object):
 
         # the build prefix, may differ for for cached files
         self.buildPrefix = str(CraftCore.standardDirs.craftRoot())
+        self.revision = None
         self.isCachedBuild = False
 
         # runtimeDependencies and buildDependencies are not different when looking

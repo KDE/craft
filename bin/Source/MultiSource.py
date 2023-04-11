@@ -86,6 +86,8 @@ class MultiSource(SourceBase):
 
     def sourceRevision(self):
         CraftCore.debug.trace("MultiSource sourceVersion")
+        if self.subinfo.revision:
+            return self.subinfo.revision
         return self._sourceClass.sourceRevision(self)
 
     def printSourceVersion(self):

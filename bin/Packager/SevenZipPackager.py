@@ -116,7 +116,7 @@ class SevenZipPackager(PackagerBase):
             manifestLocation = dstpath / "manifest.json"
             manifest = CraftManifest.load(manifestLocation, urls=manifestUrls)
             entry = manifest.get(str(self))
-            package = entry.addBuild(self.version, self.subinfo.options.dynamic)
+            package = entry.addBuild(self.version, self.subinfo.options.dynamic, revision=self.sourceRevision())
             for type, archiveName, _ in files:
                 package.addFile(
                     type,

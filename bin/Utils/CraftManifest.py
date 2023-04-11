@@ -52,6 +52,9 @@ class CraftManifestBuild(object):
         self.configHash = None
         self.config = None
 
+        # the revision is used for version pinning (shelves)
+        self.revision = None
+
         self.files = {}  # Dict[FileType, CraftManifestEntryFiles]
 
     def addFile(self, fileType: FileType, fileName: str, checksum: str) -> CraftManifestEntryFile:
@@ -66,6 +69,7 @@ class CraftManifestBuild(object):
         out.buildPrefix = data.get("buildPrefix", None)
         out.configHash = data.get("configHash", None)
         out.config = collections.OrderedDict(data.get("config", {}))
+        out.revision = data.get("revision", None)
 
         for _, v in data["files"].items():
             f = CraftManifestEntryFile.fromJson(v)
@@ -82,6 +86,8 @@ class CraftManifestBuild(object):
             "date": self.date.strftime(CraftManifest._TIME_FORMAT),
             "version": self.version,
         }
+        if self.revision:
+            data["revision"] = self.revision
         if self.config or self.configHash:
             data.update({"buildPrefix": self.buildPrefix, "config": self.config})
             if self.configHash and not self.config:
@@ -111,10 +117,11 @@ class CraftManifestEntry(object):
             "build": [x.toJson() for x in collections.OrderedDict.fromkeys(self.build)],
         }
 
-    def addBuild(self: str, version: str, config) -> CraftManifestBuild:
+    def addBuild(self: str, version: str, config, revision=None) -> CraftManifestBuild:
         f = CraftManifestBuild(version)
         if config:
             f.config = config.dump()
+        f.revision = revision
         self.build.insert(0, f)
         return f
 

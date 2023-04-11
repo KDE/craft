@@ -177,6 +177,7 @@ class PackageBase(CraftBase):
                 # try the next url
                 continue
             self.subinfo.buildPrefix = latest.buildPrefix
+            self.subinfo.revision = latest.revision
             self.subinfo.isCachedBuild = True
             if not self.cleanImage():
                 return False
