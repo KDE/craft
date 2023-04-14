@@ -1268,7 +1268,6 @@ def strip(fileName: Path, destFileName: Path = None) -> Path:
     else:
         if not (
             system(["objcopy", "--only-keep-debug", fileName, destFileName])
-            and system(["objcopy", "--only-section", ".debug_frame", "--only-section", ".eh_frame", "--only-section", ".eh_frame_hdr", fileName, destFileName])
             and system(["strip", "--strip-debug", "--strip-unneeded", fileName])
             and system(["objcopy", "--add-gnu-debuglink", destFileName, fileName])
         ):
