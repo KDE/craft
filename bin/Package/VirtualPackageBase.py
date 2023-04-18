@@ -26,6 +26,7 @@ class VirtualPackageBase(SourceComponentPackageBase):
     def __init__(self):
         CraftCore.log.debug("VirtualPackageBase.__init__ called")
         SourceComponentPackageBase.__init__(self)
+        self.subinfo.shelveAble = False
 
     def createPatch(self):
         return True
