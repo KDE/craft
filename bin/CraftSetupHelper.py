@@ -26,10 +26,12 @@ import argparse
 import collections
 import os
 import platform
+import shlex
 import shutil
 import sqlite3
 import subprocess
 import sys
+from pathlib import Path
 
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
@@ -38,6 +40,96 @@ from Utils.CaseInsensitiveDict import CaseInsensitiveDict
 # The minimum python version for craft please edit here
 # if you add code that changes this requirement
 MIN_PY_VERSION = (3, 6, 0)
+
+
+class ShellEnv(object):
+    def __init__(self, fileName: Path):
+        self.fileName = fileName
+        self.header = []
+        self.__file = None
+
+    def __enter__(self):
+        self.__file = self.fileName.open("wt", encoding="utf-8")
+        self.writelines(self.header)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.__file.close()
+
+    def write(self, val: str):
+        self.writelines([val])
+
+    def writelines(self, val: list[str]):
+        self.__file.write("\n".join(val) + "\n")
+
+    def prependVar(self, key: str, val: str, sep: str):
+        pass
+
+    def removeVar(self, key):
+        pass
+
+    def setVar(self, key, val):
+        pass
+
+    # only set the env var if its not set yet
+    def setDefaultVar(self, key, val):
+        pass
+
+
+class BatEnv(ShellEnv):
+    def __init__(self, fileName: Path):
+        ShellEnv.__init__(self, fileName)
+        self.header = ["@echo off"]
+
+    def setVar(self, key, val):
+        self.write(f"""set {key}={val}""")
+
+    def removeVar(self, key):
+        self.write(f"set {key}=")
+
+    def prependVar(self, key, val, sep):
+        self.write(f"set {key}={val}{sep}%{key}%")
+
+    def setDefaultVar(self, key, val):
+        self.write(f"""if NOT defined {key} (set {key}="{val}")""")
+
+
+class PowershellEnv(ShellEnv):
+    def __init__(self, fileName: Path):
+        ShellEnv.__init__(self, fileName)
+
+    def setVar(self, key, val):
+        self.write(f"""Set-Item -Path "ENV:\\{key}" -Value "{val}";""")
+
+    def removeVar(self, key):
+        self.write(f"""Remove-Item -Path "ENV:\{key}" -ErrorAction SilentlyContinue;""")
+
+    def prependVar(self, key: str, val: str, sep):
+        self.write(f"""Set-Item -Path "ENV:\\{key}" -Value $("{val}{sep}{{0}}" -f $(Get-Item "ENV:\\{key}" -ErrorAction SilentlyContinue).Value);""")
+
+    def setDefaultVar(self, key, val):
+        self.write(f"""if(-not $(Get-Item "ENV:\\{key}" -ErrorAction SilentlyContinue)) {{Set-Item -Path "ENV:\\{key}" -Value "{val}";}};""")
+
+
+class BashEnv(ShellEnv):
+    def __init__(self, fileName: Path):
+        ShellEnv.__init__(self, fileName)
+
+    def setVar(self, key, val):
+        assert key == shlex.quote(key)
+        self.write(f"export {key}={val}")
+
+    def removeVar(self, key):
+        assert key == shlex.quote(key)
+        self.write(f"unset {key}")
+
+    def prependVar(self, key: str, val: str, sep):
+        assert key == shlex.quote(key)
+        # we expect the val to be correctly formated
+        self.write(f'export {key}="{val}{sep}${key}"')
+
+    def setDefaultVar(self, key, val):
+        assert key == shlex.quote(key)
+        self.write(f"export {key}=${{{key}:={val}}}")
 
 
 def log(msg, critical=False):
@@ -70,6 +162,11 @@ class SetupHelper(object):
         self.args = args
         if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
             CraftCore.settings.set("General", "AllowAnsiColor", "False")
+
+        self._env = CaseInsensitiveDict()
+        self._prependEnv = CaseInsensitiveDict()
+        self._removedEnv = set()
+        self._defaultEnvVar = CaseInsensitiveDict()
 
         if SetupHelper.NeedsSetup:
             SetupHelper.NeedsSetup = False
@@ -108,9 +205,9 @@ class SetupHelper(object):
         elif args.print_banner:
             self.printBanner()
         elif args.getenv:
-            self.printEnv()
+            self.dumpEnv()
         elif args.setup:
-            self.printEnv()
+            self.dumpEnv()
             self.printBanner()
 
     def checkForEvilApplication(self):
@@ -147,25 +244,35 @@ class SetupHelper(object):
         printRow("Download directory", CraftCore.standardDirs.downloadDir())
 
     def addEnvVar(self, key, val):
+        self._env[key] = val
         os.environ[key] = str(val)
 
     def removeEnvVar(self, key):
         if key in os.environ:
             del os.environ[key]
+        self._removedEnv.add(key)
 
     def addDefaultEnvVar(self, key, val):
         if not key in os.environ:
             os.environ[key] = val
+        self._defaultEnvVar[key] = val
 
     def prependEnvVar(self, key: str, var: str, sep: str = os.path.pathsep) -> None:
         if not type(var) == list:
             var = [var]
-        if key in os.environ:
-            env = var + os.environ[key].split(sep)
-            var = list(collections.OrderedDict.fromkeys(env))
-        val = sep.join([str(x) for x in var])
-        CraftCore.log.debug(f"Setting {key}={val}")
-        os.environ[key] = val
+
+        def prepend(key, var, old):
+            if old:
+                env = var + old.split(sep)
+                var = list(collections.OrderedDict.fromkeys(env))
+            val = sep.join([str(x) for x in var])
+            CraftCore.log.debug(f"Setting {key}={val}")
+            return val
+
+        os.environ[key] = prepend(key, var, os.environ.get(key, None))
+        old, oldSep = self._prependEnv.get(key, (None, sep))
+        assert sep == oldSep
+        self._prependEnv[key] = (prepend(key, var, old), sep)
 
     @staticmethod
     def stringToEnv(string: str):
@@ -390,7 +497,14 @@ class SetupHelper(object):
         for var, value in CraftCore.settings.getSection("Environment"):  # set and override existing values
             # the ini is case insensitive so sections are lowercase....
             self.addEnvVar(var.upper(), value)
-        os.environ.update(self.getEnv())
+        baseEnv = self.getEnv()
+        for key, value in baseEnv.items():
+            # add modified values to self._env
+            # while on unix both should be equal, on Windows we load the environment from another shell
+            if key not in originaleEnv or value != originaleEnv[key]:
+                # TODO: can we reduce the changeset and user prependEnv?
+                self._env[key] = value
+        os.environ.update(baseEnv)
 
         self.addEnvVar("KDEROOT", CraftCore.standardDirs.craftRoot())
         self.addEnvVar("SSL_CERT_FILE", os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem"))
@@ -418,6 +532,7 @@ class SetupHelper(object):
         else:
             self._setupUnix()
 
+        # if PKG_CONFIG_PATH wasn't set we use the system pkg-config to query the original path and extend it
         PKG_CONFIG_PATH = collections.OrderedDict.fromkeys([os.path.join(CraftCore.standardDirs.craftRoot(), "lib", "pkgconfig")])
         if "PKG_CONFIG_PATH" in originaleEnv:
             PKG_CONFIG_PATH.update(collections.OrderedDict.fromkeys(originaleEnv["PKG_CONFIG_PATH"].split(os.path.pathsep)))
@@ -532,18 +647,27 @@ class SetupHelper(object):
             if OsUtils.isWin():
                 self.addEnvVar("TERM", "xterm-256color")  # pretend to be a common smart terminal
 
-    def printEnv(self):
+    def dumpEnv(self):
         self.setupEnvironment()
-        for key, val in os.environ.items():
-            if key.startswith("BASH_FUNC_"):
-                continue
-            if "\n" in val:
-                log(f"Not adding ${key} to environment since it contains " "a newline character and that breaks craftenv.sh")
-                continue
-            # weird protected env vars
-            if key in {"PROFILEREAD"}:
-                continue
-            CraftCore.log.info(f"{key}={val}")
+        envDir = CraftCore.standardDirs.etcDir() / ".env"
+        if not envDir.exists():
+            envDir.mkdir()
+        envWriter = [PowershellEnv(envDir / "craftenv.ps1")]
+        if CraftCore.compiler.isWindows:
+            envWriter += [BatEnv(envDir / "craftenv.bat")]
+        else:
+            envWriter += [BashEnv(envDir / "craftenv.sh")]
+
+        for env in envWriter:
+            with env:
+                for key in self._removedEnv:
+                    env.removeVar(key)
+                for key, value in self._env.items():
+                    env.setVar(key, value)
+                for key, (value, sep) in self._prependEnv.items():
+                    env.prependVar(key, value, sep)
+                for key, value in self._defaultEnvVar.items():
+                    env.setDefaultVar(key, value)
 
     @property
     def version(self):
