@@ -220,7 +220,8 @@ def unShelve(shelve, args):
         listVersion = int(parser["General"].get("version", listVersion))
         blueprintRepositories = CraftCore.settings._parseList(parser["General"].get("blueprintRepositories", ""))
     for repo in blueprintRepositories:
-        addBlueprintsRepository(repo)
+        if not addBlueprintsRepository(repo):
+            return False
     Info = namedtuple("Info", "version revision patchLevel")
     packages = {}  # type: Info
     if listVersion == 1:
