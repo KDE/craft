@@ -1263,7 +1263,7 @@ def strip(fileName: Path, destFileName: Path = None) -> Path:
         return destFileName
 
     if CraftCore.compiler.isMacOS:
-        if not (system(["dsymutil", fileName, "-o", destFileName]) and system(["strip", "-x", "-S", fileName]) and localSignMac([fileName])):
+        if not (system(["/usr/bin/dsymutil", fileName, "-o", destFileName]) and system(["strip", "-x", "-S", fileName]) and localSignMac([fileName])):
             return None
     else:
         if not (
