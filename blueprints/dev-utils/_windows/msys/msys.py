@@ -109,7 +109,7 @@ class UpdatePackage(VirtualPackageBase):
 class Package(MaybeVirtualPackageBase):
     def __init__(self):
         useExternalMsys = ("Paths", "Msys") not in CraftCore.settings
-        self.skipCondition = useExternalMsys and not CraftPackageObject.get("dev-utils/msys").isInstalled
+        self.skipCondition = useExternalMsys and not CraftCore.installdb.isInstalled("dev-utils/msys")
         MaybeVirtualPackageBase.__init__(self, condition=self.skipCondition, classA=MsysPackage, classB=UpdatePackage)
         if not useExternalMsys:
             # override the install method

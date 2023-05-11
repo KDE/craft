@@ -331,12 +331,13 @@ class CraftPackageObject(object):
             if not mod is None:
                 mod.CRAFT_CURRENT_MODULE = self
                 if hasattr(mod, "Package"):
-                    if self.children:
+                    pack = mod.Package()
+                    # poor mans inheritance check
+                    if self.children and "VirtualPackageBase" not in [x.__name__ for x in pack.__class__.__bases__]:
                         raise BlueprintException(
                             f"{self} is a category and may only provide a Pattern not a Package!",
                             self,
                         )
-                    pack = mod.Package()
                     self._instance = pack
                 else:
                     self._pattern = mod.Pattern

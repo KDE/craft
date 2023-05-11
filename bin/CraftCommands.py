@@ -140,8 +140,8 @@ def setOption(packageNames: [str], option: str) -> bool:
         # create instance to make sure options are registered
         # version is a special case, it is build in and a non existing version causes an error during construction
         # skipping the check allows to replace an invalid version
-        if option != "version" and not package.isCategory():
-            package.instance
+        if package.source:
+            _ = package.instance
         options = UserOptions.get(package)
         if not options.setOption(key, value):
             return False
