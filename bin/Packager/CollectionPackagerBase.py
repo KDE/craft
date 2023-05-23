@@ -213,8 +213,6 @@ class CollectionPackagerBase(PackagerBase):
         Copy the binaries for the Package from srcDir to the imageDir
         directory
         """
-        srcDir = Path(srcDir).resolve()
-        destDir = Path(destDir).resolve()
         CraftCore.log.debug("Copying %s -> %s" % (srcDir, destDir))
 
         filesToSign = []
