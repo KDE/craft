@@ -437,7 +437,6 @@ class SetupHelper(object):
                 CraftCore.standardDirs.craftRoot() / "lib64/plugins",
                 CraftCore.standardDirs.craftRoot() / "lib/x86_64-linux-gnu/plugins",
                 CraftCore.standardDirs.craftRoot() / "lib/plugin",
-                CraftCore.standardDirs.craftRoot() / "lib/qt6/plugins",
             ],
         )
 
@@ -448,7 +447,6 @@ class SetupHelper(object):
                 CraftCore.standardDirs.craftRoot() / "lib/qml",
                 CraftCore.standardDirs.craftRoot() / "lib64/qml",
                 CraftCore.standardDirs.craftRoot() / "lib/x86_64-linux-gnu/qml",
-                CraftCore.standardDirs.craftRoot() / "lib/qt6/qml",
             ],
         )
         self.prependEnvVar("QML_IMPORT_PATH", os.environ["QML2_IMPORT_PATH"])
