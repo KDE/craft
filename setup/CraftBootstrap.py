@@ -111,7 +111,7 @@ class CraftBootstrap(object):
         width, _ = shutil.get_terminal_size((80, 20))
         print("-" * width)
 
-    def setSettignsValue(self, section, key, value):
+    def setSettingsValue(self, section, key, value):
         reKey = re.compile(r"^[\#;]?\s*{key}\s*=.*$".format(key=key), re.IGNORECASE)
         reSection = re.compile(r"^\[(.*)\]$".format(section=section))
         inSection = False
@@ -307,25 +307,25 @@ def setUp(args):
             )
 
     boot = CraftBootstrap(args.prefix, args.branch, args.dry_run)
-    boot.setSettignsValue("Paths", "Python", os.path.dirname(sys.executable))
-    boot.setSettignsValue("General", "ABI", abi)
-    boot.setSettignsValue("General", "AllowAnsiColor", useANSIColor)
+    boot.setSettingsValue("Paths", "Python", os.path.dirname(sys.executable))
+    boot.setSettingsValue("General", "ABI", abi)
+    boot.setSettingsValue("General", "AllowAnsiColor", useANSIColor)
     py = shutil.which("py")
     if py:
         py2 = subprocess.getoutput(f"""{py} -2 -c "import sys; print(sys.executable)" """)
         if os.path.isfile(py2):
-            boot.setSettignsValue("Paths", "Python27", os.path.dirname(py2))
+            boot.setSettingsValue("Paths", "Python27", os.path.dirname(py2))
 
     if CraftBootstrap.isWin():
-        boot.setSettignsValue("Compile", "MakeProgram", "mingw32-make" if "mingw" in abi else "jom")
+        boot.setSettingsValue("Compile", "MakeProgram", "mingw32-make" if "mingw" in abi else "jom")
     else:
-        boot.setSettignsValue("Compile", "MakeProgram", "make")
+        boot.setSettingsValue("Compile", "MakeProgram", "make")
 
     if CraftBootstrap.isAndroid():
         # default to MinSizeRel on Android, as that's what we have cached there
-        boot.setSettignsValue("Compile", "BuildType", "MinSizeRel")
+        boot.setSettingsValue("Compile", "BuildType", "MinSizeRel")
 
-    boot.setSettignsValue("ShortPath", "JunctionDir", shortPath)
+    boot.setSettingsValue("ShortPath", "JunctionDir", shortPath)
 
     boot.writeSettings()
 
