@@ -56,7 +56,7 @@ class CraftTitleUpdater(object):
         def stopMessage():
             if not packages:
                 return ""
-            return f"Craft stopped with out completing {[x.path for x in packages]}"
+            return f"Craft stopped without completing {[x.path for x in packages]}"
 
         CraftTitleUpdater.instance.dynamicMessage = title
         CraftTitleUpdater.instance.dynamicStopMessage = stopMessage

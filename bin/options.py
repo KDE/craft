@@ -70,7 +70,7 @@ class UserOptions(object):
 ##
 #
 # Settings are inherited, so you can set them for a whole sub branch or a single blueprint.
-# While blueprint from [libs] are all ignored blueprint from [libs/qt5] are not.
+# While blueprints from [libs] are all ignored blueprints from [libs/qt5] are not.
 #
 """
 
