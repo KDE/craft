@@ -88,6 +88,8 @@ class AppImagePackager(CollectionPackagerBase):
                 "--desktop-file",
                 desktopFiles[0],
             ]
+            if "appimage_apprun" in defines:
+                args += ["--custom-apprun", defines["appimage_apprun"]]
             if CraftCore.debug.verbose() > 0:
                 args += ["-v0"]
             return utils.system([self.linuxdeployExe] + args, cwd=self.packageDestinationDir())
