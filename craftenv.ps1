@@ -65,6 +65,8 @@ if($settings["Paths"].Contains("Python") -and (Test-Path -path $settings["Paths"
     findPython("{0}/python" -f $settings["Paths"]["Python"])
 }
 
+findPython("python3.12")
+findPython("python3.11")
 findPython("python3.10")
 findPython("python3.9")
 findPython("python3.8")
