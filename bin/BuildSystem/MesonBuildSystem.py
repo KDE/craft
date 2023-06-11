@@ -23,6 +23,7 @@
 
 
 from BuildSystem.BuildSystemBase import *
+from CraftCompiler import CraftCompiler
 
 
 class MesonBuildSystem(BuildSystemBase):
@@ -73,9 +74,49 @@ class MesonBuildSystem(BuildSystemBase):
             ]
         )
 
+    def craftCrossFile(self):
+        craftCrossFilePath = os.path.join(CraftStandardDirs.craftRoot(), "etc", "craft-cross-file.txt")
+        if not os.path.exists(craftCrossFilePath):
+            config = "[constants]\n"
+
+            toolchain_path = os.path.join(CraftCore.standardDirs.tmpDir(), f"android-{CraftCore.compiler.architecture}-toolchain")
+            config += f"android_ndk = '{toolchain_path}/bin/'\n"
+            if CraftCore.compiler.architecture == CraftCompiler.Architecture.arm64:
+                config += "toolchain = 'aarch64-linux-android-'\n"
+            else:
+                config += f"toolchain = '{CraftCore.compiler.androidArchitecture}-linux-android-'\n"
+
+            config += "[binaries]\n"
+            config += "c = android_ndk + toolchain + 'gcc'\n"
+            config += "cpp = android_ndk + toolchain + 'g++'\n"
+            config += "ar = android_ndk + toolchain + 'ar'\n"
+            config += "ld = android_ndk + toolchain + 'ld'\n"
+            config += "objcopy = android_ndk + toolchain + 'objcopy'\n"
+            config += "strip = android_ndk + toolchain + 'strip'\n"
+            config += "pkgconfig = '/usr/bin/pkg-config'\n"
+
+            config += "[host_machine]\n"
+            config += "system = 'linux'\n"
+            config += f"cpu_family = '{CraftCore.compiler.androidArchitecture}'\n"
+            config += f"cpu = '{CraftCore.compiler.androidArchitecture}'\n" # according to meson, this value is meaningless (https://github.com/mesonbuild/meson/issues/7037#issuecomment-620137436)
+            config += "endian = 'little'\n"
+
+            with open(craftCrossFilePath, "wt", encoding="UTF-8") as f:
+                f.write(config + "\n")
+
+        if os.path.exists(craftCrossFilePath):
+            return craftCrossFilePath
+        return ""
+
     def configure(self, defines=""):
         with utils.ScopedEnv(self.__env()):
-            return utils.system(Arguments(["meson", "setup", self.configureOptions(defines)]))
+            print(CraftCore.compiler)
+
+            extra_options = []
+            if CraftCore.compiler.isAndroid:
+                extra_options = ["--cross-file", self.craftCrossFile()]
+
+            return utils.system(Arguments(["meson", "setup", extra_options, self.configureOptions(defines)]))
 
     def make(self):
         with utils.ScopedEnv(self.__env()):
