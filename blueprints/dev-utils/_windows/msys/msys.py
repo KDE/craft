@@ -103,7 +103,7 @@ class UpdatePackage(VirtualPackageBase):
         return self.subinfo.msysInstallShim(self.imageDir()) and self.subinfo.updateMsys()
 
     def qmerge(self):
-        return super().qmerge()
+        return super().qmerge(dbOnly=True)
 
 
 class Package(MaybeVirtualPackageBase):
