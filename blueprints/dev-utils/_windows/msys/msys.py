@@ -103,15 +103,18 @@ class UpdatePackage(VirtualPackageBase):
         return self.subinfo.msysInstallShim(self.imageDir()) and self.subinfo.updateMsys()
 
     def qmerge(self):
-        return super().qmerge(dbOnly=True)
+        # if it's installed inside of craft we want to update it but never unmerge it
+        # if it's an external msys we want to merge the msys.exe helper
+        internalMsys = ("Paths", "Msys") not in CraftCore.settings
+        return super().qmerge(dbOnly=internalMsys)
 
 
 class Package(MaybeVirtualPackageBase):
     def __init__(self):
-        useExternalMsys = ("Paths", "Msys") not in CraftCore.settings
-        self.skipCondition = useExternalMsys and not CraftCore.installdb.isInstalled("dev-utils/msys")
-        MaybeVirtualPackageBase.__init__(self, condition=self.skipCondition, classA=MsysPackage, classB=UpdatePackage)
-        if not useExternalMsys:
+        useExternalMsys = ("Paths", "Msys") in CraftCore.settings
+        installMsys = not useExternalMsys and not CraftCore.installdb.isInstalled("dev-utils/msys")
+        MaybeVirtualPackageBase.__init__(self, condition=installMsys, classA=MsysPackage, classB=UpdatePackage)
+        if useExternalMsys:
             # override the install method
             def install():
                 CraftCore.log.info(f"Using manually installed msys {CraftStandardDirs.msysDir()}")
