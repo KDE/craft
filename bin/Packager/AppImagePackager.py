@@ -88,6 +88,8 @@ class AppImagePackager(CollectionPackagerBase):
                 "--desktop-file",
                 desktopFiles[0],
             ]
+            for output in defines.get("appimage_extra_output", []):
+                args += [f"--output={output}"]
             if "appimage_apprun" in defines:
                 args += ["--custom-apprun", defines["appimage_apprun"]]
             if CraftCore.debug.verbose() > 0:
