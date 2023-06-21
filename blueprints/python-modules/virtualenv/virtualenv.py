@@ -17,6 +17,11 @@ class Package(PipPackageBase):
     def __init__(self, **args):
         PipPackageBase.__init__(self)
 
+    def install(self):
+        if CraftCore.compiler.isLinux:
+            return True
+        return super().install()
+
     def postInstall(self):
         for ver, python in self._pythons:
             if not self.venvDir(ver).exists():
