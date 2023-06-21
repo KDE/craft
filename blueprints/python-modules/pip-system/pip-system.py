@@ -31,7 +31,7 @@ class Package(PipPackageBase):
                         return False
         return True
 
-        def install(self):
-            if CraftCore.compiler.isLinux:
-                return True
-            return super().install()
+    def install(self):
+        if CraftCore.compiler.isLinux:
+            return True
+        return super().install()
