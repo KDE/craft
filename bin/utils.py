@@ -961,13 +961,6 @@ class ScopedEnv(object):
         self.reset()
 
 
-def normalisePath(path):
-    path = os.path.abspath(path)
-    if OsUtils.isWin():
-        return path.replace("\\", "/")
-    return path
-
-
 def configureFile(inFile: str, outFile: str, variables: dict) -> bool:
     CraftCore.log.debug(f"configureFile {inFile} -> {outFile}\n{variables}")
     configPatter = re.compile(r"@{([^{}]+)}")
