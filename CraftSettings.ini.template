@@ -234,10 +234,10 @@ Protected = False
 ## Already sign the cache, this speeds up packaging on Windows as most deployed binaries won't need signing every time
 SignCache = ${CodeSigning:Enabled}
 #Certificate = C:\CraftRoot\mycert.pfx
-CommonName = K Desktop Environment e.V.
-Organization = K Desktop Environment e.V.
-Street = Prinzenstr 85 F
-Locality = Berlin
+CommonName = K Desktop Environment e. V.
+Organization = K Desktop Environment e. V.
+#Street = Prinzenstr 85 F
+#Locality = Berlin
 Country = DE
 State = Berlin
 PostalCode = 10969
