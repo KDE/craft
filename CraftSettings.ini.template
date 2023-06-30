@@ -234,13 +234,14 @@ Protected = False
 ## Already sign the cache, this speeds up packaging on Windows as most deployed binaries won't need signing every time
 SignCache = ${CodeSigning:Enabled}
 #Certificate = C:\CraftRoot\mycert.pfx
+## Attributes of the certificate's DN (aka Subject)
 CommonName = K Desktop Environment e. V.
 Organization = K Desktop Environment e. V.
-#Street = Prinzenstr 85 F
-#Locality = Berlin
+#Street =
+#Locality =
 Country = DE
 State = Berlin
-PostalCode = 10969
+#PostalCode =
 ## Mac code signing
 ###################
 ## Your mac deveoper id asigned with your certificates
