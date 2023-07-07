@@ -17,11 +17,11 @@ class Arguments(object):
             self.__legacyString = subprocess.list2cmdline([str(x) for x in self.__args])
 
     def toSetting(self):
-        return ";".join(self.get())
+        return str(self)
 
     @staticmethod
     def fromSetting(data: str):
-        return Arguments(CraftCore.settings._parseList(data))
+        return Arguments(data)
 
     def append(self, other):
         if not other:
