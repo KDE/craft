@@ -60,7 +60,8 @@ class TestUserOptions(CraftTestBase.CraftTestBase):
 
     def testOptions(self):
         package = CraftPackageObject.get("test-blueprint")
-        package.subinfo.registerOptions()
+        # initialize subinfo and options
+        package.subinfo
         option = UserOptions.get(package)
         self.assertEqual(option.thetruth, False)
         self.assertEqual(option.name, "Something")
