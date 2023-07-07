@@ -7,9 +7,7 @@ from options import *
 
 class TestUserOptions(CraftTestBase.CraftTestBase):
     def _prepare(self, options=None):
-        path = os.path.join(self.kdeRoot.name, "BlueprintSettings.ini")
-        del UserOptions.UserOptionsSingleton._instance
-        UserOptions.UserOptionsSingleton._instance = None
+        path = CraftCore.settings.get("Blueprints", "Settings")
 
         settings = configparser.ConfigParser(allow_no_value=True)
         settings.optionxform = str
@@ -24,6 +22,9 @@ class TestUserOptions(CraftTestBase.CraftTestBase):
             with open(path, "wt+") as ini:
                 settings.write(ini)
 
+        # reload the settings
+        del UserOptions.UserOptionsSingleton._instance
+        UserOptions.UserOptionsSingleton._instance = None
         return UserOptions.instance()
 
     def test(self):

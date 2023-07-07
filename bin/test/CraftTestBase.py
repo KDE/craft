@@ -6,6 +6,7 @@ import CraftConfig
 import CraftStandardDirs
 import InstallDB
 from CraftCore import CraftCore
+from options import UserOptions
 
 
 class CraftTestBase(unittest.TestCase):
@@ -30,7 +31,12 @@ class CraftTestBase(unittest.TestCase):
             del CraftCore.installdb
         CraftCore.installdb = InstallDB.InstallDB(os.path.join(self.kdeRoot.name, "test.db"))
 
+        del UserOptions.UserOptionsSingleton._instance
+        UserOptions.UserOptionsSingleton._instance = None
+
     def tearDown(self):
         CraftCore.installdb.connection.close()
         del CraftCore.installdb
+        del UserOptions.UserOptionsSingleton._instance
+        UserOptions.UserOptionsSingleton._instance = None
         del self.kdeRoot
