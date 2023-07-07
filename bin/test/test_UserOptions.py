@@ -38,7 +38,7 @@ class TestUserOptions(CraftTestBase.CraftTestBase):
                     "ignored": "True",
                     "customeOptionInt": "5",
                 },
-                "dev-utils": {"args": "Foo"},
+                "dev-utils": {"args": "Foo", "featureArguments": 'Foo bar "-DQuotedString=This is quoted"'},
             }
         )
 
@@ -52,7 +52,10 @@ class TestUserOptions(CraftTestBase.CraftTestBase):
 
         self.assertEqual(o.ignored, True)
         self.assertEqual(o.version, "5")
-        self.assertEqual(o.args.get(), Arguments(["Foo"]).get())
+        self.assertEqual(o.args.get(), str(Arguments(["Foo"])))
+        self.assertEqual(o.featureArguments.get(), str(Arguments(["Foo", "bar", "-DQuotedString=This is quoted"])))
+        self.assertEqual((o.featureArguments + ["1", "2", "3"]).get(), 'Foo bar "-DQuotedString=This is quoted" 1 2 3')
+        self.assertEqual((o.featureArguments + ["1", "2", "3"]).get(), str(Arguments('Foo bar "-DQuotedString=This is quoted"') + Arguments(["1", "2", "3"])))
 
         self.assertEqual(o.not_existing, None)
         o.registerOption("not_existing", True)
