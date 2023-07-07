@@ -274,6 +274,8 @@ class UserOptions(object):
         """
         if package.path not in UserOptions.instance().packageOptions:
             UserOptions.instance().packageOptions[package.path] = {}
+        if package.path in UserOptions.instance().cachedOptions:
+            UserOptions.instance().cachedOptions[package.path]._cachedFromParent = {}
         UserOptions.instance().packageOptions[package.path][key] = value
 
     def setOption(self, key, value, persist: bool = True) -> bool:
