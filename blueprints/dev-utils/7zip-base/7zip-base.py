@@ -7,7 +7,7 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotFreeBSD & CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
-        for ver in ["21.03", "21.06", "21.07", "22.01"]:
+        for ver in ["21.03", "21.06", "21.07", "22.01", "23.01"]:
             verNoDot = ver.replace(".", "")
             self.targetInstallPath[ver] = os.path.join("dev-utils", "7z")
             if CraftCore.compiler.isWindows:
@@ -17,18 +17,12 @@ class subinfo(info.infoclass):
             elif CraftCore.compiler.isLinux:
                 self.targets[ver] = f"https://github.com/fmoc/prebuilt-7z/releases/download/continuous/prebuilt-7z-{ver}-x86_64-asm.tar.gz"
             else:
-                suffix = ""
-                self.targets[
-                    ver
-                ] = f"https://files.kde.org/craft/3rdparty/7zip/{verNoDot}/7z{verNoDot}-{'mac' if CraftCore.compiler.isMacOS else 'linux'}{suffix}.tar.xz"
+                self.targets[ver] = f"https://files.kde.org/craft/3rdparty/7zip/{verNoDot}/7z{verNoDot}-mac.tar.xz"
                 self.targetDigestUrls[ver] = self.targets[ver] + ".sha256"
 
         self.description = "7-Zip is a file archiver with a high compression ratio."
         self.webpage = "http://www.7-zip.org/"
-        if CraftCore.compiler.isMacOS:
-            self.defaultTarget = "21.07"
-        else:
-            self.defaultTarget = "22.01"
+        self.defaultTarget = "23.01"
 
 
 from Package.BinaryPackageBase import *

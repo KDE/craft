@@ -29,8 +29,11 @@ class PipBuildSystem(BuildSystemBase):
         return python2
 
     def _getPython3(self):
-        if CraftPackageObject.get("dev-utils/python3").isInstalled:
-            return Path(CraftCore.standardDirs.craftRoot()) / "dev-utils/bin/python3"
+        if CraftPackageObject.get("python-modules/virtualenv").isInstalled:
+            if CraftCore.compiler.isWindows:
+                return Path(CraftCore.standardDirs.craftRoot()) / f"etc/virtualenv/3/Scripts/python"
+            else:
+                return Path(CraftCore.standardDirs.craftRoot()) / f"etc/virtualenv/3/bin/python3"
         return sys.executable
 
     @property

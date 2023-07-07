@@ -3,8 +3,8 @@ import subprocess
 
 import info
 import utils
+from CraftCore import CraftCore
 from Package.PipPackageBase import PipPackageBase
-from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
@@ -30,3 +30,8 @@ class Package(PipPackageBase):
                     if not utils.system([python, "-m", "ensurepip", "--user"]):
                         return False
         return True
+
+    def install(self):
+        if CraftCore.compiler.isLinux:
+            return True
+        return super().install()
