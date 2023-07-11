@@ -73,8 +73,8 @@ class AppImagePackager(CollectionPackagerBase):
         env = {
             "ARCH": "x86_64",
             "LD_LIBRARY_PATH": f"{archiveDir}/usr/lib:{archiveDir}/usr/lib/x86_64-linux-gnu",
-            "OUTPUT": defines["setupname"],
-            "VERSION": defines["version"],
+            "LINUXDEPLOY_OUTPUT_VERSION": defines["version"],
+            "LDAI_OUTPUT": defines["setupname"],
             "NO_STRIP": "1",  # our binaries are already stripped
         }
         if OsUtils.detectDocker():
