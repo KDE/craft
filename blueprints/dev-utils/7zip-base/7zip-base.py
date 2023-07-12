@@ -31,8 +31,12 @@ from Package.BinaryPackageBase import *
 class Package(BinaryPackageBase):
     def __init__(self):
         BinaryPackageBase.__init__(self)
-        self.subinfo.options.package.disableBinaryCache = True
         self.subinfo.shelveAble = False
+
+    def binaryArchiveName(self, **kwargs):
+        # never use 7z to compress this package
+        kwargs["fileType"] = ".zip"
+        return super().binaryArchiveName(**kwargs)
 
     def unpack(self):
         if not super().unpack():
