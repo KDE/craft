@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
             else:
                 self.targets[ver] = f"https://files.kde.org/craft/3rdparty/7zip/{verNoDot}/7z{verNoDot}-mac.tar.xz"
                 self.targetDigestUrls[ver] = self.targets[ver] + ".sha256"
-
+        self.patchLevel["23.01"] = 1
         self.description = "7-Zip is a file archiver with a high compression ratio."
         self.webpage = "http://www.7-zip.org/"
         self.defaultTarget = "23.01"
@@ -35,7 +35,11 @@ class Package(BinaryPackageBase):
 
     def binaryArchiveName(self, **kwargs):
         # never use 7z to compress this package
-        kwargs["fileType"] = ".zip"
+        if CraftCore.compiler.isWindows:
+            kwargs["fileType"] = ".zip"
+        else:
+            kwargs["fileType"] = ".tar.xz"
+
         return super().binaryArchiveName(**kwargs)
 
     def unpack(self):
