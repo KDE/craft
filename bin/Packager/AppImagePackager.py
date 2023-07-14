@@ -95,4 +95,4 @@ class AppImagePackager(CollectionPackagerBase):
                 args += ["--custom-apprun", defines["appimage_apprun"]]
             if CraftCore.debug.verbose() > 0:
                 args += ["-v0"]
-            return utils.system([self.linuxdeployExe] + args, cwd=self.packageDestinationDir())
+            return utils.system([self.linuxdeployExe] + args, cwd=self.packageDestinationDir(), acceptableExitCodes=[0, -11])
