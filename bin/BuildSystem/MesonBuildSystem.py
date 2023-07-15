@@ -75,38 +75,36 @@ class MesonBuildSystem(BuildSystemBase):
         )
 
     def craftCrossFile(self):
-        craftCrossFilePath = os.path.join(CraftStandardDirs.craftRoot(), "etc", "craft-cross-file.txt")
-        if not os.path.exists(craftCrossFilePath):
-            config = "[constants]\n"
+        craftCrossFilePath = CraftStandardDirs.craftRoot() / "etc/craft-cross-file.txt"
+        config = "[constants]\n"
 
-            toolchain_path = os.path.join(CraftCore.standardDirs.tmpDir(), f"android-{CraftCore.compiler.architecture}-toolchain")
-            config += f"android_ndk = '{toolchain_path}/bin/'\n"
-            if CraftCore.compiler.architecture == CraftCompiler.Architecture.arm64:
-                config += "toolchain = 'aarch64-linux-android-'\n"
-            else:
-                config += f"toolchain = '{CraftCore.compiler.androidArchitecture}-linux-android-'\n"
+        toolchain_path = os.path.join(CraftCore.standardDirs.tmpDir(), f"android-{CraftCore.compiler.architecture}-toolchain")
+        config += f"android_ndk = '{toolchain_path}/bin/'\n"
+        if CraftCore.compiler.architecture == CraftCompiler.Architecture.arm64:
+            config += "toolchain = 'aarch64-linux-android-'\n"
+        else:
+            config += f"toolchain = '{CraftCore.compiler.androidArchitecture}-linux-android-'\n"
 
-            config += "[binaries]\n"
-            config += "c = android_ndk + toolchain + 'gcc'\n"
-            config += "cpp = android_ndk + toolchain + 'g++'\n"
-            config += "ar = android_ndk + toolchain + 'ar'\n"
-            config += "ld = android_ndk + toolchain + 'ld'\n"
-            config += "objcopy = android_ndk + toolchain + 'objcopy'\n"
-            config += "strip = android_ndk + toolchain + 'strip'\n"
-            config += "pkgconfig = '/usr/bin/pkg-config'\n"
+        config = (
+            "[binaries]\n"
+            "c = android_ndk + toolchain + 'gcc'\n"
+            "cpp = android_ndk + toolchain + 'g++'\n"
+            "ar = android_ndk + toolchain + 'ar'\n"
+            "ld = android_ndk + toolchain + 'ld'\n"
+            "objcopy = android_ndk + toolchain + 'objcopy'\n"
+            "strip = android_ndk + toolchain + 'strip'\n"
+            "pkgconfig = '/usr/bin/pkg-config'\n"
+            "[host_machine]\n"
+            "system = 'linux'\n"
+            f"cpu_family = '{CraftCore.compiler.androidArchitecture}'\n"
+            f"cpu = '{CraftCore.compiler.androidArchitecture}'\n"  # according to meson, this value is meaningless (https://github.com/mesonbuild/meson/issues/7037#issuecomment-620137436)
+            "endian = 'little'\n"
+        )
 
-            config += "[host_machine]\n"
-            config += "system = 'linux'\n"
-            config += f"cpu_family = '{CraftCore.compiler.androidArchitecture}'\n"
-            config += f"cpu = '{CraftCore.compiler.androidArchitecture}'\n" # according to meson, this value is meaningless (https://github.com/mesonbuild/meson/issues/7037#issuecomment-620137436)
-            config += "endian = 'little'\n"
+        with craftCrossFilePath.open("wt", encoding="UTF-8") as f:
+            f.write(config)
 
-            with open(craftCrossFilePath, "wt", encoding="UTF-8") as f:
-                f.write(config + "\n")
-
-        if os.path.exists(craftCrossFilePath):
-            return craftCrossFilePath
-        return ""
+        return craftCrossFilePath
 
     def configure(self, defines=""):
         with utils.ScopedEnv(self.__env()):
