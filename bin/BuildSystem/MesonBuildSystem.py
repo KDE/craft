@@ -87,7 +87,7 @@ class MesonBuildSystem(BuildSystemBase):
         config = (
             "[constants]\n"
             f"android_ndk = '{toolchain_path}/bin/'\n"
-            f"toolchain = '{toolchain}\n"
+            f"toolchain = '{toolchain}'\n"
             "[binaries]\n"
             "c = android_ndk + toolchain + 'gcc'\n"
             "cpp = android_ndk + toolchain + 'g++'\n"
