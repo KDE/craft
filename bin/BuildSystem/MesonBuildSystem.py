@@ -76,16 +76,18 @@ class MesonBuildSystem(BuildSystemBase):
 
     def craftCrossFile(self):
         craftCrossFilePath = CraftStandardDirs.craftRoot() / "etc/craft-cross-file.txt"
-        config = "[constants]\n"
 
-        toolchain_path = os.path.join(CraftCore.standardDirs.tmpDir(), f"android-{CraftCore.compiler.architecture}-toolchain")
-        config += f"android_ndk = '{toolchain_path}/bin/'\n"
         if CraftCore.compiler.architecture == CraftCompiler.Architecture.arm64:
-            config += "toolchain = 'aarch64-linux-android-'\n"
+            toolchain = "aarch64-linux-android-"
         else:
-            config += f"toolchain = '{CraftCore.compiler.androidArchitecture}-linux-android-'\n"
+            toolchain = f"{CraftCore.compiler.androidArchitecture}-linux-android-"
+
+        toolchain_path = CraftCore.standardDirs.tmpDir() / f"android-{CraftCore.compiler.architecture}-toolchain"
 
         config = (
+            "[constants]\n"
+            f"android_ndk = '{toolchain_path}/bin/'\n"
+            f"toolchain = '{toolchain}\n"
             "[binaries]\n"
             "c = android_ndk + toolchain + 'gcc'\n"
             "cpp = android_ndk + toolchain + 'g++'\n"
