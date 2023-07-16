@@ -78,23 +78,30 @@ class MesonBuildSystem(BuildSystemBase):
         craftCrossFilePath = CraftStandardDirs.craftRoot() / "etc/craft-cross-file.txt"
 
         if CraftCore.compiler.architecture == CraftCompiler.Architecture.arm64:
-            toolchain = "aarch64-linux-android-"
+            toolchain = "aarch64-linux-android"
+            compiler = "aarch64-linux-android"
+        elif CraftCore.compiler.architecture == CraftCompiler.Architecture.arm32:
+            toolchain = "arm-linux-androideabi"
+            compiler = "armv7a-linux-androideabi"
         else:
-            toolchain = f"{CraftCore.compiler.androidArchitecture}-linux-android-"
+            toolchain = f"{CraftCore.compiler.androidArchitecture}-linux-android"
+            compiler = f"{CraftCore.compiler.androidArchitecture}-linux-android"
 
-        toolchain_path = CraftCore.standardDirs.tmpDir() / f"android-{CraftCore.compiler.architecture}-toolchain"
+        toolchain_path = os.path.join(os.environ["ANDROID_NDK"], "toolchains/llvm/prebuilt", os.environ.get("ANDROID_NDK_HOST", "linux-x86_64"), "bin")
 
         config = (
             "[constants]\n"
-            f"android_ndk = '{toolchain_path}/bin/'\n"
+            f"android_ndk = '{toolchain_path}/'\n"
             f"toolchain = '{toolchain}'\n"
+            f"compiler = '{compiler}'\n"
+            f"abiversion = '{CraftCore.compiler.androidApiLevel()}'\n"
             "[binaries]\n"
-            "c = android_ndk + toolchain + 'gcc'\n"
-            "cpp = android_ndk + toolchain + 'g++'\n"
-            "ar = android_ndk + toolchain + 'ar'\n"
-            "ld = android_ndk + toolchain + 'ld'\n"
-            "objcopy = android_ndk + toolchain + 'objcopy'\n"
-            "strip = android_ndk + toolchain + 'strip'\n"
+            "c = android_ndk + compiler + abiversion + '-clang'\n"
+            "cpp = android_ndk + compiler + abiversion + '-clang++'\n"
+            "ar = android_ndk + toolchain + '-ar'\n"
+            "ld = android_ndk + toolchain + '-ld.gold'\n"
+            "objcopy = android_ndk + toolchain + '-objcopy'\n"
+            "strip = android_ndk + toolchain + '-strip'\n"
             "pkgconfig = '/usr/bin/pkg-config'\n"
             "[host_machine]\n"
             "system = 'linux'\n"
