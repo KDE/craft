@@ -38,9 +38,6 @@ if [[ ! -d "$craftRoot" ]]; then
 fi
 
 export craftRoot
-if [[ -n "$PS1" ]]; then
-    export PS1="CRAFT: $PS1"
-fi
 
 CRAFT_ENV=$(${CRAFT_PYTHON_BIN} "$craftRoot/bin/CraftSetupHelper.py" --setup)
 function unset_env() {
@@ -69,6 +66,12 @@ function export_lines() {
 }
 unset_env
 export_lines "$CRAFT_ENV"
+
+
+if [[ -n "$PS1" ]]; then
+    export PS1="CRAFT: $PS1"
+fi
+
 
 craft() {
     ${CRAFT_PYTHON_BIN} "$craftRoot/bin/craft.py" $@
