@@ -49,10 +49,7 @@ class VersionSystemSourceBase(SourceBase):
 
         CraftCore.log.debug("cleaning %s" % self.buildDir())
         self.cleanBuild()
-        ret = self.applyPatches()
-        if CraftCore.settings.getboolean("General", "EMERGE_HOLD_ON_PATCH_FAIL", False):
-            return ret
-        return True
+        return self.applyPatches()
 
     def repositoryUrlCount(self):
         """return the number of provided repository url's. Multiple repository urls' are delimited by ';'"""

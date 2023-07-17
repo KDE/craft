@@ -44,6 +44,8 @@ class SourceBase(CraftBase):
         CraftCore.debug.trace("SourceBase.applyPatches called")
         if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
             patches = self.subinfo.patchesToApply()
+            if not patches:
+                return True
             if not isinstance(patches, list):
                 patches = list([patches])
             # pylint: disable=W0142

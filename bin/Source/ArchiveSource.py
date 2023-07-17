@@ -203,10 +203,7 @@ class ArchiveSource(SourceBase):
                 if not utils.unpackFile(self.__downloadDir, filename, self.workDir()):
                     return False
 
-        ret = self.applyPatches()
-        if CraftCore.settings.getboolean("General", "EMERGE_HOLD_ON_PATCH_FAIL", False):
-            return ret
-        return True
+        return self.applyPatches()
 
     def getUrls(self):
         CraftCore.debug.printOut(self.subinfo.target())
