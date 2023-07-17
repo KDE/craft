@@ -74,7 +74,11 @@ fi
 
 
 craft() {
-    ${CRAFT_PYTHON_BIN} "$craftRoot/bin/craft.py" $@
+    local python="$KDEROOT/dev-utils/bin/python3"
+    if [[ ! -f $python ]]; then
+      local python=${CRAFT_PYTHON_BIN}
+    fi
+    ${python} "$craftRoot/bin/craft.py" $@
 }
 
 cs() {
