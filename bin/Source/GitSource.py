@@ -200,9 +200,12 @@ class GitSource(VersionSystemSourceBase):
                     if patch.is_file() and not patch.name.startswith("."):
                         out = self.applyPatch(patchfile / patch, patchdepth=patchdepth) and out
             return out
+        patchArgs = ["--ignore-space-change", "--verbose", "-p", str(patchdepth), patchfile]
+        if self.__git("apply", ["--check", "--reverse"] + patchArgs, logCommand=True):
+            return True
         return self.__git(
             "apply",
-            ["--ignore-space-change", "-p", str(patchdepth), patchfile],
+            patchArgs,
             logCommand=True,
         )
 
