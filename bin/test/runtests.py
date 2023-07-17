@@ -37,9 +37,9 @@ Just run this file as a python script to execute all tests
 
 import optparse
 import os
+import platform
 import sys
 import unittest
-import platform
 
 xml_report = True
 try:
@@ -51,13 +51,14 @@ except ImportError:
 def fallbackTestAbi():
     if os.name == "posix":
         if platform.system() == "Darwin":
-            return 'macos-clang-x86_64'
+            return "macos-clang-x86_64"
         elif platform.system() == "FreeBSD":
-            return 'freebsd-gcc-x86_64'
+            return "freebsd-gcc-x86_64"
         else:
-            return 'linux-gcc-x86_64'
+            return "linux-gcc-x86_64"
     else:
-        return 'windows-cl-msvc2019-x86_64'
+        return "windows-cl-msvc2019-x86_64"
+
 
 thisdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(thisdir, os.pardir))
@@ -77,10 +78,13 @@ def main():
     parser.set_defaults(verbosity=1)
     parser.add_option("-v", "--verbose", action="store_const", const=3, dest="verbosity")
     parser.add_option("-t", "--target", action="store", dest="target", default=None)
+    parser.add_option("--blueprint-root", action="store", dest="blueprintRoot", default=None)
     opts, rest = parser.parse_args()
 
     CraftCore.debug.setVerbose(opts.verbosity)
     os.environ["CRAFT_TEST_VERBOSITY"] = str(opts.verbosity)
+    if opts.blueprintRoot:
+        os.environ["CRAFT_TEST_BLUEPRINTS_ROOT"] = opts.blueprintRoot
 
     loader = unittest.TestLoader()
     if not opts.target:
@@ -88,7 +92,7 @@ def main():
     else:
         suite = loader.loadTestsFromName(opts.target)
     if xml_report:
-        with open('JUnitTestResults.xml', "wb") as output:
+        with open("JUnitTestResults.xml", "wb") as output:
             runner = xmlrunner.XMLTestRunner(verbosity=opts.verbosity + 1, output=output)
             result = runner.run(suite)
     else:

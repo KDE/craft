@@ -12,7 +12,10 @@ from options import UserOptions
 class CraftTestBase(unittest.TestCase):
     def setUp(self):
         CraftCore.debug.setVerbose(int(os.getenv("CRAFT_TEST_VERBOSITY")))
-        blueprintsDir = CraftCore.standardDirs.blueprintRoot()
+        if "CRAFT_TEST_BLUEPRINTS_ROOT" not in os.environ:
+            blueprintsDir = CraftCore.standardDirs.blueprintRoot()
+        else:
+            blueprintsDir = os.environ["CRAFT_TEST_BLUEPRINTS_ROOT"]
         self.kdeRoot = tempfile.TemporaryDirectory()
         craftRoot = os.path.normpath(os.path.join(os.path.split(__file__)[0], "..", "..", ".."))
         oldSettings = CraftCore.settings
