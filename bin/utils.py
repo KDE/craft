@@ -351,20 +351,14 @@ def systemWithoutShell(
     # if there was no output
     ansiFix()
 
-    if acceptableExitCodes is None:
-        ok = proc.returncode == 0
-    else:
-        ok = proc.returncode in acceptableExitCodes
-    if not ok:
-        if not secretCommand:
-            msg = f"Command {redact(cmd, secret)} failed with exit code {proc.returncode}"
-            if not ciMode:
-                CraftCore.log.debug(msg)
-            else:
-                CraftCore.log.info(msg)
-        else:
-            CraftCore.log.info(f"{app} failed with exit code {proc.returncode}")
-    return ok
+    if acceptableExitCodes and proc.returncode in acceptableExitCodes:
+        CraftCore.log.info(f"Command {redact(cmd, secret)} succeeded with exit code {proc.returncode}")
+        return True
+    elif proc.returncode == 0:
+        return True
+
+    CraftCore.log.info(f"Command {redact(cmd, secret)} failed with exit code {proc.returncode}")
+    return False
 
 
 def cleanDirectory(directory):
