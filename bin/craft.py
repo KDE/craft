@@ -288,6 +288,10 @@ def main(timer):
     elif args.verbose:
         CraftCore.debug.setVerbose(args.verbose)
 
+    if args.get:
+        # don't write any ansi to the stream
+        args.ciMode = True
+
     CraftCore.settings.set("General", "WorkOffline", args.offline or args.srcDir is not None)
     CraftCore.settings.set("Compile", "BuildType", args.buildType)
     CraftCore.settings.set("General", "Options", ";".join(args.options))
