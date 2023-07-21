@@ -17,9 +17,9 @@ class CraftTestBase(unittest.TestCase):
         else:
             blueprintsDir = os.environ["CRAFT_TEST_BLUEPRINTS_ROOT"]
         self.kdeRoot = tempfile.TemporaryDirectory()
-        craftRoot = os.path.normpath(os.path.join(os.path.split(__file__)[0], "..", "..", ".."))
-        oldSettings = CraftCore.settings
-        CraftCore.settings = CraftConfig.CraftConfig(os.path.join(craftRoot, "craft", "CraftSettings.ini.template"))
+        CraftCore.settings = CraftConfig.CraftConfig(
+            os.path.join(os.path.normpath(os.path.join(os.path.split(__file__)[0], "..", "..", "..")), "craft", "CraftSettings.ini.template")
+        )
 
         CraftCore.standardDirs = CraftStandardDirs.CraftStandardDirs(self.kdeRoot.name)
         os.makedirs(CraftCore.standardDirs.etcDir())
@@ -32,7 +32,14 @@ class CraftTestBase(unittest.TestCase):
         )
         if hasattr(CraftCore, "installdb"):
             del CraftCore.installdb
-        CraftCore.installdb = InstallDB.InstallDB(os.path.join(self.kdeRoot.name, "test.db"))
+        dbPath = os.path.join(self.kdeRoot.name, "test.db")
+
+        CraftCore.installdb = InstallDB.InstallDB(dbPath)
+        CraftCore.log.info(f"CraftRoot: {CraftCore.standardDirs.craftRoot()}")
+        CraftCore.log.info(f"etcDir: {CraftCore.standardDirs.etcDir()}")
+        CraftCore.log.info(f"BlueprintRoot: {blueprintsDir}")
+        CraftCore.log.info(f"BlueprintSettings: {CraftCore.settings.get('Blueprints','Settings')}")
+        CraftCore.log.info(f"dbPath: {dbPath}")
 
         del UserOptions.UserOptionsSingleton._instance
         UserOptions.UserOptionsSingleton._instance = None
