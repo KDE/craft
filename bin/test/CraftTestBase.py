@@ -14,11 +14,6 @@ from options import UserOptions
 class CraftTestBase(unittest.TestCase):
     def setUp(self):
         CraftCore.debug.setVerbose(int(os.getenv("CRAFT_TEST_VERBOSITY")))
-        if "CRAFT_TEST_BLUEPRINTS_ROOT" in os.environ:
-            blueprintRoot = Path(os.environ["CRAFT_TEST_BLUEPRINTS_ROOT"]).resolve()
-            if not blueprintRoot.exists():
-                self.fail(f"blueprintRoot: {blueprintRoot} does not exist")
-            CraftCore.settings.set("Blueprints", "BlueprintRoot", str(blueprintRoot))
         self.kdeRoot = tempfile.TemporaryDirectory()
         CraftCore.settings = CraftConfig.CraftConfig(
             os.path.join(os.path.normpath(os.path.join(os.path.split(__file__)[0], "..", "..", "..")), "craft", "CraftSettings.ini.template")
@@ -26,6 +21,12 @@ class CraftTestBase(unittest.TestCase):
 
         CraftCore.standardDirs = CraftStandardDirs.CraftStandardDirs(self.kdeRoot.name)
         os.makedirs(CraftCore.standardDirs.etcDir())
+
+        if "CRAFT_TEST_BLUEPRINTS_ROOT" in os.environ:
+            blueprintRoot = Path(os.environ["CRAFT_TEST_BLUEPRINTS_ROOT"]).resolve()
+            if not blueprintRoot.exists():
+                self.fail(f"blueprintRoot: {blueprintRoot} does not exist")
+            CraftCore.settings.set("Blueprints", "BlueprintRoot", str(blueprintRoot))
 
         CraftCore.settings.set("Compile", "BuildType", "RelWithDebInfo")
         CraftCore.settings.set(
