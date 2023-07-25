@@ -79,7 +79,11 @@ findPython("py")
 
 function Global:craft()
 {
-    return & $env:CRAFT_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "craft.py")) @args
+    $python = (Get-Command "$env:KDEROOT/dev-utils/bin/python3" -ErrorAction SilentlyContinue).Source
+    if (-not $python) {
+        $python = $env:CRAFT_PYTHON
+    }
+    return & $python ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "craft.py")) @args
 }
 
 function Global:craftCd([string] $package, [string]$property, [string] $target="")
