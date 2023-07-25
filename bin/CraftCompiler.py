@@ -130,7 +130,7 @@ class CraftCompiler(object):
         FreeBSD = 0x1 << 3
         Android = 0x1 << 4
 
-        Unix = Linux | MacOS | FreeBSD
+        Unix = Linux | MacOS | FreeBSD | Android
         All = ~0
 
         # define inverted values to allow usage in info.ini
