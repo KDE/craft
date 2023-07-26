@@ -846,8 +846,7 @@ def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False, env
     if CraftCore.compiler.isWindows and guiApp:
         command.append("--gui")
     if env:
-        command.append("--env")
-        command += [f"{k}={v}" for k, v in env.items()]
+        command += [f"--env {k}={v}" for k, v in env.items()]
     return system(command + ["--"] + args, **kw)
 
 
