@@ -165,7 +165,7 @@ def compress(archive: Path, source: str) -> bool:
         if not ciMode and CraftCore.cache.checkCommandOutputFor(app, "-bs"):
             flags += ["-bso2", "-bsp1"]
             kw["stderr"] = subprocess.PIPE
-        if CraftCore.compiler.isUnix:
+        if str(archive).endswith(".tar.7z"):
             tar = CraftCore.cache.findApplication("tar")
             kw["pipeProcess"] = subprocess.Popen(
                 [
