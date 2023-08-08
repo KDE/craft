@@ -83,6 +83,9 @@ class MesonBuildSystem(BuildSystemBase):
         elif CraftCore.compiler.architecture == CraftCompiler.Architecture.arm32:
             toolchain = "arm-linux-androideabi"
             compiler = "armv7a-linux-androideabi"
+        elif CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
+            toolchain = "i686-linux-android"
+            compiler = "i686-linux-android"
         else:
             toolchain = f"{CraftCore.compiler.androidArchitecture}-linux-android"
             compiler = f"{CraftCore.compiler.androidArchitecture}-linux-android"
