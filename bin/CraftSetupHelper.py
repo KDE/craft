@@ -41,10 +41,7 @@ MIN_PY_VERSION = (3, 6, 0)
 
 
 def log(msg, critical=False):
-    if critical or not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
-        CraftCore.debug.print(msg, sys.stderr)
-    else:
-        CraftCore.log.debug(msg)
+    CraftCore.debug.print(msg, sys.stderr)
     if critical:
         exit(1)
 
