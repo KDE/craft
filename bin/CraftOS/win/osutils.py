@@ -1,19 +1,24 @@
 import ctypes
 import os
-import platform
-import subprocess
+import shutil
 import tempfile
+import uuid
+from enum import IntFlag
 from pathlib import Path
 
 import CraftOS.OsUtilsBase
 from CraftCore import CraftCore
 
 
-class FileAttributes:
+class FileAttributes(IntFlag):
     # https://msdn.microsoft.com/en-us/library/windows/desktop/gg258117(v=vs.85).aspx
     FILE_ATTRIBUTE_READONLY = 0x1
     FILE_ATTRIBUTE_REPARSE_POINT = 0x400
     FILE_ATTRIBUTE_NORMAL = 0x80
+
+
+class MoveFlags(IntFlag):
+    MOVEFILE_DELAY_UNTIL_REBOOT = 0x4
 
 
 class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
@@ -21,6 +26,7 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
 
     @staticmethod
     def rm(path, force=False):
+        path = Path(path)
         CraftCore.log.debug("deleting file %s" % path)
         if OsUtils.isLink(path):
             try:
@@ -33,16 +39,20 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
         except:
             if force:
                 OsUtils.setWritable(path)
-            ret = ctypes.windll.kernel32.DeleteFileW(str(path)) != 0
-            if not ret:
-                msg = f"Deleting {path} failed error: "
+            if ctypes.windll.kernel32.DeleteFileW(str(path)) == 0:
                 error = ctypes.windll.kernel32.GetLastError()
                 if error == 5:
-                    msg += "ERROR_ACCESS_DENIED"
+                    if path.suffix != ".craft_autoremove":
+                        autoRemoveName = f"{path}.{uuid.uuid4()}.craft_autoremove"
+                        if shutil.move(path, autoRemoveName):
+                            return False
+                        CraftCore.log.debug(f"Register {autoRemoveName} for removal on restart")
+                        if ctypes.windll.kernel32.MoveFileExW(autoRemoveName, None, MoveFlags.MOVEFILE_DELAY_UNTIL_REBOOT):
+                            CraftCore.log.error(f"Registering {autoRemoveName} for removal on restart failed error: {ctypes.windll.kernel32.GetLastError()}")
+                            return False
                 else:
-                    msg += str(error)
-                CraftCore.log.error(msg)
-                return False
+                    CraftCore.log.error(f"Deleting {path} failed error: {error}")
+                    return False
         return True
 
     @staticmethod

@@ -569,6 +569,11 @@ def copyFile(
             CraftCore.log.warning("Failed to create hardlink %s for %s" % (dest, src))
     try:
         shutil.copy2(src, dest, follow_symlinks=False)
+    except PermissionError as e:
+        if CraftCore.compiler.isWindows and dest.exists():
+            return deleteFile(dest) and copyFile(src, dest)
+        else:
+            raise e
     except Exception as e:
         CraftCore.log.error(f"Failed to copy file:\n{src} to\n{dest}", exc_info=e)
         return False
@@ -726,13 +731,7 @@ def deleteFile(fileName):
     """delete file"""
     if not os.path.exists(fileName):
         return False
-    CraftCore.log.debug("delete file %s " % (fileName))
-    try:
-        os.remove(fileName)
-    except Exception as e:
-        CraftCore.log.warning(e)
-        return False
-    return True
+    return OsUtils.rm(fileName)
 
 
 def putenv(name, value):
