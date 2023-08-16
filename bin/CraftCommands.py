@@ -172,7 +172,7 @@ def addBlueprintsRepository(url: str) -> bool:
 
 
 def destroyCraftRoot() -> bool:
-    OsUtils.killProcess()
+    OsUtils.killProcess(prefix=CraftCore.standardDirs.craftRoot() / "bin")
     settingsFiles = {"kdesettings.ini", "CraftSettings.ini", "BlueprintSettings.ini"}
     dirsToKeep = [
         CraftCore.standardDirs.downloadDir(),

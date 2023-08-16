@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: BSD-2-Clause
+# SPDX-FileCopyrightText: 2014 Hannah von Reth <vonreth@kde.org>
+
 # central instance for managing settings regarding craft
-# copyright:
-# Hannah von Reth <vonreth [AT] kde [DOT] org>
 
 import atexit
 import configparser
