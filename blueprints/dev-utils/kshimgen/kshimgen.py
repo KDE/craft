@@ -10,25 +10,19 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.svnTargets["master"] = "https://invent.kde.org/sdk/kshim.git"
 
-        for ver in ["0.5.4"]:
+        for ver in ["0.6.0"]:
             if CraftCore.compiler.isAndroid:
                 # we need kshimgen only as a host tool, on Android we need to use a pre-build binary, since it doesn't build on Android natively
-                self.targets[ver] = f"https://download.kde.org/stable/kshimgen/{ver}/kshimgen-{ver}-linux-binary.tar.gz"
-                self.targetDigestUrls[ver] = f"https://download.kde.org/stable/kshimgen/{ver}/kshimgen-{ver}-linux-binary.tar.gz.sha256"
-                self.targetInstallPath[ver] = "dev-utils/bin"
+                self.targets[ver] = f"https://download.kde.org/stable/kshim/kshim-v{ver}-linux-binary-x86_64.tar.7z"
+                self.targetDigestUrls[ver] = f"https://download.kde.org/stable/kshim/kshim-v{ver}-linux-binary-x86_64.tar.7z.sha256"
+                self.targetInstallPath[ver] = "dev-utils"
             else:
                 # on all other platforms we build kshimgen from source
-                self.targets[ver] = f"https://invent.kde.org/sdk/kshim/-/archive/v{ver}/kshim-v{ver}.tar.gz"
-                self.targetInstSrc[ver] = f"kshim-v{ver}"
+                self.targets[ver] = f"https://download.kde.org/stable/kshim/kshim-{ver}.tar.xz"
+                self.targetDigestUrls[ver] = f"https://download.kde.org/stable/kshim/kshim-{ver}.tar.xz.sha256"
+                self.targetInstSrc[ver] = f"kshim-{ver}"
 
-
-        if not CraftCore.compiler.isAndroid:
-            self.targetDigests["0.5.4"] = (
-                ["f0df8b089c8464335c9599c73b83704798ff1adbe18707e7e91fc058345dbb4e"],
-                CraftHash.HashAlgorithm.SHA256,
-            )
-
-        self.defaultTarget = "0.5.4"
+        self.defaultTarget = "0.6.0"
 
     if not CraftCore.compiler.isAndroid:
         def setDependencies(self):
