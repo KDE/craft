@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         )
 
     def setDependencies(self):
-        self.buildDependencies["virtual/bin-base"] = None
+        self.buildDependencies["virtual/base"] = None
 
 
 class Package(BinaryPackageBase):

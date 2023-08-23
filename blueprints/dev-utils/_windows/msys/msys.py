@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = "base"
 
     def setDependencies(self):
-        self.runtimeDependencies["virtual/bin-base"] = None
+        self.runtimeDependencies["virtual/base"] = None
         self.runtimeDependencies["dev-utils/python3"] = None
 
     def msysInstallShim(self, installDir):
