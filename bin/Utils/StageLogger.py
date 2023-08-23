@@ -28,6 +28,11 @@ class StageLogger(object):
             self.__logFile = self._logPath.open("wt", encoding="UTF-8")
         self.__logFile.write(s)
 
+    def dump(self):
+        self.__logFile.flush()
+        with self._logPath.open("rt", encoding="UTF-8", newline="\n") as read:
+            CraftCore.log.info(read.read())
+
     def __enter__(self):
         StageLogger.ActiveLogs.append(self)
         return self
@@ -41,3 +46,7 @@ class StageLogger(object):
     def log(s: str):
         for l in StageLogger.ActiveLogs:
             l.write(s)
+
+    @staticmethod
+    def dumpCurrentLog():
+        StageLogger.ActiveLogs[-1].dump()
