@@ -394,10 +394,8 @@ class BuildSystemBase(CraftBase):
         if not self.subinfo.isCachedBuild:
             if not utils.cleanDirectory(self.symbolsImageDir()):
                 return False
-
-            if self.buildType() in {"RelWithDebInfo", "Debug"}:
-                if not self.__internalPostInstallHandleSymbols(binaryFiles):
-                    return False
+            if not self.__internalPostInstallHandleSymbols(binaryFiles):
+                return False
 
             # sign the binaries before we add them to the cache
             if CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
