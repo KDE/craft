@@ -31,7 +31,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = "master"
 
     def setDependencies(self):
-        self.runtimeDependencies["virtual/bin-base"] = None
+        self.runtimeDependencies["virtual/base"] = None
         self.runtimeDependencies["dev-utils/pkg-config"] = None
         self.buildDependencies["python-modules/pip"] = None
         self.buildDependencies["python-modules/virtualenv"] = None
