@@ -223,6 +223,9 @@ LogDeprecated = True
 ## Don't write to stderr
 Enabled = False
 
+## Hide the output by default and only display it if an error occurred
+OutputOnFailure = False
+
 ## Delete the build folder after the install
 ClearBuildFolder = False
 

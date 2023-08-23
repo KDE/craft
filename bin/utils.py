@@ -47,6 +47,7 @@ from CraftCore import CraftCore
 from CraftDebug import deprecated
 from CraftOS.osutils import OsUtils
 from Utils.Arguments import Arguments
+from Utils.StageLogger import StageLogger
 
 
 def __locate7z():
@@ -240,6 +241,7 @@ def systemWithoutShell(
     logged to allow the display of progress bars."""
 
     ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
+    onlyOutputOnFailure = CraftCore.settings.getboolean("ContinuousIntegration", "OutputOnFailure", False)
     needsAnsiFix = OsUtils.isWin() and CraftCore.settings.getboolean("General", "AllowAnsiColor", True)
 
     def ansiFix():
@@ -306,8 +308,9 @@ def systemWithoutShell(
         if secret:
             _debugCommand = redact(_debugCommand, secret)
             _logCommand = redact(_logCommand, secret)
-        if logCommand:
+        if logCommand and not onlyOutputOnFailure:
             CraftCore.debug.print(f"executing command: {_logCommand}")
+        StageLogger.log(f"executing command: {_logCommand}")
         CraftCore.log.debug(_debugCommand)
         CraftCore.log.debug(f"CWD: {cwd!r}")
         CraftCore.log.debug(f"displayProgress={displayProgress}")
@@ -324,15 +327,17 @@ def systemWithoutShell(
         if pipeProcess:
             pipeProcess.stdout.close()
         for line in proc.stdout:
+            lineUtf8 = line.decode("utf-8", errors="backslashreplace")
             if isinstance(stdout, io.TextIOWrapper):
-                if CraftCore.debug.verbose() < 3:  # don't print if we write the debug log to stdout anyhow
+                StageLogger.log(lineUtf8)
+                if not onlyOutputOnFailure and CraftCore.debug.verbose() < 3:  # don't print if we write the debug log to stdout anyhow
                     ansiFix()
                     stdout.buffer.write(line)
                     stdout.flush()
             elif stdout == subprocess.DEVNULL:
                 pass
             elif isinstance(stdout, io.TextIOBase) or "IORedirector" in stdout.__class__.__name__:
-                stdout.write(line.decode("utf-8", errors="backslashreplace"))
+                stdout.write(lineUtf8)
             else:
                 stdout.write(line)
 
@@ -356,7 +361,8 @@ def systemWithoutShell(
         return True
     elif proc.returncode == 0:
         return True
-
+    if onlyOutputOnFailure:
+        StageLogger.dumpCurrentLog()
     CraftCore.log.info(f"Command {redact(cmd, secret)} failed with exit code {proc.returncode}")
     return False
 

@@ -213,6 +213,14 @@ def main(timer):
     )
 
     parser.add_argument(
+        "--output-on-failure",
+        action="store_true",
+        default=CraftCore.settings.getboolean("ContinuousIntegration", "OutputOnFailure", False),
+        dest="outputOnFailure",
+        help="Hide subprocess output and only display it if an error occurred",
+    )
+
+    parser.add_argument(
         "--add-blueprint-repository",
         action="store",
         help="Installs a blueprint repository",
@@ -303,6 +311,7 @@ def main(timer):
     CraftCore.settings.set("Packager", "UseCache", not args.noCache and args.useCache)
     CraftCore.settings.set("ContinuousIntegration", "SourceDir", args.srcDir)
     CraftCore.settings.set("ContinuousIntegration", "Enabled", args.ciMode)
+    CraftCore.settings.set("ContinuousIntegration", "OutputOnFailure", args.outputOnFailure)
 
     CraftTitleUpdater.instance.start(f"({CraftCore.standardDirs.craftRoot()}) craft " + " ".join(sys.argv[1:]), timer)
     CraftSetupHelper.SetupHelper.printBanner()

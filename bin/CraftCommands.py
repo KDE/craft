@@ -36,6 +36,7 @@ from Blueprints.CraftVersion import CraftVersion
 from options import *
 from Utils import CraftTimer
 from Utils.CraftTitleUpdater import CraftTitleUpdater
+from Utils.StageLogger import StageLogger
 
 
 def __recurseCraft(command: [str], args: [str]):
@@ -66,7 +67,7 @@ def doExec(package, action):
 
 # in general it would be nice to handle this with inheritance, but actually we don't wan't a blueprint to be able to change the behaviour of "all"...
 def handlePackage(package, buildAction, directTargets):
-    with CraftTimer.Timer(f"HandlePackage {package}", 3) as timer:
+    with CraftTimer.Timer(f"HandlePackage {package}", 3) as timer, StageLogger(f"{package.path}/{package.name}"):
         success = True
         actions = []
         timer.hook = lambda: utils.notify(
@@ -102,9 +103,10 @@ def handlePackage(package, buildAction, directTargets):
         else:
             actions = [buildAction]
         for action in actions:
-            success = doExec(package, action)
-            if not success:
-                return False
+            with StageLogger(f"{package.path}/{action}"):
+                success = doExec(package, action)
+                if not success:
+                    return False
         return True
 
 

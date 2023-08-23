@@ -133,7 +133,7 @@ class CraftBase(object):
             CraftCore.settings.get(
                 "Packager",
                 "Destination",
-                os.path.join(CraftStandardDirs.craftRoot(), "tmp"),
+                CraftCore.standardDirs.tmpDir(),
             )
         )
         utils.createDir(dstpath)
