@@ -25,9 +25,11 @@
 # SUCH DAMAGE.
 
 import os
+import tempfile
 from pathlib import Path
 
 import utils
+from Blueprints.CraftPackageObject import CraftPackageObject
 from Blueprints.CraftVersion import CraftVersion
 from CraftBase import InitGuard
 from CraftCompiler import CraftCompiler
@@ -144,20 +146,22 @@ class NullsoftInstallerPackager(PortablePackager):
                 total += self.folderSize(entry.path)
         return total
 
+    def _prepare7Z(self, tmpDir: str):
+        sevenZPath = CraftPackageObject.get("7zip-base").instance.imageDir() / "dev-utils/7z"
+        sevenZPath /= "7za.exe" if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64 else "7za_32.exe"
+        sevenZDest = Path(tmpDir) / "7za.exe"
+        if not sevenZPath.exists():
+            CraftCore.log.warning("Failed to find 7z")
+            return None
+        if not (utils.copyFile(sevenZPath, sevenZDest) and CodeSign.signWindows(sevenZDest)):
+            return None
+        return sevenZDest
+
     def generateNSISInstaller(self, defines):
         """runs makensis to generate the installer itself"""
         defines["dataPath"] = defines["setupname"]
         defines["dataName"] = os.path.basename(defines["dataPath"])
         defines["setupname"] = str(Path(defines["setupname"]).with_suffix(".exe"))
-        sevenZPath = CraftCore.standardDirs.craftRoot() / "dev-utils/7z"
-        if sevenZPath.exists():
-            defines["7za"] = sevenZPath / "7za.exe" if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64 else sevenZPath / "7za_32.exe"
-        else:  # legacy
-            defines["7za"] = (
-                CraftCore.cache.findApplication("7za")
-                if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64
-                else CraftCore.cache.findApplication("7za_32")
-            )
         # provide the actual installation size in kb, ignore the 7z size as it gets removed after the install
         defines["installSize"] = str(int((self.folderSize(self.archiveDir()) - os.path.getsize(defines["dataPath"])) / 1000))
         defines["estimated_size"] = str(int(int(os.path.getsize(defines["dataPath"])) / 1000))
@@ -195,29 +199,32 @@ class NullsoftInstallerPackager(PortablePackager):
         defines["uninstallFiles"] = "\n".join([f'Delete "$INSTDIR\\{f}"' for f in uninstallFiles])
         defines["uninstallDirs"] = "\n".join([f'RMDir "$INSTDIR\\{x}"' for x in sorted(uninstallDirs, reverse=True)])
 
-        CraftCore.debug.new_line()
-        CraftCore.log.debug(f"generating installer {defines['setupname']}")
+        with tempfile.TemporaryDirectory() as tmp:
+            # we need to sign 7z.exe as we modify the file, do it in a tmp dir
+            defines["7za"] = self._prepare7Z(tmp)
+            CraftCore.debug.new_line()
+            CraftCore.log.debug(f"generating installer {defines['setupname']}")
 
-        verboseString = "/V4" if CraftCore.debug.verbose() > 0 else "/V3"
+            verboseString = "/V4" if CraftCore.debug.verbose() > 0 else "/V3"
 
-        defines.setdefault("nsis_include", f"!addincludedir {os.path.dirname(self.scriptname)}")
-        defines["nsis_include_internal"] = f"!addincludedir {os.path.join(os.path.dirname(__file__), 'Nsis')}"
-        cmdDefines = []
-        configuredScrip = os.path.join(self.workDir(), f"{self.package.name}.nsi")
-        if not utils.configureFile(self.scriptname, configuredScrip, defines):
-            configuredScrip = self.scriptname
-            # this script uses the old behaviour, using defines
-            for key, value in defines.items():
-                if value is not None:
-                    cmdDefines.append(f"/D{key}={value}")
+            defines.setdefault("nsis_include", f"!addincludedir {os.path.dirname(self.scriptname)}")
+            defines["nsis_include_internal"] = f"!addincludedir {os.path.join(os.path.dirname(__file__), 'Nsis')}"
+            cmdDefines = []
+            configuredScrip = os.path.join(self.workDir(), f"{self.package.name}.nsi")
+            if not utils.configureFile(self.scriptname, configuredScrip, defines):
+                configuredScrip = self.scriptname
+                # this script uses the old behaviour, using defines
+                for key, value in defines.items():
+                    if value is not None:
+                        cmdDefines.append(f"/D{key}={value}")
 
-        if not utils.systemWithoutShell(
-            [self.nsisExe, verboseString] + cmdDefines + [configuredScrip],
-            cwd=os.path.abspath(self.packageDir()),
-        ):
-            CraftCore.log.critical("Error in makensis execution")
-            return False
-        return CodeSign.signWindows([defines["setupname"]])
+            if not utils.systemWithoutShell(
+                [self.nsisExe, verboseString] + cmdDefines + [configuredScrip],
+                cwd=os.path.abspath(self.packageDir()),
+            ):
+                CraftCore.log.critical("Error in makensis execution")
+                return False
+            return CodeSign.signWindows([defines["setupname"]])
 
     def createPackage(self):
         """create a package"""
