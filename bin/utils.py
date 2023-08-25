@@ -43,8 +43,8 @@ import tempfile
 from pathlib import Path
 
 import Notifier.NotificationLoader
-from CraftCore import CraftCore
 from CraftCompiler import CraftCompiler
+from CraftCore import CraftCore
 from CraftDebug import deprecated
 from CraftOS.osutils import OsUtils
 from Utils.Arguments import Arguments
@@ -311,7 +311,7 @@ def systemWithoutShell(
             _logCommand = redact(_logCommand, secret)
         if logCommand and not onlyOutputOnFailure:
             CraftCore.debug.print(f"executing command: {_logCommand}")
-        StageLogger.log(f"executing command: {_logCommand}")
+        StageLogger.logLine(f"executing command: {_logCommand}")
         CraftCore.log.debug(_debugCommand)
         CraftCore.log.debug(f"CWD: {cwd!r}")
         CraftCore.log.debug(f"displayProgress={displayProgress}")
@@ -362,9 +362,12 @@ def systemWithoutShell(
         return True
     elif proc.returncode == 0:
         return True
+    resultMessage = f"Command {redact(cmd, secret)} failed with exit code {proc.returncode}"
+    StageLogger.logLine(resultMessage)
     if onlyOutputOnFailure:
         StageLogger.dumpCurrentLog()
-    CraftCore.log.info(f"Command {redact(cmd, secret)} failed with exit code {proc.returncode}")
+    else:
+        CraftCore.log.info(resultMessage)
     return False
 
 
@@ -1272,8 +1275,8 @@ def strip(fileName: Path, destFileName: Path = None) -> Path:
             objcopy = os.path.join(toolchain_path, f"{toolchain}-objcopy")
             strip = os.path.join(toolchain_path, f"{toolchain}-strip")
         else:
-            objcopy = 'objcopy'
-            strip = 'strip'
+            objcopy = "objcopy"
+            strip = "strip"
         if not (
             system([objcopy, "--only-keep-debug", fileName, destFileName])
             and system([strip, "--strip-debug", "--strip-unneeded", fileName])

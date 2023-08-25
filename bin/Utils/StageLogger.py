@@ -43,5 +43,9 @@ class StageLogger(object):
             l.write(s)
 
     @staticmethod
+    def logLine(s: str):
+        StageLogger.log(s + "\n")
+
+    @staticmethod
     def dumpCurrentLog():
         StageLogger.ActiveLogs[-1].dump()
