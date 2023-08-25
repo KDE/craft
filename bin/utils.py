@@ -44,6 +44,7 @@ from pathlib import Path
 
 import Notifier.NotificationLoader
 from CraftCore import CraftCore
+from CraftCompiler import CraftCompiler
 from CraftDebug import deprecated
 from CraftOS.osutils import OsUtils
 from Utils.Arguments import Arguments
@@ -1258,10 +1259,25 @@ def strip(fileName: Path, destFileName: Path = None) -> Path:
         if not (system(["/usr/bin/dsymutil", fileName, "-o", destFileName]) and system(["strip", "-x", "-S", fileName]) and localSignMac([fileName])):
             return None
     else:
+        if CraftCore.compiler.isAndroid:
+            toolchain_path = os.path.join(os.environ["ANDROID_NDK"], "toolchains/llvm/prebuilt", os.environ.get("ANDROID_NDK_HOST", "linux-x86_64"), "bin")
+            if CraftCore.compiler.architecture == CraftCompiler.Architecture.arm64:
+                toolchain = "aarch64-linux-android"
+            elif CraftCore.compiler.architecture == CraftCompiler.Architecture.arm32:
+                toolchain = "arm-linux-androideabi"
+            elif CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
+                toolchain = "i686-linux-android"
+            else:
+                toolchain = f"{CraftCore.compiler.androidArchitecture}-linux-android"
+            objcopy = os.path.join(toolchain_path, f"{toolchain}-objcopy")
+            strip = os.path.join(toolchain_path, f"{toolchain}-strip")
+        else:
+            objcopy = 'objcopy'
+            strip = 'strip'
         if not (
-            system(["objcopy", "--only-keep-debug", fileName, destFileName])
-            and system(["strip", "--strip-debug", "--strip-unneeded", fileName])
-            and system(["objcopy", "--add-gnu-debuglink", destFileName, fileName])
+            system([objcopy, "--only-keep-debug", fileName, destFileName])
+            and system([strip, "--strip-debug", "--strip-unneeded", fileName])
+            and system([objcopy, "--add-gnu-debuglink", destFileName, fileName])
         ):
             return False
     return destFileName
