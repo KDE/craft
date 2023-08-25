@@ -13,12 +13,7 @@ class StageLogger(object):
 
     def __init__(self, name: str):
         self.__logFile = None  # type: io.TextIOBase
-        logDir = CraftCore.settings.get(
-            "Packager",
-            "Destination",
-            CraftCore.standardDirs.tmpDir(),
-        )
-        self._logPath = (Path(logDir) / "logs" / name).with_suffix(".log")
+        self._logPath = (CraftCore.standardDirs.craftRoot() / "logs" / name).with_suffix(".log")
         if not self._logPath.parent.exists():
             self._logPath.parent.mkdir(parents=True)
 
@@ -46,6 +41,10 @@ class StageLogger(object):
     def log(s: str):
         for l in StageLogger.ActiveLogs:
             l.write(s)
+
+    @staticmethod
+    def logLine(s: str):
+        StageLogger.log(s + "\n")
 
     @staticmethod
     def dumpCurrentLog():
