@@ -43,7 +43,6 @@ import tempfile
 from pathlib import Path
 
 import Notifier.NotificationLoader
-from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from CraftDebug import deprecated
 from CraftOS.osutils import OsUtils
@@ -1264,11 +1263,11 @@ def strip(fileName: Path, destFileName: Path = None) -> Path:
     else:
         if CraftCore.compiler.isAndroid:
             toolchain_path = os.path.join(os.environ["ANDROID_NDK"], "toolchains/llvm/prebuilt", os.environ.get("ANDROID_NDK_HOST", "linux-x86_64"), "bin")
-            if CraftCore.compiler.architecture == CraftCompiler.Architecture.arm64:
+            if CraftCore.compiler.architecture == CraftCore.compiler.Architecture.arm64:
                 toolchain = "aarch64-linux-android"
-            elif CraftCore.compiler.architecture == CraftCompiler.Architecture.arm32:
+            elif CraftCore.compiler.architecture == CraftCore.compiler.Architecture.arm32:
                 toolchain = "arm-linux-androideabi"
-            elif CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
+            elif CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_32:
                 toolchain = "i686-linux-android"
             else:
                 toolchain = f"{CraftCore.compiler.androidArchitecture}-linux-android"
