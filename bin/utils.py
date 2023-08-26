@@ -241,7 +241,6 @@ def systemWithoutShell(
     logged to allow the display of progress bars."""
 
     ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
-    onlyOutputOnFailure = CraftCore.settings.getboolean("ContinuousIntegration", "OutputOnFailure", False)
     needsAnsiFix = OsUtils.isWin() and CraftCore.settings.getboolean("General", "AllowAnsiColor", True)
 
     def ansiFix():
@@ -308,7 +307,7 @@ def systemWithoutShell(
         if secret:
             _debugCommand = redact(_debugCommand, secret)
             _logCommand = redact(_logCommand, secret)
-        if logCommand and not onlyOutputOnFailure:
+        if logCommand and not StageLogger.isOutputOnFailure():
             CraftCore.debug.print(f"executing command: {_logCommand}")
         StageLogger.logLine(f"executing command: {_logCommand}")
         CraftCore.log.debug(_debugCommand)
@@ -330,7 +329,7 @@ def systemWithoutShell(
             lineUtf8 = line.decode("utf-8", errors="backslashreplace")
             if isinstance(stdout, io.TextIOWrapper):
                 StageLogger.log(lineUtf8)
-                if not onlyOutputOnFailure and CraftCore.debug.verbose() < 3:  # don't print if we write the debug log to stdout anyhow
+                if not StageLogger.isOutputOnFailure() and CraftCore.debug.verbose() < 3:  # don't print if we write the debug log to stdout anyhow
                     ansiFix()
                     stdout.buffer.write(line)
                     stdout.flush()
@@ -363,9 +362,7 @@ def systemWithoutShell(
         return True
     resultMessage = f"Command {redact(cmd, secret)} failed with exit code {proc.returncode}"
     StageLogger.logLine(resultMessage)
-    if onlyOutputOnFailure:
-        StageLogger.dumpCurrentLog()
-    else:
+    if not StageLogger.isOutputOnFailure():
         CraftCore.log.info(resultMessage)
     return False
 

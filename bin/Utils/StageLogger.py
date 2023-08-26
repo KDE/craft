@@ -49,3 +49,7 @@ class StageLogger(object):
     @staticmethod
     def dumpCurrentLog():
         StageLogger.ActiveLogs[-1].dump()
+
+    @staticmethod
+    def isOutputOnFailure():
+        return CraftCore.settings.getboolean("ContinuousIntegration", "OutputOnFailure", False)
