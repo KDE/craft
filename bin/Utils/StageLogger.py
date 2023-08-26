@@ -44,7 +44,7 @@ class StageLogger(object):
 
     @staticmethod
     def logLine(s: str):
-        StageLogger.log(s + "\n")
+        StageLogger.log(f"{s}\n{'=' * CraftCore.debug.lineWidth}")
 
     @staticmethod
     def dumpCurrentLog():
