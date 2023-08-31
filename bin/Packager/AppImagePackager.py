@@ -75,7 +75,7 @@ class AppImagePackager(CollectionPackagerBase):
             "LD_LIBRARY_PATH": f"{archiveDir}/usr/lib:{archiveDir}/usr/lib/x86_64-linux-gnu",
             "LINUXDEPLOY_OUTPUT_VERSION": defines["version"],
             "LDAI_OUTPUT": defines["setupname"],
-            "LDNP_PACKAGE_NAME": defines.get("appimage_native_package_name", defines["appname"]),
+            "LDNP_META_PACKAGE_NAME": defines.get("appimage_native_package_name", defines["appname"]),
             "NO_STRIP": "1",  # our binaries are already stripped
         }
         if OsUtils.detectDocker():
