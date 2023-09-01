@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 # this package contains functions to check the current compiler
 # copyright:
@@ -53,10 +54,15 @@ class BoostBuildSystem(BuildSystemBase):
             options += ["link=shared", "runtime-link=shared"]
         else:
             options += ["link=static", "runtime-link=shared"]
-        if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64:
+
+        if CraftCore.compiler.architecture & CraftCompiler.Architecture.x86_64:
             options += ["address-model=64", "architecture=x86"]
-        else:
+        elif CraftCore.compiler.architecture & CraftCompiler.Architecture.x86_32:
             options += ["address-model=32", "architecture=x86"]
+        elif CraftCore.compiler.architecture & CraftCompiler.Architecture.arm64:
+            options += ["address-model=64", "architecture=arm"]
+        elif CraftCore.compiler.architecture & CraftCompiler.Architecture.arm32:
+            options += ["address-model=32", "architecture=arm"]
 
         if self.buildType() == "Debug":
             options += ["variant=debug"]
