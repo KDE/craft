@@ -252,7 +252,6 @@ class PackageBase(CraftBase):
             "cleanimage": "cleanImage",
             "cleanbuild": "cleanBuild",
             "unpack": "unpack",
-            "compile": "compile",
             "configure": "configure",
             "make": "make",
             "install": ["install", "internalPostInstall"],

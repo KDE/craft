@@ -86,7 +86,8 @@ def handlePackage(package, buildAction, directTargets):
                 actions = [
                     "fetch",
                     "unpack",
-                    "compile",
+                    "configure",
+                    "make",
                     "cleanimage",
                     "install",
                     "post-install",
@@ -100,6 +101,8 @@ def handlePackage(package, buildAction, directTargets):
                         actions += ["package"]
             elif buildAction == "update":
                 actions = ["update"]
+        elif buildAction == "compile":
+            actions = ["configure", "make"]
         else:
             actions = [buildAction]
         for action in actions:

@@ -98,12 +98,6 @@ class BuildSystemBase(CraftBase):
         elif OsUtils.isUnix():
             return "make"
 
-    def compile(self):
-        """convencience method - runs configure() and make()"""
-        configure = getattr(self, "configure")
-        make = getattr(self, "make")
-        return configure() and make()
-
     def configureSourceDir(self):
         """returns source dir used for configure step"""
         # pylint: disable=E1101
