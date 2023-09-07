@@ -242,7 +242,6 @@ def unShelve(shelve, args):
             packages[p] = Info(
                 s.get("version", None),
                 s.get("revision", None),
-                s.get("patchLevel", None),
             )
 
     settings = UserOptions.instance().settings
@@ -253,8 +252,6 @@ def unShelve(shelve, args):
             settings[p]["version"] = info.version
         if info.revision:
             settings[p]["revision"] = info.revision
-        if info.patchLevel:
-            settings[p]["patchLevel"] = info.patchLevel
     # bootstrap craft first
     opt = []
     skip = False
