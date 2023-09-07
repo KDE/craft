@@ -243,7 +243,7 @@ class PackageBase(CraftBase):
             if revision == installed.getRevision():
                 return True
         # TODO: handle the internal steps more sane
-        return self.compile() and self.install() and self.internalPostInstall() and self.postInstall() and self.qmerge() and self.postQmerge()
+        return self.configure() and self.make() and self.install() and self.internalPostInstall() and self.postInstall() and self.qmerge() and self.postQmerge()
 
     def runAction(self, command):
         # TODO: handle the internal steps more sane
