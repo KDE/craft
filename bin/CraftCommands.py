@@ -86,7 +86,8 @@ def handlePackage(package, buildAction, directTargets):
                 actions = [
                     "fetch",
                     "unpack",
-                    "compile",
+                    "configure",
+                    "make",
                     "cleanimage",
                     "install",
                     "post-install",
@@ -100,6 +101,8 @@ def handlePackage(package, buildAction, directTargets):
                         actions += ["package"]
             elif buildAction == "update":
                 actions = ["update"]
+        elif buildAction == "compile":
+            actions = ["configure", "make"]
         else:
             actions = [buildAction]
         for action in actions:
@@ -226,12 +229,12 @@ def unShelve(shelve, args):
     for repo in blueprintRepositories:
         if not addBlueprintsRepository(repo):
             return False
-    Info = namedtuple("Info", "version revision patchLevel")
+    Info = namedtuple("Info", "version revision")
     packages = {}  # type: Info
     if listVersion == 1:
         for sections in parser.keys():
             for packageName in parser[sections]:
-                packages[packageName] = Info(parser[sections].get(packageName, None), None, None)
+                packages[packageName] = Info(parser[sections].get(packageName, None), None)
     elif listVersion == 2:
         for p, s in parser.items():
             if p in {"General", "DEFAULT"}:
@@ -239,7 +242,6 @@ def unShelve(shelve, args):
             packages[p] = Info(
                 s.get("version", None),
                 s.get("revision", None),
-                s.get("patchLevel", None),
             )
 
     settings = UserOptions.instance().settings
@@ -250,8 +252,6 @@ def unShelve(shelve, args):
             settings[p]["version"] = info.version
         if info.revision:
             settings[p]["revision"] = info.revision
-        if info.patchLevel:
-            settings[p]["patchLevel"] = info.patchLevel
     # bootstrap craft first
     opt = []
     skip = False

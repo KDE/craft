@@ -312,14 +312,14 @@ class SetupHelper(object):
             )
 
     def _setupUnix(self):
-        libraryPaths = [os.path.join(CraftCore.standardDirs.craftRoot(), "lib")]
+        libraryPaths = [CraftCore.standardDirs.craftRoot() / "lib"]
 
         if CraftCore.compiler.isLinux:
-            libraryPaths.append(os.path.join(CraftCore.standardDirs.craftRoot(), "lib", "x86_64-linux-gnu"))
+            libraryPaths.append(CraftCore.standardDirs.craftRoot() / "lib/x86_64-linux-gnu")
 
         self.prependEnvVar("LD_LIBRARY_PATH", libraryPaths)
         if CraftCore.compiler.isLinux or CraftCore.compiler.isFreeBSD:
-            self.prependEnvVar("LDFLAGS", "-Wl,-rpath,'$ORIGIN/../lib'", sep=" ")
+            self.prependEnvVar("LDFLAGS", ["-Wl,-rpath,'$ORIGIN/../lib'", f"-L{CraftCore.standardDirs.craftRoot() / 'lib'}"], sep=" ")
         self.prependEnvVar(
             "BISON_PKGDATADIR",
             os.path.join(CraftCore.standardDirs.craftRoot(), "share", "bison"),
@@ -335,7 +335,7 @@ class SetupHelper(object):
         # we will later replace the hard coded path in BuildSystemBase.internalPostInstall
         self.prependEnvVar(
             "LDFLAGS",
-            f"-Wl,-rpath,{os.path.join(CraftCore.standardDirs.craftRoot(), 'lib')}",
+            [f"-Wl,-rpath,{CraftCore.standardDirs.craftRoot() / 'lib'}", f"-L{CraftCore.standardDirs.craftRoot() / 'lib'}"],
             sep=" ",
         )
         self.prependEnvVar(

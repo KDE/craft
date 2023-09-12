@@ -153,7 +153,7 @@ class NullsoftInstallerPackager(PortablePackager):
         if not sevenZPath.exists():
             CraftCore.log.warning("Failed to find 7z")
             return None
-        if not (utils.copyFile(sevenZPath, sevenZDest) and CodeSign.signWindows(sevenZDest)):
+        if not (utils.copyFile(sevenZPath, sevenZDest) and CodeSign.signWindows([sevenZDest])):
             return None
         return sevenZDest
 

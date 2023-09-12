@@ -21,6 +21,6 @@ class Package(VirtualPackageBase):
     def __init__(self):
         VirtualPackageBase.__init__(self)
 
-    def compile(self):
+    def make(self):
         CraftCore.log.warning("This blueprint does nothing. It is designed to be used by the automated tests only.")
         return True

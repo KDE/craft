@@ -23,6 +23,7 @@ from Package.BinaryPackageBase import *
 class Package(BinaryPackageBase):
     def __init__(self):
         BinaryPackageBase.__init__(self)
+        self.subinfo.shelveAble = False
 
     def postInstall(self):
         return utils.createShim(
