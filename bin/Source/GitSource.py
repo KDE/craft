@@ -204,8 +204,8 @@ class GitSource(VersionSystemSourceBase):
         CraftCore.log.info(f"git apply {patchfile}")
         with tempfile.TemporaryDirectory() as tmp:
             tmpPatch = Path(tmp) / patchfile.name
-            with patchfile.open("rt", newline=None) as patch, tmpPatch.open("wt", newline="\n") as tmp:
-                tmp.write(patch.read())
+            with patchfile.open("rt", newline=None) as patch, tmpPatch.open("wt", newline="\n") as tmpFile:
+                tmpFile.write(patch.read())
             patchArgs = ["--ignore-space-change", "--verbose", "-p", str(patchdepth), tmpPatch]
             if self.__git("apply", ["--check", "--reverse"] + patchArgs, logCommand=True):
                 return True
