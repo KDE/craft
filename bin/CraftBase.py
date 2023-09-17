@@ -112,17 +112,16 @@ class CraftBase(object):
 
     def imageDir(self) -> Path:
         """return absolute path to the install root directory of the currently active package"""
-        return self.buildRoot() / self.imageDirPattern()
+        return CraftShortPath(self.buildRoot()).shortPath / self.imageDirPattern()
 
     def installDir(self) -> Path:
         """return absolute path to the install directory of the currently active package.
         This path may point to a subdir of imageDir() in case @ref info.targetInstallPath is used
         """
         if self.subinfo.hasInstallPath():
-            installDir = self.imageDir() / self.subinfo.installPath()
+            return self.imageDir() / self.subinfo.installPath()
         else:
-            installDir = self.imageDir()
-        return installDir
+            return self.imageDir()
 
     def packageDestinationDir(self) -> Path:
         """return absolute path to the directory where binary packages are placed into.
