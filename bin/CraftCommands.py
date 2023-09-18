@@ -106,11 +106,10 @@ def handlePackage(package, buildAction, directTargets):
         else:
             actions = [buildAction]
         for action in actions:
-            with StageLogger(f"{package.path}/{action}"):
-                success = doExec(package, action)
-                if not success:
+            with StageLogger(f"{package.path}/{action}") as log:
+                if not doExec(package, action):
                     if StageLogger.isOutputOnFailure():
-                        StageLogger.dumpCurrentLog()
+                        log.dump()
                     return False
         return True
 

@@ -47,9 +47,5 @@ class StageLogger(object):
         StageLogger.log(f"{s}\n{'=' * CraftCore.debug.lineWidth}\n")
 
     @staticmethod
-    def dumpCurrentLog():
-        StageLogger.ActiveLogs[-1].dump()
-
-    @staticmethod
     def isOutputOnFailure():
         return CraftCore.settings.getboolean("ContinuousIntegration", "OutputOnFailure", False)
