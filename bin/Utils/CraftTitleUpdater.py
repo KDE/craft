@@ -17,7 +17,7 @@ class CraftTitleUpdater(object):
         dynamicPart = ""
         if self.dynamicMessage:
             dynamicPart = f" {self.dynamicMessage()}"
-        return f"{self.title}: {self.timer}{dynamicPart}"
+        return f"{self.title}:\n{self.timer}{dynamicPart}"
 
     def updateTitle(self):
         utils.OsUtils.setConsoleTitle(str(self))
