@@ -183,7 +183,7 @@ class SetupHelper(object):
         if not args:
             args = []
         vswhere = os.path.join(CraftCore.standardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")
-        command = [vswhere, "-property", "installationPath", "-nologo", "-latest"]
+        command = [vswhere, "-property", "installationPath", "-nologo", "-latest", "-products", "*"]
         if prerelease:
             command += ["-prerelease"]
         if version:
@@ -192,10 +192,9 @@ class SetupHelper(object):
                 command.append("-legacy")
             else:
                 if not args:
-                    args = ["-products", "*"]
                     if native:
                         # this fails with express versions
-                        args += [
+                        args = [
                             "-requires",
                             "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
                         ]
