@@ -24,12 +24,14 @@
 
 import argparse
 import collections
+import json
 import os
 import platform
 import shutil
 import sqlite3
 import subprocess
 import sys
+from pathlib import Path
 
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
@@ -165,20 +167,6 @@ class SetupHelper(object):
         os.environ[key] = val
 
     @staticmethod
-    def stringToEnv(string: str):
-        env = CaseInsensitiveDict(os.environ)
-        for line in string.strip().split("\n"):
-            kv = line.strip().split("=", 1)
-            if len(kv) != 2:
-                log(f"Failed to parse environment variable: {line}\n{string}")
-                continue
-            # TODO: why?
-            if kv[0] == "Path":
-                kv[0] = "PATH"
-            env[kv[0]] = kv[1]
-        return env
-
-    @staticmethod
     def _callVCVER(version: int, args: [] = None, native: bool = True, prerelease: bool = False) -> str:
         if not args:
             args = []
@@ -265,10 +253,10 @@ class SetupHelper(object):
                 f"Failed to setup msvc compiler.\n" f"{path} does not exist.",
                 critical=True,
             )
-        status, result = SetupHelper._getOutput(f'"{path}" {args} > NUL && set', shell=True)
+        status, result = SetupHelper._getOutput(f'"{path}" {args} > NUL && {sys.executable} {Path(__file__).parent}/dumpenv.py', shell=True)
         if status != 0:
             log(f"Failed to setup msvc compiler.\n" f"Command: {result} ", critical=True)
-        return SetupHelper.stringToEnv(result)
+        return json.loads(result)
 
     def getEnv(self):
         if CraftCore.compiler.isMSVC():
@@ -278,7 +266,7 @@ class SetupHelper(object):
                 CraftCore.compiler.msvcToolset,
                 CraftCore.compiler.isNative(),
             )
-            return SetupHelper.stringToEnv(result)
+            return json.loads(result)
         return os.environ
 
     def setXDG(self):
