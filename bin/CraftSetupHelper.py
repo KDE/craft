@@ -96,6 +96,7 @@ class SetupHelper(object):
         parser.add_argument("--print-banner", action="store_true")
         parser.add_argument("--getenv", action="store_true")
         parser.add_argument("--setup", action="store_true")
+        parser.add_argument("--format", action="store", choices=["json", "text"], default="text")
         parser.add_argument("rest", nargs=argparse.REMAINDER)
         args = parser.parse_args()
 
@@ -107,9 +108,9 @@ class SetupHelper(object):
         elif args.print_banner:
             self.printBanner()
         elif args.getenv:
-            self.printEnv()
+            self.printEnv(args.format)
         elif args.setup:
-            self.printEnv()
+            self.printEnv(args.format)
             self.printBanner()
 
     def checkForEvilApplication(self):
@@ -516,18 +517,22 @@ class SetupHelper(object):
             if OsUtils.isWin():
                 self.addEnvVar("TERM", "xterm-256color")  # pretend to be a common smart terminal
 
-    def printEnv(self):
+    def printEnv(self, format: str):
         self.setupEnvironment()
-        for key, val in os.environ.items():
-            if key.startswith("BASH_FUNC_"):
-                continue
-            if "\n" in val:
-                log(f"Not adding ${key} to environment since it contains " "a newline character and that breaks craftenv.sh")
-                continue
-            # weird protected env vars
-            if key in {"PROFILEREAD"}:
-                continue
-            CraftCore.log.info(f"{key}={val}")
+
+        if format == "text":
+            for key, val in os.environ.items():
+                if key.startswith("BASH_FUNC_"):
+                    continue
+                if "\n" in val:
+                    log(f"Not adding ${key} to environment since it contains " "a newline character and that breaks craftenv.sh")
+                    continue
+                # weird protected env vars
+                if key in {"PROFILEREAD"}:
+                    continue
+                CraftCore.log.info(f"{key}={val}")
+        else:
+            CraftCore.log.info(json.dumps(dict(os.environ)))
 
     @property
     def version(self):
