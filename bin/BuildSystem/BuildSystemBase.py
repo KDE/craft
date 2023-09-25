@@ -281,11 +281,14 @@ class BuildSystemBase(CraftBase):
                     symFile = utils.symFileName(f)
                     symFileDest = self.symbolsImageDir() / symFile.relative_to(self.imageDir())
                     if symFileDest.exists():
-                        return symFileDest
+                        return True
 
                     if not symFileDest.parent.exists() and not utils.createDir(symFileDest.parent):
                         return False
                     if not utils.strip(f, symFileDest):
+                        if CraftCore.compiler.isAndroid:
+                            CraftCore.log.warning(f"Failed to strip {f}. Is {f} a host tool?")
+                            return True
                         return False
         return True
 
