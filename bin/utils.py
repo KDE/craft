@@ -309,7 +309,7 @@ def systemWithoutShell(
             _logCommand = redact(_logCommand, secret)
         if logCommand and not StageLogger.isOutputOnFailure():
             CraftCore.debug.print(f"executing command: {_logCommand}")
-        StageLogger.logLine(f"executing command: {_logCommand}")
+        StageLogger.logLine(f"executing command: {_debugCommand}")
         CraftCore.log.debug(_debugCommand)
         CraftCore.log.debug(f"CWD: {cwd!r}")
         CraftCore.log.debug(f"displayProgress={displayProgress}")
