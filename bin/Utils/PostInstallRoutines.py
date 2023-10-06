@@ -39,8 +39,12 @@ class PostInstallRoutines(object):
         # only check in imageDir, if installDir differs from imageDir it is irrelevant for us
         if not os.path.isdir(os.path.join(package.imageDir(), dataDir)):
             return True
+        updateMimeDatabase = CraftCore.cache.findApplication("update-mime-database")
+        if not updateMimeDatabase:
+            CraftCore.log.warning("Skipping update-mime-database: update-mime-database not found")
+            return True
         dataDir = os.path.join(CraftCore.standardDirs.craftRoot(), dataDir)
         flags = []
         if CraftCore.debug.verbose() > 0:
             flags += ["-V"]
-        return utils.system(["update-mime-database"] + flags + [dataDir])
+        return utils.system([updateMimeDatabase] + flags + [dataDir])
