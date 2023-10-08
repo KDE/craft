@@ -257,7 +257,7 @@ class SetupHelper(object):
         status, result = SetupHelper._getOutput(f'"{path}" {args} > NUL && "{sys.executable}" "{Path(__file__).parent}/dumpenv.py"', shell=True)
         if status != 0:
             log(f"Failed to setup msvc compiler.\n" f"Command: {result} ", critical=True)
-        return json.loads(result)
+        return CaseInsensitiveDict(json.loads(result))
 
     def getEnv(self):
         if CraftCore.compiler.isMSVC():
