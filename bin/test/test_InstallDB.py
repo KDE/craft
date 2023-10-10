@@ -46,4 +46,4 @@ class TestAPI(CraftTestBase.CraftTestBase):
         package = CraftCore.installdb.addInstalled(packageInstance, "1.4.0")
         package.addFiles(dict().fromkeys(["test", "test1", "test2"], "empty hash"))
         package.install()
-        self.assertEquals(CraftCore.installdb.isInstalled(packageInstance, "1.4.0"), True)
+        self.assertEqual(CraftCore.installdb.isInstalled(packageInstance, "1.4.0"), True)
