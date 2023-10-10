@@ -42,7 +42,7 @@ class TestAPI(CraftTestBase.CraftTestBase):
     def test_addInstalled(self):
         print(CraftPackageObject.rootDirectories())
         packageInstance = CraftPackageObject.get("craft/craft-core")
-        self.assertNotEquals(packageInstance, None)
+        self.assertNotEqual(packageInstance, None)
         package = CraftCore.installdb.addInstalled(packageInstance, "1.4.0")
         package.addFiles(dict().fromkeys(["test", "test1", "test2"], "empty hash"))
         package.install()
