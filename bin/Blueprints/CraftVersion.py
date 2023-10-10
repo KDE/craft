@@ -1,6 +1,6 @@
 import re
-from distutils.version import LooseVersion, StrictVersion, Version
 
+from Blueprints.distutils_version import LooseVersion, StrictVersion, Version
 from CraftCore import CraftCore
 
 
