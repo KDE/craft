@@ -178,6 +178,10 @@ class ArchiveSource(SourceBase):
         """unpacking all zipped(gz, zip, bz2) tarballs"""
         CraftCore.log.debug("ArchiveSource.unpack called")
 
+        if ("ContinuousIntegration", "SourceDir") in CraftCore.settings:
+            # We have source dir, no need to unpack
+            return self.applyPatches()
+
         filenames = self.localFileNames()
 
         # TODO: this might delete generated patches

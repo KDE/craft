@@ -29,6 +29,9 @@ class SourceBase(CraftBase):
         The subinfo class members @ref targetSrcSuffic and @ref targetInstSrc
         controls parts of the name of the generated path."""
 
+        if ("ContinuousIntegration", "SourceDir") in CraftCore.settings:
+            return Path(CraftCore.settings.get("ContinuousIntegration", "SourceDir"))
+
         sourcedir = self.workDir()
 
         if self.subinfo.targetSourceSuffix() != None:
