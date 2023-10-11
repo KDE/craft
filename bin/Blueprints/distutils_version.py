@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: PSF-2.0
+# SPDX-FileCopyrightText: 1998-2001 Corporation for National Research Initiatives
+# SPDX-FileCopyrightText: 2001-2023 Python Software Foundation
 #
 # distutils/version.py
 #
