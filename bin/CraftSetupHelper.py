@@ -111,7 +111,17 @@ class SetupHelper(object):
             self.printEnv(args.format)
         elif args.setup:
             self.printEnv(args.format)
+            self.dumpEnv()
             self.printBanner()
+
+    def dumpEnv(self):
+        # dump the env also to a json file to be used by helper scripts
+        with (CraftCore.standardDirs.etcDir() / "craftenv.json").open("wt", encoding="UTF-8") as out:
+            json.dump(dict(os.environ), out, sort_keys=True, indent=2)
+
+        with (CraftCore.standardDirs.etcDir() / "craftenv-dump.bat").open("wt", encoding="UTF-8", newline="\r\n") as out:
+            lines = [f"@echo off"] + [f"set {k}={v}" for k, v in os.environ.items()]
+            out.write("\r\n".join(lines))
 
     def checkForEvilApplication(self):
         blackList = []
