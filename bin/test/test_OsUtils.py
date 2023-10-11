@@ -40,7 +40,7 @@ class OsUtilsTest(CraftTestBase.CraftTestBase):
                         self.assertEqual(OsUtils.killProcess("craft_test", tmp2), True)
                         self.assertEqual(process.poll(), None)
                         # ensure that process 2 was killed
-                        self.assertNotEquals(process2.poll(), None)
+                        self.assertNotEqual(process2.poll(), None)
                     except subprocess.SubprocessError as e:
                         CraftCore.log.warning(e)
                     finally:

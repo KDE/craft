@@ -309,7 +309,7 @@ def systemWithoutShell(
             _logCommand = redact(_logCommand, secret)
         if logCommand and not StageLogger.isOutputOnFailure():
             CraftCore.debug.print(f"executing command: {_logCommand}")
-        StageLogger.logLine(f"executing command: {_logCommand}")
+        StageLogger.logLine(f"executing command: {_debugCommand}")
         CraftCore.log.debug(_debugCommand)
         CraftCore.log.debug(f"CWD: {cwd!r}")
         CraftCore.log.debug(f"displayProgress={displayProgress}")
@@ -1245,8 +1245,7 @@ def strip(fileName: Path, destFileName: Path = None) -> Path:
     """strip debugging informations from shared libraries and executables"""
     """ Returns the path to the sym file on success, None on error"""
     if CraftCore.compiler.isMSVC() or not CraftCore.compiler.isGCCLike():
-        CraftCore.log.warning(f"Skipping stripping of {fileName} -- either disabled or unsupported with this compiler")
-        return True
+        raise Exception(f"Skipping stripping of {fileName} -- either disabled or unsupported with this compiler")
 
     fileName = Path(fileName)
     if not destFileName:
@@ -1278,7 +1277,7 @@ def strip(fileName: Path, destFileName: Path = None) -> Path:
             and system([strip, "--strip-debug", "--strip-unneeded", fileName])
             and system([objcopy, "--add-gnu-debuglink", destFileName, fileName])
         ):
-            return False
+            return None
     return destFileName
 
 

@@ -33,8 +33,7 @@ class CraftTitleUpdater(object):
         if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
             return
         self.doUpdateTitle = True
-        tittleThread = threading.Thread(target=self.run)
-        tittleThread.setDaemon(True)
+        tittleThread = threading.Thread(target=self.run, daemon=True)
         tittleThread.start()
 
     def stop(self):
