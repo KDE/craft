@@ -20,7 +20,7 @@ from Utils import GetFiles
 
 
 class CraftCache(object):
-    RE_TYPE = re.Pattern if sys.version_info >= (3, 7) else re._pattern_type
+    RE_TYPE = re.Pattern
     _version = 9
     _cacheLifetime = (60 * 60 * 24) * 1  # days
 
