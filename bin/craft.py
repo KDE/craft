@@ -27,6 +27,7 @@
 
 import argparse
 import collections
+import copy
 import subprocess
 import sys
 

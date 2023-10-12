@@ -23,15 +23,13 @@
 # SUCH DAMAGE.
 
 import configparser
-import copy
-import importlib
+import importlib.util
 import os
-import re
+import sys
 from pathlib import Path
 
 import utils
 from CraftCore import CraftCore
-from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 
 
@@ -323,9 +321,11 @@ class CraftPackageObject(object):
         if not self._instance and not self._pattern:
             CraftCore.log.debug(f"module to import: {self.source} {self.path}")
             modulename = os.path.splitext(os.path.basename(self.source))[0].replace(".", "_")
-            loader = importlib.machinery.SourceFileLoader(modulename, self.source)
             try:
-                mod = loader.load_module()
+                spec = importlib.util.spec_from_file_location(modulename, self.source)
+                mod = importlib.util.module_from_spec(spec)
+                sys.modules[modulename] = mod
+                spec.loader.exec_module(mod)
             except Exception as e:
                 raise BlueprintException(f"Failed to load file {self.source}", self, e)
             if not mod is None:

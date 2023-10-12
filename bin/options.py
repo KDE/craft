@@ -8,6 +8,7 @@
 import atexit
 import collections
 import configparser
+import re
 import zlib
 from typing import Dict
 
