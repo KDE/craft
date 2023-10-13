@@ -2,6 +2,7 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 from CraftBase import *
+import utils
 
 
 class SourceBase(CraftBase):

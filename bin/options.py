@@ -45,6 +45,7 @@ class UserOptions(object):
 #     ignored: [True|False]
 #     version: some version
 #     # use the same url as defined for the target but checks out a different branch
+#     srcDir: str                                   An absolute path to a source dir to use instead of fetching the source from the targets remote
 #     branch: str                                   A branch
 #     revision: str                                 A revision or tag, overrides branch
 #     patchLevel: int
@@ -131,6 +132,7 @@ class UserOptions(object):
         _register("version", str, persist=False, compatible=True)
         _register("patchLevel", int, persist=False, compatible=True)
 
+        _register("srcDir", str, persist=False, compatible=True)
         _register("branch", str, persist=False)
         _register("revision", str, persist=False)
         _register("ignored", bool, persist=False, compatible=True)

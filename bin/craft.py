@@ -201,7 +201,7 @@ def main(timer):
         "--src-dir",
         action="store",
         dest="srcDir",
-        help="This will override the source dir and enable the offline mode",
+        help=argparse.SUPPRESS,  # This will override the source dir and enable the offline mode
     )
 
     parser.add_argument(

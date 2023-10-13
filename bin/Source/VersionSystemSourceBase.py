@@ -94,8 +94,6 @@ class VersionSystemSourceBase(SourceBase):
 
     def checkoutDir(self, dummyIndex=0) -> Path:
         CraftCore.debug.trace("VersionSystemSourceBase checkoutDir")
-        if ("ContinuousIntegration", "SourceDir") in CraftCore.settings:
-            return CraftCore.settings.get("ContinuousIntegration", "SourceDir")
         if self.subinfo.hasSvnTarget():
             sourcedir = Path(CraftStandardDirs.gitDir()) / self.package.path
         else:
@@ -108,8 +106,6 @@ class VersionSystemSourceBase(SourceBase):
 
     def sourceDir(self, index=0) -> Path:
         CraftCore.debug.trace("VersionSystemSourceBase sourceDir")
-        if ("ContinuousIntegration", "SourceDir") in CraftCore.settings:
-            return CraftCore.settings.get("ContinuousIntegration", "SourceDir")
 
         sourcedir = self.checkoutDir(index)
 
