@@ -37,6 +37,7 @@ import CraftSetupHelper
 import InstallDB
 from Blueprints.CraftPackageObject import *
 from CraftCore import CraftCore
+from CraftOS.osutils import OsUtils
 from options import UserOptions
 from Utils import CraftTimer
 from Utils.CraftTitleUpdater import CraftTitleUpdater
