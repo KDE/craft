@@ -26,9 +26,12 @@
 
 # git support
 import io
+import os
 import tempfile
+from datetime import datetime
 
 from Source.VersionSystemSourceBase import *
+from Utils.CraftShortPath import CraftShortPath
 
 ## \todo requires installed git package -> add suport for installing packages
 
