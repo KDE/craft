@@ -323,15 +323,14 @@ class CraftPackageObject(object):
             modulename = os.path.splitext(os.path.basename(self.source))[0].replace(".", "_")
             try:
                 spec = importlib.util.spec_from_file_location(modulename, self.source)
-                mod = importlib.util.module_from_spec(spec)
-                sys.modules[modulename] = mod
-                spec.loader.exec_module(mod)
+                self._Module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(self._Module)
             except Exception as e:
                 raise BlueprintException(f"Failed to load file {self.source}", self, e)
-            if not mod is None:
-                mod.CRAFT_CURRENT_MODULE = self
-                if hasattr(mod, "Package"):
-                    pack = mod.Package()
+            if not self._Module is None:
+                CraftCore._CurrentPackage = self
+                if hasattr(self._Module, "Package"):
+                    pack = self._Module.Package()
                     # poor mans inheritance check
                     if self.children and "VirtualPackageBase" not in [x.__name__ for x in pack.__class__.__bases__]:
                         raise BlueprintException(
@@ -340,7 +339,7 @@ class CraftPackageObject(object):
                         )
                     self._instance = pack
                 else:
-                    self._pattern = mod.Pattern
+                    self._pattern = self._Module.Pattern
             else:
                 raise BlueprintException("Failed to find package", self)
         return self._instance

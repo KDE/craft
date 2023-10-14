@@ -55,10 +55,9 @@ class CraftBase(object):
         object.__init__(self)
         CraftCore.log.debug("CraftBase.__init__ called")
 
-        mod = sys.modules[self.__module__]
         # ugly workaround we need to replace the constructor
-        self.package = mod.CRAFT_CURRENT_MODULE  # type: CraftPackageObject
-        self.subinfo = mod.subinfo(self)  # type: info.infoclass
+        self.package = CraftCore._CurrentPackage  # type: CraftPackageObject
+        self.subinfo = self.package._Module.subinfo(self)  # type: info.infoclass
 
         self.buildSystemType = None
 
