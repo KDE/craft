@@ -33,6 +33,7 @@ import utils
 from Blueprints.CraftDependencyPackage import CraftDependencyPackage, DependencyType
 from Blueprints.CraftPackageObject import CraftPackageObject
 from Blueprints.CraftVersion import CraftVersion
+from CraftOS.osutils import OsUtils
 from options import *
 from Utils import CraftTimer
 from Utils.CraftTitleUpdater import CraftTitleUpdater
