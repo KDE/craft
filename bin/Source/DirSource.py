@@ -15,13 +15,13 @@ class DirSource(SourceBase):
         SourceBase.__init__(self)
 
     def sourceDir(self, dummyIndex=0) -> Path:
-        srcPath = Path(self.subinfo.options.dynamic.srcDir)
-
         if ("ContinuousIntegration", "SourceDir") in CraftCore.settings:
             CraftCore.log.warning(
                 "WARNING: [ContinuousIntegration]SourceDir and the --src-dir option are deprecated and will soon be removed. Use the srcDir option of a blueprint instead eg. --options myapp.srcDir=/path/to/source"
             )
             srcPath = Path(CraftCore.settings.get("ContinuousIntegration", "SourceDir"))
+        else:
+            srcPath = Path(self.subinfo.options.dynamic.srcDir)
 
         if not srcPath.is_absolute():
             CraftCore.log.error("Error: Please provide an absolute path as source dir")
