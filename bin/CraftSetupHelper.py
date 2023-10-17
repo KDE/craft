@@ -39,7 +39,7 @@ from Utils.CaseInsensitiveDict import CaseInsensitiveDict
 
 # The minimum python version for craft please edit here
 # if you add code that changes this requirement
-MIN_PY_VERSION = (3, 6, 0)
+MIN_PY_VERSION = (3, 8, 0)
 
 
 def log(msg, critical=False):

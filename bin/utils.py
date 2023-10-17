@@ -835,7 +835,8 @@ def levenshtein(s1, s2):
 
 
 # kw is forwareded to system
-def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False, env=None, **kw) -> bool:
+# keepArgv0 controls whether the kshimgen will be called with the --keep-argv0 flag to emulate symlinks
+def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False, keepArgv0=False, env=None, **kw) -> bool:
     if not useAbsolutePath and os.path.isabs(target):
         target = os.path.relpath(target, os.path.dirname(shim))
     createDir(os.path.dirname(shim))
@@ -850,6 +851,8 @@ def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False, env
     command = ["kshimgen", "--create", shim, target]
     if CraftCore.compiler.isWindows and guiApp:
         command.append("--gui")
+    if keepArgv0:
+        command.append("--keep-argv0")
     if env:
         for k, v in env.items():
             command += ["--env", f"{k}={v}"]

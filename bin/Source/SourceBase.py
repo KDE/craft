@@ -1,7 +1,11 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
-from CraftBase import *
+from pathlib import Path
+
+import utils
+from CraftBase import CraftBase
+from CraftCore import CraftCore
 
 
 class SourceBase(CraftBase):
@@ -60,7 +64,7 @@ class SourceBase(CraftBase):
             return True
         if not srcdir:
             srcdir = self.sourceDir()
-        patchfile = os.path.join(self.packageDir(), fileName)
+        patchfile = self.packageDir() / fileName
         # TODO: integrate utils.applyPatch() here and remove it from utils().
         # and change packages in blueprints accordingly
         return utils.applyPatch(srcdir, patchfile, patchdepth)

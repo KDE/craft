@@ -23,15 +23,13 @@
 # SUCH DAMAGE.
 
 import configparser
-import copy
-import importlib
+import importlib.util
 import os
-import re
+import sys
 from pathlib import Path
 
 import utils
 from CraftCore import CraftCore
-from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 
 
@@ -323,15 +321,16 @@ class CraftPackageObject(object):
         if not self._instance and not self._pattern:
             CraftCore.log.debug(f"module to import: {self.source} {self.path}")
             modulename = os.path.splitext(os.path.basename(self.source))[0].replace(".", "_")
-            loader = importlib.machinery.SourceFileLoader(modulename, self.source)
             try:
-                mod = loader.load_module()
+                spec = importlib.util.spec_from_file_location(modulename, self.source)
+                self._Module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(self._Module)
             except Exception as e:
                 raise BlueprintException(f"Failed to load file {self.source}", self, e)
-            if not mod is None:
-                mod.CRAFT_CURRENT_MODULE = self
-                if hasattr(mod, "Package"):
-                    pack = mod.Package()
+            if not self._Module is None:
+                CraftCore._CurrentPackage = self
+                if hasattr(self._Module, "Package"):
+                    pack = self._Module.Package()
                     # poor mans inheritance check
                     if self.children and "VirtualPackageBase" not in [x.__name__ for x in pack.__class__.__bases__]:
                         raise BlueprintException(
@@ -340,7 +339,7 @@ class CraftPackageObject(object):
                         )
                     self._instance = pack
                 else:
-                    self._pattern = mod.Pattern
+                    self._pattern = self._Module.Pattern
             else:
                 raise BlueprintException("Failed to find package", self)
         return self._instance

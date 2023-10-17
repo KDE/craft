@@ -3,6 +3,7 @@
 #
 
 from Source.ArchiveSource import ArchiveSource
+from Source.DirSource import DirSource
 from Source.GitSource import GitSource
 from Source.SourceBase import *
 from Source.SvnSource import SvnSource
@@ -20,7 +21,9 @@ class MultiSource(SourceBase):
     def _sourceClass(self):
         # don't access those during the construction but only on demand
         if not self.__sourceClass:
-            if self.subinfo.hasSvnTarget():
+            if self.subinfo.options.dynamic.srcDir or ("ContinuousIntegration", "SourceDir") in CraftCore.settings:
+                self.__sourceClass = DirSource
+            elif self.subinfo.hasSvnTarget():
                 url = self.subinfo.svnTarget()
                 sourceType = utils.getVCSType(url)
                 if sourceType == "svn":

@@ -94,10 +94,8 @@ class VersionSystemSourceBase(SourceBase):
 
     def checkoutDir(self, dummyIndex=0) -> Path:
         CraftCore.debug.trace("VersionSystemSourceBase checkoutDir")
-        if ("ContinuousIntegration", "SourceDir") in CraftCore.settings:
-            return CraftCore.settings.get("ContinuousIntegration", "SourceDir")
         if self.subinfo.hasSvnTarget():
-            sourcedir = Path(CraftStandardDirs.gitDir()) / self.package.path
+            sourcedir = Path(CraftCore.standardDirs.gitDir()) / self.package.path
         else:
             CraftCore.log.critical("svnTarget property not set for this target")
 
@@ -108,8 +106,6 @@ class VersionSystemSourceBase(SourceBase):
 
     def sourceDir(self, index=0) -> Path:
         CraftCore.debug.trace("VersionSystemSourceBase sourceDir")
-        if ("ContinuousIntegration", "SourceDir") in CraftCore.settings:
-            return CraftCore.settings.get("ContinuousIntegration", "SourceDir")
 
         sourcedir = self.checkoutDir(index)
 
@@ -123,7 +119,7 @@ class VersionSystemSourceBase(SourceBase):
         CraftCore.debug.trace("VersionSystemSourceBase sourceRevision")
         if self.subinfo.isCachedBuild:
             return None
-        if not os.path.exists(self.sourceDir()):
+        if not Path(self.sourceDir()).exists():
             # as we are using the cahce we don't have the git clone present
             return "latest"
         return self.sourceVersion()

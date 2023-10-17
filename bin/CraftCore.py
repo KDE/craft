@@ -71,6 +71,9 @@ class State(object):
 
 
 class CraftCore(object):
+    # a hack used in CraftBase
+    _CurrentPackage = None  # type: CraftPackageObject
+
     debug = AutoImport("debug", "CraftDebug")  # type: CraftDebug
     # log will be replaced once debug is loaded
     log = AutoImport("debug", "CraftDebug", member="log")  # type: logging.Logger
