@@ -1,0 +1,17 @@
+# metainfo.yaml
+fancyname: Craft
+description: Craft is a cross platform package manager providing source builds, as well as binary artifacts, for hundreds of libraries, Qt and KDE Frameworks.
+maintainer: vonreth
+public_lib: true
+logo: logo.png
+platforms:
+    - name: Linux
+    - name: FreeBSD
+    - name: Windows
+    - name: macOS
+    - name: Android
+      note: Supported as target platform through cross builds
+public_source_dirs:
+    - bin
+    - setup
+
