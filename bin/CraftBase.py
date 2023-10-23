@@ -178,7 +178,13 @@ class CraftBase(object):
         CraftCore.log.debug("entering: %s" % self.sourceDir())
 
     def buildNumber(self):
-        return os.environ.get("APPVEYOR_BUILD_VERSION") or os.environ.get("BUILD_NUMBER") or os.environ.get("DRONE_BUILD_NUMBER") or ""
+        return (
+            os.environ.get("APPVEYOR_BUILD_VERSION")
+            or os.environ.get("BUILD_NUMBER")
+            or os.environ.get("DRONE_BUILD_NUMBER")
+            or os.environ.get("CI_PIPELINE_IID")
+            or ""
+        )
 
     def formatVersion(self, includeRevision, includeTimeStamp) -> str:
         buildVersion = self.buildNumber()
