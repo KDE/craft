@@ -101,7 +101,7 @@ def unpackFile(downloaddir, filename, workdir):
         if (
             not OsUtils.isWin()
             or (OsUtils.supportsSymlinks() and CraftCore.cache.getVersion(__locate7z(), versionCommand="-version") >= "16")
-            or not re.match("(.*\.tar.*$|.*\.tgz$)", filename)
+            or not re.match(r"(.*\.tar.*$|.*\.tgz$)", filename)
         ):
             return un7zip(os.path.join(downloaddir, filename), workdir, ext)
     try:
@@ -129,7 +129,7 @@ def un7zip(fileName, destdir, flag=None):
         # But git is an exe file renamed to 7z and we need to specify the type.
         # Yes it is an ugly hack.
         type = ["-t7z"]
-    if re.match("(.*\.tar.*$|.*\.tgz$)", fileName):
+    if re.match(r"(.*\.tar.*$|.*\.tgz$)", fileName):
         if progressFlags:
             if ciMode:
                 progressFlags = []

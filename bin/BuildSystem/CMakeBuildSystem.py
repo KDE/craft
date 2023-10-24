@@ -75,19 +75,24 @@ class CMakeBuildSystem(BuildSystemBase):
             options += ["-DCMAKE_INSTALL_LIBDIR:PATH=lib"]
         elif CraftCore.compiler.isAndroid:
             kfVersion = CraftCore.settings.get("General", "KFHostToolingVersion", "5")
+            nativeToolingRoot = CraftCore.settings.get("General", f"KF{kfVersion}HostToolingRoot", "/opt/nativetooling")
+
+            # prefer the toolchain file ECM installed, fall back to the one in the host tools
+            ecmToolchain = os.path.join(OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot()), "share/ECM/toolchain/Android.cmake")
+            if not os.path.exists(ecmToolchain):
+                ecmToolchain = os.path.join(nativeToolingRoot, "share/ECM/toolchain/Android.cmake")
+
             if kfVersion == "5":
-                nativeToolingRoot = CraftCore.settings.get("General", "KF5HostToolingRoot", "/opt/nativetooling")
                 nativeToolingCMake = CraftCore.settings.get(
                     "General",
                     "KF5HostToolingCMakePath",
                     "/opt/nativetooling/lib/x86_64-linux-gnu/cmake/",
                 )
                 options += [
-                    f"-DCMAKE_TOOLCHAIN_FILE={nativeToolingRoot}/share/ECM/toolchain/Android.cmake",
+                    f"-DCMAKE_TOOLCHAIN_FILE={ecmToolchain}",
                     f"-DKF5_HOST_TOOLING={nativeToolingCMake}",
                 ]
             elif kfVersion == "6":
-                nativeToolingRoot = CraftCore.settings.get("General", "KF6HostToolingRoot", "/opt/nativetooling")
                 nativeToolingCMake = CraftCore.settings.get(
                     "General",
                     "KF6HostToolingCMakePath",
@@ -97,13 +102,13 @@ class CMakeBuildSystem(BuildSystemBase):
                 if os.path.exists(qtToolchainPath):
                     options += [
                         f"-DCMAKE_TOOLCHAIN_FILE={qtToolchainPath}",
-                        f"-DQT_CHAINLOAD_TOOLCHAIN_FILE={nativeToolingRoot}/share/ECM/toolchain/Android.cmake",
+                        f"-DQT_CHAINLOAD_TOOLCHAIN_FILE={ecmToolchain}",
                         f"-DKF6_HOST_TOOLING={nativeToolingCMake}",
                     ]
                 else:
                     # the ECM toolchain file still works standalone, if we don't have Qt's own toolchain file yet
                     options += [
-                        f"-DCMAKE_TOOLCHAIN_FILE={nativeToolingRoot}/share/ECM/toolchain/Android.cmake",
+                        f"-DCMAKE_TOOLCHAIN_FILE={ecmToolchain}",
                         f"-DKF6_HOST_TOOLING={nativeToolingCMake}",
                     ]
 
