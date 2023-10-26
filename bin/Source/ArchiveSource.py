@@ -23,10 +23,10 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
+import datetime
 import io
 import os
 import tempfile
-from datetime import datetime
 from pathlib import Path
 
 from CraftCore import CraftCore
