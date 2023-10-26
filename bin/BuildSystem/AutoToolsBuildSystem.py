@@ -163,7 +163,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         """returns default configure options"""
         options = BuildSystemBase.configureOptions(self)
         prefix = self.shell.toNativePath(self.installPrefix())
-        options += [f"--prefix={prefix}"]
+        options += [f"--prefix={prefix}", f"--cache-file={self.shell.toNativePath(self.buildDir())}/config.cache"]
         if not self.subinfo.options.configure.noLibDir:
             options += [f"--libdir={prefix}/lib"]
         if OsUtils.isWin() and not self.subinfo.options.configure.noDataRootDir:
