@@ -2,6 +2,9 @@
 # SPDX-FileCopyrightText: 2023 Julius Künzel <jk.kdedev@smartlab.uber.space>
 
 from pathlib import Path
+import os
+import io
+import utils
 
 from CraftCore import CraftCore
 from Source.SourceBase import SourceBase
@@ -27,6 +30,14 @@ class DirSource(SourceBase):
             CraftCore.log.error("Error: Please provide an absolute path as source dir")
             return None
         return srcPath
+
+    def sourceRevision(self):
+        CraftCore.debug.trace("DirSource.sourceRevision called")
+        if os.path.exists(self.sourceDir() / ".git"):
+            with io.StringIO() as tmp:
+                if utils.system(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=self.sourceDir(), stdout=tmp):
+                    return tmp.getvalue().strip()
+        return "latest"
 
     def fetch(self):
         CraftCore.debug.trace("DirSource.fetch called")
