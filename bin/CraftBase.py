@@ -196,7 +196,11 @@ class CraftBase(object):
             else:
                 version += ["latest", self.version]
         else:
-            version += [self.version, buildVersion]
+            if self.subinfo.options.dynamic.srcDir:
+                version += [self.sourceRevision()]
+            else:
+                version += [self.version]
+            version += [buildVersion]
         if includeTimeStamp:
             version += [datetime.datetime.utcnow().strftime("%Y%m%dT%H%M%S")]
         version = "-".join(filter(None, version))
