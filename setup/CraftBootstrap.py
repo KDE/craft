@@ -243,6 +243,27 @@ def getABI(args):
         return f"{platform}-{compiler}-{arch}"
 
 
+def windowsSetup():
+    # Used on Windows to generate shorter paths in order to workaround issues with some tools
+    if not CraftBootstrap.isWin():
+        return "", False
+
+    CraftBootstrap.startSection()
+    shortPath = Path(Path(args.prefix).drive) / "/_"
+    shortPath = (
+        shortPath
+        if args.use_defaults
+        else input(f"Craft will use {shortPath} to create shorter path during builds.\n" f"Specify short path root: [{shortPath}]: ") or shortPath
+    )
+    installShortCut = CraftBootstrap.promptForChoice(
+        "Do you want to install a StartMenu entry",
+        [("Yes", True), ("No", False)],
+        default="Yes",
+        returnDefaultWithoutPrompt=args.use_defaults,
+    )
+    return shortPath, installShortCut
+
+
 def setUp(args):
     while not args.prefix:
         print("Where do you want us to install Craft")
@@ -261,22 +282,14 @@ def setUp(args):
     print(f"Craft will be installed to: {args.prefix}")
     abi = getABI(args)
 
-    installShortCut = False
-    # Used on Windows to generate shorter paths in order to workaround issues with some tools
-    shortPath = Path(Path(args.prefix).drive) / "/_"
-    if CraftBootstrap.isWin():
-        CraftBootstrap.startSection()
-        shortPath = (
-            shortPath
-            if args.use_defaults
-            else input(f"Craft will use {shortPath} to create shorter path during builds.\n" f"Specify short path root: [{shortPath}]: ") or shortPath
-        )
-        installShortCut = CraftBootstrap.promptForChoice(
-            "Do you want to install a StartMenu entry",
-            [("Yes", True), ("No", False)],
-            default="Yes",
-            returnDefaultWithoutPrompt=args.use_defaults,
-        )
+    qtMajorVersion = CraftBootstrap.promptForChoice(
+        "Select the version of Qt you want to use (Craft can't mix Qt5 and Qt6). This will change the cache version used by craft",
+        [("Qt5", "5"), ("Qt6", "6")],
+        default="Qt5",
+        returnDefaultWithoutPrompt=args.use_defaults,
+    )
+
+    shortPath, installShortCut = windowsSetup()
 
     useANSIColor = CraftBootstrap.promptForChoice(
         "Do you want to enable the support for colored logs",
@@ -327,6 +340,11 @@ def setUp(args):
 
     boot.setSettingsValue("ShortPath", "JunctionDir", shortPath)
 
+    if qtMajorVersion == "6":
+        boot.setSettingsValue("Packager", "RepositoryUrl", "https://files.kde.org/craft/master/Qt6/")
+    else:
+        boot.setSettingsValue("Packager", "RepositoryUrl", "https://files.kde.org/craft/master/")
+
     boot.writeSettings()
 
     cmd = []
@@ -336,7 +354,7 @@ def setUp(args):
     run(args, cmd)
     if not args.dry_run:
         shutil.rmtree(os.path.join(args.prefix, f"craft-{args.branch}"))
-    if installShortCut:
+    if installShortCut:  # Windows only
         run(args, ["craft-startmenu-entry"])
 
     # install toast notifications
@@ -344,6 +362,8 @@ def setUp(args):
         run(args, ["dev-utils/snoretoast"])
     elif CraftBootstrap.isMac():
         run(args, ["dev-utils/terminal-notifier"])
+
+    run(args, ["--set", f"qtMajorVersion={qtMajorVersion}", "libs/qt"])
 
     print("Setup complete")
     print()
