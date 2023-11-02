@@ -20,6 +20,9 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-utils/cmake"] = None
         self.buildDependencies["dev-utils/wget"] = None
 
+        if CraftCore.compiler.isLinux:
+            self.buildDependencies["dev-utils/patchelf"] = None
+
         self.buildDependencies["dev-utils/git"] = None
         self.buildDependencies["python-modules/pip-system"] = None
         self.buildDependencies["python-modules/virtualenv"] = None

@@ -305,8 +305,8 @@ class SetupHelper(object):
         if CraftCore.compiler.isLinux:
             libraryPaths.append(CraftCore.standardDirs.craftRoot() / "lib/x86_64-linux-gnu")
 
-        self.prependEnvVar("LD_LIBRARY_PATH", libraryPaths)
-        if CraftCore.compiler.isLinux or CraftCore.compiler.isFreeBSD:
+        if CraftCore.compiler.isFreeBSD:
+            self.prependEnvVar("LD_LIBRARY_PATH", libraryPaths)
             self.prependEnvVar("LDFLAGS", ["-Wl,-rpath,'$ORIGIN/../lib'", f"-L{CraftCore.standardDirs.craftRoot() / 'lib'}"], sep=" ")
         self.prependEnvVar(
             "BISON_PKGDATADIR",
