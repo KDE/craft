@@ -24,7 +24,6 @@
 # SUCH DAMAGE.
 
 
-""" \package BuildSystemBase"""
 import glob
 import io
 import multiprocessing
