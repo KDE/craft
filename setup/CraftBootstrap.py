@@ -23,7 +23,7 @@ class CraftBootstrap(object):
 
         if not dryRun:
             with open(
-                os.path.join(craftRoot, f"craft-{branch}", "CraftSettings.ini.template"),
+                os.path.join(craftRoot, f"craft-tmp", "CraftSettings.ini.template"),
                 "rt",
                 encoding="UTF-8",
             ) as ini:
@@ -182,7 +182,7 @@ class CraftBootstrap(object):
 def run(args, command):
     root = os.path.join(args.prefix, "craft")
     if not os.path.isdir(root):
-        root = os.path.join(args.prefix, f"craft-{args.branch}")
+        root = os.path.join(args.prefix, f"craft-tmp")
     script = os.path.join(root, "bin", "craft.py")
     command = [sys.executable, script] + command
     commandStr = " ".join(command)
@@ -309,15 +309,18 @@ def setUp(args):
             )
             print("Getting code from local {}".format(args.localDev))
         else:
+            branchName = f"craft-{args.branch.replace('/', '-')}"
+            zipName = f"{branchName}.zip"
             CraftBootstrap.downloadFile(
-                f"https://github.com/KDE/craft/archive/{args.branch}.zip",
+                f"https://invent.kde.org/packaging/craft/-/archive/{args.branch}/{zipName}",
                 os.path.join(args.prefix, "download"),
-                f"craft-{args.branch}.zip",
+                zipName,
             )
             shutil.unpack_archive(
-                os.path.join(args.prefix, "download", f"craft-{args.branch}.zip"),
+                os.path.join(args.prefix, "download", zipName),
                 args.prefix,
             )
+            shutil.move(os.path.join(args.prefix, branchName), os.path.join(args.prefix, "craft-tmp"))
 
     boot = CraftBootstrap(args.prefix, args.branch, args.dry_run)
     boot.setSettingsValue("Paths", "Python", os.path.dirname(sys.executable))
