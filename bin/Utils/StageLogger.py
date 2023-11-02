@@ -20,7 +20,7 @@ class StageLogger(object):
     def write(self, s: str):
         # only create the log file if anything is written
         if not self.__logFile:
-            self.__logFile = self._logPath.open("wt", encoding="UTF-8")
+            self.__logFile = self._logPath.open("wt", encoding="UTF-8", newline="\n")
         self.__logFile.write(s)
 
     def dump(self):
