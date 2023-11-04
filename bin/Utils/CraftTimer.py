@@ -27,8 +27,7 @@ class Timer(object):
 
         def format(time, string):
             time = int(time)
-            s = "s" if time != 1 else ""
-            return f"{time} {string}{s}"
+            return f"{time}{string}"
 
         out = []
         if hours:
