@@ -357,7 +357,7 @@ class BuildSystemBase(CraftBase):
             craftRpath = os.path.join(newPrefix, "lib")
             with io.StringIO() as log:
                 if not utils.system(["patchelf", "--print-rpath", f], stdout=log):
-                    if "The input file is most likely statically linked" in log:
+                    if "The input file is most likely statically linked" in log.getvalue():
                         continue
                     else:
                         return False
