@@ -356,7 +356,7 @@ class BuildSystemBase(CraftBase):
             # replace the old prefix or add it if missing
             craftRpath = os.path.join(newPrefix, "lib")
             with io.StringIO() as log:
-                if not utils.system(["patchelf", "--print-rpath", f], stdout=log):
+                if not utils.system(["patchelf", "--print-rpath", f], stdout=log, stderr=subprocess.STDOUT):
                     if "The input file is most likely statically linked" in log.getvalue():
                         continue
                     else:
