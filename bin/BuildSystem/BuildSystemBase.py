@@ -298,16 +298,16 @@ class BuildSystemBase(CraftBase):
             # replace the old prefix or add it if missing
             craftRpath = os.path.join(newPrefix, "lib")
             if not utils.system(
-                    [
-                        "install_name_tool",
-                        "-rpath",
-                        os.path.join(self.subinfo.buildPrefix, "lib"),
-                        craftRpath,
-                        f,
-                    ],
-                    logCommand=False,
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL,
+                [
+                    "install_name_tool",
+                    "-rpath",
+                    os.path.join(self.subinfo.buildPrefix, "lib"),
+                    craftRpath,
+                    f,
+                ],
+                logCommand=False,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
             ):
                 CraftCore.log.info(f"Adding rpath {craftRpath} to {f}")
                 utils.system(
@@ -329,8 +329,8 @@ class BuildSystemBase(CraftBase):
                         newId = oldId.replace(self.subinfo.buildPrefix, newPrefix)
                         if newId != oldId:
                             if not utils.system(
-                                    ["install_name_tool", "-id", newId, f],
-                                    logCommand=False,
+                                ["install_name_tool", "-id", newId, f],
+                                logCommand=False,
                             ):
                                 return False
 
@@ -340,8 +340,8 @@ class BuildSystemBase(CraftBase):
                         newDep = dep.replace(self.subinfo.buildPrefix, newPrefix)
                         if newDep != dep:
                             if not utils.system(
-                                    ["install_name_tool", "-change", dep, newDep, f],
-                                    logCommand=False,
+                                ["install_name_tool", "-change", dep, newDep, f],
+                                logCommand=False,
                             ):
                                 return False
         return True
@@ -364,7 +364,7 @@ class BuildSystemBase(CraftBase):
                 currentRpath = set(log.getvalue().strip().split(":"))
             if self.subinfo.buildPrefix != newPrefix:
                 # remove the old prefix
-                rPathToRemove = str(Path(self.subinfo.buildPrefix)/ "lib")
+                rPathToRemove = str(Path(self.subinfo.buildPrefix) / "lib")
                 if rPathToRemove in currentRpath:
                     currentRpath.remove(rPathToRemove)
             # add the new prefix
