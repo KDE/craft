@@ -357,7 +357,11 @@ class BuildSystemBase(CraftBase):
             craftRpath = os.path.join(newPrefix, "lib")
             with io.StringIO() as log:
                 if not utils.system(["patchelf", "--print-rpath", f], stdout=log, stderr=subprocess.STDOUT):
-                    if "The input file is most likely statically linked" in log.getvalue():
+                    if f.endswith(".cpp.o"):
+                        CraftCore.log.info("Ignoring rpath error on .o file. This is a workaround for Qt installing garbage.")
+                        continue
+                    elif "The input file is most likely statically linked" in log.getvalue():
+                        CraftCore.log.info("Ignoring rpath error on statically linked file.")
                         continue
                     else:
                         return False
