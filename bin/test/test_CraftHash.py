@@ -56,6 +56,20 @@ class TestAPI(CraftHashTest):
             CraftHash.HashAlgorithm.SHA512,
         )
 
+    def test_AlgorithmFromPrefix(self):
+        filehash = "[SHA224] deef4b9f1cf9e7bdfa34ba05521740a7fdf3e1570b704a3d4088cec2"
+        algorithm = CraftHash.HashAlgorithm.getAlgorithmFromPrefix(filehash)
+        self.assertEqual(algorithm, CraftHash.HashAlgorithm.SHA224)
+
+    def test_AlgorithmFromFile(self):
+        filename = "kshim-v0.6.0-linux-binary-x86_64.tar.7z.sha256"
+        algorithm = CraftHash.HashAlgorithm.getAlgorithmFromFile(filename)
+        self.assertEqual(algorithm, CraftHash.HashAlgorithm.SHA256)
+
+        filename = "kshim-v0.6.0-linux-binary-x86_64.tar.7z.md5"
+        algorithm = CraftHash.HashAlgorithm.getAlgorithmFromFile(filename)
+        self.assertEqual(algorithm, CraftHash.HashAlgorithm.MD5)
+
     def test_printFilesDigests(self):
         path, name = os.path.split(self.tmpFile)
         log = io.StringIO()
