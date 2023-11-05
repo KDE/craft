@@ -309,7 +309,7 @@ class CraftCompiler(object):
     def getGCCLikeVersion(self, compilerExecutable):
         _, result = CraftCore.cache.getCommandOutput(compilerExecutable, "--version")
         if result:
-            result = re.findall("\d+\.\d+\.?\d*", result)[0]
+            result = re.findall(r"\d+\.\d+\.?\d*", result)[0]
             CraftCore.log.debug("{0} Version: {1}".format(compilerExecutable, result))
         return result or "0"
 
