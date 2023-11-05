@@ -402,7 +402,7 @@ def run(package: [CraftPackageObject], action: str, args) -> bool:
             if not args.resolve_deps.capitalize() in DependencyType.__members__:
                 CraftCore.log.error(f"Invalid dependency type {args.resolve_deps}, valid types are {DependencyType.__members__}")
                 return False
-            depType = DependencyType.__getattr__(args.resolve_deps.capitalize())
+            depType = DependencyType.__getitem__(args.resolve_deps.capitalize())
         elif action == "install-deps":
             depType = DependencyType.Both
         else:
