@@ -361,7 +361,7 @@ class BuildSystemBase(CraftBase):
                         continue
                     else:
                         return False
-                currentRpath = set(log.getvalue().strip().split(":"))
+                currentRpath = set(filter(None, log.getvalue().strip().split(":")))
             CraftCore.log.info(f"Updating rpath: {currentRpath}")
             if self.subinfo.buildPrefix != newPrefix:
                 # remove the old prefix
