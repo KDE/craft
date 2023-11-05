@@ -33,7 +33,7 @@ class HashAlgorithm(Enum):
 
     @classmethod
     def getAlgorithmFromPrefix(cls, hash):
-        for alg in re.findall("\[.*\]", hash):
+        for alg in re.findall(r"\[.*\]", hash):
             return cls.__getitem__(alg[1:-1])
         return None
 
