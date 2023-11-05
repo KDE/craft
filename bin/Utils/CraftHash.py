@@ -29,12 +29,12 @@ class HashAlgorithm(Enum):
     @classmethod
     def getAlgorithmFromFile(cls, file):
         _, ext = os.path.splitext(file)
-        return cls.__getattr__(ext[1:].upper())
+        return cls.__getitem__(ext[1:].upper())
 
     @classmethod
     def getAlgorithmFromPrefix(cls, hash):
         for alg in re.findall("\[.*\]", hash):
-            return cls.__getattr__(alg[1:-1])
+            return cls.__getitem__(alg[1:-1])
         return None
 
 
