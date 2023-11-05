@@ -26,7 +26,9 @@ class StageLogger(object):
     def dump(self):
         self.__logFile.flush()
         with self._logPath.open("rt", encoding="UTF-8", newline="\n") as read:
-            CraftCore.log.info(read.read())
+            # linebased printing as workaround for gitlab logs dropping logs
+            for l in read.readlines():
+                CraftCore.log.info(l.strip())
 
     def __enter__(self):
         StageLogger.ActiveLogs.append(self)
