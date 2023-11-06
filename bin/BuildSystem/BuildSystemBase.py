@@ -366,7 +366,7 @@ class BuildSystemBase(CraftBase):
                     else:
                         return False
                 currentRpath = set(filter(None, log.getvalue().strip().split(":")))
-            newRpath = currentRpath
+            newRpath = currentRpath.copy()
             if self.subinfo.buildPrefix != newPrefix:
                 # remove the old prefix
                 rPathToRemove = str(Path(self.subinfo.buildPrefix) / "lib")
