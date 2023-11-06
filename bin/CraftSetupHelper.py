@@ -145,6 +145,7 @@ class SetupHelper(object):
         printRow("Version", SetupHelper.CraftVersion)
         printRow("ABI", CraftCore.compiler)
         printRow("Download directory", CraftCore.standardDirs.downloadDir())
+        printRow("Cache repository", ", ".join(CraftCore.settings.cacheRepositoryUrls()))
 
     def addEnvVar(self, key, val):
         os.environ[key] = str(val)

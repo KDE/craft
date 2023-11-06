@@ -265,13 +265,11 @@ class CraftBase(object):
             out += [
                 "/".join(
                     [
-                        url if not url.endswith("/") else url[0:-1],
-                        version,
-                        *CraftCore.compiler.signature,
+                        url,
                         bt,
                     ]
                 )
-                for url in CraftCore.settings.getList("Packager", "RepositoryUrl")
+                for url in CraftCore.settings.cacheRepositoryUrls()
             ]
         return out
 
