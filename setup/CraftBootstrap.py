@@ -202,7 +202,7 @@ def getABI(args):
             [
                 ("Mingw-w64", (None, "gcc")),
                 ("Microsoft Visual Studio 2019", ("msvc2019", "cl")),
-                # ("Microsoft Visual Studio 2022", ("msvc2022", "cl")),
+                ("Microsoft Visual Studio 2022", ("msvc2022", "cl")),
             ],
             "Microsoft Visual Studio 2019",
             returnDefaultWithoutPrompt=args.use_defaults,
