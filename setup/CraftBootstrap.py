@@ -192,19 +192,16 @@ def run(args, command):
             exit(1)
 
 
-def getABI(args):
+def getABI(args, qtMajorVersion):
     arch = "x86_64"
     abi = None
     if CraftBootstrap.isWin():
         platform = "windows"
+        msvcVer = "Microsoft Visual Studio 2019" if qtMajorVersion == "5" else "Microsoft Visual Studio 2022"
         abi, compiler = CraftBootstrap.promptForChoice(
             "Select compiler",
-            [
-                ("Mingw-w64", (None, "gcc")),
-                ("Microsoft Visual Studio 2019", ("msvc2019", "cl")),
-                ("Microsoft Visual Studio 2022", ("msvc2022", "cl")),
-            ],
-            "Microsoft Visual Studio 2019",
+            [("Mingw-w64", (None, "gcc")), (msvcVer, ("msvc2019" if qtMajorVersion == "5" else "msvc2022", "cl"))],
+            msvcVer,
             returnDefaultWithoutPrompt=args.use_defaults,
         )
 
@@ -280,14 +277,14 @@ def setUp(args):
 
     print("Welcome to the Craft setup wizard!")
     print(f"Craft will be installed to: {args.prefix}")
-    abi = getABI(args)
-
     qtMajorVersion = CraftBootstrap.promptForChoice(
         "Select the version of Qt you want to use (Craft can't mix Qt5 and Qt6). This will change the cache version used by craft",
         [("Qt5", "5"), ("Qt6", "6")],
         default="Qt5",
         returnDefaultWithoutPrompt=args.use_defaults,
     )
+
+    abi = getABI(args, qtMajorVersion)
 
     shortPath, installShortCut = windowsSetup()
 
