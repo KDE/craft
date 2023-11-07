@@ -304,7 +304,7 @@ def setUp(args):
         if args.localDev:
             shutil.copytree(
                 args.localDev,
-                os.path.join(args.prefix, f"craft-{args.branch}"),
+                os.path.join(args.prefix, f"craft-tmp"),
                 ignore=shutil.ignore_patterns(".git"),
             )
             print("Getting code from local {}".format(args.localDev))
@@ -356,7 +356,7 @@ def setUp(args):
     cmd += ["craft"]
     run(args, cmd)
     if not args.dry_run:
-        shutil.rmtree(os.path.join(args.prefix, f"craft-{args.branch}"))
+        shutil.rmtree(os.path.join(args.prefix, f"craft-tmp"))
     if installShortCut:  # Windows only
         run(args, ["craft-startmenu-entry"])
 
