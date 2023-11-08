@@ -35,6 +35,8 @@ class SeachPackage(object):
         return out
 
     def __str__(self):
+        # init package so that dynamic options are loaded etc
+        self.package.instance
         installed = CraftCore.installdb.getInstalledPackages(self.package)
         version = None
         revision = None
