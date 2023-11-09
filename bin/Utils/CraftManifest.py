@@ -131,7 +131,7 @@ class CraftManifestEntry(object):
 
 
 class CraftManifest(object):
-    _TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
+    _TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f%z"
 
     def __init__(self):
         self.date = datetime.datetime.now(datetime.timezone.utc)
@@ -260,4 +260,7 @@ class CraftManifest(object):
 
     @staticmethod
     def _parseTimeStamp(time: str) -> datetime.datetime:
-        return datetime.datetime.strptime(time, CraftManifest._TIME_FORMAT)
+        try:
+            return datetime.datetime.strptime(time, CraftManifest._TIME_FORMAT)
+        except ValueError:
+            return datetime.datetime.strptime(time, "%Y-%m-%d %H:%M:%S.%f").astimezone(datetime.timezone.utc)
