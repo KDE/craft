@@ -14,7 +14,7 @@ class CraftManifestEntryFile(object):
     def __init__(self, fileName: str, checksum: str, version: str = "") -> None:
         self.fileName = fileName
         self.checksum = checksum
-        self.date = datetime.datetime.now(datetime.UTC)
+        self.date = datetime.datetime.now(datetime.timezone.utc)
         self.version = version
         self.buildPrefix = str(CraftCore.standardDirs.craftRoot())
         # deprecated use config
@@ -86,7 +86,7 @@ class CraftManifest(object):
     _TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 
     def __init__(self):
-        self.date = datetime.datetime.now(datetime.UTC)
+        self.date = datetime.datetime.now(datetime.timezone.utc)
         self.packages = {str(CraftCore.compiler): {}}
         self.origin = None
 
