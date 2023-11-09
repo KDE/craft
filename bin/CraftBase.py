@@ -202,7 +202,7 @@ class CraftBase(object):
                 version += [self.version]
             version += [buildVersion]
         if includeTimeStamp:
-            version += [datetime.datetime.utcnow().strftime("%Y%m%dT%H%M%S")]
+            version += [datetime.datetime.now(datetime.UTC).strftime("%Y%m%dT%H%M%S")]
         version = "-".join(filter(None, version))
         return version.replace("/", "_")
 

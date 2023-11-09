@@ -45,7 +45,7 @@ class CraftManifestEntryFile(object):
 
 class CraftManifestBuild(object):
     def __init__(self, version: str) -> None:
-        self.date = datetime.datetime.utcnow()
+        self.date = datetime.datetime.now(datetime.UTC)
         self.version = version
         self.buildPrefix = str(CraftCore.standardDirs.craftRoot())
         # deprecated use config
@@ -134,7 +134,7 @@ class CraftManifest(object):
     _TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 
     def __init__(self):
-        self.date = datetime.datetime.utcnow()
+        self.date = datetime.datetime.now(datetime.UTC)
         self.packages = {str(CraftCore.compiler): {}}
         self.origin = None
 
@@ -214,7 +214,7 @@ class CraftManifest(object):
     def dump(self, cacheFilePath):
         cacheFilePath = Path(cacheFilePath)
         cacheFilePathTimed = cacheFilePath.parent / f"{cacheFilePath.stem}-{self.date.strftime('%Y%m%dT%H%M%S')}{cacheFilePath.suffix}"
-        self.date = datetime.datetime.utcnow()
+        self.date = datetime.datetime.now(datetime.UTC)
         if self.origin:
             CraftCore.log.info(f"Updating cache manifest from: {self.origin} in: {cacheFilePath}")
         else:
