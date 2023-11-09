@@ -76,7 +76,7 @@ class CraftDependencyPackage(CraftPackageObject):
                         )
                     if isinstance(requiredVersion, tuple):
                         requiredVersion, type = requiredVersion
-                        if type == DependencyRequirementType.Required:
+                        if type == DependencyRequirementType.Required and not self.isIgnored():
                             if not bool(package.categoryInfo.compiler & CraftCore.compiler.compiler):
                                 raise BlueprintException(
                                     f"{self} requries {package}, but it is not supported on {CraftCore.compiler.compiler}",
