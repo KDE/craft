@@ -318,7 +318,7 @@ class CraftPackageObject(object):
 
     @property
     def instance(self):
-        if not self._instance and not self._pattern:
+        if not self._instance and not self._pattern and self.source:
             CraftCore.log.debug(f"module to import: {self.source} {self.path}")
             modulename = os.path.splitext(os.path.basename(self.source))[0].replace(".", "_")
             try:
