@@ -18,6 +18,8 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = f"perl-{ver}"
 
         if CraftCore.compiler.isWindows:
+            self.patchToApply["5.36.0"] = [(".perl-5.36.0_win", 1)]
+        else:
             self.patchToApply["5.36.0"] = [(".perl-5.36.0", 1)]
         self.targetDigests["5.36.0"] = (["e26085af8ac396f62add8a533c3a0ea8c8497d836f0689347ac5abd7b7a4e00a"], CraftHash.HashAlgorithm.SHA256)
         self.description = (
