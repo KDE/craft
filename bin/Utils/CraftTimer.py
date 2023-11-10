@@ -27,15 +27,14 @@ class Timer(object):
 
         def format(time, string):
             time = int(time)
-            s = "s" if time != 1 else ""
-            return f"{time} {string}{s}"
+            return f"{time}{string}"
 
         out = []
         if hours:
-            out.append(format(hours, "hour"))
+            out.append(format(hours, "h"))
         if minutes:
-            out.append(format(minutes, "minute"))
-        out.append(format(seconds, "second"))
+            out.append(format(minutes, "min"))
+        out.append(format(seconds, "s"))
         return " ".join(out)
 
     @property

@@ -34,11 +34,19 @@ Main entry point for the craft test suite.
 
 Just run this file as a python script to execute all tests
 """
+import sys
+
+# enable warnings
+if not sys.warnoptions:
+    import os
+    import warnings
+
+    warnings.simplefilter("default")  # Change the filter in this process
+    os.environ["PYTHONWARNINGS"] = "default"  # Also affect subprocesses
 
 import optparse
 import os
 import platform
-import sys
 import unittest
 
 xml_report = True

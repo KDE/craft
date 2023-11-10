@@ -486,6 +486,9 @@ class OptionsConfigure(OptionsBase):
         # whether to not pass --libdir configure
         self.noLibDir = False
 
+        # whether to not pass --cache-file configure
+        self.noCacheFile = False
+        
 
 ## options for the make action
 class OptionsMake(OptionsBase):

@@ -23,7 +23,7 @@ class CraftBootstrap(object):
 
         if not dryRun:
             with open(
-                os.path.join(craftRoot, f"craft-{branch}", "CraftSettings.ini.template"),
+                os.path.join(craftRoot, f"craft-tmp", "CraftSettings.ini.template"),
                 "rt",
                 encoding="UTF-8",
             ) as ini:
@@ -182,7 +182,7 @@ class CraftBootstrap(object):
 def run(args, command):
     root = os.path.join(args.prefix, "craft")
     if not os.path.isdir(root):
-        root = os.path.join(args.prefix, f"craft-{args.branch}")
+        root = os.path.join(args.prefix, f"craft-tmp")
     script = os.path.join(root, "bin", "craft.py")
     command = [sys.executable, script] + command
     commandStr = " ".join(command)
@@ -192,19 +192,16 @@ def run(args, command):
             exit(1)
 
 
-def getABI(args):
+def getABI(args, qtMajorVersion):
     arch = "x86_64"
     abi = None
     if CraftBootstrap.isWin():
         platform = "windows"
+        msvcVer = "Microsoft Visual Studio 2019" if qtMajorVersion == "5" else "Microsoft Visual Studio 2022"
         abi, compiler = CraftBootstrap.promptForChoice(
             "Select compiler",
-            [
-                ("Mingw-w64", (None, "gcc")),
-                ("Microsoft Visual Studio 2019", ("msvc2019", "cl")),
-                # ("Microsoft Visual Studio 2022", ("msvc2022", "cl")),
-            ],
-            "Microsoft Visual Studio 2019",
+            [("Mingw-w64", (None, "gcc")), (msvcVer, ("msvc2019" if qtMajorVersion == "5" else "msvc2022", "cl"))],
+            msvcVer,
             returnDefaultWithoutPrompt=args.use_defaults,
         )
 
@@ -243,6 +240,27 @@ def getABI(args):
         return f"{platform}-{compiler}-{arch}"
 
 
+def windowsSetup():
+    # Used on Windows to generate shorter paths in order to workaround issues with some tools
+    if not CraftBootstrap.isWin():
+        return "", False
+
+    CraftBootstrap.startSection()
+    shortPath = Path(Path(args.prefix).drive) / "/_"
+    shortPath = (
+        shortPath
+        if args.use_defaults
+        else input(f"Craft will use {shortPath} to create shorter path during builds.\n" f"Specify short path root: [{shortPath}]: ") or shortPath
+    )
+    installShortCut = CraftBootstrap.promptForChoice(
+        "Do you want to install a StartMenu entry",
+        [("Yes", True), ("No", False)],
+        default="Yes",
+        returnDefaultWithoutPrompt=args.use_defaults,
+    )
+    return shortPath, installShortCut
+
+
 def setUp(args):
     while not args.prefix:
         print("Where do you want us to install Craft")
@@ -259,24 +277,16 @@ def setUp(args):
 
     print("Welcome to the Craft setup wizard!")
     print(f"Craft will be installed to: {args.prefix}")
-    abi = getABI(args)
+    qtMajorVersion = CraftBootstrap.promptForChoice(
+        "Select the version of Qt you want to use (Craft can't mix Qt5 and Qt6). This will change the cache version used by craft",
+        [("Qt5", "5"), ("Qt6", "6")],
+        default="Qt5",
+        returnDefaultWithoutPrompt=args.use_defaults,
+    )
 
-    installShortCut = False
-    # Used on Windows to generate shorter paths in order to workaround issues with some tools
-    shortPath = Path(Path(args.prefix).drive) / "/_"
-    if CraftBootstrap.isWin():
-        CraftBootstrap.startSection()
-        shortPath = (
-            shortPath
-            if args.use_defaults
-            else input(f"Craft will use {shortPath} to create shorter path during builds.\n" f"Specify short path root: [{shortPath}]: ") or shortPath
-        )
-        installShortCut = CraftBootstrap.promptForChoice(
-            "Do you want to install a StartMenu entry",
-            [("Yes", True), ("No", False)],
-            default="Yes",
-            returnDefaultWithoutPrompt=args.use_defaults,
-        )
+    abi = getABI(args, qtMajorVersion)
+
+    shortPath, installShortCut = windowsSetup()
 
     useANSIColor = CraftBootstrap.promptForChoice(
         "Do you want to enable the support for colored logs",
@@ -291,20 +301,23 @@ def setUp(args):
         if args.localDev:
             shutil.copytree(
                 args.localDev,
-                os.path.join(args.prefix, f"craft-{args.branch}"),
+                os.path.join(args.prefix, f"craft-tmp"),
                 ignore=shutil.ignore_patterns(".git"),
             )
             print("Getting code from local {}".format(args.localDev))
         else:
+            branchName = f"craft-{args.branch.replace('/', '-')}"
+            zipName = f"{branchName}.zip"
             CraftBootstrap.downloadFile(
-                f"https://github.com/KDE/craft/archive/{args.branch}.zip",
+                f"https://invent.kde.org/packaging/craft/-/archive/{args.branch}/{zipName}",
                 os.path.join(args.prefix, "download"),
-                f"craft-{args.branch}.zip",
+                zipName,
             )
             shutil.unpack_archive(
-                os.path.join(args.prefix, "download", f"craft-{args.branch}.zip"),
+                os.path.join(args.prefix, "download", zipName),
                 args.prefix,
             )
+            shutil.move(os.path.join(args.prefix, branchName), os.path.join(args.prefix, "craft-tmp"))
 
     boot = CraftBootstrap(args.prefix, args.branch, args.dry_run)
     boot.setSettingsValue("Paths", "Python", os.path.dirname(sys.executable))
@@ -327,6 +340,11 @@ def setUp(args):
 
     boot.setSettingsValue("ShortPath", "JunctionDir", shortPath)
 
+    if qtMajorVersion == "6":
+        boot.setSettingsValue("Packager", "RepositoryUrl", "https://files.kde.org/craft/Qt6/")
+    else:
+        boot.setSettingsValue("Packager", "RepositoryUrl", "https://files.kde.org/craft/Qt5/")
+
     boot.writeSettings()
 
     cmd = []
@@ -335,8 +353,8 @@ def setUp(args):
     cmd += ["craft"]
     run(args, cmd)
     if not args.dry_run:
-        shutil.rmtree(os.path.join(args.prefix, f"craft-{args.branch}"))
-    if installShortCut:
+        shutil.rmtree(os.path.join(args.prefix, f"craft-tmp"))
+    if installShortCut:  # Windows only
         run(args, ["craft-startmenu-entry"])
 
     # install toast notifications
@@ -344,6 +362,8 @@ def setUp(args):
         run(args, ["dev-utils/snoretoast"])
     elif CraftBootstrap.isMac():
         run(args, ["dev-utils/terminal-notifier"])
+
+    run(args, ["--set", f"qtMajorVersion={qtMajorVersion}", "libs/qt"])
 
     print("Setup complete")
     print()

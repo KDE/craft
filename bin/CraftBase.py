@@ -202,7 +202,7 @@ class CraftBase(object):
                 version += [self.version]
             version += [buildVersion]
         if includeTimeStamp:
-            version += [datetime.datetime.utcnow().strftime("%Y%m%dT%H%M%S")]
+            version += [datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S")]
         version = "-".join(filter(None, version))
         return version.replace("/", "_")
 
@@ -265,13 +265,11 @@ class CraftBase(object):
             out += [
                 "/".join(
                     [
-                        url if not url.endswith("/") else url[0:-1],
-                        version,
-                        *CraftCore.compiler.signature,
+                        url,
                         bt,
                     ]
                 )
-                for url in CraftCore.settings.getList("Packager", "RepositoryUrl")
+                for url in CraftCore.settings.cacheRepositoryUrls()
             ]
         return out
 

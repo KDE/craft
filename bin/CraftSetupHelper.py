@@ -145,6 +145,7 @@ class SetupHelper(object):
         printRow("Version", SetupHelper.CraftVersion)
         printRow("ABI", CraftCore.compiler)
         printRow("Download directory", CraftCore.standardDirs.downloadDir())
+        printRow("Cache repository", ", ".join(CraftCore.settings.cacheRepositoryUrls()))
 
     def addEnvVar(self, key, val):
         os.environ[key] = str(val)
@@ -305,8 +306,8 @@ class SetupHelper(object):
         if CraftCore.compiler.isLinux:
             libraryPaths.append(CraftCore.standardDirs.craftRoot() / "lib/x86_64-linux-gnu")
 
-        self.prependEnvVar("LD_LIBRARY_PATH", libraryPaths)
-        if CraftCore.compiler.isLinux or CraftCore.compiler.isFreeBSD:
+        if CraftCore.compiler.isFreeBSD:
+            self.prependEnvVar("LD_LIBRARY_PATH", libraryPaths)
             self.prependEnvVar("LDFLAGS", ["-Wl,-rpath,'$ORIGIN/../lib'", f"-L{CraftCore.standardDirs.craftRoot() / 'lib'}"], sep=" ")
         self.prependEnvVar(
             "BISON_PKGDATADIR",

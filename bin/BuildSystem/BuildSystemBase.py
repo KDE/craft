@@ -24,7 +24,6 @@
 # SUCH DAMAGE.
 
 
-""" \package BuildSystemBase"""
 import glob
 import io
 import multiprocessing
@@ -292,6 +291,94 @@ class BuildSystemBase(CraftBase):
                         return False
         return True
 
+    def __patchRpathMac(self, binaryFiles, newPrefix):
+        for f in binaryFiles:
+            if os.path.islink(f):
+                continue
+            # replace the old prefix or add it if missing
+            craftRpath = os.path.join(newPrefix, "lib")
+            if not utils.system(
+                [
+                    "install_name_tool",
+                    "-rpath",
+                    os.path.join(self.subinfo.buildPrefix, "lib"),
+                    craftRpath,
+                    f,
+                ],
+                logCommand=False,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            ):
+                CraftCore.log.info(f"Adding rpath {craftRpath} to {f}")
+                utils.system(
+                    ["install_name_tool", "-add_rpath", craftRpath, f],
+                    logCommand=False,
+                )
+
+            # update prefix
+            if self.subinfo.buildPrefix != newPrefix:
+                if os.path.splitext(f)[1] in {".dylib", ".so"}:
+                    # fix dylib id
+                    with io.StringIO() as log:
+                        utils.system(["otool", "-D", f], stdout=log, logCommand=False)
+                        oldId = log.getvalue().strip().split("\n")
+                    # the first line is the file name
+                    # the second the id, if we only get one line, there is no id to fix
+                    if len(oldId) == 2:
+                        oldId = oldId[1].strip()
+                        newId = oldId.replace(self.subinfo.buildPrefix, newPrefix)
+                        if newId != oldId:
+                            if not utils.system(
+                                ["install_name_tool", "-id", newId, f],
+                                logCommand=False,
+                            ):
+                                return False
+
+                # fix dependencies
+                for dep in utils.getLibraryDeps(f):
+                    if dep.startswith(self.subinfo.buildPrefix):
+                        newDep = dep.replace(self.subinfo.buildPrefix, newPrefix)
+                        if newDep != dep:
+                            if not utils.system(
+                                ["install_name_tool", "-change", dep, newDep, f],
+                                logCommand=False,
+                            ):
+                                return False
+        return True
+
+    def __patchRpathLinux(self, binaryFiles, newPrefix):
+        if not (CraftCore.standardDirs.craftRoot() / "dev-utils/bin/patchelf").exists():
+            CraftCore.log.info("Skipping elf patching during bootstrapping")
+            return True
+        for f in binaryFiles:
+            if os.path.islink(f):
+                continue
+            # replace the old prefix or add it if missing
+            craftRpath = os.path.join(newPrefix, "lib")
+            with io.StringIO() as log:
+                if not utils.system(["patchelf", "--print-rpath", f], stdout=log, stderr=subprocess.STDOUT):
+                    if f.endswith(".cpp.o"):
+                        CraftCore.log.info("Ignoring rpath error on .o file. This is a workaround for Qt installing garbage.")
+                        continue
+                    elif "The input file is most likely statically linked" in log.getvalue():
+                        CraftCore.log.info("Ignoring rpath error on statically linked file.")
+                        continue
+                    else:
+                        return False
+                currentRpath = set(filter(None, log.getvalue().strip().split(":")))
+            newRpath = currentRpath.copy()
+            if self.subinfo.buildPrefix != newPrefix:
+                # remove the old prefix
+                rPathToRemove = str(Path(self.subinfo.buildPrefix) / "lib")
+                if rPathToRemove in newRpath:
+                    newRpath.remove(rPathToRemove)
+            # add the new prefix
+            newRpath.add(craftRpath)
+            CraftCore.log.info(f"Updating rpath: {currentRpath} -> {newRpath}")
+            if not utils.system(["patchelf", "--set-rpath", ":".join(newRpath), f]):
+                return False
+        return True
+
     def internalPostInstall(self):
         if not super().internalPostInstall():
             return False
@@ -332,59 +419,13 @@ class BuildSystemBase(CraftBase):
                 lambda x, root: True,
             )
         )
-        if CraftCore.compiler.isMacOS and os.path.isdir(self.installDir()):
-            for f in binaryFiles:
-                if os.path.islink(f):
-                    continue
-                # replace the old prefix or add it if missing
-                craft_rpath = os.path.join(newPrefix, "lib")
-                if not utils.system(
-                    [
-                        "install_name_tool",
-                        "-rpath",
-                        os.path.join(self.subinfo.buildPrefix, "lib"),
-                        craft_rpath,
-                        f,
-                    ],
-                    logCommand=False,
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL,
-                ):
-                    CraftCore.log.info(f"Adding rpath {craft_rpath} to {f}")
-                    utils.system(
-                        ["install_name_tool", "-add_rpath", craft_rpath, f],
-                        logCommand=False,
-                    )
-
-                # update prefix
-                if self.subinfo.buildPrefix != newPrefix:
-                    if os.path.splitext(f)[1] in {".dylib", ".so"}:
-                        # fix dylib id
-                        with io.StringIO() as log:
-                            utils.system(["otool", "-D", f], stdout=log, logCommand=False)
-                            oldId = log.getvalue().strip().split("\n")
-                        # the first line is the file name
-                        # the second the id, if we only get one line, there is no id to fix
-                        if len(oldId) == 2:
-                            oldId = oldId[1].strip()
-                            newId = oldId.replace(self.subinfo.buildPrefix, newPrefix)
-                            if newId != oldId:
-                                if not utils.system(
-                                    ["install_name_tool", "-id", newId, f],
-                                    logCommand=False,
-                                ):
-                                    return False
-
-                    # fix dependencies
-                    for dep in utils.getLibraryDeps(f):
-                        if dep.startswith(self.subinfo.buildPrefix):
-                            newDep = dep.replace(self.subinfo.buildPrefix, newPrefix)
-                            if newDep != dep:
-                                if not utils.system(
-                                    ["install_name_tool", "-change", dep, newDep, f],
-                                    logCommand=False,
-                                ):
-                                    return False
+        if self.installDir().is_dir():
+            if CraftCore.compiler.isMacOS:
+                if not self.__patchRpathMac(binaryFiles, newPrefix):
+                    return False
+            elif CraftCore.compiler.isLinux:
+                if not self.__patchRpathLinux(binaryFiles, newPrefix):
+                    return False
 
         # Install pdb files on MSVC if they are not found next to the dll
         # skip if we are a release build or from cache

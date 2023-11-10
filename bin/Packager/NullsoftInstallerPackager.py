@@ -68,7 +68,7 @@ class NullsoftInstallerPackager(PortablePackager):
     SHORTCUT_SECTION = """
     Section
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-    CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
+    CreateDirectory "$SMPROGRAMS\\$StartMenuFolder"
     {shortcuts}
     !insertmacro MUI_STARTMENU_WRITE_END
     SectionEnd
@@ -134,7 +134,7 @@ class NullsoftInstallerPackager(PortablePackager):
         if appId:
             out += f'!insertmacro SnoreShortcut "$SMPROGRAMS\\{name}.lnk" "$INSTDIR\\{OsUtils.toNativePath(target)}" "{appId}"\n'
         else:
-            out += f'CreateShortCut "$SMPROGRAMS\$StartMenuFolder\\{name}.lnk" "$INSTDIR\\{OsUtils.toNativePath(target)}" "{parameter}" "{icon}" 0 SW_SHOWNORMAL "" "{description}"\n'
+            out += f'CreateShortCut "$SMPROGRAMS\\$StartMenuFolder\\{name}.lnk" "$INSTDIR\\{OsUtils.toNativePath(target)}" "{parameter}" "{icon}" 0 SW_SHOWNORMAL "" "{description}"\n'
         return out
 
     def folderSize(self, path):

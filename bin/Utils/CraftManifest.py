@@ -45,7 +45,7 @@ class CraftManifestEntryFile(object):
 
 class CraftManifestBuild(object):
     def __init__(self, version: str) -> None:
-        self.date = datetime.datetime.utcnow()
+        self.date = datetime.datetime.now(datetime.timezone.utc)
         self.version = version
         self.buildPrefix = str(CraftCore.standardDirs.craftRoot())
         # deprecated use config
@@ -131,10 +131,10 @@ class CraftManifestEntry(object):
 
 
 class CraftManifest(object):
-    _TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
+    _TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f%z"
 
     def __init__(self):
-        self.date = datetime.datetime.utcnow()
+        self.date = datetime.datetime.now(datetime.timezone.utc)
         self.packages = {str(CraftCore.compiler): {}}
         self.origin = None
 
@@ -214,7 +214,7 @@ class CraftManifest(object):
     def dump(self, cacheFilePath):
         cacheFilePath = Path(cacheFilePath)
         cacheFilePathTimed = cacheFilePath.parent / f"{cacheFilePath.stem}-{self.date.strftime('%Y%m%dT%H%M%S')}{cacheFilePath.suffix}"
-        self.date = datetime.datetime.utcnow()
+        self.date = datetime.datetime.now(datetime.timezone.utc)
         if self.origin:
             CraftCore.log.info(f"Updating cache manifest from: {self.origin} in: {cacheFilePath}")
         else:
@@ -260,4 +260,7 @@ class CraftManifest(object):
 
     @staticmethod
     def _parseTimeStamp(time: str) -> datetime.datetime:
-        return datetime.datetime.strptime(time, CraftManifest._TIME_FORMAT)
+        try:
+            return datetime.datetime.strptime(time, CraftManifest._TIME_FORMAT)
+        except ValueError:
+            return datetime.datetime.strptime(time, "%Y-%m-%d %H:%M:%S.%f").astimezone(datetime.timezone.utc)

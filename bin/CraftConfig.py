@@ -12,6 +12,7 @@ from pathlib import Path
 
 from CraftCore import CraftCore
 
+
 class CraftConfig(object):
     __CraftBin = None
 
@@ -193,3 +194,16 @@ class CraftConfig(object):
     def _dump():
         if CraftCore.settings.getboolean("CraftDebug", "DumpSettings", False):
             CraftCore.settings.dump()
+
+    def cacheRepositoryUrls(self) -> [str]:
+        out = [
+            "/".join(
+                [
+                    url if not url.endswith("/") else url[0:-1],
+                    CraftCore.settings.get("Packager", "CacheVersion"),
+                    *CraftCore.compiler.signature,
+                ]
+            )
+            for url in CraftCore.settings.getList("Packager", "RepositoryUrl")
+        ]
+        return out
