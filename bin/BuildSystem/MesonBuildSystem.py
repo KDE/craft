@@ -126,7 +126,16 @@ class MesonBuildSystem(BuildSystemBase):
             if CraftCore.compiler.isAndroid:
                 extra_options = ["--cross-file", self.craftCrossFile()]
 
-            return utils.system(Arguments(["meson", "setup", extra_options, self.configureOptions(defines)]))
+            if not utils.system(Arguments(["meson", "setup", extra_options, self.configureOptions(defines)])):
+                logFile = self.buildDir() / "meson-logs/meson-log.txt"
+                if logFile.exists():
+                    with logFile.open("rt", encoding="UTF-8") as log:
+                        CraftCore.log.info(logFile)
+                        CraftCore.debug.debug_line()
+                        CraftCore.log.info(log.read())
+                        CraftCore.debug.debug_line()
+                return False
+            return True
 
     def make(self):
         with utils.ScopedEnv(self.__env()):
