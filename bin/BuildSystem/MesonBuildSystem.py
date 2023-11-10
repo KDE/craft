@@ -119,7 +119,12 @@ class MesonBuildSystem(BuildSystemBase):
         return craftCrossFilePath
 
     def configure(self, defines=""):
-        with utils.ScopedEnv(self.__env()):
+        env = self.__env()
+        if CraftCore.compiler.isLinux:
+            # find craft internal libs in the sanity check
+            # build/meson-private/sanitycheckc.exe: error while loading shared libraries: libintl.so.8: cannot open shared object file: No such file or directory
+            env["LD_LIBRARY_PATH"] = CraftCore.standardDirs.craftRoot() / "lib"
+        with utils.ScopedEnv(env):
             print(CraftCore.compiler)
 
             extra_options = []
