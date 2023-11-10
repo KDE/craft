@@ -347,7 +347,8 @@ class BuildSystemBase(CraftBase):
         return True
 
     def __patchRpathLinux(self, binaryFiles, newPrefix):
-        if not (CraftCore.standardDirs.craftRoot() / "dev-utils/bin/patchelf").exists():
+        patchElf = CraftCore.standardDirs.craftRoot() / "dev-utils/bin/patchelf"
+        if not patchElf.exists():
             CraftCore.log.info("Skipping elf patching during bootstrapping")
             return True
         for f in binaryFiles:
@@ -356,7 +357,7 @@ class BuildSystemBase(CraftBase):
             # replace the old prefix or add it if missing
             craftRpath = os.path.join(newPrefix, "lib")
             with io.StringIO() as log:
-                if not utils.system(["patchelf", "--print-rpath", f], stdout=log, stderr=subprocess.STDOUT, logCommand=False):
+                if not utils.system([patchElf, "--print-rpath", f], stdout=log, stderr=subprocess.STDOUT, logCommand=False):
                     if f.endswith(".cpp.o"):
                         CraftCore.log.info("Ignoring rpath error on .o file. This is a workaround for Qt installing garbage.")
                         continue
@@ -376,7 +377,7 @@ class BuildSystemBase(CraftBase):
             newRpath.add(craftRpath)
             if newRpath != currentRpath:
                 CraftCore.log.info(f"Updating rpath: {currentRpath} -> {newRpath}")
-                if not utils.system(["patchelf", "--set-rpath", ":".join(newRpath), f], logCommand=False):
+                if not utils.system([patchElf, "--set-rpath", ":".join(newRpath), f], logCommand=False):
                     return False
         return True
 
