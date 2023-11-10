@@ -120,8 +120,6 @@ class MesonBuildSystem(BuildSystemBase):
 
     def configure(self, defines=""):
         with utils.ScopedEnv(self.__env()):
-            print(CraftCore.compiler)
-
             extra_options = []
             if CraftCore.compiler.isAndroid:
                 extra_options = ["--cross-file", self.craftCrossFile()]
