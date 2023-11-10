@@ -301,14 +301,13 @@ class SetupHelper(object):
             )
 
     def _setupUnix(self):
-        libraryPaths = [CraftCore.standardDirs.craftRoot() / "lib"]
-
-        if CraftCore.compiler.isLinux:
-            libraryPaths.append(CraftCore.standardDirs.craftRoot() / "lib/x86_64-linux-gnu")
+        craftLibDir = CraftCore.standardDirs.craftRoot() / "lib"
 
         if CraftCore.compiler.isFreeBSD:
-            self.prependEnvVar("LD_LIBRARY_PATH", libraryPaths)
-            self.prependEnvVar("LDFLAGS", ["-Wl,-rpath,'$ORIGIN/../lib'", f"-L{CraftCore.standardDirs.craftRoot() / 'lib'}"], sep=" ")
+            self.prependEnvVar("LD_LIBRARY_PATH", [craftLibDir])
+            self.prependEnvVar("LDFLAGS", ["-Wl,-rpath,'$ORIGIN/../lib'", f"-L{craftLibDir}"], sep=" ")
+        elif CraftCore.compiler.isLinux:
+            self.prependEnvVar("LDFLAGS", [f"-Wl,-rpath,'{craftLibDir}'", f"-L{craftLibDir}"], sep=" ")
         self.prependEnvVar(
             "BISON_PKGDATADIR",
             os.path.join(CraftCore.standardDirs.craftRoot(), "share", "bison"),
