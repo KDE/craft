@@ -356,7 +356,7 @@ class BuildSystemBase(CraftBase):
             # replace the old prefix or add it if missing
             craftRpath = os.path.join(newPrefix, "lib")
             with io.StringIO() as log:
-                if not utils.system(["patchelf", "--print-rpath", f], stdout=log, stderr=subprocess.STDOUT):
+                if not utils.system(["patchelf", "--print-rpath", f], stdout=log, stderr=subprocess.STDOUT, logCommand=False):
                     if f.endswith(".cpp.o"):
                         CraftCore.log.info("Ignoring rpath error on .o file. This is a workaround for Qt installing garbage.")
                         continue
@@ -374,9 +374,10 @@ class BuildSystemBase(CraftBase):
                     newRpath.remove(rPathToRemove)
             # add the new prefix
             newRpath.add(craftRpath)
-            CraftCore.log.info(f"Updating rpath: {currentRpath} -> {newRpath}")
-            if not utils.system(["patchelf", "--set-rpath", ":".join(newRpath), f]):
-                return False
+            if newRpath != currentRpath:
+                CraftCore.log.info(f"Updating rpath: {currentRpath} -> {newRpath}")
+                if not utils.system(["patchelf", "--set-rpath", ":".join(newRpath), f], logCommand=False):
+                    return False
         return True
 
     def internalPostInstall(self):
