@@ -69,10 +69,10 @@ def doExec(package, action):
 # in general it would be nice to handle this with inheritance, but actually we don't wan't a blueprint to be able to change the behaviour of "all"...
 def handlePackage(package, buildAction, directTargets):
     with CraftTimer.Timer(f"HandlePackage {package}", 3) as timer, StageLogger(f"{package.path}/{package.name}"):
-        success = True
+        status = "succeeded"
         actions = []
         timer.hook = lambda: utils.notify(
-            f"Craft {buildAction} {'succeeded' if success else 'failed'}",
+            f"Craft {buildAction} {status}",
             f"{package} after {timer}",
             buildAction,
         )
@@ -111,6 +111,8 @@ def handlePackage(package, buildAction, directTargets):
                 if not doExec(package, action):
                     if StageLogger.isOutputOnFailure():
                         log.dump()
+                    # report failure in timer.hook
+                    status = "failed"
                     return False
         return True
 
