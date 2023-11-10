@@ -307,6 +307,7 @@ class SetupHelper(object):
             self.prependEnvVar("LD_LIBRARY_PATH", [craftLibDir])
             self.prependEnvVar("LDFLAGS", ["-Wl,-rpath,'$ORIGIN/../lib'", f"-L{craftLibDir}"], sep=" ")
         elif CraftCore.compiler.isLinux:
+            # we will later replace the hard coded path in BuildSystemBase.internalPostInstall
             self.prependEnvVar("LDFLAGS", [f"-Wl,-rpath,'{craftLibDir}'", f"-L{craftLibDir}"], sep=" ")
         self.prependEnvVar(
             "BISON_PKGDATADIR",
