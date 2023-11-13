@@ -289,6 +289,11 @@ class BuildSystemBase(CraftBase):
                             CraftCore.log.warning(f"Failed to strip {f}. Is {f} a host tool?")
                             return True
                         return False
+
+                    # we don't do anything with debug symbols for APKs yet, so remove them for now
+                    # to not unnecessarily bloat packages
+                    if CraftCore.compiler.isAndroid:
+                        os.remove(symFileDest)
         return True
 
     def __patchRpathMac(self, binaryFiles, newPrefix):
