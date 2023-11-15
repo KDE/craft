@@ -1,0 +1,4 @@
+# QQC2 styles we don't use on Android
+qml/QtQuick/Controls/Imagine/.*
+qml/QtQuick/Controls/Fusion/.*
+qml/QtQuick/Controls/Universal/.*
