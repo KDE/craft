@@ -83,9 +83,13 @@ class CraftBase(object):
     def sourceDir(self, dummyIndex=0) -> Path:
         utils.abstract()
 
-    def packageDir(self) -> Path:
-        """add documentation"""
+    def blueprintDir(self):
+        """The folder containing this blueprint"""
         return Path(self.package.source).parent
+
+    @deprecated("self.blueprintDir()")
+    def packageDir(self) -> Path:
+        return self.blueprintDir()
 
     def installPrefix(self) -> Path:
         prefix = Path(CraftCore.standardDirs.craftRoot())
