@@ -102,11 +102,14 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     @staticmethod
     def supportsSymlinks():
         with tempfile.TemporaryDirectory() as tmp:
-            testFile = os.path.join(tmp, "CRAFT_LINK_TEST")
+            testFileSource = Path(tmp) / "CRAFT_LINK_TEST_SOURCE"
+            with testFileSource.open("wt") as out:
+                out.write("Hello from craft")
+            testFileDest = Path(tmp) / "CRAFT_LINK_TEST_DEST"
             return (
                 CraftCore.cache.getCommandOutput(
                     f"cmd",
-                    f"/C mklink {testFile} {__file__}",
+                    f"/C mklink {testFileDest} {testFileSource}",
                     testName="CRAFT_LINK_TEST",
                 )[0]
                 == 0
