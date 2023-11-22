@@ -33,6 +33,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+from Blueprints.CraftVersion import CraftVersion
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from Utils.CaseInsensitiveDict import CaseInsensitiveDict
@@ -327,15 +328,24 @@ class SetupHelper(object):
             [f"-Wl,-rpath,{CraftCore.standardDirs.craftRoot() / 'lib'}", f"-L{CraftCore.standardDirs.craftRoot() / 'lib'}"],
             sep=" ",
         )
+        if CraftVersion(CraftCore.settings.get("General", "MacDeploymentTarget", "10.15")) < "12":
+            # https://developer.apple.com/documentation/xcode-release-notes/xcode-15-release-notes
+            # Binaries using symbols with a weak definition crash at runtime on iOS 14/macOS 12 or older. This impacts primarily C++ projects due to their extensive use of weak symbols. (114813650) (FB13097713)
+            # Workaround: Bump the minimum deployment target to iOS 15, macOS 12, watchOS 8 or tvOS 15, or add -Wl,-ld_classic to the OTHER_LDFLAGS build setting.
+            self.prependEnvVar(
+                "LDFLAGS",
+                ["-Wl,-ld_classic"],
+                sep=" ",
+            )
+        self.addEnvVar(
+            "MACOSX_DEPLOYMENT_TARGET",
+            CraftCore.settings.get("General", "MacDeploymentTarget", "10.15"),
+        )
         self.prependEnvVar(
             "BISON_PKGDATADIR",
             os.path.join(CraftCore.standardDirs.craftRoot(), "share", "bison"),
         )
         self.prependEnvVar("M4", os.path.join(CraftCore.standardDirs.craftRoot(), "bin", "m4"))
-        self.addEnvVar(
-            "MACOSX_DEPLOYMENT_TARGET",
-            CraftCore.settings.get("General", "MacDeploymentTarget", "10.15"),
-        )
         try:
             dbusInstalled = bool(CraftCore.installdb.isInstalled("libs/dbus"))
         except sqlite3.OperationalError:
