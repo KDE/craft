@@ -34,6 +34,7 @@ class MesonBuildSystem(BuildSystemBase):
         env = {
             "LDFLAGS": self.subinfo.options.configure.ldflags + " " + os.environ.get("LDFLAGS", ""),
             "CFLAGS": self.subinfo.options.configure.cflags + " " + os.environ.get("CFLAGS", ""),
+            "CXXFLAGS": self.subinfo.options.configure.cxxflags + " " + os.environ.get("CXXFLAGS", ""),
         }
         if CraftCore.compiler.isMSVC():
             env.update(
@@ -45,6 +46,7 @@ class MesonBuildSystem(BuildSystemBase):
         else:
             env["LDFLAGS"] = f"-L{CraftStandardDirs.craftRoot() / 'lib'} {env['LDFLAGS']}"
             env["CFLAGS"] = f"-I{CraftStandardDirs.craftRoot() / 'include'} {env['CFLAGS']}"
+            env["CXXFLAGS"] = f"-I{CraftStandardDirs.craftRoot() / 'include'} {env['CXXFLAGS']}"
         return env
 
     def configureOptions(self, defines=""):
