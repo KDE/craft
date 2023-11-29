@@ -76,8 +76,17 @@ class AppImagePackager(CollectionPackagerBase):
             "LINUXDEPLOY_OUTPUT_VERSION": defines["version"],
             "LDAI_OUTPUT": defines["setupname"],
             "LDNP_META_PACKAGE_NAME": defines.get("appimage_native_package_name", defines["appname"]),
+            "LDNP_META_DEB_ARCHITECTURE": "amd64",
+            "LDNP_META_RPM_BUILD_ARCH": "x86_64",
             "NO_STRIP": "1",  # our binaries are already stripped
         }
+
+        if "website" in defines:
+            env.update({
+                "LDNP_META_DEB_HOMEPAGE": defines["website"],
+                "LDNP_META_RPM_URL": defines["website"],
+            })
+
         if OsUtils.detectDocker():
             env["APPIMAGE_EXTRACT_AND_RUN"] = "1"
         with utils.ScopedEnv(env):
