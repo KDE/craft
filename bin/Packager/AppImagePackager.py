@@ -70,14 +70,15 @@ class AppImagePackager(CollectionPackagerBase):
         if len(desktopFiles) != 1:
             CraftCore.log.error("Failed to find the .desktop file")
             return False
+
         env = {
-            "ARCH": "x86_64",
+            "ARCH": CraftCore.compiler.appImageArchitecture,
             "LD_LIBRARY_PATH": f"{archiveDir}/usr/lib:{archiveDir}/usr/lib/x86_64-linux-gnu",
             "LINUXDEPLOY_OUTPUT_VERSION": defines["version"],
             "LDAI_OUTPUT": defines["setupname"],
             "LDNP_META_PACKAGE_NAME": defines.get("appimage_native_package_name", defines["appname"]),
-            "LDNP_META_DEB_ARCHITECTURE": "amd64",
-            "LDNP_META_RPM_BUILD_ARCH": "x86_64",
+            "LDNP_META_DEB_ARCHITECTURE": CraftCore.compiler.debArchitecture,
+            "LDNP_META_RPM_BUILD_ARCH": CraftCore.compiler.rpmArchitecture,
             "NO_STRIP": "1",  # our binaries are already stripped
         }
 
