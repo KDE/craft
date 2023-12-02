@@ -2,3 +2,7 @@
 qml/QtQuick/Controls/Imagine/.*
 qml/QtQuick/Controls/Fusion/.*
 qml/QtQuick/Controls/Universal/.*
+
+# application data not used on Android
+share/applications/.*\.desktop
+share/metainfo/.*\.xml
