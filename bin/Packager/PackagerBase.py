@@ -79,6 +79,10 @@ class PackagerBase(CraftBase):
             appPath = apps[0]
         return lookPath / appPath
 
+    def getImageMacAppPath(self):
+        defines = self.setDefaults(self.defines)
+        return self.getMacAppPath(defines, self.imageDir())
+
     def preArchive(self):
         utils.abstract()
 
