@@ -130,6 +130,7 @@ class CMakeBuildSystem(BuildSystemBase):
             if hasattr(self, "androidApkDirs"):
                 if self.androidApkTargets:
                     options += [
+                        f"-DECM_APK_STAGING_ROOT_PATH='{self.archiveDir()}'",
                         f"-DQTANDROID_EXPORTED_TARGET='{';'.join(self.androidApkTargets)}'",
                         f"-DANDROID_APK_DIR='{';'.join(self.androidApkDirs)}'",
                     ]

@@ -70,29 +70,39 @@ class AppImagePackager(CollectionPackagerBase):
         if len(desktopFiles) != 1:
             CraftCore.log.error("Failed to find the .desktop file")
             return False
+
         env = {
-            "ARCH": "x86_64",
+            "ARCH": CraftCore.compiler.appImageArchitecture,
             "LD_LIBRARY_PATH": f"{archiveDir}/usr/lib:{archiveDir}/usr/lib/x86_64-linux-gnu",
             "LINUXDEPLOY_OUTPUT_VERSION": defines["version"],
             "LDAI_OUTPUT": defines["setupname"],
             "LDNP_META_PACKAGE_NAME": defines.get("appimage_native_package_name", defines["appname"]),
+            "LDNP_META_DEB_ARCHITECTURE": CraftCore.compiler.debArchitecture,
+            "LDNP_META_RPM_BUILD_ARCH": CraftCore.compiler.rpmArchitecture,
             "NO_STRIP": "1",  # our binaries are already stripped
         }
+
+        if "website" in defines:
+            env.update({
+                "LDNP_META_DEB_HOMEPAGE": defines["website"],
+                "LDNP_META_RPM_URL": defines["website"],
+            })
+
         if OsUtils.detectDocker():
             env["APPIMAGE_EXTRACT_AND_RUN"] = "1"
+        args = [
+            "--appdir",
+            self.archiveDir(),
+            "--desktop-file",
+            desktopFiles[0],
+        ]
+        for output in ["appimage"] + defines.get("appimage_extra_output", []):
+            args += [f"--output={output}"]
+        for plugin in ["qt"] + defines.get("appimage_extra_plugins", []):
+            args += [f"--plugin={plugin}"]
+        if "appimage_apprun" in defines:
+            args += ["--custom-apprun", defines["appimage_apprun"]]
+        if CraftCore.debug.verbose() > 0:
+            args += ["-v0"]
         with utils.ScopedEnv(env):
-            args = [
-                "--appdir",
-                self.archiveDir(),
-                "--plugin=qt",
-                "--output=appimage",
-                "--desktop-file",
-                desktopFiles[0],
-            ]
-            for output in defines.get("appimage_extra_output", []):
-                args += [f"--output={output}"]
-            if "appimage_apprun" in defines:
-                args += ["--custom-apprun", defines["appimage_apprun"]]
-            if CraftCore.debug.verbose() > 0:
-                args += ["-v0"]
             return utils.system([self.linuxdeployExe] + args, cwd=self.packageDestinationDir(), acceptableExitCodes=[0, -11])

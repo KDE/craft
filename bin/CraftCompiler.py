@@ -216,6 +216,38 @@ class CraftCompiler(object):
         return out
 
     @property
+    def rpmArchitecture(self):
+        architectures = {
+            # values from Fedora, your mileage may vary on other distributions
+            CraftCompiler.Architecture.x86_32: "i686",
+            CraftCompiler.Architecture.x86_64: "x86_64",
+            CraftCompiler.Architecture.arm32: "armhfp",
+            CraftCompiler.Architecture.arm64: "arm64",
+        }
+        return architectures[self.architecture]
+
+    @property
+    def debArchitecture(self):
+        # https://wiki.debian.org/SupportedArchitectures
+        architectures = {
+            CraftCompiler.Architecture.x86_32: "i386",
+            CraftCompiler.Architecture.x86_64: "amd64",
+            CraftCompiler.Architecture.arm32: "armhf",
+            CraftCompiler.Architecture.arm64: "arm64",
+        }
+        return architectures[self.architecture]
+
+    @property
+    def appImageArchitecture(self):
+        architectures = {
+            CraftCompiler.Architecture.x86_32: "i686",
+            CraftCompiler.Architecture.x86_64: "amd64",
+            CraftCompiler.Architecture.arm32: "armhf",
+            CraftCompiler.Architecture.arm64: "aarch64",
+        }
+        return architectures[self.architecture]
+
+    @property
     def msvcToolset(self):
         return self._MSVCToolset
 

@@ -5,14 +5,14 @@ from xml.etree import ElementTree
 import utils
 from CraftBase import InitGuard
 from CraftCore import *
-from Packager.PackagerBase import PackagerBase
+from Packager.CollectionPackagerBase import CollectionPackagerBase
 from Utils.Arguments import Arguments
 
 
-class CMakeApkPackager(PackagerBase):
+class CMakeApkPackager(CollectionPackagerBase):
     @InitGuard.init_once
     def __init__(self):
-        PackagerBase.__init__(self)
+        CollectionPackagerBase.__init__(self)
         self.__androidApkTargets = set()
         self.__androidApkDirs = set()
 
@@ -41,6 +41,8 @@ class CMakeApkPackager(PackagerBase):
         return self.__androidApkTargets
 
     def createPackage(self):
+        if not self.internalCreatePackage():
+            return False
         if self.androidApkTargets:
             self.enterBuildDir()
             command = Arguments.formatCommand([self.makeProgram], ["create-apk"])

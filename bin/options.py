@@ -137,7 +137,7 @@ class UserOptions(object):
         _register("branch", str, persist=False)
         _register("revision", str, persist=False)
         _register("ignored", bool, persist=False, compatible=True)
-        _register("buildTests", True, persist=False, compatible=True)
+        _register("buildTests", not CraftCore.compiler.isAndroid, persist=False, compatible=True)
         _register("buildStatic", bool, persist=False)
 
         _register(
