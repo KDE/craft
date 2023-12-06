@@ -6,3 +6,10 @@ qml/QtQuick/Controls/Universal/.*
 # application data not used on Android
 share/applications/.*\.desktop
 share/metainfo/.*\.xml
+
+# Android-specific development files
+share/ndk-modules/.*
+
+# data files not relevant on Android
+share/licenses/SDL2/.*
+share/zsh/.*
