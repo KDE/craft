@@ -19,8 +19,8 @@ class MacDMGPackager(MacBasePackager):
     def __init__(self, whitelists=None, blacklists=None):
         MacBasePackager.__init__(self, whitelists, blacklists)
 
-    def setDefaults(self, defines: {str: str}) -> {str: str}:
-        defines = super().setDefaults(defines)
+    def setPackagingDefines(self, defines: {str: str}) -> {str: str}:
+        defines = super().setPackagingDefines(defines)
         defines["setupname"] = f"{defines['setupname']}.dmg"
         return defines
 
@@ -28,7 +28,7 @@ class MacDMGPackager(MacBasePackager):
         """create a package"""
         CraftCore.log.debug("packaging using the MacDMGPackager")
 
-        defines = self.setDefaults(self.defines)
+        defines = self.setPackagingDefines(self.defines)
         # TODO: provide an image with dbg files
         if not self.internalCreatePackage(defines):
             return False

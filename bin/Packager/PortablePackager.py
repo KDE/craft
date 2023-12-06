@@ -13,8 +13,8 @@ class PortablePackager(CollectionPackagerBase, SevenZipPackager):
         SevenZipPackager.__init__(self)
         CollectionPackagerBase.__init__(self, whitelists, blacklists)
 
-    def setDefaults(self, defines: {str: str}) -> {str: str}:
-        defines = super().setDefaults(defines)
+    def setPackagingDefines(self, defines: {str: str}) -> {str: str}:
+        defines = super().setPackagingDefines(defines)
         defines["setupname"] = f"{defines['setupname']}{self.archiveExtension}"
         return defines
 
@@ -29,7 +29,7 @@ class PortablePackager(CollectionPackagerBase, SevenZipPackager):
     def createPackage(self):
         """create a package"""
 
-        defines = self.setDefaults(self.defines)
+        defines = self.setPackagingDefines(self.defines)
         if not self.internalCreatePackage(defines):
             return False
 

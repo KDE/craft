@@ -69,8 +69,8 @@ class InnoSetupPackager(PortablePackager):
         self.nsisExe = None
         self._isInstalled = False
 
-    def setDefaults(self, defines) -> {}:
-        defines = super().setDefaults(defines)
+    def setPackagingDefines(self, defines) -> {}:
+        defines = super().setPackagingDefines(defines)
         defines.setdefault("srcdir", self.archiveDir())  # deprecated
         defines.setdefault("registry_keys", [])
         defines.setdefault("file_types", [])  # extension -> label pair would be better, but trying to be compatible with existing AppxPackager
@@ -180,7 +180,7 @@ class InnoSetupPackager(PortablePackager):
 
         CraftCore.log.debug("packaging using the InnoSetupPackager")
 
-        defines = self.setDefaults(self.defines)
+        defines = self.setPackagingDefines(self.defines)
 
         if not self.internalCreatePackage(defines):
             return False

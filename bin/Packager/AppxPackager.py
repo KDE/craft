@@ -122,8 +122,8 @@ class AppxPackager(CollectionPackagerBase):
             defines.setdefault("file_types", "")
             defines.setdefault("extensions", "")
 
-    def setDefaults(self, defines: dict) -> dict:
-        defines = super().setDefaults(defines)
+    def setPackagingDefines(self, defines: dict) -> dict:
+        defines = super().setPackagingDefines(defines)
         defines.setdefault("additional_xmlns", "")
         architectures = {
             CraftCompiler.Architecture.x86_32: "x86",
@@ -267,7 +267,7 @@ class AppxPackager(CollectionPackagerBase):
         return self.__createAppX(defines) and CodeSign.signWindows([setupName])
 
     def createPackage(self):
-        defines = self.setDefaults(self.defines)
+        defines = self.setPackagingDefines(self.defines)
 
         if not "executable" in defines:
             CraftCore.log.error(

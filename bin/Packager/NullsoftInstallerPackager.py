@@ -80,8 +80,8 @@ class NullsoftInstallerPackager(PortablePackager):
         self.nsisExe = None
         self._isInstalled = False
 
-    def setDefaults(self, defines) -> dict:
-        defines = super().setDefaults(defines)
+    def setPackagingDefines(self, defines) -> dict:
+        defines = super().setPackagingDefines(defines)
         defines.setdefault("architecture", CraftCore.compiler.architecture.name.lower())
         defines.setdefault(
             "defaultinstdir",
@@ -233,7 +233,7 @@ class NullsoftInstallerPackager(PortablePackager):
 
         CraftCore.log.debug("packaging using the NullsoftInstallerPackager")
 
-        defines = self.setDefaults(self.defines)
+        defines = self.setPackagingDefines(self.defines)
 
         if not super().createPackage():
             return False

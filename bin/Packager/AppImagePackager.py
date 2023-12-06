@@ -8,8 +8,8 @@ class AppImagePackager(CollectionPackagerBase):
         self.linuxdeployExe = None
         self._isInstalled = False
 
-    def setDefaults(self, defines: {str: str}) -> {str: str}:
-        defines = super().setDefaults(defines)
+    def setPackagingDefines(self, defines: {str: str}) -> {str: str}:
+        defines = super().setPackagingDefines(defines)
         defines["setupname"] = f"{defines['setupname']}.AppImage"
         defines.setdefault(
             "runenv",
@@ -49,7 +49,7 @@ class AppImagePackager(CollectionPackagerBase):
         CraftCore.log.debug("packaging using the AppImagePackager")
 
         archiveDir = Path(self.archiveDir())
-        defines = self.setDefaults(self.defines)
+        defines = self.setPackagingDefines(self.defines)
         if not self.internalCreatePackage(defines):
             return False
         if not utils.mergeTree(archiveDir, archiveDir / "usr"):

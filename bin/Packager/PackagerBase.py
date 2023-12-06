@@ -27,7 +27,11 @@ class PackagerBase(CraftBase):
         self._manifest = None
         self._currentManifestEnty = None
 
+    @deprecated("self.setPackagingDefines")
     def setDefaults(self, defines: {str: str}) -> {str: str}:
+        return self.setPackagingDefines(defines)
+
+    def setPackagingDefines(self, defines: {str: str}) -> {str: str}:
         defines = dict(defines)
         defines.setdefault(
             "setupname",

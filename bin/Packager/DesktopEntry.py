@@ -30,7 +30,7 @@ from shells import Powershell
 
 class DesktopEntry(PackagerBase):
     def createPackage(self):
-        defines = self.setDefaults(self.defines)
+        defines = self.setPackagingDefines(self.defines)
         craftName = CraftCore.standardDirs.craftRoot().name
         if CraftCore.compiler.isMacOS:
             root = CraftCore.standardDirs.craftRoot()

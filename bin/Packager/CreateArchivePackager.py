@@ -14,5 +14,5 @@ class CreateArchivePackager(CollectionPackagerBase):
         """create a package"""
         CraftCore.log.debug("packaging using the CreateArchivePackager")
 
-        defines = self.setDefaults(self.defines)
+        defines = self.setPackagingDefines(self.defines)
         return self.internalCreatePackage(defines)

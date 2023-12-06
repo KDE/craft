@@ -19,8 +19,8 @@ class MacPkgPackager(MacBasePackager):
     def __init__(self, whitelists=None, blacklists=None):
         MacBasePackager.__init__(self, whitelists, blacklists)
 
-    def setDefaults(self, defines: {str: str}) -> {str: str}:
-        defines = super().setDefaults(defines)
+    def setPackagingDefines(self, defines: {str: str}) -> {str: str}:
+        defines = super().setPackagingDefines(defines)
         defines["setupname"] = f"{defines['setupname']}.pkg"
         return defines
 
@@ -33,7 +33,7 @@ class MacPkgPackager(MacBasePackager):
             )
             return False
 
-        defines = self.setDefaults(self.defines)
+        defines = self.setPackagingDefines(self.defines)
         if not "pkgproj" in defines:
             CraftCore.log.error("Cannot not create .pkg because no .pkgproj was defined.")
             return False
