@@ -1,5 +1,8 @@
 import info
-from Package.MaybeVirtualPackageBase import *
+import utils
+from CraftCore import CraftCore
+from Package.BinaryPackageBase import BinaryPackageBase
+from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
@@ -9,13 +12,17 @@ class subinfo(info.infoclass):
     def setTargets(self):
         for ver in ["21.03", "21.06", "21.07", "22.01", "23.01"]:
             verNoDot = ver.replace(".", "")
-            self.targetInstallPath[ver] = os.path.join("dev-utils", "7z")
+            self.targetInstallPath[ver] = "dev-utils/7z"
             if CraftCore.compiler.isWindows:
                 self.targets[ver] = f"https://files.kde.org/craft/3rdparty/7zip/{verNoDot}/7z{verNoDot}-extra.zip"
                 self.targetInstSrc[ver] = f"7z{verNoDot}-extra"
                 self.targetDigestUrls[ver] = self.targets[ver] + ".sha256"
             elif CraftCore.compiler.isLinux:
-                self.targets[ver] = f"https://github.com/fmoc/prebuilt-7z/releases/download/continuous/prebuilt-7z-{ver}-x86_64-asm.tar.gz"
+                if CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_64:
+                    self.targets[ver] = f"https://github.com/fmoc/prebuilt-7z/releases/download/continuous/prebuilt-7z-{ver}-x86_64-asm.tar.gz"
+                elif CraftCore.compiler.architecture & CraftCore.compiler.Architecture.arm:
+                    self.targets[ver] = f"https://www.7-zip.org/a/7z{verNoDot}-linux-arm64.tar.xz"
+                    self.targetDigests["23.01"] = (['34e938fc4ba8ca6a835239733d9c1542ad8442cc037f43ca143a119bdf322b63'], CraftHash.HashAlgorithm.SHA256)
             else:
                 self.targets[ver] = f"https://files.kde.org/craft/3rdparty/7zip/{verNoDot}/7z{verNoDot}-mac.tar.xz"
                 self.targetDigestUrls[ver] = self.targets[ver] + ".sha256"
@@ -25,7 +32,6 @@ class subinfo(info.infoclass):
         self.defaultTarget = "23.01"
 
 
-from Package.BinaryPackageBase import *
 
 
 class Package(BinaryPackageBase):
