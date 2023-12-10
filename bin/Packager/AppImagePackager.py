@@ -83,10 +83,12 @@ class AppImagePackager(CollectionPackagerBase):
         }
 
         if "website" in defines:
-            env.update({
-                "LDNP_META_DEB_HOMEPAGE": defines["website"],
-                "LDNP_META_RPM_URL": defines["website"],
-            })
+            env.update(
+                {
+                    "LDNP_META_DEB_HOMEPAGE": defines["website"],
+                    "LDNP_META_RPM_URL": defines["website"],
+                }
+            )
 
         if OsUtils.detectDocker():
             env["APPIMAGE_EXTRACT_AND_RUN"] = "1"
@@ -105,4 +107,4 @@ class AppImagePackager(CollectionPackagerBase):
         if CraftCore.debug.verbose() > 0:
             args += ["-v0"]
         with utils.ScopedEnv(env):
-            return utils.system([self.linuxdeployExe] + args, cwd=self.packageDestinationDir(), acceptableExitCodes=[0, -11])
+            return utils.system([self.linuxdeployExe] + args, cwd=self.packageDestinationDir())

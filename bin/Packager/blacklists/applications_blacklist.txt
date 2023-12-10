@@ -118,3 +118,6 @@ plugins/qmltooling/.*
 
 # kf6 development files
 share/kf6/jsonschema/.*
+
+# ffmpeg example files
+share/ffmpeg/examples/.*

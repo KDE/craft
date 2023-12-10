@@ -241,7 +241,7 @@ class CraftCompiler(object):
     def appImageArchitecture(self):
         architectures = {
             CraftCompiler.Architecture.x86_32: "i686",
-            CraftCompiler.Architecture.x86_64: "amd64",
+            CraftCompiler.Architecture.x86_64: "x86_64",
             CraftCompiler.Architecture.arm32: "armhf",
             CraftCompiler.Architecture.arm64: "aarch64",
         }
