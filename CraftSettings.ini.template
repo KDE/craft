@@ -259,6 +259,8 @@ MacDeveloperId = K Desktop Environment e.V. (5433B4KXM8)
 #MacCertificateApplication =
 ## The path to the Installer certigicate
 #MacCertificateInstaller =
+## If the custom command is not empty it will be used instead of codesign
+#MacCustomSignCommand =
 
 
 [Version]

@@ -206,6 +206,19 @@ class _MacSignScope(LockFile, utils.ScopedEnv):
         LockFile.__exit__(self, exc_type, exc_value, trback)
 
 
+def __verifyMacApp(appPath: Path):
+    # Verify signature
+    if not utils.system(["codesign", "--display", "--verbose", appPath]):
+        return False
+
+    if not utils.system(["codesign", "--verify", "--verbose", "--strict", "--deep", appPath]):
+        return False
+
+    # TODO: this step might require notarisation
+    utils.system(["spctl", "-a", "-t", "exec", "-vv", appPath])
+    return True
+
+
 def __signMacApp(appPath: Path, scope: _MacSignScope):
     CraftCore.log.info(f"Sign {appPath}")
     devID = CraftCore.settings.get("CodeSigning", "MacDeveloperId")
@@ -261,81 +274,87 @@ def __signMacApp(appPath: Path, scope: _MacSignScope):
     if not utils.system(signCommand + ["--deep", appPath]):
         return False
 
-    ## Verify signature
-    if not utils.system(["codesign", "--display", "--verbose", appPath]):
-        return False
-
-    if not utils.system(["codesign", "--verify", "--verbose", "--strict", "--deep", appPath]):
-        return False
-
-    # TODO: this step might require notarisation
-    utils.system(["spctl", "-a", "-t", "exec", "-vv", appPath])
-    return True
+    return __verifyMacApp(appPath)
 
 
 def signMacApp(appPath: Path):
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
         return True
-    # special case, two independent setups of craft might want to sign at the same time and only one keychain can be unlocked at a time
-    with _MacSignScope() as scope:
-        return __signMacApp(appPath, scope)
+
+    customComand = CraftCore.settings.get("CodeSigning", "MacCustomSignCommand")
+    if customComand:
+        if not utils.system(customComand + [appPath]):
+            return False
+        return __verifyMacApp(appPath)
+    else:
+        # special case, two independent setups of craft might want to sign at the same time and only one keychain can be unlocked at a time
+        with _MacSignScope() as scope:
+            return __signMacApp(appPath, scope)
+
+
+def __signMacPackage(packagePath: Path, scope: _MacSignScope):
+    packagePath = Path(packagePath)
+    devID = CraftCore.settings.get("CodeSigning", "MacDeveloperId")
+
+    if packagePath.name.endswith(".dmg"):
+        # sign dmg
+        if not utils.system(
+            [
+                "codesign",
+                "--force",
+                "--keychain",
+                scope.loginKeychain,
+                "--sign",
+                f"Developer ID Application: {devID}",
+                "--timestamp",
+                packagePath,
+            ]
+        ):
+            return False
+
+        # TODO: this step would require notarisation
+        # verify dmg signature
+        utils.system(
+            [
+                "spctl",
+                "-a",
+                "-t",
+                "open",
+                "--context",
+                "context:primary-signature",
+                packagePath,
+            ]
+        )
+    else:
+        # sign pkg
+        packagePathTmp = f"{packagePath}.sign"
+        if not utils.system(
+            [
+                "productsign",
+                "--keychain",
+                scope.loginKeychain,
+                "--sign",
+                f"Developer ID Installer: {devID}",
+                "--timestamp",
+                packagePath,
+                packagePathTmp,
+            ]
+        ):
+            return False
+
+        utils.moveFile(packagePathTmp, packagePath)
+
+    return True
 
 
 def signMacPackage(packagePath: str):
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
         return True
 
-    # special case, two independent setups of craft might want to sign at the same time and only one keychain can be unlocked at a time
-    with _MacSignScope() as scope:
-        packagePath = Path(packagePath)
-        devID = CraftCore.settings.get("CodeSigning", "MacDeveloperId")
-
-        if packagePath.name.endswith(".dmg"):
-            # sign dmg
-            if not utils.system(
-                [
-                    "codesign",
-                    "--force",
-                    "--keychain",
-                    scope.loginKeychain,
-                    "--sign",
-                    f"Developer ID Application: {devID}",
-                    "--timestamp",
-                    packagePath,
-                ]
-            ):
-                return False
-
-            # TODO: this step would require notarisation
-            # verify dmg signature
-            utils.system(
-                [
-                    "spctl",
-                    "-a",
-                    "-t",
-                    "open",
-                    "--context",
-                    "context:primary-signature",
-                    packagePath,
-                ]
-            )
-        else:
-            # sign pkg
-            packagePathTmp = f"{packagePath}.sign"
-            if not utils.system(
-                [
-                    "productsign",
-                    "--keychain",
-                    scope.loginKeychain,
-                    "--sign",
-                    f"Developer ID Installer: {devID}",
-                    "--timestamp",
-                    packagePath,
-                    packagePathTmp,
-                ]
-            ):
-                return False
-
-            utils.moveFile(packagePathTmp, packagePath)
-
-        return True
+    customComand = CraftCore.settings.get("CodeSigning", "MacCustomSignCommand")
+    if customComand:
+        return utils.system(customComand + [packagePath])
+    else:
+        # special case, two independent setups of craft might want to sign at the same time and only one keychain can be unlocked at a time
+        with _MacSignScope() as scope:
+            return __signMacPackage(Path(packagePath), scope)
