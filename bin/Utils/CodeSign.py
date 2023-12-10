@@ -281,7 +281,7 @@ def signMacApp(appPath: Path):
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
         return True
 
-    customComand = CraftCore.settings.get("CodeSigning", "MacCustomSignCommand")
+    customComand = CraftCore.settings.get("CodeSigning", "MacCustomSignCommand", "")
     if customComand:
         if not utils.system(customComand + [appPath]):
             return False
@@ -351,7 +351,7 @@ def signMacPackage(packagePath: str):
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
         return True
 
-    customComand = CraftCore.settings.get("CodeSigning", "MacCustomSignCommand")
+    customComand = CraftCore.settings.get("CodeSigning", "MacCustomSignCommand", "")
     if customComand:
         return utils.system(customComand + [packagePath])
     else:
