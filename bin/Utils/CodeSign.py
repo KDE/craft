@@ -285,7 +285,7 @@ def signMacApp(appPath: Path):
     customComand = CraftCore.settings.get("CodeSigning", "MacCustomSignCommand", "")
     if customComand:
         cmd = shlex.split(customComand)
-        cmd += appPath
+        cmd += [appPath]
         if not utils.system(cmd):
             return False
         return __verifyMacApp(appPath)
@@ -357,7 +357,7 @@ def signMacPackage(packagePath: str):
     customComand = CraftCore.settings.get("CodeSigning", "MacCustomSignCommand", "")
     if customComand:
         cmd = shlex.split(customComand)
-        cmd += packagePath
+        cmd += [packagePath]
         return utils.system(cmd)
     else:
         # special case, two independent setups of craft might want to sign at the same time and only one keychain can be unlocked at a time
