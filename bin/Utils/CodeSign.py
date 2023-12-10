@@ -25,6 +25,7 @@
 import os
 import re
 import secrets
+import shlex
 import subprocess
 from pathlib import Path
 
@@ -283,7 +284,9 @@ def signMacApp(appPath: Path):
 
     customComand = CraftCore.settings.get("CodeSigning", "MacCustomSignCommand", "")
     if customComand:
-        if not utils.system([customComand, appPath]):
+        cmd = shlex.split(customComand)
+        cmd += appPath
+        if not utils.system(cmd):
             return False
         return __verifyMacApp(appPath)
     else:
@@ -353,7 +356,9 @@ def signMacPackage(packagePath: str):
 
     customComand = CraftCore.settings.get("CodeSigning", "MacCustomSignCommand", "")
     if customComand:
-        return utils.system([customComand, packagePath])
+        cmd = shlex.split(customComand)
+        cmd += packagePath
+        return utils.system(cmd)
     else:
         # special case, two independent setups of craft might want to sign at the same time and only one keychain can be unlocked at a time
         with _MacSignScope() as scope:
