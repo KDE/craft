@@ -1,3 +1,14 @@
 # we are using the icon.rcc on mac
 share/icons/.*
 # buildsystem stuff
+
+# Qt 6.6 bug: on macOS object files get installed
+# libs/qt6/qtbase: plugins/permissions/objects-RelWithDebInfo/QDarwinCalendarPermissionPlugin_init/QDarwinCalendarPermissionPlugin_init.cpp.o
+# libs/qt6/qtbase: plugins/permissions/objects-RelWithDebInfo/QDarwinLocationPermissionPlugin_init/QDarwinLocationPermissionPlugin_init.cpp.o
+# libs/qt6/qtbase: plugins/permissions/objects-RelWithDebInfo/QDarwinCameraPermissionPlugin_init/QDarwinCameraPermissionPlugin_init.cpp.o
+# libs/qt6/qtbase: plugins/permissions/objects-RelWithDebInfo/QDarwinMicrophonePermissionPlugin_init/QDarwinMicrophonePermissionPlugin_init.cpp.o
+# libs/qt6/qtbase: plugins/permissions/objects-RelWithDebInfo/QDarwinContactsPermissionPlugin_init/QDarwinContactsPermissionPlugin_init.cpp.o
+# libs/qt6/qtbase: plugins/permissions/objects-RelWithDebInfo/QDarwinBluetoothPermissionPlugin_init/QDarwinBluetoothPermissionPlugin_init.cpp.o
+# libs/qt6/qtbase: lib/objects-RelWithDebInfo/ExampleIconsPrivate_resources_1/.rcc/qrc_example_icons.cpp.o
+# libs/qt6/qtdeclarative: qml/Qt/test/controls/objects-RelWithDebInfo/QuickControlsTestUtilsPrivate_resources_1/.rcc/qrc_qmake_Qt_test_controls.cpp.o
+.*/objects-RelWithDebInfo/.*
