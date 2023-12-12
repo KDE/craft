@@ -281,6 +281,11 @@ def main(timer):
         nargs=argparse.REMAINDER,
         help="Run an application in the Craft environment and detach",
     )
+    actionHandler.addActionWithArg(
+        "exec",
+        nargs=argparse.REMAINDER,
+        help="Run an application in the Craft environment using os.exec*",
+    )
 
     # other actions
 
@@ -339,6 +344,8 @@ def main(timer):
         if CraftCore.compiler.isWindows:
             kwargs["creationflags"] = subprocess.DETACHED_PROCESS
         return subprocess.Popen(run_detached, **kwargs)
+    elif args.exec:
+        return os.execvp(args.exec[0], args.exec)
 
     if args.add_blueprint_repository:
         return CraftCommands.addBlueprintsRepository(args.add_blueprint_repository)
