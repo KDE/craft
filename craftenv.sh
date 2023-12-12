@@ -53,32 +53,30 @@ fi
 
 craft() {
     local python="$KDEROOT/dev-utils/bin/python3"
-    if [[ ! -f $python ]]; then
+    if [[ ! -f "$python" ]]; then
       local python=${CRAFT_PYTHON_BIN}
     fi
-    ${python} "$craftRoot/bin/craft.py" $@
+    ${python} "$craftRoot/bin/craft.py" "$@"
 }
 
 cs() {
-    dir=$(craft -q --ci-mode --get "sourceDir()" "$1")
-    if (($? > 0));then
-        echo $dir
+    if ! dir="$(craft -q --ci-mode --get "sourceDir()" "$1")"; then
+        echo "$dir"
     else
-        cd "$dir"
+        cd "$dir" || exit 2
     fi
 }
 
 cb() {
-    dir=$(craft -q --ci-mode --get "buildDir()" $1)
-    if (($? > 0));then
-        echo $dir
+    if ! dir="$(craft -q --ci-mode --get "buildDir()" "$1")"; then
+        echo "$dir"
     else
-        cd "$dir"
+        cd "$dir" || exit 2
     fi
 }
 
 cr() {
-    cd "$KDEROOT"
+    cd "$KDEROOT" || exit 2
 }
 
 cr
