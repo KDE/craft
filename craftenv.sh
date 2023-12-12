@@ -10,7 +10,9 @@ if [[ -z "$craftRoot" ]];then
     exit 1
 fi
 
-if command -v python3.7 >/dev/null; then
+if [ -n "$CRAFT_PYTHON_BIN" ]; then
+    echo "Using user-provided CRAFT_PYTHON_BIN: $CRAFT_PYTHON_BIN";
+elif command -v python3.7 >/dev/null; then
     CRAFT_PYTHON_BIN=$(command -v python3.7)
 elif command -v python3.6 >/dev/null; then
     CRAFT_PYTHON_BIN=$(command -v python3.6)
