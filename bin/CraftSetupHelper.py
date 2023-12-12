@@ -96,7 +96,7 @@ class SetupHelper(object):
         parser.add_argument("--print-banner", action="store_true")
         parser.add_argument("--getenv", action="store_true")
         parser.add_argument("--setup", action="store_true")
-        parser.add_argument("--format", action="store", choices=["json", "text"], default="text")
+        parser.add_argument("--format", action="store", choices=["json", "text", "null"], default="text")
         parser.add_argument("rest", nargs=argparse.REMAINDER)
         args = parser.parse_args()
 
@@ -521,19 +521,38 @@ class SetupHelper(object):
     def printEnv(self, format: str):
         self.setupEnvironment()
 
-        if format == "text":
+        if format in ("null", "text"):
+            envToDump = {}
+
             for key, val in os.environ.items():
                 if key.startswith("BASH_FUNC_"):
                     continue
-                if "\n" in val:
-                    log(f"Not adding ${key} to environment since it contains " "a newline character and that breaks craftenv.sh")
-                    continue
+
                 # weird protected env vars
                 if key in {"PROFILEREAD"}:
                     continue
-                CraftCore.log.info(f"{key}={val}")
-        else:
+
+                if format == "text" and "\n" in val:
+                    log(f"Not adding ${key} to environment since it contains " "a newline character")
+                    continue
+
+                envToDump[key] = val
+
+            if format == "null":
+                end = "\0"
+            else:
+                end = "\n"
+
+            CraftCore.log.info(end.join((f"{key}={val}" for key, val in envToDump.items())))
+
+            return
+
+        elif format == "json":
             CraftCore.log.info(json.dumps(dict(os.environ)))
+
+            return
+
+        raise RuntimeError(f"unsupported format: {format}")
 
     @property
     def version(self):
