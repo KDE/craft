@@ -415,7 +415,7 @@ if __name__ == "__main__":
             CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_64
             and CraftCore.compiler.hostArchitecture != CraftCore.compiler.Architecture.x86_64
         ):
-            exit(subprocess.call(["arch", "-arch", "x86_64", sys.executable] + sys.argv))
+            os.execvp("arch", ["arch", "-arch", "x86_64", sys.executable] + sys.argv)
 
     success = False
     with CraftTimer.Timer("Craft", 0) as timer:
