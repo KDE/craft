@@ -41,12 +41,13 @@ fi
 
 export craftRoot
 
-${CRAFT_PYTHON_BIN} "$craftRoot/bin/CraftSetupHelper.py" --setup --format null | while read -r -d '' env_var; do
+
+while read -r -d '' env_var; do
     # environment variable keys may not contain =, therefore parsing is relatively easy
     key="$(cut -d= -f1 <<<"$env_var")"
     value="$(cut -d= -f2- <<<"$env_var")"
     export "$key"="$value"
-done
+done < <("${CRAFT_PYTHON_BIN}" "$craftRoot/bin/CraftSetupHelper.py" --setup --format null)
 
 if [[ -n "$PS1" ]]; then
     export PS1="CRAFT: $PS1"
