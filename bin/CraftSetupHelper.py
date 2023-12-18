@@ -473,7 +473,7 @@ class SetupHelper(object):
         # make sure that craftroot bin is the first to look for dlls etc
         self.prependEnvVar(
             "PATH",
-            [CraftCore.standardDirs.craftRoot() / "bin", CraftCore.standardDirs.craftRoot() / "libexec", CraftCore.standardDirs.craftRoot() / "dev-utils/bin"],
+            [CraftCore.standardDirs.craftRoot() / "dev-utils/bin", CraftCore.standardDirs.craftRoot() / "bin", CraftCore.standardDirs.craftRoot() / "libexec"],
         )
 
         if CraftCore.compiler.isClang() and not CraftCore.compiler.isAndroid:
