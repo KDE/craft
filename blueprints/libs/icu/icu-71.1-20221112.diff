@@ -1,0 +1,16 @@
+# https://github.com/SpaceIm/conan-center-index/blob/1d470aa3b8caa59312edd0d15213b3ef4fe4a45e/recipes/icu/all/conanfile.py#L144
+diff -Nrub -x *~ -x *\.rej -x *\.orig -x *\.o -x *\.pyc -x CMakeLists.txt.user icu/source.orig/config/mh-darwin icu/source/config/mh-darwin
+--- icu/source.orig/config/mh-darwin	2022-04-08 00:41:55
++++ source/config/mh-darwin	2022-11-12 21:47:00
+@@ -31,9 +31,9 @@
+ 
+ ## Compiler switches to embed a library name and version information
+ ifeq ($(ENABLE_RPATH),YES)
+-LD_SONAME = -Wl,-compatibility_version -Wl,$(SO_TARGET_VERSION_MAJOR) -Wl,-current_version -Wl,$(SO_TARGET_VERSION) -install_name $(libdir)/$(notdir $(MIDDLE_SO_TARGET))
++LD_SONAME = -Wl,-compatibility_version -Wl,$(SO_TARGET_VERSION_MAJOR) -Wl,-current_version -Wl,$(SO_TARGET_VERSION) -install_name @rpath/$(notdir $(MIDDLE_SO_TARGET))
+ else
+-LD_SONAME = -Wl,-compatibility_version -Wl,$(SO_TARGET_VERSION_MAJOR) -Wl,-current_version -Wl,$(SO_TARGET_VERSION) -install_name $(notdir $(MIDDLE_SO_TARGET)) $(PKGDATA_TRAILING_SPACE)
++LD_SONAME = -Wl,-compatibility_version -Wl,$(SO_TARGET_VERSION_MAJOR) -Wl,-current_version -Wl,$(SO_TARGET_VERSION) -install_name @rpath/$(notdir $(MIDDLE_SO_TARGET))
+ endif
+ 
+ ## Compiler switch to embed a runtime search path

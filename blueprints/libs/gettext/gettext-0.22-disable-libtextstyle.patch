@@ -1,0 +1,80 @@
+diff -ur gettext-0.22.orig/Makefile.am gettext-0.22/Makefile.am
+--- gettext-0.22.orig/Makefile.am	2023-06-23 17:44:45.388281215 +0800
++++ gettext-0.22/Makefile.am	2023-06-23 17:43:14.098701787 +0800
+@@ -19,7 +19,7 @@
+ AUTOMAKE_OPTIONS = 1.5 gnu no-dependencies
+ ACLOCAL_AMFLAGS = -I m4
+ 
+-SUBDIRS = gnulib-local gettext-runtime libtextstyle gettext-tools
++SUBDIRS = gnulib-local gettext-runtime gettext-tools
+ 
+ changelog_etc = \
+   gettext-runtime/ChangeLog.0 \
+@@ -87,7 +87,7 @@
+ 	cmp -s $(srcdir)/gettext-runtime/m4/xsize.m4 $(srcdir)/gettext-tools/gnulib-m4/xsize.m4
+ 	cmp -s $(srcdir)/gettext-runtime/man/help2man $(srcdir)/gettext-tools/man/help2man
+ 	cmp -s $(srcdir)/gettext-runtime/man/x-to-1.in $(srcdir)/gettext-tools/man/x-to-1.in
+-	cmp -s $(srcdir)/libtextstyle/m4/libtextstyle.m4 $(srcdir)/gettext-tools/gnulib-m4/libtextstyle.m4
++#	cmp -s $(srcdir)/libtextstyle/m4/libtextstyle.m4 $(srcdir)/gettext-tools/gnulib-m4/libtextstyle.m4
+ 	cmp -s $(srcdir)/gettext-tools/examples/hello-java-awt/m4/TestAWT.java $(srcdir)/gettext-tools/examples/hello-java-swing/m4/TestAWT.java
+ 	cmp -s $(srcdir)/gettext-tools/examples/hello-java-awt/m4/TestAWT.class $(srcdir)/gettext-tools/examples/hello-java-swing/m4/TestAWT.class
+ # Verify that all files have appropriate copyright headers.
+diff -ur gettext-0.22.orig/configure.ac gettext-0.22/configure.ac
+--- gettext-0.22.orig/configure.ac	2020-09-06 18:01:37.000000000 +0800
++++ gettext-0.22/configure.ac	2023-06-23 17:43:14.099701793 +0800
+@@ -37,7 +37,7 @@
+ 
+ dnl Checks for library functions.
+ 
+-AC_CONFIG_SUBDIRS([gettext-runtime libtextstyle gettext-tools])
++AC_CONFIG_SUBDIRS([gettext-runtime gettext-tools])
+ 
+ AM_EXTRA_RECURSIVE_TARGETS([maintainer-update-po])
+ 
+@@ -49,7 +49,7 @@
+ dnl Optional Features: AC_ARG_ENABLE calls
+ dnl Optional Packages: AC_ARG_WITH calls
+ dnl Some influential environment variables: AC_ARG_VAR calls
+-esyscmd([{ cd gettext-runtime && autoconf --trace=AC_ARG_ENABLE:'$n([$1],[$2])' --trace=AC_ARG_WITH:'$n([$1],[$2])' --trace=AC_ARG_VAR:'$n($@)' && cd ..; cd libtextstyle && autoconf --trace=AC_ARG_ENABLE:'$n([$1],[$2])' --trace=AC_ARG_WITH:'$n([$1],[$2])' --trace=AC_ARG_VAR:'$n($@)' && cd ..; { cd gettext-tools && autoconf --trace=AC_ARG_ENABLE:'$n([$1],[$2])' --trace=AC_ARG_WITH:'$n([$1],[$2])' --trace=AC_ARG_VAR:'$n($@)' && cd ..; } | grep -v installed.libtextstyle | grep -v installed.csharp | grep -v 'installed C#'; } | sed -f build-aux/ac-help.sed ])
++esyscmd([{ cd gettext-runtime && autoconf --trace=AC_ARG_ENABLE:'$n([$1],[$2])' --trace=AC_ARG_WITH:'$n([$1],[$2])' --trace=AC_ARG_VAR:'$n($@)' && cd ..; { cd gettext-tools && autoconf --trace=AC_ARG_ENABLE:'$n([$1],[$2])' --trace=AC_ARG_WITH:'$n([$1],[$2])' --trace=AC_ARG_VAR:'$n($@)' && cd ..; } | grep -v installed.csharp | grep -v 'installed C#'; } | sed -f build-aux/ac-help.sed ])
+ 
+ AC_CONFIG_FILES([Makefile])
+ 
+diff -ur gettext-0.22.orig/gettext-tools/Makefile.am gettext-0.22/gettext-tools/Makefile.am
+--- gettext-0.22.orig/gettext-tools/Makefile.am	2021-06-15 04:22:46.000000000 +0800
++++ gettext-0.22/gettext-tools/Makefile.am	2023-06-23 18:24:08.822906444 +0800
+@@ -19,7 +19,7 @@
+ AUTOMAKE_OPTIONS = 1.5 gnu no-dependencies
+ ACLOCAL_AMFLAGS = -I m4 -I ../gettext-runtime/m4 -I ../m4 -I gnulib-m4 -I libgrep/gnulib-m4 -I libgettextpo/gnulib-m4
+ 
+-SUBDIRS = gnulib-lib libgrep src libgettextpo po its projects styles emacs misc man m4 tests system-tests gnulib-tests examples doc
++SUBDIRS = gnulib-lib libgrep libgettextpo src po its projects styles emacs misc man m4 tests system-tests gnulib-tests examples doc
+ 
+ EXTRA_DIST = misc/DISCLAIM
+ MOSTLYCLEANFILES = core *.stackdump
+diff -ur gettext-0.22.orig/gettext-tools/src/Makefile.am gettext-0.22/gettext-tools/src/Makefile.am
+--- gettext-0.22.orig/gettext-tools/src/Makefile.am	2023-06-09 05:03:36.000000000 +0800
++++ gettext-0.22/gettext-tools/src/Makefile.am	2023-06-23 17:43:14.099701793 +0800
+@@ -305,19 +305,9 @@
+ cldr_plurals_CFLAGS = $(AM_CFLAGS) $(INCXML)
+ cldr_plurals_LDADD = libgettextsrc.la $(LDADD)
+ 
+-if USE_INSTALLED_LIBTEXTSTYLE
+-LT_LIBTEXTSTYLE = @LTLIBTEXTSTYLE@
+-else
+-# How to get the include files of libtextstyle.
+-textstyle.h textstyle/stdbool.h textstyle/version.h textstyle/woe32dll.h:
+-	here=`pwd`; \
+-	cd ../../libtextstyle/lib && \
+-	  $(MAKE) install-nobase_includeHEADERS install-nobase_nodist_includeHEADERS includedir="$$here"
+-BUILT_SOURCES    += textstyle.h textstyle/stdbool.h textstyle/version.h textstyle/woe32dll.h
+-MOSTLYCLEANFILES += textstyle.h textstyle/stdbool.h textstyle/version.h textstyle/woe32dll.h
+-# Where to find the built libtextstyle library.
+-LT_LIBTEXTSTYLE = ../../libtextstyle/lib/libtextstyle.la
+-endif
++# Use the dummy libtextstyle from gnulib, as libgettextpo does.
++LT_LIBTEXTSTYLE =
++AM_CPPFLAGS += -I../libgettextpo -I$(top_srcdir)/libgettextpo
+ 
+ # How to build libgettextsrc.la.
+ # Need ../gnulib-lib/libgettextlib.la.

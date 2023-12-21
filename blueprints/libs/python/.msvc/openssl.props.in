@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- https://github.com/microsoft/vcpkg/blob/0e47c1985273129e4d0ee52ff73bed9125555de8/ports/python3/openssl.props.in -->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalDependencies>Crypt32.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(Configuration)|$(IncludeExternals)'=='Release|true'">
+        @{CRYPTO_RELEASE};@{SSL_RELEASE};%(AdditionalDependencies)
+      </AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(Configuration)|$(IncludeExternals)'=='Debug|true'">
+        @{CRYPTO_DEBUG};@{SSL_DEBUG};%(AdditionalDependencies)
+      </AdditionalDependencies>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>Crypt32.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(Configuration)|$(IncludeExternals)'=='Release|true'">
+        @{CRYPTO_RELEASE};@{SSL_RELEASE};%(AdditionalDependencies)
+      </AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(Configuration)|$(IncludeExternals)'=='Debug|true'">
+        @{CRYPTO_DEBUG};@{SSL_DEBUG};%(AdditionalDependencies)
+      </AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+</Project>

@@ -12,9 +12,6 @@ class subinfo(info.infoclass):
         self.svnTargets["master"] = ""
         self.defaultTarget = "master"
 
-    def setDependencies(self):
-        self.buildDependencies["core/cacert"] = None
-
 
 class Package(PipPackageBase):
     def __init__(self):

@@ -1,0 +1,8 @@
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x '*\.o' -x '*\.pyc' -x CMakeLists.txt.user sqlite-amalgamation-3390200.orig/sqlite3.c sqlite-amalgamation-3390200/sqlite3.c
+--- sqlite-amalgamation-3390200.orig/sqlite3.c	2022-07-21 18:02:15.000000000 +0200
++++ sqlite-amalgamation-3390200/sqlite3.c	2022-07-28 16:17:19.941404200 +0200
+@@ -1,3 +1,4 @@
++#include "libsqlite3_export.h"
+ /******************************************************************************
+ ** This file is an amalgamation of many separate C source files from SQLite
+ ** version 3.39.2.  By combining all the individual C code files into this

@@ -11,8 +11,9 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/kshimgen"] = None
-        self.runtimeDependencies["python-modules/pip"] = None
-        self.runtimeDependencies["python-modules/virtualenv"] = None
+        self.buildDependencies["python-modules/pip-system"] = None
+        self.buildDependencies["python-modules/virtualenv"] = None
+        self.buildDependencies["python-modules/pip"] = None
 
 
 class Package(BinaryPackageBase):

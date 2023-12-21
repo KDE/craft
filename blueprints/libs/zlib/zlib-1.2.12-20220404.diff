@@ -1,0 +1,43 @@
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x '*\.o' -x '*\.pyc' -x CMakeLists.txt.user zlib-1.2.12.orig/CMakeLists.txt zlib-1.2.12/CMakeLists.txt
+--- zlib-1.2.12.orig/CMakeLists.txt	2022-03-28 01:39:42.000000000 +0200
++++ zlib-1.2.12/CMakeLists.txt	2022-04-04 12:33:48.694091900 +0200
+@@ -60,7 +60,6 @@
+ check_include_file(unistd.h Z_HAVE_UNISTD_H)
+ 
+ if(MSVC)
+-    set(CMAKE_DEBUG_POSTFIX "d")
+     add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+     add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
+     include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+@@ -78,6 +77,12 @@
+   endif()
+ endif()
+ 
++if(MSVC)
++    set(ZLIB_NAME zlib)
++else()
++    set(ZLIB_NAME z)
++endif()
++
+ set(ZLIB_PC ${CMAKE_CURRENT_BINARY_DIR}/zlib.pc)
+ configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/zlib.pc.cmakein
+ 		${ZLIB_PC} @ONLY)
+@@ -199,7 +204,7 @@
+     set_target_properties(zlib PROPERTIES VERSION ${ZLIB_FULL_VERSION})
+ endif()
+ 
+-if(UNIX)
++if(UNIX OR MINGW)
+     # On unix-like platforms the library is almost always called libz
+    set_target_properties(zlib zlibstatic PROPERTIES OUTPUT_NAME z)
+    if(NOT APPLE)
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x '*\.o' -x '*\.pyc' -x CMakeLists.txt.user zlib-1.2.12.orig/zlib.pc.cmakein zlib-1.2.12/zlib.pc.cmakein
+--- zlib-1.2.12.orig/zlib.pc.cmakein	2012-03-11 18:16:04.000000000 +0100
++++ zlib-1.2.12/zlib.pc.cmakein	2022-04-04 12:31:36.189408800 +0200
+@@ -9,5 +9,5 @@
+ Version: @VERSION@
+ 
+ Requires:
+-Libs: -L${libdir} -L${sharedlibdir} -lz
++Libs: -L${libdir} -L${sharedlibdir} -l@ZLIB_NAME@
+ Cflags: -I${includedir}

@@ -1,0 +1,21 @@
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x '*\.o' -x '*\.pyc' -x CMakeLists.txt.user libffi-3.3.orig/include/ffi.h.in libffi-3.3/include/ffi.h.in
+--- libffi-3.3.orig/include/ffi.h.in	2019-11-13 13:57:22.000000000 +0100
++++ libffi-3.3/include/ffi.h.in	2021-01-26 16:38:25.336169400 +0100
+@@ -114,17 +114,7 @@
+    when using the static version of the library.
+    Besides, as a workaround, they can define FFI_BUILDING if they
+    *know* they are going to link with the static library.  */
+-#if defined _MSC_VER
+-# if defined FFI_BUILDING_DLL /* Building libffi.DLL with msvcc.sh */
+-#  define FFI_API __declspec(dllexport)
+-# elif !defined FFI_BUILDING  /* Importing libffi.DLL */
+-#  define FFI_API __declspec(dllimport)
+-# else                        /* Building/linking static library */
+ #  define FFI_API
+-# endif
+-#else
+-# define FFI_API
+-#endif
+ 
+ /* The externally visible type declarations also need the MSVC DLL
+    decorations, or they will not be exported from the object file.  */

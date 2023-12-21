@@ -1,0 +1,11 @@
+# https://git.savannah.gnu.org/gitweb/?p=gettext.git;a=commitdiff;h=7cf68dffb2adb76375bfb0781e277510523a1f3e
+--- a/gettext-tools/woe32dll/gettextsrc-exports.c
++++ b/gettext-tools/woe32dll/gettextsrc-exports.c
+@@ -50,6 +50,7 @@ VARIABLE(formatstring_python)
+ VARIABLE(formatstring_python_brace)
+ VARIABLE(formatstring_qt)
+ VARIABLE(formatstring_qt_plural)
++VARIABLE(formatstring_ruby)
+ VARIABLE(formatstring_scheme)
+ VARIABLE(formatstring_sh)
+ VARIABLE(formatstring_smalltalk)

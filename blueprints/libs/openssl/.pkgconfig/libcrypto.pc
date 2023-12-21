@@ -1,0 +1,13 @@
+prefix=@{CRAFT_ROOT}
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+enginesdir=${libdir}/engines-3
+modulesdir=${libdir}/ossl-modules
+
+Name: OpenSSL-libcrypto
+Description: OpenSSL cryptography library
+Version: @{VERSION}
+Libs: -L${libdir} -llibcrypto
+Libs.private: -lws2_32 -lgdi32 -lcrypt32 
+Cflags: -I${includedir}

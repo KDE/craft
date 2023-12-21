@@ -1,0 +1,10 @@
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x '*\.o' -x '*\.pyc' -x CMakeLists.txt.user expat-2.2.10.orig/expat.pc.in expat-2.2.10/expat.pc.in
+--- expat-2.2.10.orig/expat.pc.in	2020-09-25 19:47:39.000000000 +0200
++++ expat-2.2.10/expat.pc.in	2021-04-26 19:58:14.382450200 +0200
+@@ -7,5 +7,5 @@
+ Version: @PACKAGE_VERSION@
+ Description: expat XML parser
+ URL: http://www.libexpat.org
+-Libs: -L${libdir} -l@_EXPAT_OUTPUT_NAME@
++Libs: -L${libdir} -l@_EXPAT_OUTPUT_NAME@@CMAKE_DEBUG_POSTFIX@
+ Cflags: -I${includedir}

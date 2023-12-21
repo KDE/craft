@@ -34,7 +34,17 @@ class PipBuildSystem(BuildSystemBase):
                 return Path(CraftCore.standardDirs.craftRoot()) / f"etc/virtualenv/3/Scripts/python"
             else:
                 return Path(CraftCore.standardDirs.craftRoot()) / f"etc/virtualenv/3/bin/python3"
-        return sys.executable
+        craftPython = CraftPackageObject.get("libs/python")
+        if craftPython.isInstalled:
+            python = CraftCore.standardDirs.craftRoot() / f"bin/python{CraftCore.compiler.executableSuffix}"
+            if python.exists():
+                return python
+            python = CraftCore.standardDirs.craftRoot() / f"bin/python3{CraftCore.compiler.executableSuffix}"
+            if python.exists():
+                return python
+        if not craftPython.categoryInfo.isActive:
+            return sys.executable
+        raise Exception("Please install libs/python first")
 
     @property
     def _pythons(self):

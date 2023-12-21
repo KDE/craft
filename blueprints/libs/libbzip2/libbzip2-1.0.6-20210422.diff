@@ -1,0 +1,11 @@
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x '*\.o' -x '*\.pyc' -x CMakeLists.txt.user bzip2-1.0.6.orig/CMakeLists.txt bzip2-1.0.6/CMakeLists.txt
+--- bzip2-1.0.6.orig/CMakeLists.txt	2021-04-22 15:16:05.000000000 +0200
++++ bzip2-1.0.6/CMakeLists.txt	2021-04-22 15:15:51.000000000 +0200
+@@ -1,5 +1,7 @@
+ project(bzip2)
+ cmake_minimum_required(VERSION 2.6)
++set(CMAKE_MACOSX_RPATH ON)
++set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+ 
+ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
+ 
