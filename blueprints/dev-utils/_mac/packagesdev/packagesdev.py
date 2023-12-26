@@ -21,7 +21,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = f"[git]https://github.com/packagesdev/packages.git||v{ver}"
         self.description = "Integrated Packaging Environment for OS X "
         self.webpage = "https://github.com/packagesdev/packages"
-        self.defaultTarget = "1.2.102"
+        self.defaultTarget = "1.2.10"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
