@@ -13,7 +13,8 @@
 #    limitations under the License.
 
 from collections import OrderedDict
-from collections.abc import MutableMapping
+from collections.abc import Mapping, MutableMapping
+
 
 # https://raw.githubusercontent.com/kennethreitz/requests/v2.21.0/requests/structures.py
 class CaseInsensitiveDict(MutableMapping):
@@ -68,11 +69,7 @@ class CaseInsensitiveDict(MutableMapping):
 
     def lower_items(self):
         """Like iteritems(), but with all lowercase keys."""
-        return (
-            (lowerkey, keyval[1])
-            for (lowerkey, keyval)
-            in self._store.items()
-        )
+        return ((lowerkey, keyval[1]) for (lowerkey, keyval) in self._store.items())
 
     def __eq__(self, other):
         if isinstance(other, Mapping):

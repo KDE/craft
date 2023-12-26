@@ -24,7 +24,6 @@
 # SUCH DAMAGE.
 
 
-""" \package BuildSystemBase"""
 import glob
 import io
 import multiprocessing
@@ -41,7 +40,23 @@ from Utils.Arguments import Arguments
 
 class BuildSystemBase(CraftBase):
     """provides a generic interface for build systems and implements all stuff for all build systems"""
-    PatchableFile = {".service", ".pc", ".pri", ".prl", ".cmake", ".conf", ".sh", ".bat", ".cmd", ".ini", ".pl", ".pm", ".la", ".py"}
+
+    PatchableFile = {
+        ".service",
+        ".pc",
+        ".pri",
+        ".prl",
+        ".cmake",
+        ".conf",
+        ".sh",
+        ".bat",
+        ".cmd",
+        ".ini",
+        ".pl",
+        ".pm",
+        ".la",
+        ".py",
+    }
 
     def __init__(self, typeName=""):
         """constructor"""
@@ -68,7 +83,7 @@ class BuildSystemBase(CraftBase):
                 del os.environ["MAKE"]
 
         if OsUtils.isWin():
-            if CraftCore.compiler.isMSVC() or CraftCore.compiler.isIntel():
+            if CraftCore.compiler.isMSVC():
                 if self.subinfo.options.make.supportsMultijob and CraftCore.cache.findApplication("jom"):
                     return "jom"
                 else:
@@ -81,12 +96,6 @@ class BuildSystemBase(CraftBase):
             return "gmake"
         elif OsUtils.isUnix():
             return "make"
-
-    def compile(self):
-        """convencience method - runs configure() and make()"""
-        configure = getattr(self, 'configure')
-        make = getattr(self, 'make')
-        return configure() and make()
 
     def configureSourceDir(self):
         """returns source dir used for configure step"""
@@ -123,9 +132,12 @@ class BuildSystemBase(CraftBase):
             if CraftCore.debug.verbose() > 0:
                 defines += ["VERBOSE=1", "V=1"]
 
-        if self.subinfo.options.make.supportsMultijob and makeProgram != "nmake" :
+        if self.subinfo.options.make.supportsMultijob and makeProgram != "nmake":
             if makeProgram not in {"ninja", "jom"} or ("Compile", "Jobs") in CraftCore.settings:
-                defines += ["-j", str(CraftCore.settings.get("Compile", "Jobs", multiprocessing.cpu_count()))]
+                defines += [
+                    "-j",
+                    str(CraftCore.settings.get("Compile", "Jobs", multiprocessing.cpu_count())),
+                ]
 
         if args:
             defines.append(args)
@@ -152,25 +164,18 @@ class BuildSystemBase(CraftBase):
 
     def _fixInstallPrefix(self, prefix=CraftStandardDirs.craftRoot()):
         CraftCore.log.debug(f"Begin: fixInstallPrefix {self}: {prefix}")
+
         def stripPath(path):
             rootPath = os.path.splitdrive(path)[1]
             if rootPath.startswith(os.path.sep) or rootPath.startswith("/"):
                 rootPath = rootPath[1:]
             return rootPath
+
         badPrefix = os.path.join(self.installDir(), stripPath(prefix))
 
         if os.path.exists(badPrefix) and not os.path.samefile(self.installDir(), badPrefix):
             if not utils.mergeTree(badPrefix, self.installDir()):
                 return False
-
-        if CraftCore.settings.getboolean("QtSDK", "Enabled", False):
-            qtDir = os.path.join(CraftCore.settings.get("QtSDK", "Path"),
-                                 CraftCore.settings.get("QtSDK", "Version"),
-                                 CraftCore.settings.get("QtSDK", "Compiler"))
-            path = self.installDir() / stripPath(qtDir)
-            if path.exists() and not os.path.samefile(self.installDir(), path):
-                if not utils.mergeTree(path, self.installDir()):
-                    return False
 
         if stripPath(prefix):
             oldPrefix = self.installDir() / Path(stripPath(prefix)).parts[0]
@@ -180,7 +185,12 @@ class BuildSystemBase(CraftBase):
         CraftCore.log.debug(f"End: fixInstallPrefix {self}")
         return True
 
-    def patchInstallPrefix(self, files: [str], oldPaths: [Path] = None, newPath: Path = Path(CraftCore.standardDirs.craftRoot())) -> bool:
+    def patchInstallPrefix(
+        self,
+        files: [str],
+        oldPaths: [Path] = None,
+        newPath: Path = Path(CraftCore.standardDirs.craftRoot()),
+    ) -> bool:
         if not isinstance(oldPaths, list):
             oldPaths = [oldPaths]
         elif not oldPaths:
@@ -219,11 +229,168 @@ class BuildSystemBase(CraftBase):
                         f.write(content)
         return True
 
+    def __internalPostInstallHandleSymbols(self, binaryFiles):
+        symbolsPattern = re.compile(r".*\{0}$".format(CraftCore.compiler.symbolsSuffix), re.IGNORECASE)
+
+        def symFilter(x: os.DirEntry, root):
+            if CraftCore.compiler.isMacOS:
+                if x.is_file():
+                    return False
+            else:
+                if x.is_dir():
+                    return False
+            return utils.regexFileFilter(x, root, [symbolsPattern])
+
+        for f in utils.filterDirectoryContent(self.imageDir(), symFilter, lambda x, root: True):
+            dest = self.symbolsImageDir() / Path(f).relative_to(self.imageDir())
+            if not dest.parent.exists():
+                if not utils.createDir(dest.parent):
+                    return False
+            if not utils.moveFile(f, dest):
+                return False
+        if CraftCore.compiler.isMSVC():
+            # static libs might also have pdbs
+            def staticLibsFilter(p: Path):
+                if p.suffix == ".lib":
+                    with io.StringIO() as log:
+                        utils.system(["lib", "-list", "-nologo", p], stdout=log, logCommand=False)
+                        if ".dll" in log.getvalue():
+                            return False
+                        return True
+                return False
+
+            staticLibs = list(utils.filterDirectoryContent(self.installDir(), lambda x, root: staticLibsFilter(Path(x.path)), lambda x, root: True))
+            for f in binaryFiles + staticLibs:
+                pdb = utils.getPDBForBinary(f)
+                if not pdb:
+                    CraftCore.log.warning(f"Could not find a PDB for {f}")
+                    continue
+                pdbDestination = self.symbolsImageDir() / Path(f).parent.relative_to(self.imageDir()) / os.path.basename(pdb)
+                if not pdbDestination.exists():
+                    if not pdb.exists():
+                        CraftCore.log.warning(f"PDB {pdb} for {f} does not exist")
+                        continue
+                    CraftCore.log.info(f"Install pdb: {pdbDestination} for {os.path.basename(f)}")
+                    if not utils.copyFile(pdb, pdbDestination, linkOnly=False):
+                        return False
+        else:
+            if not self.subinfo.options.package.disableStriping:
+                for f in binaryFiles:
+                    f = Path(f)
+                    symFile = utils.symFileName(f)
+                    symFileDest = self.symbolsImageDir() / symFile.relative_to(self.imageDir())
+                    if symFileDest.exists():
+                        return True
+
+                    if not symFileDest.parent.exists() and not utils.createDir(symFileDest.parent):
+                        return False
+                    if not utils.strip(f, symFileDest):
+                        if CraftCore.compiler.isAndroid:
+                            CraftCore.log.warning(f"Failed to strip {f}. Is {f} a host tool?")
+                            return True
+                        return False
+        return True
+
+    def __patchRpathMac(self, binaryFiles, newPrefix):
+        for f in binaryFiles:
+            if os.path.islink(f):
+                continue
+            # replace the old prefix or add it if missing
+            craftRpath = os.path.join(newPrefix, "lib")
+            if not utils.system(
+                [
+                    "install_name_tool",
+                    "-rpath",
+                    os.path.join(self.subinfo.buildPrefix, "lib"),
+                    craftRpath,
+                    f,
+                ],
+                logCommand=False,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            ):
+                CraftCore.log.info(f"Adding rpath {craftRpath} to {f}")
+                utils.system(
+                    ["install_name_tool", "-add_rpath", craftRpath, f],
+                    logCommand=False,
+                )
+
+            # update prefix
+            if self.subinfo.buildPrefix != newPrefix:
+                if os.path.splitext(f)[1] in {".dylib", ".so"}:
+                    # fix dylib id
+                    with io.StringIO() as log:
+                        utils.system(["otool", "-D", f], stdout=log, logCommand=False)
+                        oldId = log.getvalue().strip().split("\n")
+                    # the first line is the file name
+                    # the second the id, if we only get one line, there is no id to fix
+                    if len(oldId) == 2:
+                        oldId = oldId[1].strip()
+                        newId = oldId.replace(self.subinfo.buildPrefix, newPrefix)
+                        if newId != oldId:
+                            if not utils.system(
+                                ["install_name_tool", "-id", newId, f],
+                                logCommand=False,
+                            ):
+                                return False
+
+                # fix dependencies
+                for dep in utils.getLibraryDeps(f):
+                    if dep.startswith(self.subinfo.buildPrefix):
+                        newDep = dep.replace(self.subinfo.buildPrefix, newPrefix)
+                        if newDep != dep:
+                            if not utils.system(
+                                ["install_name_tool", "-change", dep, newDep, f],
+                                logCommand=False,
+                            ):
+                                return False
+        return True
+
+    def __patchRpathLinux(self, binaryFiles, newPrefix):
+        patchElf = CraftCore.standardDirs.craftRoot() / "dev-utils/bin/patchelf"
+        if not patchElf.exists():
+            CraftCore.log.info("Skipping elf patching during bootstrapping")
+            return True
+        for f in binaryFiles:
+            if os.path.islink(f):
+                continue
+            # replace the old prefix or add it if missing
+            craftRpath = os.path.join(newPrefix, "lib")
+            with io.StringIO() as log:
+                if not utils.system([patchElf, "--print-rpath", f], stdout=log, stderr=subprocess.STDOUT, logCommand=False):
+                    if f.endswith(".cpp.o"):
+                        CraftCore.log.info("Ignoring rpath error on .o file. This is a workaround for Qt installing garbage.")
+                        continue
+                    elif "The input file is most likely statically linked" in log.getvalue():
+                        CraftCore.log.info("Ignoring rpath error on statically linked file.")
+                        continue
+                    else:
+                        return False
+                currentRpath = set(filter(None, log.getvalue().strip().split(":")))
+            newRpath = currentRpath.copy()
+            if self.subinfo.buildPrefix != newPrefix:
+                # remove the old prefix
+                rPathToRemove = str(Path(self.subinfo.buildPrefix) / "lib")
+                if rPathToRemove in newRpath:
+                    newRpath.remove(rPathToRemove)
+            # add the new prefix
+            newRpath.add(craftRpath)
+            if newRpath != currentRpath:
+                CraftCore.log.info(f"Updating rpath: {currentRpath} -> {newRpath}")
+                if not utils.system([patchElf, "--set-rpath", ":".join(newRpath), f], logCommand=False):
+                    return False
+        return True
+
     def internalPostInstall(self):
         if not super().internalPostInstall():
             return False
         # fix absolute symlinks
-        for sym in utils.filterDirectoryContent(self.installDir(), lambda x, root: x.is_symlink(), lambda x, root: True, allowBadSymlinks=True):
+        for sym in utils.filterDirectoryContent(
+            self.installDir(),
+            lambda x, root: x.is_symlink(),
+            lambda x, root: True,
+            allowBadSymlinks=True,
+        ):
             target = Path(os.readlink(sym))
             if target.is_absolute():
                 sym = Path(sym)
@@ -232,81 +399,60 @@ class BuildSystemBase(CraftBase):
                 # we can't use relative_to here
                 sym.symlink_to(os.path.relpath(target, sym.parent))
 
-
         # a post install routine to fix the prefix (make things relocatable)
         newPrefix = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
         oldPrefixes = [self.subinfo.buildPrefix]
         if CraftCore.compiler.isWindows:
             oldPrefixes += [OsUtils.toMSysPath(self.subinfo.buildPrefix)]
 
-        files = utils.filterDirectoryContent(self.installDir(),
-                                             whitelist=lambda x, root: Path(x).suffix.lower() in BuildSystemBase.PatchableFile or utils.isScript(x),
-                                             blacklist=lambda x, root: True)
+        files = utils.filterDirectoryContent(
+            self.installDir(),
+            whitelist=lambda x, root: Path(x).suffix.lower() in BuildSystemBase.PatchableFile or utils.isScript(x),
+            blacklist=lambda x, root: True,
+        )
 
         if not self.patchInstallPrefix(files, oldPrefixes, newPrefix):
             return False
 
-        binaryFiles = list(utils.filterDirectoryContent(self.installDir(), lambda x, root: utils.isBinary(x.path), lambda x, root: True))
-        if (CraftCore.compiler.isMacOS
-                and os.path.isdir(self.installDir())):
-            for f in binaryFiles:
-                if os.path.islink(f):
-                    continue
-                # replace the old prefix or add it if missing
-                craft_rpath = os.path.join(newPrefix, "lib")
-                if not utils.system(["install_name_tool", "-rpath", os.path.join(self.subinfo.buildPrefix, "lib"), craft_rpath, f], logCommand=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL):
-                    CraftCore.log.info(f"Adding rpath {craft_rpath} to {f}")
-                    utils.system(["install_name_tool", "-add_rpath", craft_rpath, f], logCommand=False)
-
-                # update prefix
-                if self.subinfo.buildPrefix != newPrefix:
-                    if os.path.splitext(f)[1] in {".dylib", ".so"}:
-                        # fix dylib id
-                        with io.StringIO() as log:
-                            utils.system(["otool", "-D", f], stdout=log, logCommand=False)
-                            oldId = log.getvalue().strip().split("\n")
-                        # the first line is the file name
-                        # the second the id, if we only get one line, there is no id to fix
-                        if len(oldId) == 2:
-                            oldId = oldId[1].strip()
-                            newId = oldId.replace(self.subinfo.buildPrefix, newPrefix)
-                            if newId != oldId:
-                                if not utils.system(["install_name_tool", "-id", newId, f], logCommand=False):
-                                    return False
-
-                    # fix dependencies
-                    for dep in utils.getLibraryDeps(f):
-                        if dep.startswith(self.subinfo.buildPrefix):
-                            newDep = dep.replace(self.subinfo.buildPrefix, newPrefix)
-                            if newDep != dep:
-                                if not utils.system(["install_name_tool", "-change", dep, newDep, f], logCommand=False):
-                                    return False
+        binaryFiles = list(
+            utils.filterDirectoryContent(
+                self.installDir(),
+                lambda x, root: utils.isBinary(x.path),
+                lambda x, root: True,
+            )
+        )
+        if self.installDir().is_dir():
+            if CraftCore.compiler.isMacOS:
+                if not self.__patchRpathMac(binaryFiles, newPrefix):
+                    return False
+            elif CraftCore.compiler.isLinux:
+                if not self.__patchRpathLinux(binaryFiles, newPrefix):
+                    return False
 
         # Install pdb files on MSVC if they are not found next to the dll
         # skip if we are a release build or from cache
         if not self.subinfo.isCachedBuild:
-            if self.buildType() in {"RelWithDebInfo", "Debug"}:
-                if CraftCore.compiler.isMSVC():
-                    for f in binaryFiles:
-                        if not os.path.exists(f"{os.path.splitext(f)[0]}.pdb"):
-                            pdb = utils.getPDBForBinary(f)
-                            if not pdb:
-                                CraftCore.log.warning(f"Could not find a PDB for {f}")
-                                continue
-                            if not os.path.exists(pdb):
-                                CraftCore.log.warning(f"PDB {pdb} for {f} does not exist")
-                                continue
-                            pdbDestination = os.path.join(os.path.dirname(f), os.path.basename(pdb))
+            if not utils.cleanDirectory(self.symbolsImageDir()):
+                return False
+            if not self.__internalPostInstallHandleSymbols(binaryFiles):
+                return False
 
-                            CraftCore.log.info(f"Install pdb: {pdbDestination} for {os.path.basename(f)}")
-                            utils.copyFile(pdb, pdbDestination, linkOnly=False)
-                else:
-                    if not self.subinfo.options.package.disableStriping:
-                        for f in binaryFiles:
-                            utils.strip(f)
-
-            # sign the binaries if we can
+            # sign the binaries before we add them to the cache
             if CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
                 if not CodeSign.signWindows(binaryFiles):
                     return False
+        else:
+            # restoring from cache
+            if CraftCore.compiler.isMacOS:
+                # resign files after they are modified
+                # we use a local certificate, for distribution the files are properly signed in the package step
+                if not utils.localSignMac(binaryFiles):
+                    return False
+
+            # sign the binaries if we can.
+            # only needed if the cache was not signed
+            if CraftCore.compiler.isWindows and not CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
+                if not CodeSign.signWindows(binaryFiles):
+                    return False
+
         return True

@@ -65,6 +65,8 @@ if($settings["Paths"].Contains("Python") -and (Test-Path -path $settings["Paths"
     findPython("{0}/python" -f $settings["Paths"]["Python"])
 }
 
+findPython("python3.12")
+findPython("python3.11")
 findPython("python3.10")
 findPython("python3.9")
 findPython("python3.8")
@@ -77,7 +79,11 @@ findPython("py")
 
 function Global:craft()
 {
-    return & $env:CRAFT_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "craft.py")) @args
+    $python = (Get-Command "$env:KDEROOT/dev-utils/bin/python3" -ErrorAction SilentlyContinue).Source
+    if (-not $python) {
+        $python = $env:CRAFT_PYTHON
+    }
+    return & $python ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "craft.py")) @args
 }
 
 function Global:craftCd([string] $package, [string]$property, [string] $target="")
@@ -125,16 +131,12 @@ if($args.Length -ne 0)
 {
     craft --run @args
 } else {
-    $env2 = (& $env:CRAFT_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "CraftSetupHelper.py")) "--setup")
+    $env2 = ConvertFrom-Json (& $env:CRAFT_PYTHON ([IO.PATH]::COMBINE("$env:CraftRoot", "bin", "CraftSetupHelper.py")) @("--setup", "--format=json"))
     Get-ChildItem env: | ForEach-Object {
         Remove-Item ("ENV:{0}" -f ${_}.Name)
     }
-    foreach($_ in $env2) {
-        if ($_ -match "=") {
-            $v = $_.split("=", 2)
-            set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])"
-            #Write-Host("$v[0]=$v[1]")
-        }
+    foreach ($property in $env2.PSObject.Properties) {
+        Set-Item -force -path "ENV:\$($property.Name)"  -value "$($property.Value)"
     }
     cr
 }

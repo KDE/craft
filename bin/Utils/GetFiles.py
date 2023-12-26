@@ -25,21 +25,22 @@
 
 ### fetch functions
 
-from genericpath import exists
-from CraftCore import CraftCore
-from CraftDebug import deprecated
-import utils
-from shells import Powershell
-
 import io
 import os
-from pathlib import Path
-import urllib
+import re
 import subprocess
 import sys
-import re
+import urllib
+from pathlib import Path
 
-def getFile(url, destdir, filename='', quiet=None) -> bool:
+import utils
+from CraftCore import CraftCore
+from CraftDebug import deprecated
+from genericpath import exists
+from shells import Powershell
+
+
+def getFile(url, destdir, filename="", quiet=None) -> bool:
     """download file from 'url' into 'destdir'"""
     if quiet is None:
         quiet = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
@@ -83,6 +84,7 @@ def getFile(url, destdir, filename='', quiet=None) -> bool:
 
     CraftCore.log.info(f"Downloading: {url} to {absFilename}")
     with utils.ProgressBar() as progress:
+
         def dlProgress(count, blockSize, totalSize):
             if totalSize != -1:
                 progress.print(int(count * blockSize * 100 / totalSize))
@@ -91,13 +93,20 @@ def getFile(url, destdir, filename='', quiet=None) -> bool:
                 sys.stdout.flush()
 
         try:
-            urllib.request.urlretrieve(url, filename=absFilename,
-                                    reporthook=dlProgress if CraftCore.debug.verbose() >= 0 else None)
+            urllib.request.urlretrieve(
+                url,
+                filename=absFilename,
+                reporthook=dlProgress if CraftCore.debug.verbose() >= 0 else None,
+            )
         except Exception as e:
             CraftCore.log.warning(e)
-            powershell =  Powershell()
+            powershell = Powershell()
             if powershell.pwsh:
-                return powershell.execute([f"[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; (new-object net.webclient).DownloadFile(\"{url}\", \"{absFilename}\")"])
+                return powershell.execute(
+                    [
+                        f'[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; (new-object net.webclient).DownloadFile("{url}", "{absFilename}")'
+                    ]
+                )
             return False
     return True
 
@@ -110,7 +119,7 @@ def curlFile(url, destdir, filename, quiet):
     if os.path.exists(cert):
         command += ["--cacert", cert]
     # the default of 20 might not be enough for sourceforge ...
-    command += ["--max-redirs",  "50"]
+    command += ["--max-redirs", "50"]
     command += ["-o", os.path.join(destdir, filename)]
     command += [url]
     CraftCore.log.debug("curlfile called")
@@ -129,10 +138,10 @@ def curlFile(url, destdir, filename, quiet):
                     if loc:
                         CraftCore.log.info(f"Downloaded from: {loc[-1]}")
                 return True
-        elif CraftCore.cache.checkCommandOutputFor(curl, "--progress-bar"):
+        elif CraftCore.cache.checkCommandOutputFor(curl, "--progress-bar", helpCommand="--help all"):
             command += ["--progress-bar"]
-            CraftCore.log.info(f"curl {url}")
-            return utils.system(command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT)
+        CraftCore.log.info(f"curl {url}")
+        return utils.system(command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT)
     command += ["-v"]
     return utils.system(command)
 
@@ -145,7 +154,7 @@ def wgetFile(url, destdir, filename, quiet):
     if os.path.exists(cert):
         command += ["--ca-certificate", cert]
     # the default of 20 might not be enough for sourceforge ...
-    command += ["--max-redirect",  "50"]
+    command += ["--max-redirect", "50"]
     if CraftCore.settings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False):
         command += ["--no-passive-ftp"]
     if not filename:
@@ -169,17 +178,24 @@ def wgetFile(url, destdir, filename, quiet):
         elif CraftCore.cache.checkCommandOutputFor(wget, "--show-progress"):
             command += ["-q", "--show-progress"]
             CraftCore.log.info(f"wget {url}")
-            return utils.system(command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT)
+            return utils.system(
+                command,
+                displayProgress=True,
+                logCommand=False,
+                stderr=subprocess.STDOUT,
+            )
     return utils.system(command)
 
-def s3File(url : str, destdir : str, filename : str) ->bool:
+
+def s3File(url: str, destdir: str, filename: str) -> bool:
     aws = CraftCore.cache.findApplication("aws")
     if not aws:
-        CraftCore.log.critical("aws not found, please install awscli. \"pip install awscli\" ")
+        CraftCore.log.critical('aws not found, please install awscli. "pip install awscli" ')
         return False
     return utils.system([aws, "s3", "cp", url, os.path.join(destdir, filename)])
 
-def minioGet(url : str, destdir : str, filename : str) ->bool:
+
+def minioGet(url: str, destdir: str, filename: str) -> bool:
     minio = None
     if CraftCore.compiler.isWindows:
         minio = CraftCore.cache.findApplication("minio")

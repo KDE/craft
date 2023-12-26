@@ -28,12 +28,15 @@ from Package.MaybeVirtualPackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        ver = "2.30.2"
+        ver = "2.38.1"
         build = "1"
         self.targets[ver] = f"https://github.com/git-for-windows/git/releases/download/v{ver}.windows.{build}/PortableGit-{ver}-64-bit.7z.exe"
         self.archiveNames[ver] = f"PortableGit-{ver}-64-bit.7z"
         self.targetInstallPath[ver] = os.path.join("dev-utils", "git")
-        self.targetDigests[ver] = (["f719f248de3dd7ef234331f8da95762594a388f6aa62f4c0260df18068e5a447"], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigests[ver] = (
+            ["cdcdb268aaed1dd2ac33d1dfdaf105369e3d7bd8d84d641d26d30b34e706b843"],
+            CraftHash.HashAlgorithm.SHA256,
+        )
         self.defaultTarget = ver
 
     def setDependencies(self):
@@ -53,12 +56,25 @@ class GitPackage(BinaryPackageBase):
         env = None
         if CraftCore.compiler.isWindows:
             env = {"TERM": ""}
-        return utils.createShim(os.path.join(self.imageDir(), "dev-utils", "bin", "git.exe"),
-                                os.path.join(self.imageDir(), "dev-utils", "git", "bin", "git.exe"), env=env)
+        return utils.createShim(
+            os.path.join(self.imageDir(), "dev-utils", "bin", "git.exe"),
+            os.path.join(self.imageDir(), "dev-utils", "git", "bin", "git.exe"),
+            env=env,
+        )
 
     def postQmerge(self):
-        gitDir = os.path.join(CraftStandardDirs.craftRoot(), self.subinfo.targetInstallPath[self.buildTarget])
-        utils.system([os.path.join(gitDir, "git-cmd.exe"), "--no-cd", "--command=post-install.bat"], cwd=gitDir)
+        gitDir = os.path.join(
+            CraftStandardDirs.craftRoot(),
+            self.subinfo.targetInstallPath[self.buildTarget],
+        )
+        utils.system(
+            [
+                os.path.join(gitDir, "git-cmd.exe"),
+                "--no-cd",
+                "--command=post-install.bat",
+            ],
+            cwd=gitDir,
+        )
         return True
 
 

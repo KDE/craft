@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: BSD-2-Clause
+# SPDX-FileCopyrightText: 2014 Hannah von Reth <vonreth@kde.org>
+
 # central instance for managing settings regarding craft
-# copyright:
-# Hannah von Reth <vonreth [AT] kde [DOT] org>
 
 import atexit
 import configparser
 import os
-import shutil
 import sys
-
+from pathlib import Path
 
 from CraftCore import CraftCore
+
 
 class CraftConfig(object):
     __CraftBin = None
@@ -18,19 +19,26 @@ class CraftConfig(object):
     def __init__(self, iniPath=None):
         self._config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
         if iniPath:
-            self.iniPath = iniPath
+            self.iniPath = Path(iniPath)
         else:
-            oldPath = os.path.join(CraftConfig._craftRoot(), "etc", "kdesettings.ini")
-            newPath = os.path.join(CraftConfig._craftRoot(), "etc", "CraftSettings.ini")
-            if os.path.isfile(oldPath):
-                shutil.move(oldPath, newPath)
-            self.iniPath = os.path.join(newPath)
+            self.iniPath = CraftConfig._craftRoot() / "etc/CraftSettings.ini"
+        if not self.iniPath.exists() and "CRAFT_TEST" in os.environ:
+            # this should only happen when running test outside of a craft setup (eg. CI)
+            self.iniPath = CraftConfig._craftBin() / "../CraftSettings.ini.template"
+
         self._alias = {}
         self._groupAlias = {}
         self._readSettings()
 
+        if str(self.iniPath).endswith("CraftSettings.ini.template") and "CRAFT_TEST_ABI" in os.environ:
+            # this should only happen when running test outside of a craft setup (eg. CI)
+            self.set("General", "ABI", os.environ["CRAFT_TEST_ABI"])
+
         if self.version < 4:
-            print("Your configuration is outdated and no longer supported, please reinstall Craft.", file=sys.stderr)
+            print(
+                "Your configuration is outdated and no longer supported, please reinstall Craft.",
+                file=sys.stderr,
+            )
             exit(-1)
 
         if self.version < 5:
@@ -59,12 +67,12 @@ class CraftConfig(object):
         if not os.path.join(dir, "craftenv.ps1"):
             print("Failed to find the craft root", file=sys.stderr)
             exit(-1)
-        CraftConfig.__CraftBin = os.path.join(dir, "bin")
+        CraftConfig.__CraftBin = Path(os.path.join(dir, "bin"))
         return CraftConfig.__CraftBin
 
     @staticmethod
     def _craftRoot():
-        return os.path.abspath(os.path.join(CraftConfig._craftBin(), "..", ".."))
+        return Path(os.path.abspath(os.path.join(CraftConfig._craftBin(), "..", "..")))
 
     def _setAliasesV6(self):
         self.addAlias("CodeSigning", "CommonName", "CodeSigning", "SubjectName")
@@ -81,9 +89,9 @@ class CraftConfig(object):
         if not (deprecatedSection, deprecatedKey) in self._warned:
             self._warned.add((deprecatedSection, deprecatedKey))
             print(
-                f"Warning: {deprecatedSection}/{deprecatedKey} is deprecated and has been renamed to "
-                f"{section}/{key}, please update your CraftSettings.ini",
-                file=sys.stderr if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) else sys.stdout)
+                f"Warning: {deprecatedSection}/{deprecatedKey} is deprecated and has been renamed to " f"{section}/{key}, please update your CraftSettings.ini",
+                file=sys.stderr if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) else sys.stdout,
+            )
 
     def _readSettings(self):
         if not os.path.exists(self.iniPath):
@@ -98,15 +106,18 @@ class CraftConfig(object):
             self._config.add_section("Variables")
         for key, value in {
             "CraftRoot": CraftConfig._craftRoot(),
-            "CraftDir": craftDir }.items():
-            self._config["Variables"][key] = value
+            "CraftDir": craftDir,
+        }.items():
+            self._config["Variables"][key] = str(value)
         # read user settings
         self._config.read(self.iniPath, encoding="utf-8")
 
     def __contains__(self, key):
-        return self.__contains_no_alias(key) or \
-               (key in self._alias and self.__contains__(self._alias[key])) or \
-               (key[0] in self._groupAlias and self.__contains__((self._groupAlias[key[0]], key[1])))
+        return (
+            self.__contains_no_alias(key)
+            or (key in self._alias and self.__contains__(self._alias[key]))
+            or (key[0] in self._groupAlias and self.__contains__((self._groupAlias[key[0]], key[1])))
+        )
 
     def __contains_no_alias(self, key):
         return self._config and self._config.has_section(key[0]) and key[1] in self._config[key[0]]
@@ -135,7 +146,6 @@ class CraftConfig(object):
                     self._warnDeprecated(oldGroup, key, group, key)
                     return self.get(oldGroup, key)
 
-
         if self.__contains_no_alias((group, key)):
             return self._config[group][key]
 
@@ -148,7 +158,7 @@ class CraftConfig(object):
         exit(1)
 
     @staticmethod
-    def _parseList(s : str) -> [str]:
+    def _parseList(s: str) -> [str]:
         return [v.strip() for v in s.split(";") if v]
 
     def getList(self, group, key, default=None):
@@ -176,7 +186,7 @@ class CraftConfig(object):
             self.set(group, key, value)
 
     def dump(self):
-        with open(self.iniPath + ".dump", 'wt+') as configfile:
+        with open(self.iniPath + ".dump", "wt+") as configfile:
             self._config.write(configfile)
 
     @staticmethod
@@ -184,3 +194,16 @@ class CraftConfig(object):
     def _dump():
         if CraftCore.settings.getboolean("CraftDebug", "DumpSettings", False):
             CraftCore.settings.dump()
+
+    def cacheRepositoryUrls(self) -> [str]:
+        out = [
+            "/".join(
+                [
+                    url if not url.endswith("/") else url[0:-1],
+                    CraftCore.settings.get("Packager", "CacheVersion"),
+                    *CraftCore.compiler.signature,
+                ]
+            )
+            for url in CraftCore.settings.getList("Packager", "RepositoryUrl")
+        ]
+        return out

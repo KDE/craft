@@ -1,6 +1,6 @@
 import re
-from distutils.version import Version, LooseVersion, StrictVersion
 
+from Blueprints.distutils_version import LooseVersion, StrictVersion, Version
 from CraftCore import CraftCore
 
 
@@ -27,10 +27,8 @@ class CraftVersion(Version):
         elif not isinstance(other, CraftVersion):
             raise TypeError("Can't compare CraftVersion with %s" % type(other))
         if self.isBranch or other.isBranch:
-            return (0 if self.versionstr == other.versionstr
-                    else -1 if self.isBranch and not other.isBranch else 1)
+            return 0 if self.versionstr == other.versionstr else -1 if self.isBranch and not other.isBranch else 1
         return 0 if self.version == other.version else -1 if self.version < other.version else 1
-
 
     # allow to use % for a comparison of major versions
     def __mod__(self, other):
@@ -43,8 +41,7 @@ class CraftVersion(Version):
     def normalizedVersion(self):
         v = CraftVersion.invalid_re.sub("", self.versionstr)
         if self.isBranch or not re.match(r"^\d+.*", v):
-            CraftCore.log.warning(
-                "Can't convert %s to StrictVersion, please use release versions for packaging" % self.versionstr)
+            CraftCore.log.warning("Can't convert %s to StrictVersion, please use release versions for packaging" % self.versionstr)
             return CraftVersion("0")
         loose = LooseVersion(re.sub("-|_", ".", v))
         out = []
@@ -66,8 +63,8 @@ class CraftVersion(Version):
     def strictVersion(self):
         out = self.normalizedVersion.versionstr.split(".")
         if len(out) < 3:
-            out += ["0"]*(3-len(out))
-        vstring = ".".join(out[0: min(len(out), 3)])
+            out += ["0"] * (3 - len(out))
+        vstring = ".".join(out[0 : min(len(out), 3)])
         if len(out) > 3:
             vstring += "".join(out[3:])
         return StrictVersion(vstring)
@@ -105,31 +102,32 @@ class CraftVersion(Version):
          candidates, and therefore are not as new as a version string that does not
          contain them, and "dev" is replaced with an '@' so that it sorts lower than
          than any other pre-release tag.
-         """
+        """
 
         # remove leading characters like tag markers etc ("v5.8.0" == "5.8.0")
         s = CraftVersion.invalid_re.sub("", s)
 
         parts = []
         for part in self.__parse_version_parts(s.lower()):
-            if part.startswith('*'):
-                if part < '*final':  # remove '-' before a prerelease tag
-                    while parts and parts[-1] == '*final-': parts.pop()
+            if part.startswith("*"):
+                if part < "*final":  # remove '-' before a prerelease tag
+                    while parts and parts[-1] == "*final-":
+                        parts.pop()
                 # remove trailing zeros from each series of numeric parts
-                while parts and parts[-1] == '00000000':
+                while parts and parts[-1] == "00000000":
                     parts.pop()
             parts.append(part)
         self.version = tuple(parts)
 
     def __parse_version_parts(self, s):
-        replace = {'pre': 'c', 'preview': 'c', '-': 'final-', 'rc': 'c', 'dev': '@'}.get
+        replace = {"pre": "c", "preview": "c", "-": "final-", "rc": "c", "dev": "@"}.get
         for part in CraftVersion.component_re.split(s):
             part = replace(part, part)
-            if not part or part == '.':
+            if not part or part == ".":
                 continue
-            if part[:1] in '0123456789':
+            if part[:1] in "0123456789":
                 yield part.zfill(8)  # pad for numeric comparison
             else:
-                yield '*' + part
+                yield "*" + part
 
-        yield '*final'  # ensure that alpha/beta/candidate are before final
+        yield "*final"  # ensure that alpha/beta/candidate are before final

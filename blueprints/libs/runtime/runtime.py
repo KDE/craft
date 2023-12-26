@@ -1,5 +1,7 @@
-import info
 import glob
+
+import info
+
 
 class subinfo(info.infoclass):
     def registerOptions(self):
@@ -8,7 +10,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         # not used  yet only for reference
         ver = str(CraftCore.compiler.getVersion())
-        self.patchLevel[ver] = 1
+        self.patchLevel[ver] = 2
         self.targets[ver] = ""
         self.description = "The compiler runtime package"
         self.defaultTarget = ver
@@ -22,7 +24,7 @@ class subinfo(info.infoclass):
 from Package.BinaryPackageBase import *
 
 
-class PackageWin(BinaryPackageBase):
+class Package(BinaryPackageBase):
     def __init__(self):
         BinaryPackageBase.__init__(self)
         self.subinfo.options.package.disableBinaryCache = CraftCore.compiler.isMSVC()
@@ -39,51 +41,50 @@ class PackageWin(BinaryPackageBase):
 
         files = []
         if CraftCore.compiler.isMinGW():
-            files = ['libgomp-1.dll', 'libstdc++-6.dll', 'libwinpthread-1.dll']
-            if CraftCore.compiler.isMinGW_W32():
-                files.append('libgcc_s_sjlj-1.dll')
-                srcdir = os.path.join(self.rootdir, "mingw", "bin")
-            elif CraftCore.compiler.isMinGW_W64():
-                files.append('libgcc_s_seh-1.dll')
-                srcdir = os.path.join(self.rootdir, "mingw64", "bin")
+            files = [
+                "libgomp-1.dll",
+                "libstdc++-6.dll",
+                "libwinpthread-1.dll",
+                "libgcc_s_seh-1.dll",
+                "libssp-0.dll",
+            ]
+            srcdir = os.path.join(self.rootdir, "mingw64", "bin")
         elif CraftCore.compiler.isMSVC():
             redistDir = None
             if self.buildType() != "Debug":
                 if CraftCore.compiler.getInternalVersion() >= 15:
                     if CraftCore.compiler.isMSVC2022():
-                        flavor="2022"
+                        flavor = "2022"
                     elif CraftCore.compiler.isMSVC2019():
-                        flavor="2019"
+                        flavor = "2019"
                     elif CraftCore.compiler.isMSVC2017():
-                        flavor="2017"
+                        flavor = "2017"
                     else:
                         raise Exception("Unknown compiler")
                     if "VCTOOLSREDISTDIR" in os.environ:
                         redistDir = os.environ["VCTOOLSREDISTDIR"]
                     else:
-                        CraftCore.log.error(f"Could not find Microsoft Visual Studio {flavor}.\n"
-                                            f"VCTOOLSREDISTDIR does not exist, and likely should point to '*\\Microsoft Visual Studio\\{flavor}\\Community\\VC\\Redist\\MSVC\\xx.xx.xxxxx'.")
-                elif CraftCore.compiler.isMSVC2015():
-                    if "VCINSTALLDIR" in os.environ:
-                        redistDir = os.path.join(os.environ["VCINSTALLDIR"], "redist")
-                    else:
-                        CraftCore.log.error("Could not find Microsoft Visual Studio 2015.\n" +
-                                            r"VCINSTALLDIR does not exist, and should point to '*\Microsoft Visual Studio\2015\Community\VC\'.")
+                        CraftCore.log.error(
+                            f"Could not find Microsoft Visual Studio {flavor}.\n"
+                            f"VCTOOLSREDISTDIR does not exist, and likely should point to '*\\Microsoft Visual Studio\\{flavor}\\Community\\VC\\Redist\\MSVC\\xx.xx.xxxxx'."
+                        )
                 if redistDir:
-                    files = glob.glob(os.path.join(redistDir, CraftCore.compiler.architecture, "**/*.dll"), recursive=True)
+                    redistDir = os.path.join(redistDir, "x86" if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32 else "x64")
+                    files = glob.glob(
+                        os.path.join(redistDir, "**/*.dll"),
+                        recursive=True,
+                    )
+                    if not files:
+                        CraftCore.log.error(f"No runtime files found in {redistDir}")
+                        return False
                 else:
                     CraftCore.log.error("Unsupported Compiler")
                     return False
         for f in files:
             if not os.path.isabs(f):
                 f = os.path.join(srcdir, f)
-            utils.copyFile(f, os.path.join(destdir, os.path.basename(f)), linkOnly=False)
+            dest = os.path.join(destdir, os.path.basename(f))
+            CraftCore.log.info(f"Installing: {dest}")
+            if not utils.copyFile(f, dest, linkOnly=False):
+                return False
         return True
-
-
-from Package.Qt5CorePackageBase import *
-
-
-class Package(Qt5CoreSdkPackageBase):
-    def __init__(self):
-        Qt5CoreSdkPackageBase.__init__(self, condition=OsUtils.isWin(), classA=PackageWin)

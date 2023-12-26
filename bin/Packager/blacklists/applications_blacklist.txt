@@ -19,6 +19,8 @@ include/.*
 lib/cmake/.*
 lib/charset\.alias
 share/ECM/.*
+lib/icu/.*
+lib/objects-.*/.*
 
 # multiple docs
 (bin/data|share)/man/.*
@@ -104,3 +106,18 @@ bin/xmlpatternsvalidator(\.exe)?
 bin/qvkgen(\.exe)?
 bin/windeployqt(\.exe)?
 lib/.*\.sh
+
+# QML development files
+metatypes/.*
+modules/.*
+.*\.qmltypes
+.*-qmlmodule\.version
+plugins/designer/.*
+plugins/qmllint/.*
+plugins/qmltooling/.*
+
+# kf6 development files
+share/kf6/jsonschema/.*
+
+# ffmpeg example files
+share/ffmpeg/examples/.*

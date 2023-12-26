@@ -41,7 +41,6 @@ class VersionInfo(object):
             self.tarballs = []
             self.info = {}
 
-
     def __init__(self, subinfo=None, fileName=None, package=None):
         self.subinfo = subinfo
         if package:
@@ -62,7 +61,10 @@ class VersionInfo(object):
                 filePath = self.package.filePath
                 while True:
                     if filePath in CraftPackageObject.rootDirectories():
-                        raise BlueprintException("setDefaultValues() called without providing a version.ini", self.package)
+                        raise BlueprintException(
+                            "setDefaultValues() called without providing a version.ini",
+                            self.package,
+                        )
                     ini = filePath / "version.ini"
                     if ini.exists():
                         self._fileName = ini
@@ -81,7 +83,11 @@ class VersionInfo(object):
                     self._data.info = config["General"]
                     for k in ["tags", "branches", "tarballs"]:
                         if k in self._data.info:
-                            setattr(self._data, k, CraftCore.settings._parseList(self._data.info[k]))
+                            setattr(
+                                self._data,
+                                k,
+                                CraftCore.settings._parseList(self._data.info[k]),
+                            )
 
                     CraftCore.log.debug(f"Found a version info for {self.package} in {self._fileName}")
         return self._data
@@ -120,7 +126,8 @@ class VersionInfo(object):
             "VERSION": ver,
             "PACKAGE_NAME": name,
             "COMPILER_BITS": CraftCore.compiler.bits,
-            }
+            "COMPILER_ARCHITECTURE": CraftCore.compiler.architecture.name,
+        }
 
         split_ver = ver.split(".")
         if len(split_ver) == 3:
@@ -133,23 +140,36 @@ class VersionInfo(object):
                 text = text.replace(match, replaces[match[2:-1].upper()])
         return text
 
-    def format(self, s : str, ver : str):
+    def format(self, s: str, ver: str):
         return VersionInfo._replaceVar(s, ver, self.package.name)
 
-    def get(self, key : str,  fallback=configparser._UNSET):
+    def get(self, key: str, fallback=configparser._UNSET):
         platformKey = f"{key}_{CraftCore.compiler.platform.name}"
         if platformKey in self.data.info:
             return self.data.info.get(platformKey)
         return self.data.info.get(key, fallback)
 
-    def setDefaultValuesFromFile(self, fileName, tarballUrl=None, tarballDigestUrl=None, tarballInstallSrc=None,
-                                 gitUrl=None):
+    def setDefaultValuesFromFile(
+        self,
+        fileName,
+        tarballUrl=None,
+        tarballDigestUrl=None,
+        tarballInstallSrc=None,
+        gitUrl=None,
+    ):
         self._fileName = os.path.abspath(os.path.join(os.path.dirname(self.package.source), fileName))
         self._data = None
         self.setDefaultValues(tarballUrl, tarballDigestUrl, tarballInstallSrc, gitUrl)
 
-    def setDefaultValues(self, tarballUrl=None, tarballDigestUrl=None, tarballInstallSrc=None,
-                         gitUrl=None, packageName=None, patchLevel=None):
+    def setDefaultValues(
+        self,
+        tarballUrl=None,
+        tarballDigestUrl=None,
+        tarballInstallSrc=None,
+        gitUrl=None,
+        packageName=None,
+        patchLevel=None,
+    ):
         """
         Set svn and tarball targets based on the settings in the next version.ini
         Parameters may contain ${} Variables which then will be replaces.
@@ -163,7 +183,14 @@ class VersionInfo(object):
 
         """
         if self._include:
-            self._include.setDefaultValues(tarballUrl, tarballDigestUrl, tarballInstallSrc, gitUrl, packageName, patchLevel)
+            self._include.setDefaultValues(
+                tarballUrl,
+                tarballDigestUrl,
+                tarballInstallSrc,
+                gitUrl,
+                packageName,
+                patchLevel,
+            )
 
         if packageName is None:
             packageName = self.subinfo.parent.package.name
@@ -202,10 +229,12 @@ class VersionInfo(object):
 
             if len(gitUpdatedRepoUrls) == 2:
                 for target in self.data.tags + self.data.branches:
-                    self.subinfo.targetUpdatedRepoUrl[target] = (self._replaceVar(gitUpdatedRepoUrls[0], target, packageName), self._replaceVar(gitUpdatedRepoUrls[1], target, packageName))
+                    self.subinfo.targetUpdatedRepoUrl[target] = (
+                        self._replaceVar(gitUpdatedRepoUrls[0], target, packageName),
+                        self._replaceVar(gitUpdatedRepoUrls[1], target, packageName),
+                    )
             elif len(gitUpdatedRepoUrls) > 2:
                 raise Exception("gitUpdatedRepoUrls must be a list of the lenght 2")
-
 
         defaultTarget = self.defaultTarget()
         if defaultTarget:

@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 # this package contains functions to check the current compiler
 # copyright:
@@ -6,12 +7,13 @@
 """@package provides boost build system"""
 from Blueprints.CraftVersion import CraftVersion
 from BuildSystem.BuildSystemBase import *
+from CraftCompiler import CraftCompiler
 from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 
 
 class BoostBuildSystem(BuildSystemBase):
-    """ cmake build support """
+    """cmake build support"""
 
     def __init__(self):
         """constructor. configureOptions are added to the configure command line and makeOptions are added to the make command line"""
@@ -36,27 +38,31 @@ class BoostBuildSystem(BuildSystemBase):
         """returns default configure options"""
         options = BuildSystemBase.configureOptions(self)
 
-        options += [f"-j{multiprocessing.cpu_count()}",
-                    f"--build-dir={self.buildDir()}",
-                    "--build-type=minimal",
-                    #                " --debug-configuration"
-                    "threading=multi",
-                    f"include=\"{CraftCore.standardDirs.craftRoot()}/include\"",
-                    f"library-path=\"{CraftCore.standardDirs.craftRoot()}/lib\""
+        options += [
+            f"-j{multiprocessing.cpu_count()}",
+            f"--build-dir={self.buildDir()}",
+            "--build-type=minimal",
+            #                " --debug-configuration"
+            "threading=multi",
+            f'include="{CraftCore.standardDirs.craftRoot()}/include"',
+            f'library-path="{CraftCore.standardDirs.craftRoot()}/lib"',
         ]
         if CraftCore.debug.verbose() >= 1:
             options += ["--dx13"]
 
         if not self.subinfo.options.buildStatic:
-            options += ["link=shared",
-                        "runtime-link=shared"]
+            options += ["link=shared", "runtime-link=shared"]
         else:
-            options += ["link=static",
-                        "runtime-link=shared"]
-        if CraftCore.compiler.isX64():
+            options += ["link=static", "runtime-link=shared"]
+
+        if CraftCore.compiler.architecture & CraftCompiler.Architecture.x86_64:
             options += ["address-model=64", "architecture=x86"]
-        else:
+        elif CraftCore.compiler.architecture & CraftCompiler.Architecture.x86_32:
             options += ["address-model=32", "architecture=x86"]
+        elif CraftCore.compiler.architecture & CraftCompiler.Architecture.arm64:
+            options += ["address-model=64", "architecture=arm"]
+        elif CraftCore.compiler.architecture & CraftCompiler.Architecture.arm32:
+            options += ["address-model=32", "architecture=arm"]
 
         if self.buildType() == "Debug":
             options += ["variant=debug"]
@@ -92,15 +98,16 @@ class BoostBuildSystem(BuildSystemBase):
 
     def make(self):
         """implements the make step for cmake projects"""
-        boost = CraftPackageObject.get('libs/boost/boost-headers').instance
-        self.subinfo.targetInstSrc[self.subinfo.buildTarget] = os.path.join(boost.sourceDir(), "libs",
-                                                                            self.subinfo.targetInstSrc[self.subinfo.buildTarget],
-                                                                            "build")
+        boost = CraftPackageObject.get("libs/boost/boost-headers").instance
+        self.subinfo.targetInstSrc[self.subinfo.buildTarget] = os.path.join(
+            boost.sourceDir(),
+            "libs",
+            self.subinfo.targetInstSrc[self.subinfo.buildTarget],
+            "build",
+        )
 
         self.enterSourceDir()
         return utils.system(Arguments.formatCommand(["bjam"], self.configureOptions(self.subinfo.options.configure.args)))
-
-
 
     def install(self):
         """install the target"""
@@ -117,14 +124,15 @@ class BoostBuildSystem(BuildSystemBase):
                 elif reLib.search(f):
                     utils.copyFile(os.path.join(root, f), os.path.join(self.imageDir(), "lib", f))
                     if CraftCore.compiler.isUnix and not f.endswith(".a"):
-                      name, ext = os.path.splitext(f)
-                      while not ext == ".so":
-                        utils.createSymlink(os.path.join(self.imageDir(), "lib", os.path.basename(f)), os.path.join(self.imageDir(), "lib", name))
-                        name, ext = os.path.splitext(name)
+                        name, ext = os.path.splitext(f)
+                        while not ext == ".so":
+                            utils.createSymlink(
+                                os.path.join(self.imageDir(), "lib", os.path.basename(f)),
+                                os.path.join(self.imageDir(), "lib", name),
+                            )
+                            name, ext = os.path.splitext(name)
 
         return True
-
-
 
     def unittest(self):
         return True

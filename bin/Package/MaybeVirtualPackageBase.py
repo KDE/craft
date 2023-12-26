@@ -1,6 +1,6 @@
-from Package.VirtualPackageBase import *
-from Blueprints.CraftVersion import CraftVersion
 import Utils.CraftCache
+from Blueprints.CraftVersion import CraftVersion
+from Package.VirtualPackageBase import *
 
 
 class MaybeVirtualPackageBase(object):
@@ -13,9 +13,16 @@ class MaybeVirtualPackageBase(object):
         self.__class__.__bases__[0].__init__(self)
 
 
-
 class VirtualIfSufficientVersion(MaybeVirtualPackageBase):
-    def __init__(self, app, version, classA, classB=VirtualPackageBase, pattern=None, versionCommand=None):
+    def __init__(
+        self,
+        app,
+        version,
+        classA,
+        classB=VirtualPackageBase,
+        pattern=None,
+        versionCommand=None,
+    ):
         app = CraftCore.cache.findApplication(app)
         newer = False
         if app and CraftCore.standardDirs.craftRoot() not in Path(app).parents:
@@ -28,8 +35,7 @@ class VirtualIfSufficientVersion(MaybeVirtualPackageBase):
         if not self.skipCondition:
             # override the install method
             def install():
-                CraftCore.log.info(
-                    f"Skipping installation of {self} as the installed version of {app} {appVersion} >= {self.checkVersion}")
+                CraftCore.log.info(f"Skipping installation of {self} as the installed version of {app} {appVersion} >= {self.checkVersion}")
                 return self.baseClass.install(self)
 
             def sourceRevision():

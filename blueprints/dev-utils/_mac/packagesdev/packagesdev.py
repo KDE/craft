@@ -3,15 +3,17 @@ import info
 
 class subinfo(info.infoclass):
     def registerOptions(self):
+        self.options.dynamic.setDefault("buildType", "Release")
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.MacOS
 
     def setTargets(self):
-        self.svnTargets['master'] = "[git]https://github.com/packagesdev/packages.git"
+        self.svnTargets["master"] = "[git]https://github.com/packagesdev/packages.git"
         self.patchToApply["master"] = [("packagesdev-20191209.patch", 1)]
+
         for ver in ["1.2.6", "1.2.7", "1.2.10"]:
-           # self.patchToApply[ver] = [("packagesdev-20191209.patch", 1)]
+            # self.patchToApply[ver] = [("packagesdev-20191209.patch", 1)]
             self.svnTargets[ver] = f"[git]https://github.com/packagesdev/packages.git||v{ver}"
-        self.description = "Integrated Packaging Environment for OS X "
+        self.description = "Integrated Packaging Environment for OS X"
         self.webpage = "https://github.com/packagesdev/packages"
         self.defaultTarget = '1.2.10'
 
@@ -36,7 +38,7 @@ class Package(MakeFilePackageBase):
         return super().fetch()
 
     def make(self):
-        return utils.system([Path(self.sourceDir()) / "build.sh" ])
+        return utils.system([Path(self.sourceDir()) / "build.sh"])
 
     def install(self):
         dest = Path(self.imageDir()) / "bin"

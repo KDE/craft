@@ -1,9 +1,8 @@
 import abc
 import os
-from pathlib import Path
 import platform
-
 import sys
+from pathlib import Path
 
 from CraftOS.OsDetection import OsDetection
 
@@ -11,26 +10,26 @@ from CraftOS.OsDetection import OsDetection
 class OsUtilsBase(OsDetection, metaclass=abc.ABCMeta):
     @abc.abstractstaticmethod
     def rm(path, force=False):
-        """ Removes a file"""
+        """Removes a file"""
         pass
 
     @abc.abstractstaticmethod
     def rmDir(path, force=False):
-        """ Removes a file"""
+        """Removes a file"""
         pass
 
     @abc.abstractstaticmethod
     def getFileAttributes(path):
-        """ Returns the attributes"""
+        """Returns the attributes"""
         pass
 
     @abc.abstractstaticmethod
     def removeReadOnlyAttribute(path):
-        """ Removes the readonly flag"""
+        """Removes the readonly flag"""
         pass
 
     def setConsoleTitle(title):
-        """ Set the console title """
+        """Set the console title"""
         return True
 
     @staticmethod
@@ -38,13 +37,13 @@ class OsUtilsBase(OsDetection, metaclass=abc.ABCMeta):
         return True
 
     @staticmethod
-    def toWindowsPath(path : str) -> Path:
+    def toWindowsPath(path: str) -> Path:
         if not path:
             return None
         return Path(path)
 
     @staticmethod
-    def toUnixPath(path : str) -> str:
+    def toUnixPath(path: str) -> str:
         if not path:
             return None
         return Path(path).as_posix()
@@ -60,12 +59,12 @@ class OsUtilsBase(OsDetection, metaclass=abc.ABCMeta):
         return out
 
     @staticmethod
-    def toNativePath(path : str) -> str:
+    def toNativePath(path: str) -> str:
         """Return a native path"""
         pass
 
     @staticmethod
-    def killProcess(name : str="*", prefix : str=None) -> bool:
+    def killProcess(name: str = "*", prefix: str = None) -> bool:
         pass
 
     @staticmethod

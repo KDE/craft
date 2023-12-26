@@ -1,9 +1,12 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
+import stat
+from pathlib import Path
+
 from BuildSystem.BinaryBuildSystem import *
 from Package.PackageBase import *
-from Packager.TypePackager import *
+from Packager.TypePackager import TypePackager
 from Source.MultiSource import *
 
 
@@ -31,4 +34,9 @@ class BinaryPackageBase(PackageBase, MultiSource, BinaryBuildSystem, TypePackage
                 if not dest.exists():
                     if not utils.copyFile(f, dest, linkOnly=False):
                         return False
+        if CraftCore.compiler.isUnix:
+            for f in glob.glob(f"{self.installDir()}/**/*.AppImage", recursive=True):
+                appImage = Path(f)
+                CraftCore.log.info(f"Make {appImage} executable")
+                appImage.chmod(appImage.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
         return True

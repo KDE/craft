@@ -33,14 +33,13 @@ class subinfo(info.infoclass):
             self.targetDigestUrls[ver] = "http://download.qt.io/online/qtsdkrepository/windows_x86/desktop/tools_ifw/qt.tools.ifw.30/3.0.2ifw-win-x86.7z.sha1"
             self.targetInstallPath[ver] = "dev-utils"
 
-
         self.description = "The Qt Installer Framework provides a set of tools and utilities to create installers for the supported desktop Qt platforms: Linux, Microsoft Windows, and Mac OS X."
         self.webpage = "https://wiki.qt.io/Qt-Installer-Framework"
 
         self.defaultTarget = "3.0.2"
 
     def setDependencies(self):
-        self.buildDependencies["virtual/bin-base"] = None
+        self.buildDependencies["virtual/base"] = None
 
     def registerOptions(self):
         self.options.dynamic.registerOption("name", "Craft Installer")
@@ -63,28 +62,43 @@ class Package(BinaryPackageBase):
     def __init__(self):
         BinaryPackageBase.__init__(self)
 
-
     def createPackage(self):
         # TODO: don't run this in package but in a different ways....
         qtifDir = os.path.join(self.packageDestinationDir(), "qtif")
 
-        vars = {"NAME" : self.subinfo.options.dynamic.name,
-                "VERSION" : self.subinfo.options.dynamic.installerVersion,
-                "PUBLISHER" : self.subinfo.options.dynamic.publisher,
-                "TARGET_DIR" : self.subinfo.options.dynamic.targetDir,
-                "START_MENU_DIR" : self.subinfo.options.dynamic.startMenuDir,
-                "TITLE" : self.subinfo.options.dynamic.title,
-
-                "REPO_ENABLED" : "0" if self.subinfo.options.dynamic.offlineInstaller else "1",
-                "REPO_URL" : self.subinfo.options.dynamic.repositoryURL if self.subinfo.options.dynamic.repositoryURL else f"file:///{OsUtils.toUnixPath(qtifDir)}/repo",
-                "REPO_NAME" : self.subinfo.options.dynamic.repositoryName,
-                }
-        if not utils.configureFile(os.path.join(self.packageDir(), "config.xml"), os.path.join(qtifDir, "config.xml"), vars):
+        vars = {
+            "NAME": self.subinfo.options.dynamic.name,
+            "VERSION": self.subinfo.options.dynamic.installerVersion,
+            "PUBLISHER": self.subinfo.options.dynamic.publisher,
+            "TARGET_DIR": self.subinfo.options.dynamic.targetDir,
+            "START_MENU_DIR": self.subinfo.options.dynamic.startMenuDir,
+            "TITLE": self.subinfo.options.dynamic.title,
+            "REPO_ENABLED": "0" if self.subinfo.options.dynamic.offlineInstaller else "1",
+            "REPO_URL": self.subinfo.options.dynamic.repositoryURL
+            if self.subinfo.options.dynamic.repositoryURL
+            else f"file:///{OsUtils.toUnixPath(qtifDir)}/repo",
+            "REPO_NAME": self.subinfo.options.dynamic.repositoryName,
+        }
+        if not utils.configureFile(
+            os.path.join(self.packageDir(), "config.xml"),
+            os.path.join(qtifDir, "config.xml"),
+            vars,
+        ):
             return False
-        if not utils.system(["binarycreator", "-n" if not self.subinfo.options.dynamic.offlineInstaller else "-f",
-                             "-c", os.path.join(qtifDir, "config.xml"),
-                             "-p", os.path.join(qtifDir, "image"),
-                             os.path.join(qtifDir, self.subinfo.options.dynamic.installerName + CraftCore.compiler.executableSuffix)]):
+        if not utils.system(
+            [
+                "binarycreator",
+                "-n" if not self.subinfo.options.dynamic.offlineInstaller else "-f",
+                "-c",
+                os.path.join(qtifDir, "config.xml"),
+                "-p",
+                os.path.join(qtifDir, "image"),
+                os.path.join(
+                    qtifDir,
+                    self.subinfo.options.dynamic.installerName + CraftCore.compiler.executableSuffix,
+                ),
+            ]
+        ):
             return False
         if not self.subinfo.options.dynamic.offlineInstaller:
             repoDir = os.path.join(qtifDir, "repo")

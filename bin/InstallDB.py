@@ -1,40 +1,40 @@
+import os
 import sqlite3
 
-from CraftConfig import *
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 
 
 class InstallPackage(object):
-    """ InstallPackage finalizes an installation.
+    """InstallPackage finalizes an installation.
 
-        If you call addInstalled or remInstalled an InstallPackage object is returned which
-        you can use to handle file information with the InstallDB. For installation use code
-        similar to this one:
+    If you call addInstalled or remInstalled an InstallPackage object is returned which
+    you can use to handle file information with the InstallDB. For installation use code
+    similar to this one:
 
-        # get an InstallPackage object p
-        p = CraftCore.installdb.addInstalled( "cat", "pac", "ver", "prefix" )
-        # add files ( including the hash )
-        p.addFiles( [ ( "file1", "hash1" ), ( "file2", "hash2" ), ( "file3", "hash3" ) ] )
-        if failed:
-            # in case we somehow need to go back
-            p.revert()
-        else:
-            # finalize the installation
-            p.install()
+    # get an InstallPackage object p
+    p = CraftCore.installdb.addInstalled( "cat", "pac", "ver", "prefix" )
+    # add files ( including the hash )
+    p.addFiles( [ ( "file1", "hash1" ), ( "file2", "hash2" ), ( "file3", "hash3" ) ] )
+    if failed:
+        # in case we somehow need to go back
+        p.revert()
+    else:
+        # finalize the installation
+        p.install()
 
-        Deinstallation works similar:
-        p = CraftCore.installdb.remInstalled( "cat", "pac", "ver", "prefix" )
-        # get the files ( including the hash )
-        f = p.getFilesWithHashes()
-        # f now contains [ ( "file1", "hash1" ), ( "file2", "hash2" ), ( "file3", "hash3" ) ]
-        if failed:
-            # in case we somehow need to go back
-            p.revert()
-        else:
-            # finalize the uninstall
-            p.uninstall()
+    Deinstallation works similar:
+    p = CraftCore.installdb.remInstalled( "cat", "pac", "ver", "prefix" )
+    # get the files ( including the hash )
+    f = p.getFilesWithHashes()
+    # f now contains [ ( "file1", "hash1" ), ( "file2", "hash2" ), ( "file3", "hash3" ) ]
+    if failed:
+        # in case we somehow need to go back
+        p.revert()
+    else:
+        # finalize the uninstall
+        p.uninstall()
     """
 
     def __init__(self, cursor, packageId):
@@ -43,52 +43,58 @@ class InstallPackage(object):
         self.fileDict = dict()
 
     def addFiles(self, fileDict):
-        """ appends files to the list of files to be installed """
+        """appends files to the list of files to be installed"""
         self.fileDict.update(fileDict)
 
     def getFilesWithHashes(self):
-        """ get the list of files (filename, fileHash tuples) for the given package """
-        cmd = '''SELECT filename, fileHash FROM fileList WHERE packageId=?;'''
+        """get the list of files (filename, fileHash tuples) for the given package"""
+        cmd = """SELECT filename, fileHash FROM fileList WHERE packageId=?;"""
         InstallDB.log("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)))
         self.cursor.execute(cmd, (self.packageId,))
         return self.cursor.fetchall()
 
     def getFiles(self):
-        """ get the list of files for the given package """
-        cmd = '''SELECT filename FROM fileList WHERE packageId=?;'''
+        """get the list of files for the given package"""
+        cmd = """SELECT filename FROM fileList WHERE packageId=?;"""
         InstallDB.log("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)))
         self.cursor.execute(cmd, (self.packageId,))
         return self.cursor.fetchall()
 
     def getPackageInfo(self):
-        cmd = '''SELECT packagePath, version FROM packageList WHERE packageId=?'''
+        cmd = """SELECT packagePath, version FROM packageList WHERE packageId=?"""
         self.cursor.execute(cmd, (self.packageId,))
         return self.cursor.fetchall()[0]
 
     def revert(self):
-        """ revert all changes made to the database, use with care """
+        """revert all changes made to the database, use with care"""
         self.cursor.connection.rollback()
 
     def uninstall(self):
-        """ really uninstall that package """
-        cmd = '''DELETE FROM fileList WHERE packageId=?;'''
+        """really uninstall that package"""
+        cmd = """DELETE FROM fileList WHERE packageId=?;"""
         InstallDB.log("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)))
         self.cursor.execute(cmd, (self.packageId,))
-        cmd = '''DELETE FROM packageList WHERE packageId=?;'''
+        cmd = """DELETE FROM packageList WHERE packageId=?;"""
         InstallDB.log("executing sqlcmd '%s' with parameter %s" % (cmd, str(self.packageId)))
         self.cursor.execute(cmd, (self.packageId,))
         self.cursor.connection.commit()
 
     def install(self):
-        """ marking the package & package file list installed """
+        """marking the package & package file list installed"""
         fileNumber = len(self.fileDict)
         # keys() and values will stay in the same order if no changes are done in between calls
         # structure of each tuple:
         # fileId | packageId == package Id | filenames | file hashes
-        dataList = list(zip([None] * fileNumber, [self.packageId] * fileNumber, list(self.fileDict.keys()),
-                            list(self.fileDict.values())))
+        dataList = list(
+            zip(
+                [None] * fileNumber,
+                [self.packageId] * fileNumber,
+                list(self.fileDict.keys()),
+                list(self.fileDict.values()),
+            )
+        )
 
-        cmd = '''INSERT INTO fileList VALUES (?, ?, ?, ?)'''
+        cmd = """INSERT INTO fileList VALUES (?, ?, ?, ?)"""
         InstallDB.log("executing sqlcmd '%s' %s times" % (cmd, len(self.fileDict)))
         self.cursor.executemany(cmd, dataList)
 
@@ -105,24 +111,30 @@ class InstallPackage(object):
         return self.cursor.fetchall()[0][0]
 
     def getCacheVersion(self):
-        self.cursor.execute("SELECT cacheVersion FROM packageList WHERE packageId == ?", (self.packageId,))
+        self.cursor.execute(
+            "SELECT cacheVersion FROM packageList WHERE packageId == ?",
+            (self.packageId,),
+        )
         return self.cursor.fetchall()[0][0]
 
-
     def setCacheVersion(self, cacheVersion):
-        self.cursor.execute("UPDATE packageList SET cacheVersion = ? WHERE packageId == ?", (cacheVersion, self.packageId))
+        self.cursor.execute(
+            "UPDATE packageList SET cacheVersion = ? WHERE packageId == ?",
+            (cacheVersion, self.packageId),
+        )
 
 
 class InstallDB(object):
-    """ a database object which provides the methods for adding and removing a package and
-        checking its installation status.
-        In case the database doesn't exist if the constructor is called, a new database is constructed
+    """a database object which provides the methods for adding and removing a package and
+    checking its installation status.
+    In case the database doesn't exist if the constructor is called, a new database is constructed
     """
+
     SCHEMA_VERSION = 1
 
     def __init__(self, filename=None):
         if filename == None:
-            filename = os.path.join(CraftStandardDirs.etcBlueprintDir(), 'install.db')
+            filename = os.path.join(CraftStandardDirs.etcBlueprintDir(), "install.db")
 
         self.dbfilename = filename
         self._prepareDatabase()
@@ -133,8 +145,8 @@ class InstallDB(object):
             CraftCore.log.debug(command)
 
     def getLastId(self):
-        """ returns the last id from a table, which is essentially the  """
-        cmd = '''SELECT max(packageId) FROM packageList;'''
+        """returns the last id from a table, which is essentially the"""
+        cmd = """SELECT max(packageId) FROM packageList;"""
 
         cursor = self.connection.cursor()
         cursor.execute(cmd)
@@ -148,43 +160,44 @@ class InstallDB(object):
         for key in list(_dict.keys()):
             if _dict[key]:
                 if parametersUsed:
-                    stmt += ''' AND'''
-                stmt += f''' {key}=?'''
+                    stmt += """ AND"""
+                stmt += f""" {key}=?"""
                 params.append(str(_dict[key]))
                 parametersUsed = True
         if not stmt == "":
-            stmt = ''' WHERE''' + stmt
+            stmt = """ WHERE""" + stmt
 
         return stmt, params
 
-    def isInstalled(self,  package, version=None):
-        """ returns whether a package is installed. If version is empty, all versions will be checked. """
-        cmd = '''SELECT * FROM packageList'''
-        stmt, params = self.__constructWhereStmt(
-            {'prefix': None, 'packagePath': package, 'version': version})
+    def isInstalled(self, package, version=None):
+        """returns whether a package is installed. If version is empty, all versions will be checked."""
+        cmd = """SELECT * FROM packageList"""
+        stmt, params = self.__constructWhereStmt({"prefix": None, "packagePath": package, "version": version})
         cmd += stmt
-        cmd += ''';'''
+        cmd += """;"""
         InstallDB.log("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
 
         cursor = self.connection.cursor()
         cursor.execute(cmd, tuple(params))
-        installedPackage  = cursor.fetchall()
+        installedPackage = cursor.fetchall()
         if installedPackage:
-            InstallDB.log(f"""The package {package} has been installed with
-                            version '{version}'.""")
+            InstallDB.log(
+                f"""The package {package} has been installed with
+                            version '{version}'."""
+            )
         else:
             InstallDB.log(f"""Couldn't find a trace that the package {package} has been installed with version '{version}'""")
         cursor.close()
         return bool(installedPackage)
 
     def getDistinctInstalled(self, package=None):
-        """ returns a list of the installed packages, which can be restricted by adding
-            package.
+        """returns a list of the installed packages, which can be restricted by adding
+        package.
         """
-        cmd = '''SELECT DISTINCT packagePath, version, revision FROM packageList'''
-        stmt, params = self.__constructWhereStmt({'prefix': None, 'packagePath': package})
+        cmd = """SELECT DISTINCT packagePath, version, revision FROM packageList"""
+        stmt, params = self.__constructWhereStmt({"prefix": None, "packagePath": package})
         cmd += stmt
-        cmd += ''';'''
+        cmd += """;"""
         InstallDB.log("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
 
         cursor = self.connection.cursor()
@@ -194,13 +207,13 @@ class InstallDB(object):
         return values
 
     def getPackageIds(self, package):
-        """ returns a list of the ids of the packages, which can be restricted by adding
-            package.
+        """returns a list of the ids of the packages, which can be restricted by adding
+        package.
         """
-        cmd = '''SELECT packageId FROM packageList'''
-        stmt, params = self.__constructWhereStmt({'prefix': None, 'packagePath': package.path})
+        cmd = """SELECT packageId FROM packageList"""
+        stmt, params = self.__constructWhereStmt({"prefix": None, "packagePath": package.path})
         cmd += stmt
-        cmd += ''';'''
+        cmd += """;"""
         InstallDB.log("executing sqlcmd '%s' with parameters: %s" % (cmd, tuple(params)))
 
         cursor = self.connection.cursor()
@@ -211,28 +224,28 @@ class InstallDB(object):
         return values
 
     def getPackagesForFileSearch(self, filename):
-        """ returns a list of tuple(InstallPackage(), filename) for packages providing a given file """
+        """returns a list of tuple(InstallPackage(), filename) for packages providing a given file"""
 
         cursor = self.connection.cursor()
-        cmd = '''SELECT packageId, fileName FROM fileList WHERE filename LIKE ?;'''
+        cmd = """SELECT packageId, fileName FROM fileList WHERE filename LIKE ?;"""
         InstallDB.log("executing sqlcmd '%s' with parameter %s" % (cmd, str(filename)))
         cursor.execute(cmd, ("%" + filename + "%",))
         rows = cursor.fetchall()
         return [(InstallPackage(cursor, row[0]), row[1]) for row in rows]
 
     def addInstalled(self, package, version, ignoreInstalled=False, revision="", cacheVersion=None):
-        """ adds an installed package """
+        """adds an installed package"""
         cursor = self.connection.cursor()
         if self.isInstalled(package, version) and not ignoreInstalled:
-            raise Exception(f'package {package}-{version} already installed')
+            raise Exception(f"package {package}-{version} already installed")
         params = (None, package.path, version, revision, cacheVersion)
-        cmd = '''INSERT INTO packageList (packageId, packagePath, version, revision, cacheVersion) VALUES (?, ?, ?, ?, ?)'''
+        cmd = """INSERT INTO packageList (packageId, packagePath, version, revision, cacheVersion) VALUES (?, ?, ?, ?, ?)"""
         InstallDB.log(f"executing sqlcmd {cmd!r} with parameters: {params}")
         cursor.execute(cmd, params)
         return InstallPackage(cursor, self.getLastId())
 
     def getInstalledPackages(self, package):
-        """ return an installed package """
+        """return an installed package"""
         cursor = self.connection.cursor()
         out = [InstallPackage(cursor, pId) for pId in self.getPackageIds(package)]
         # TODO: we always just have 1 package installed so don't return a list
@@ -240,9 +253,8 @@ class InstallDB(object):
             CraftCore.log.error(f"Database corruption: Found multiple packages for {package}")
         return out
 
-
     def _prepareDatabase(self):
-        """ prepare a new database and add the required table layout """
+        """prepare a new database and add the required table layout"""
         if not os.path.exists(self.dbfilename):
             if not os.path.exists(CraftStandardDirs.etcBlueprintDir()):
                 os.makedirs(CraftStandardDirs.etcBlueprintDir())
@@ -250,42 +262,47 @@ class InstallDB(object):
             cursor = self.connection.cursor()
 
             # first, create the required tables
-            cursor.execute('''CREATE TABLE packageList (packageId INTEGER PRIMARY KEY AUTOINCREMENT,
-                               prefix TEXT, packagePath TEXT, version TEXT, revision TEXT, cacheVersion TEXT)''')
-            cursor.execute('''CREATE TABLE fileList (fileId INTEGER PRIMARY KEY AUTOINCREMENT,
-                               packageId INTEGER, filename TEXT, fileHash TEXT)''')
-            cursor.execute(f'''PRAGMA user_version={InstallDB.SCHEMA_VERSION};''')
+            cursor.execute(
+                """CREATE TABLE packageList (packageId INTEGER PRIMARY KEY AUTOINCREMENT,
+                               prefix TEXT, packagePath TEXT, version TEXT, revision TEXT, cacheVersion TEXT)"""
+            )
+            cursor.execute(
+                """CREATE TABLE fileList (fileId INTEGER PRIMARY KEY AUTOINCREMENT,
+                               packageId INTEGER, filename TEXT, fileHash TEXT)"""
+            )
+            cursor.execute(f"""PRAGMA user_version={InstallDB.SCHEMA_VERSION};""")
             self.connection.commit()
         else:
             self.connection = sqlite3.connect(self.dbfilename)
             self.__migrateDatabase()
 
-
     def __migrateDatabase(self):
         cursor = self.connection.cursor()
-        cursor.execute('''PRAGMA user_version;''')
+        cursor.execute("""PRAGMA user_version;""")
         version = cursor.fetchall()[0][0]
         # TODO: drop prefix from packageList (will break compat)
         if version < 1:
-            cursor.execute('''ALTER TABLE packageList ADD COLUMN cacheVersion TEXT;''')
-        cursor.execute(f'''PRAGMA user_version={InstallDB.SCHEMA_VERSION};''')
+            cursor.execute("""ALTER TABLE packageList ADD COLUMN cacheVersion TEXT;""")
+        cursor.execute(f"""PRAGMA user_version={InstallDB.SCHEMA_VERSION};""")
 
 
 def printInstalled():
     """get all the packages that are already installed"""
     installed = CraftCore.installdb.getDistinctInstalled()
     width = 40
+
     def printLine(first, second):
         CraftCore.debug.printOut(f"{first:{width}}: {second}")
 
     printLine("Package", "Version")
     printLine("=" * width, "=" * 10)
-    installed = sorted(installed, key=lambda x :x[0])
+    installed = sorted(installed, key=lambda x: x[0])
     for package, version, revision in installed:
         printLine(package, revision or version)
+
 
 def printPackagesForFileSearch(filename):
     packages = CraftCore.installdb.getPackagesForFileSearch(filename)
     for pId, filename in packages:
-        path , version = pId.getPackageInfo()
+        path, version = pId.getPackageInfo()
         CraftCore.debug.printOut(f"{path}: {filename}")

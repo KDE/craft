@@ -1,0 +1,12 @@
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x '*\.o' -x '*\.pyc' -x CMakeLists.txt.user perl-5.36.0.orig/win32/GNUmakefile perl-5.36.0/win32/GNUmakefile
+--- perl-5.36.0.orig/win32/GNUmakefile	2022-06-22 14:22:41.518239500 +0200
++++ perl-5.36.0/win32/GNUmakefile	2022-06-22 14:22:29.409527600 +0200
+@@ -611,7 +611,7 @@
+ DEFINES		+= -DDEBUGGING
+ else
+ OPTIMIZE	= -O2
+-LINK_DBG	= -s
++LINK_DBG	=
+ endif
+ 
+ EXTRACFLAGS	= $(CRAFT_CFLAGS)

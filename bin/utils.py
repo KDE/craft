@@ -43,24 +43,36 @@ import tempfile
 from pathlib import Path
 
 import Notifier.NotificationLoader
-from Blueprints.CraftVersion import CraftVersion
 from CraftCore import CraftCore
 from CraftDebug import deprecated
 from CraftOS.osutils import OsUtils
 from Utils.Arguments import Arguments
+from Utils.StageLogger import StageLogger
+
+
+def __locate7z():
+    app = CraftCore.cache.findApplication("7za")
+    if app:
+        return app
+    appPath = CraftCore.standardDirs.craftRoot() / "dev-utils/7z" / ("7za.exe" if CraftCore.compiler.isWindows else "7zz")
+    if appPath.exists():
+        return appPath
+    return None
 
 
 def abstract():
     caller = inspect.getouterframes(inspect.currentframe())[1][3]
-    raise NotImplementedError(caller + ' must be implemented in subclass')
+    raise NotImplementedError(caller + " must be implemented in subclass")
+
 
 ### unpack functions
+
 
 def unpackFiles(downloaddir, filenames, workdir):
     """unpack (multiple) files specified by 'filenames' from 'downloaddir' into 'workdir'"""
 
     for filename in filenames:
-        if (not unpackFile(downloaddir, filename, workdir)):
+        if not unpackFile(downloaddir, filename, workdir):
             return False
 
     return True
@@ -78,15 +90,19 @@ def unpackFile(downloaddir, filename, workdir):
         return True
 
     if OsUtils.isWin() and not OsUtils.supportsSymlinks():
-        CraftCore.log.warning("Please enable Windows 10 development mode to enable support for symlinks.\n"
-                              "This will enable faster extractions.\n"
-                              "https://docs.microsoft.com/en-us/windows/uwp/get-started/enable-your-device-for-development")
-    if CraftCore.cache.findApplication("7za"):
+        CraftCore.log.warning(
+            "Please enable Windows 10 development mode to enable support for symlinks.\n"
+            "This will enable faster extractions.\n"
+            "https://docs.microsoft.com/en-us/windows/uwp/get-started/enable-your-device-for-development"
+        )
+    if __locate7z():
         # we use tar on linux not 7z, don't use tar on windows as it skips symlinks
         # test it with breeze-icons
-        if (not OsUtils.isWin()
-                or (OsUtils.supportsSymlinks() and CraftCore.cache.getVersion("7za", versionCommand="-version") >= "16")
-                or not re.match("(.*\.tar.*$|.*\.tgz$)", filename)):
+        if (
+            not OsUtils.isWin()
+            or (OsUtils.supportsSymlinks() and CraftCore.cache.getVersion(__locate7z(), versionCommand="-version") >= "16")
+            or not re.match(r"(.*\.tar.*$|.*\.tgz$)", filename)
+        ):
             return un7zip(os.path.join(downloaddir, filename), workdir, ext)
     try:
         shutil.unpack_archive(os.path.join(downloaddir, filename), workdir)
@@ -102,10 +118,10 @@ def un7zip(fileName, destdir, flag=None):
     kw = {}
     progressFlags = []
     type = []
-    app = CraftCore.cache.findApplication("7za")
-    env = {}
+    app = __locate7z()
+    resolveSymlinks = False
     if not ciMode and CraftCore.cache.checkCommandOutputFor(app, "-bs"):
-        progressFlags = ["-bso2",  "-bsp1"]
+        progressFlags = ["-bso2", "-bsp1"]
         kw["stderr"] = subprocess.PIPE
 
     if flag == ".7z":
@@ -113,23 +129,19 @@ def un7zip(fileName, destdir, flag=None):
         # But git is an exe file renamed to 7z and we need to specify the type.
         # Yes it is an ugly hack.
         type = ["-t7z"]
-    if re.match("(.*\.tar.*$|.*\.tgz$)", fileName):
+    if re.match(r"(.*\.tar.*$|.*\.tgz$)", fileName):
         if progressFlags:
             if ciMode:
                 progressFlags = []
             else:
                 # print progress to stderr
                 progressFlags = ["-bsp2"]
-        kw["pipeProcess"] = subprocess.Popen([app, "x", fileName, "-so"] + progressFlags, stdout = subprocess.PIPE)
+        kw["pipeProcess"] = subprocess.Popen([app, "x", fileName, "-so"] + progressFlags, stdout=subprocess.PIPE)
         if OsUtils.isWin():
+            resolveSymlinks = True
             if progressFlags:
                 progressFlags = ["-bsp0"]
-            command = [sys.executable, "-u", Path(__file__).parent / "untar.py", destdir]
-            # don't fail on non printable log messages
-            env["PYTHONIOENCODING"] = ":replace"
-            # we don't have progress, diesplay error messages
-            if "stderr" in kw:
-                del kw["stderr"]
+            command = [app, "x", "-si", f"-o{destdir}", "-ttar"] + progressFlags
             kw["stdout"] = subprocess.DEVNULL
         else:
             tar = CraftCore.cache.findApplication("tar")
@@ -138,14 +150,15 @@ def un7zip(fileName, destdir, flag=None):
         command = [app, "x", "-r", "-y", f"-o{destdir}", fileName] + type + progressFlags
 
     # While 7zip supports symlinks cmake 3.8.0 does not support symlinks
-    with ScopedEnv(env):
-        return system(command,  **kw)
+    return system(command, **kw) and (not resolveSymlinks or replaceSymlinksWithCopies(destdir))
 
-def compress(archive : Path, source : str) -> bool:
+
+def compress(archive: Path, source: str) -> bool:
     archive = Path(archive)
     ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
+
     def __7z(archive, source):
-        app = CraftCore.cache.findApplication("7za")
+        app = __locate7z()
         kw = {}
         flags = []
         if archive.suffix in {".appxsym", ".appxupload"}:
@@ -153,12 +166,22 @@ def compress(archive : Path, source : str) -> bool:
         if not ciMode and CraftCore.cache.checkCommandOutputFor(app, "-bs"):
             flags += ["-bso2", "-bsp1"]
             kw["stderr"] = subprocess.PIPE
-        if CraftCore.compiler.isUnix:
+        if str(archive).endswith(".tar.7z"):
             tar = CraftCore.cache.findApplication("tar")
-            kw["pipeProcess"] = subprocess.Popen([tar, "-cf", "-", "-C", source, ".",], stdout=subprocess.PIPE)
-            command = [app, "a", "-si",  archive] + flags
+            kw["pipeProcess"] = subprocess.Popen(
+                [
+                    tar,
+                    "-cf",
+                    "-",
+                    "-C",
+                    source,
+                    ".",
+                ],
+                stdout=subprocess.PIPE,
+            )
+            command = [app, "a", "-si", archive] + flags
         else:
-          command = [app, "a", "-r",  archive] + flags
+            command = [app, "a", "-r", archive] + flags
 
         if isinstance(source, list):
             command += source
@@ -180,7 +203,7 @@ def compress(archive : Path, source : str) -> bool:
     if os.path.isfile(archive):
         deleteFile(archive)
 
-    if not CraftCore.cache.findApplication("7za") and archive.suffix == ".zip":
+    if not __locate7z() and archive.suffix == ".zip":
         return shutil.make_archive(archive.with_suffix(""), "zip", source)
 
     if CraftCore.compiler.isUnix and archive.suffixes[-2:] == [".tar", ".xz"]:
@@ -192,10 +215,25 @@ def compress(archive : Path, source : str) -> bool:
 def system(cmd, displayProgress=False, logCommand=True, acceptableExitCodes=None, **kw):
     """execute cmd in a shell. All keywords are passed to Popen. stdout and stderr
     might be changed depending on the chosen logging options."""
-    return systemWithoutShell(cmd, displayProgress=displayProgress, logCommand=logCommand, acceptableExitCodes=acceptableExitCodes, **kw)
+    return systemWithoutShell(
+        cmd,
+        displayProgress=displayProgress,
+        logCommand=logCommand,
+        acceptableExitCodes=acceptableExitCodes,
+        **kw,
+    )
 
 
-def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=None, acceptableExitCodes=None, secretCommand=False, secret=None, **kw):
+def systemWithoutShell(
+    cmd,
+    displayProgress=False,
+    logCommand=True,
+    pipeProcess=None,
+    acceptableExitCodes=None,
+    secretCommand=False,
+    secret=None,
+    **kw,
+):
     """execute cmd. All keywords are passed to Popen. stdout and stderr
     might be changed depending on the chosen logging options.
 
@@ -204,6 +242,12 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
 
     ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
     needsAnsiFix = OsUtils.isWin() and CraftCore.settings.getboolean("General", "AllowAnsiColor", True)
+
+    def ansiFix():
+        if needsAnsiFix:
+            # a bug in cygwin msys removes the ansi flag, set it again
+            ctypes.windll.kernel32.SetConsoleMode(ctypes.windll.kernel32.GetStdHandle(-11), 7)
+            ctypes.windll.kernel32.SetConsoleMode(ctypes.windll.kernel32.GetStdHandle(-12), 7)
 
     environment = kw.get("env", os.environ)
     cwd = kw.get("cwd", os.getcwd())
@@ -231,7 +275,7 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
             kw["shell"] = True
         arg0 = shlex.split(cmd, posix=not OsUtils.isWin())[0]
 
-    matchQuoted = re.match("^\"(.*)\"$", arg0)
+    matchQuoted = re.match('^"(.*)"$', arg0)
     if matchQuoted:
         CraftCore.log.warning(f"Please don't pass quoted paths to systemWithoutShell, app={arg0}")
     if not os.path.isfile(arg0) and not matchQuoted:
@@ -243,7 +287,7 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
         if isinstance(cmd, list):
             cmd[0] = app
         elif not matchQuoted:
-            cmd = cmd.replace(arg0, f"\"{app}\"", 1)
+            cmd = cmd.replace(arg0, f'"{app}"', 1)
     else:
         app = arg0
 
@@ -263,8 +307,9 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
         if secret:
             _debugCommand = redact(_debugCommand, secret)
             _logCommand = redact(_logCommand, secret)
-        if logCommand:
+        if logCommand and not StageLogger.isOutputOnFailure():
             CraftCore.debug.print(f"executing command: {_logCommand}")
+        StageLogger.logLine(f"executing command: {_debugCommand}")
         CraftCore.log.debug(_debugCommand)
         CraftCore.log.debug(f"CWD: {cwd!r}")
         CraftCore.log.debug(f"displayProgress={displayProgress}")
@@ -272,27 +317,26 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
     if pipeProcess:
         kw["stdin"] = pipeProcess.stdout
     if not displayProgress or ciMode:
-        stdout = kw.get('stdout', sys.stdout)
+        stdout = kw.get("stdout", sys.stdout)
         if stdout == sys.stdout:
-            kw['stderr'] = subprocess.STDOUT
-        kw['stdout'] = subprocess.PIPE
+            kw["stderr"] = subprocess.STDOUT
+        kw["stdout"] = subprocess.PIPE
 
         proc = subprocess.Popen(cmd, **kw)
         if pipeProcess:
             pipeProcess.stdout.close()
         for line in proc.stdout:
+            lineUtf8 = line.decode("utf-8", errors="backslashreplace")
             if isinstance(stdout, io.TextIOWrapper):
-                if CraftCore.debug.verbose() < 3:  # don't print if we write the debug log to stdout anyhow
-                    if needsAnsiFix:
-                        # a bug in cygwin msys removes the ansi flag, set it again
-                        ctypes.windll.kernel32.SetConsoleMode(ctypes.windll.kernel32.GetStdHandle(-11), 7)
-                        ctypes.windll.kernel32.SetConsoleMode(ctypes.windll.kernel32.GetStdHandle(-12), 7)
+                StageLogger.log(lineUtf8)
+                if not StageLogger.isOutputOnFailure() and CraftCore.debug.verbose() < 3:  # don't print if we write the debug log to stdout anyhow
+                    ansiFix()
                     stdout.buffer.write(line)
                     stdout.flush()
             elif stdout == subprocess.DEVNULL:
                 pass
-            elif isinstance(stdout, io.StringIO) or "IORedirector" in stdout.__class__.__name__:
-                stdout.write(line.decode("UTF-8"))
+            elif isinstance(stdout, io.TextIOBase) or "IORedirector" in stdout.__class__.__name__:
+                stdout.write(lineUtf8)
             else:
                 stdout.write(line)
 
@@ -308,20 +352,20 @@ def systemWithoutShell(cmd, displayProgress=False, logCommand=True, pipeProcess=
     proc.communicate()
     proc.wait()
 
-    if acceptableExitCodes is None:
-        ok = proc.returncode == 0
-    else:
-        ok = proc.returncode in acceptableExitCodes
-    if not ok:
-        if not secretCommand:
-            msg = f"Command {redact(cmd, secret)} failed with exit code {proc.returncode}"
-            if not ciMode:
-                CraftCore.log.debug(msg)
-            else:
-                CraftCore.log.info(msg)
-        else:
-            CraftCore.log.info(f"{app} failed with exit code {proc.returncode}")
-    return ok
+    # if there was no output
+    ansiFix()
+
+    if acceptableExitCodes and proc.returncode in acceptableExitCodes:
+        CraftCore.log.info(f"Command {redact(cmd, secret)} succeeded with exit code {proc.returncode}")
+        return True
+    elif proc.returncode == 0:
+        return True
+    resultMessage = f"Command {redact(cmd, secret)} failed with exit code {proc.returncode}"
+    StageLogger.logLine(resultMessage)
+    if not StageLogger.isOutputOnFailure():
+        CraftCore.log.info(resultMessage)
+    return False
+
 
 def cleanDirectory(directory):
     CraftCore.log.debug("clean directory %s" % directory)
@@ -342,7 +386,7 @@ def cleanDirectory(directory):
 
 
 def getVCSType(url):
-    """ return the type of the vcs url """
+    """return the type of the vcs url"""
     if not url:
         return ""
     if isGitUrl(url):
@@ -359,52 +403,53 @@ def getVCSType(url):
 
 
 def isGitUrl(Url):
-    """ this function returns true, if the Url given as parameter is a git url:
-        it either starts with git:// or the first part before the first '|' ends with .git
-        or if the url starts with the token [git] """
-    if Url.startswith('git://'):
+    """this function returns true, if the Url given as parameter is a git url:
+    it either starts with git:// or the first part before the first '|' ends with .git
+    or if the url starts with the token [git]"""
+    if Url.startswith("git://"):
         return True
     # split away branch and tags
-    splitUrl = Url.split('|')
+    splitUrl = Url.split("|")
     if splitUrl[0].endswith(".git"):
         return True
     if Url.startswith("[git]"):
         return True
     return False
 
+
 def isSvnUrl(url):
-    """ this function returns true, if the Url given as parameter is a svn url """
+    """this function returns true, if the Url given as parameter is a svn url"""
     if url.startswith("[svn]"):
         return True
     elif "svn:" in url:
         return True
     return False
 
+
 def splitVCSUrl(Url):
-    """ this function splits up an url provided by Url into the server name, the path, a branch or tag;
-        it will return a list with 3 strings according to the following scheme:
-        git://servername/path.git|4.5branch|v4.5.1 will result in ['git://servername:path.git', '4.5branch', 'v4.5.1']
-        This also works for all other dvcs"""
-    splitUrl = Url.split('|')
+    """this function splits up an url provided by Url into the server name, the path, a branch or tag;
+    it will return a list with 3 strings according to the following scheme:
+    git://servername/path.git|4.5branch|v4.5.1 will result in ['git://servername:path.git', '4.5branch', 'v4.5.1']
+    This also works for all other dvcs"""
+    splitUrl = Url.split("|")
     if len(splitUrl) < 3:
         c = [x for x in splitUrl]
         for dummy in range(3 - len(splitUrl)):
-            c.append('')
+            c.append("")
     else:
         c = splitUrl[0:3]
     return c
 
 
 def replaceVCSUrl(Url):
-    """ this function should be used to replace the url of a server
-        this comes in useful if you e.g. need to switch the server url for a push url on gitorious.org """
+    """this function should be used to replace the url of a server
+    this comes in useful if you e.g. need to switch the server url for a push url on gitorious.org"""
     configfile = os.path.join(CraftCore.standardDirs.etcBlueprintDir(), "..", "crafthosts.conf")
     replacedict = dict()
 
     # FIXME handle svn/git usernames and settings with a distinct naming
     # todo WTF
-    if (("General", "KDESVNUSERNAME") in CraftCore.settings and
-                CraftCore.settings.get("General", "KDESVNUSERNAME") != "username"):
+    if ("General", "KDESVNUSERNAME") in CraftCore.settings and CraftCore.settings.get("General", "KDESVNUSERNAME") != "username":
         replacedict["git://git.kde.org/"] = "git@git.kde.org:"
     if os.path.exists(configfile):
         config = configparser.ConfigParser()
@@ -426,7 +471,7 @@ def createImportLibs(dll_name, basepath):
     """creating the import libraries for the other compiler(if ANSI-C libs)"""
 
     dst = os.path.join(basepath, "lib")
-    if (not os.path.exists(dst)):
+    if not os.path.exists(dst):
         os.mkdir(dst)
 
     # check whether the required binary tools exist
@@ -462,12 +507,12 @@ def createImportLibs(dll_name, basepath):
         cmd = "gendef - %s -a > %s " % (dllpath, defpath)
         system(cmd)
 
-    if (HAVE_LIB and not os.path.isfile(imppath)):
+    if HAVE_LIB and not os.path.isfile(imppath):
         # create .lib
         cmd = "lib /machine:x86 /def:%s /out:%s" % (defpath, imppath)
         system(cmd)
 
-    if (HAVE_DLLTOOL and not os.path.isfile(gccpath)):
+    if HAVE_DLLTOOL and not os.path.isfile(gccpath):
         # create .dll.a
         cmd = "dlltool -d %s -l %s -k" % (defpath, gccpath)
         system(cmd)
@@ -477,6 +522,7 @@ def createImportLibs(dll_name, basepath):
     if os.path.exists(exppath):
         os.remove(exppath)
     return True
+
 
 def createSymlink(source, linkName, useAbsolutePath=False, targetIsDirectory=False):
     if not useAbsolutePath and os.path.isabs(linkName):
@@ -501,8 +547,12 @@ def createDir(path):
     return True
 
 
-def copyFile(src : Path, dest : Path, linkOnly=CraftCore.settings.getboolean("General", "UseHardlinks", False)):
-    """ copy file from src to dest"""
+def copyFile(
+    src: Path,
+    dest: Path,
+    linkOnly=CraftCore.settings.getboolean("General", "UseHardlinks", False),
+):
+    """copy file from src to dest"""
     CraftCore.log.debug("copy file from %s to %s" % (src, dest))
     src = Path(src)
     dest = Path(dest)
@@ -525,14 +575,24 @@ def copyFile(src : Path, dest : Path, linkOnly=CraftCore.settings.getboolean("Ge
             CraftCore.log.warning("Failed to create hardlink %s for %s" % (dest, src))
     try:
         shutil.copy2(src, dest, follow_symlinks=False)
+    except PermissionError as e:
+        if CraftCore.compiler.isWindows and dest.exists():
+            return deleteFile(dest) and copyFile(src, dest)
+        else:
+            raise e
     except Exception as e:
         CraftCore.log.error(f"Failed to copy file:\n{src} to\n{dest}", exc_info=e)
         return False
     return True
 
 
-def copyDir(srcdir, destdir, linkOnly=CraftCore.settings.getboolean("General", "UseHardlinks", False), copiedFiles=None):
-    """ copy directory from srcdir to destdir """
+def copyDir(
+    srcdir,
+    destdir,
+    linkOnly=CraftCore.settings.getboolean("General", "UseHardlinks", False),
+    copiedFiles=None,
+):
+    """copy directory from srcdir to destdir"""
     CraftCore.log.debug("copyDir called. srcdir: %s, destdir: %s" % (srcdir, destdir))
 
     srcdir = Path(srcdir)
@@ -549,7 +609,7 @@ def copyDir(srcdir, destdir, linkOnly=CraftCore.settings.getboolean("General", "
                 dest = destdir / Path(entry.path).parent.relative_to(srcdir) / entry.name
                 if entry.is_dir():
                     if entry.is_symlink():
-                    # copy the symlinks without resolving them
+                        # copy the symlinks without resolving them
                         if not copyFile(entry.path, dest, linkOnly=False):
                             return False
                         if copiedFiles is not None:
@@ -559,7 +619,7 @@ def copyDir(srcdir, destdir, linkOnly=CraftCore.settings.getboolean("General", "
                             return False
                 else:
                     # symlinks to files are included in `files`
-                    if not copyFile(entry.path, dest,linkOnly=linkOnly):
+                    if not copyFile(entry.path, dest, linkOnly=linkOnly):
                         return False
                     if copiedFiles is not None:
                         copiedFiles.append(str(dest))
@@ -568,7 +628,13 @@ def copyDir(srcdir, destdir, linkOnly=CraftCore.settings.getboolean("General", "
         return False
     return True
 
-def globCopyDir(srcDir : str, destDir : str, pattern : [str], linkOnly=CraftCore.settings.getboolean("General", "UseHardlinks", False)) -> bool:
+
+def globCopyDir(
+    srcDir: str,
+    destDir: str,
+    pattern: [str],
+    linkOnly=CraftCore.settings.getboolean("General", "UseHardlinks", False),
+) -> bool:
     files = []
     for p in pattern:
         files.extend(glob.glob(os.path.join(srcDir, p), recursive=True))
@@ -577,8 +643,9 @@ def globCopyDir(srcDir : str, destDir : str, pattern : [str], linkOnly=CraftCore
             return False
     return True
 
+
 def mergeTree(srcdir, destdir):
-    """ moves directory from @p srcdir to @p destdir
+    """moves directory from @p srcdir to @p destdir
 
     If a directory in @p destdir exists, just write into it
     """
@@ -616,8 +683,10 @@ def mergeTree(srcdir, destdir):
                     if not mergeTree(src.path, dest):
                         return False
                 else:
-                    CraftCore.log.critical(f"mergeTree failed: how to merge folder {src.path} into file {dest}\n"
-                                           f"If this error occured during packaging, consider extending the blacklist.")
+                    CraftCore.log.critical(
+                        f"mergeTree failed: how to merge folder {src.path} into file {dest}\n"
+                        f"If this error occured during packaging, consider extending the blacklist."
+                    )
                     return False
             else:
                 if not moveFile(src.path, destdir):
@@ -634,21 +703,27 @@ def mergeTree(srcdir, destdir):
 
 @deprecated("moveFile")
 def moveDir(srcdir, destdir):
-    """ move directory from srcdir to destdir """
+    """move directory from srcdir to destdir"""
     return moveFile(srcdir, destdir)
+
 
 def moveFile(src, dest):
     """move file from src to dest"""
     CraftCore.log.debug(f"move file from {src} to {dest}")
     try:
-        shutil.move(src, dest, copy_function=lambda src, dest, *kw : shutil.copy2(src, dest, *kw, follow_symlinks=False))
+        shutil.move(
+            src,
+            dest,
+            copy_function=lambda src, dest, *kw: shutil.copy2(src, dest, *kw, follow_symlinks=False),
+        )
     except Exception as e:
         CraftCore.log.warning(e)
         return False
     return True
 
+
 def rmtree(directory):
-    """ recursively delete directory """
+    """recursively delete directory"""
     CraftCore.log.debug("rmtree called. directory: %s" % (directory))
     try:
         shutil.rmtree(directory, True)  # ignore errors
@@ -657,17 +732,13 @@ def rmtree(directory):
         return False
     return True
 
+
 def deleteFile(fileName):
-    """delete file """
+    """delete file"""
     if not os.path.exists(fileName):
         return False
-    CraftCore.log.debug("delete file %s " % (fileName))
-    try:
-        os.remove(fileName)
-    except Exception as e:
-        CraftCore.log.warning(e)
-        return False
-    return True
+    return OsUtils.rm(fileName)
+
 
 def putenv(name, value):
     """set environment variable"""
@@ -685,7 +756,7 @@ def putenv(name, value):
     return True
 
 
-def applyPatch(sourceDir, f, patchLevel='0'):
+def applyPatch(sourceDir, f, patchLevel="0"):
     """apply single patch"""
     if os.path.isdir(f):
         # apply a whole dir of patches
@@ -695,26 +766,35 @@ def applyPatch(sourceDir, f, patchLevel='0'):
                 if patch.is_file() and not patch.name.startswith("."):
                     out = applyPatch(sourceDir, os.path.join(f, patch), patchLevel) and out
         return out
-    cmd = ["patch", "--ignore-whitespace", "-d", sourceDir, "-p", str(patchLevel), "-i", f]
+    cmd = [
+        "patch",
+        "--ignore-whitespace",
+        "-d",
+        sourceDir,
+        "-p",
+        str(patchLevel),
+        "-i",
+        f,
+    ]
     result = system(cmd)
     if not result:
         CraftCore.log.warning(f"applying {f} failed!")
     return result
 
+
 def embedManifest(executable, manifest):
-    '''
-       Embed a manifest to an executable using either the free
-       kdewin manifest if it exists in dev-utils/bin
-       or the one provided by the Microsoft Platform SDK if it
-       is installed'
-    '''
+    """
+    Embed a manifest to an executable using either the free
+    kdewin manifest if it exists in dev-utils/bin
+    or the one provided by the Microsoft Platform SDK if it
+    is installed'
+    """
     if not os.path.isfile(executable) or not os.path.isfile(manifest):
         # We die here because this is a problem with the blueprint files
         CraftCore.log.critical("embedManifest %s or %s do not exist" % (executable, manifest))
-    CraftCore.log.debug("embedding ressource manifest %s into %s" % \
-                         (manifest, executable))
-    return system(["mt", "-nologo", "-manifest", manifest,
-                    f"-outputresource:{executable};1"])
+    CraftCore.log.debug("embedding ressource manifest %s into %s" % (manifest, executable))
+    return system(["mt", "-nologo", "-manifest", manifest, f"-outputresource:{executable};1"])
+
 
 def notify(title, message, alertClass=None, log=True):
     if log:
@@ -745,8 +825,7 @@ def levenshtein(s1, s2):
     for i, c1 in enumerate(s1):
         current_row = [i + 1]
         for j, c2 in enumerate(s2):
-            insertions = previous_row[
-                             j + 1] + 1  # j+1 instead of j since previous_row and current_row are one character longer
+            insertions = previous_row[j + 1] + 1  # j+1 instead of j since previous_row and current_row are one character longer
             deletions = current_row[j] + 1  # than s2
             substitutions = previous_row[j] + (c1 != c2)
             current_row.append(min(insertions, deletions, substitutions))
@@ -756,7 +835,8 @@ def levenshtein(s1, s2):
 
 
 # kw is forwareded to system
-def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False, env=None, **kw) -> bool:
+# keepArgv0 controls whether the kshimgen will be called with the --keep-argv0 flag to emulate symlinks
+def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False, keepArgv0=False, env=None, **kw) -> bool:
     if not useAbsolutePath and os.path.isabs(target):
         target = os.path.relpath(target, os.path.dirname(shim))
     createDir(os.path.dirname(shim))
@@ -771,14 +851,57 @@ def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False, env
     command = ["kshimgen", "--create", shim, target]
     if CraftCore.compiler.isWindows and guiApp:
         command.append("--gui")
+    if keepArgv0:
+        command.append("--keep-argv0")
     if env:
-        command.append("--env")
-        command += [f"{k}={v}" for k,v in env.items()]
-    if CraftCore.compiler.isAndroid:
-        os.symlink(target, shim)
-        return True
-    else:
-        return system(command + ["--"] + args, **kw)
+        for k, v in env.items():
+            command += ["--env", f"{k}={v}"]
+    return system(command + ["--"] + args, **kw)
+
+
+def replaceSymlinksWithCopies(path, _replaceDirs=False):
+    def resolveLink(path):
+        while os.path.islink(path):
+            toReplace = os.readlink(path)
+            if not os.path.isabs(toReplace):
+                path = os.path.join(os.path.dirname(path), toReplace)
+            else:
+                path = toReplace
+        return path
+
+    # symlinks to dirs are resolved after we resolved the files
+    dirsToResolve = []
+    ok = True
+    for root, _, files in os.walk(path):
+        for svg in files:
+            if not ok:
+                return False
+            path = os.path.join(root, svg)
+            if os.path.islink(path):
+                toReplace = resolveLink(path)
+                if not os.path.exists(toReplace):
+                    CraftCore.log.error(f"Resolving {path} failed: {toReplace} does not exists.")
+                    continue
+                if toReplace != path:
+                    if os.path.isdir(toReplace):
+                        if not _replaceDirs:
+                            dirsToResolve.append(path)
+                        else:
+                            os.unlink(path)
+                            ok = copyDir(toReplace, path)
+                    else:
+                        os.unlink(path)
+                        ok = copyFile(toReplace, path)
+    while dirsToResolve:
+        d = dirsToResolve.pop()
+        if not os.path.exists(resolveLink(d)):
+            CraftCore.log.warning(f"Delay replacement of {d}")
+            dirsToResolve.append(d)
+            continue
+        if not replaceSymlinksWithCopies(os.path.dirname(d), _replaceDirs=True):
+            return False
+    return True
+
 
 class ProgressBar(object):
     def __init__(self, initialProgess=0):
@@ -787,7 +910,7 @@ class ProgressBar(object):
         # don't try experiemtns on old terminals
         self._legacyMode = not CraftCore.settings.getboolean("General", "AllowAnsiColor")
 
-    def print(self, progress : int, force : bool=False):
+    def print(self, progress: int, force: bool = False):
         progress = int(progress)
         progress = max(0, progress)
         progress = min(100, progress)
@@ -800,13 +923,17 @@ class ProgressBar(object):
         if self._legacyMode:
             width -= 20  # margin
             times = int(width / 100 * progress)
-            sys.stderr.write(
-                "\r{percent}% [{progress}{space}]".format(progress="#" * times, space=" " * (width - times), percent=progress))
+            sys.stderr.write("\r{percent}% [{progress}{space}]".format(progress="#" * times, space=" " * (width - times), percent=progress))
         else:
-            width -= 5 # margin
+            width -= 5  # margin
             times = int(width / 100 * progress)
-            sys.stderr.write("\r{percent}% {progress}{fill}"
-                .format(progress="\u2588" * times, fill = "\u2591" * (width - times), percent=progress))
+            sys.stderr.write(
+                "\r{percent}% {progress}{fill}".format(
+                    progress="\u2588" * times,
+                    fill="\u2591" * (width - times),
+                    percent=progress,
+                )
+            )
         sys.stderr.flush()
 
     def __enter__(self):
@@ -816,6 +943,7 @@ class ProgressBar(object):
     def __exit__(self, exc_type, exc_value, trback):
         self.print(100, True)
         CraftCore.debug.new_line()
+
 
 class ScopedEnv(object):
     def __init__(self, env):
@@ -834,14 +962,8 @@ class ScopedEnv(object):
     def __exit__(self, exc_type, exc_value, trback):
         self.reset()
 
-def normalisePath(path):
-    path = os.path.abspath(path)
-    if OsUtils.isWin():
-        return path.replace("\\", "/")
-    return path
 
-
-def configureFile(inFile : str, outFile : str, variables : dict) -> bool:
+def configureFile(inFile: str, outFile: str, variables: dict) -> bool:
     CraftCore.log.debug(f"configureFile {inFile} -> {outFile}\n{variables}")
     configPatter = re.compile(r"@{([^{}]+)}")
     with open(inFile, "rt", encoding="UTF-8") as f:
@@ -858,10 +980,9 @@ def configureFile(inFile : str, outFile : str, variables : dict) -> bool:
                 linenUmber = 0
                 for line in script.split("\n"):
                     if match in line:
-                      break
+                        break
                     linenUmber += 1
-                raise Exception(f"Failed to configure {inFile}: @{{{match}}} is not in variables\n"
-                                f"{linenUmber}:{line}")
+                raise Exception(f"Failed to configure {inFile}: @{{{match}}} is not in variables\n" f"{linenUmber}:{line}")
             script = script.replace(f"@{{{match}}}", str(val))
         matches = configPatter.findall(script)
 
@@ -870,7 +991,8 @@ def configureFile(inFile : str, outFile : str, variables : dict) -> bool:
         f.write(script)
     return True
 
-def limitCommandLineLength(command : [str], args : [str]) -> [[str]]:
+
+def limitCommandLineLength(command: [str], args: [str]) -> [[str]]:
     if CraftCore.compiler.isWindows:
         # https://docs.microsoft.com/en-US/troubleshoot/windows-client/shell-experience/command-line-string-limitation
         SIZE = 8191
@@ -899,8 +1021,9 @@ def limitCommandLineLength(command : [str], args : [str]) -> [[str]]:
         out.append(command + tmp)
     return out
 
+
 # includeShellScripts, on windows this will also check for shell scripts
-def isExecuatable(fileName : Path, includeShellScripts=False):
+def isExecuatable(fileName: Path, includeShellScripts=False):
     fileName = Path(fileName)
     if CraftCore.compiler.isWindows:
         if fileName.suffix.upper() in os.environ["PATHEXT"].split(";"):
@@ -913,7 +1036,8 @@ def isExecuatable(fileName : Path, includeShellScripts=False):
         return os.access(fileName, os.X_OK)
     return False
 
-def isBinary(fileName : str) -> bool:
+
+def isBinary(fileName: str) -> bool:
     # https://en.wikipedia.org/wiki/List_of_file_signatures
     MACH_O_64 = b"\xCF\xFA\xED\xFE"
     ELF = b"\x7F\x45\x4C\x46"
@@ -944,7 +1068,8 @@ def isBinary(fileName : str) -> bool:
                 return f.read(len(signature)) == signature
     return False
 
-def isScript(fileName : str):
+
+def isScript(fileName: str):
     fileName = Path(fileName)
     if fileName.is_symlink() or fileName.is_dir():
         return False
@@ -956,17 +1081,17 @@ def isScript(fileName : str):
             return f.read(len(signature)) == signature
     return False
 
+
 def getLibraryDeps(path):
     deps = []
     if CraftCore.compiler.isMacOS:
         # based on https://github.com/qt/qttools/blob/5.11/src/macdeployqt/shared/shared.cpp
-        infoRe = re.compile("^\\t(.+) \\(compatibility version (\\d+\\.\\d+\\.\\d+), "+
-                            "current version (\\d+\\.\\d+\\.\\d+)\\)$")
+        infoRe = re.compile("^\\t(.+) \\(compatibility version (\\d+\\.\\d+\\.\\d+), " + "current version (\\d+\\.\\d+\\.\\d+)\\)$")
         with io.StringIO() as log:
             if not system(["otool", "-L", path], stdout=log, logCommand=False):
                 return []
             lines = log.getvalue().strip().split("\n")
-        lines.pop(0)# name of the library
+        lines.pop(0)  # name of the library
         for line in lines:
             match = infoRe.match(line)
             if match:
@@ -974,8 +1099,8 @@ def getLibraryDeps(path):
     return deps
 
 
-def regexFileFilter(filename : os.DirEntry, root : str, patterns : [re]=None) -> bool:
-    """ return False if file does not match pattern"""
+def regexFileFilter(filename: os.DirEntry, root: str, patterns: [re] = None) -> bool:
+    """return False if file does not match pattern"""
     # use linux style seperators
     relFilePath = Path(filename.path).relative_to(root).as_posix()
     for pattern in patterns:
@@ -984,11 +1109,18 @@ def regexFileFilter(filename : os.DirEntry, root : str, patterns : [re]=None) ->
             return True
     return False
 
-def filterDirectoryContent(root, whitelist=lambda f, root: True, blacklist=lambda g, root: False, allowBadSymlinks=False, handleAppBundleAsFile=False):
+
+def filterDirectoryContent(
+    root,
+    whitelist=lambda f, root: True,
+    blacklist=lambda g, root: False,
+    allowBadSymlinks=False,
+    handleAppBundleAsFile=False,
+):
     """
-        Traverse through a directory tree and return every
-        filename that the function whitelist returns as true and
-        which do not match blacklist entries
+    Traverse through a directory tree and return every
+    filename that the function whitelist returns as true and
+    which do not match blacklist entries
     """
     if not os.path.exists(root):
         return
@@ -1029,8 +1161,9 @@ def filterDirectoryContent(root, whitelist=lambda f, root: True, blacklist=lambd
                     CraftCore.log.warning(f"Unhandled case: {filePath}")
                     raise Exception(f"Unhandled case: {filePath}")
 
-def makeWritable(targetPath: Path, log: bool=True) -> (bool, int):
-    """ Make a file writable if needed. Returns if the mode was changed and the curent mode of the file"""
+
+def makeWritable(targetPath: Path, log: bool = True) -> (bool, int):
+    """Make a file writable if needed. Returns if the mode was changed and the curent mode of the file"""
     targetPath = Path(targetPath)
     originalMode = targetPath.stat().st_mode
     if not bool(originalMode & stat.S_IWUSR):
@@ -1040,6 +1173,7 @@ def makeWritable(targetPath: Path, log: bool=True) -> (bool, int):
             CraftCore.log.info(f"Made {targetPath} writeable")
         return (True, newMode)
     return (False, originalMode)
+
 
 @contextlib.contextmanager
 def makeTemporaryWritable(targetPath: Path):
@@ -1054,72 +1188,107 @@ def makeTemporaryWritable(targetPath: Path):
         if wasReadOnly:
             targetPath.chmod(mode & ~stat.S_IWUSR)
 
-def getPDBForBinary(path :str) -> str:
+
+def getPDBForBinary(path: str) -> Path:
     with open(path, "rb") as f:
         data = f.read()
     pdb = data.rfind(b".pdb")
-    if pdb:
-        return data[data.rfind(0x00, 0, pdb) + 1:pdb + 4].decode("utf-8")
-    return ""
+    if pdb != -1:
+        return Path(data[data.rfind(0x00, 0, pdb) + 1 : pdb + 4].decode("utf-8"))
+    return None
 
 
-def installShortcut(name : str, path : str, workingDir : str, icon : str, desciption : str):
+def installShortcut(name: str, path: str, workingDir: str, icon: str, desciption: str):
     if not CraftCore.compiler.isWindows:
         return True
     from shells import Powershell
+
     pwsh = Powershell()
     shortcutPath = Path(os.environ["APPDATA"]) / f"Microsoft/Windows/Start Menu/Programs/Craft/{name}.lnk"
     shortcutPath.parent.mkdir(parents=True, exist_ok=True)
 
-    return pwsh.execute([os.path.join(CraftCore.standardDirs.craftBin(), "install-lnk.ps1"),
-                         "-Path", pwsh.quote(path),
-                  "-WorkingDirectory", pwsh.quote(OsUtils.toNativePath(workingDir)),
-                  "-Name", pwsh.quote(shortcutPath),
-                  "-Icon", pwsh.quote(icon),
-                  "-Description", pwsh.quote(desciption)])
+    return pwsh.execute(
+        [
+            os.path.join(CraftCore.standardDirs.craftBin(), "install-lnk.ps1"),
+            "-Path",
+            pwsh.quote(path),
+            "-WorkingDirectory",
+            pwsh.quote(OsUtils.toNativePath(workingDir)),
+            "-Name",
+            pwsh.quote(shortcutPath),
+            "-Icon",
+            pwsh.quote(icon),
+            "-Description",
+            pwsh.quote(desciption),
+        ]
+    )
 
 
-def strip(fileName):
-    """strip debugging informations from shared libraries and executables - mingw only!!! """
-    if CraftCore.compiler.isMSVC() or not CraftCore.compiler.isGCCLike():
-        CraftCore.log.warning(f"Skipping stripping of {fileName} -- either disabled or unsupported with this compiler")
-        return True
-
-    fileName = Path(fileName)
-    isBundle = False
+def symFileName(fileName: Path) -> Path:
     if CraftCore.compiler.isMacOS:
-        bundleDir = list(filter(lambda x: x.name.endswith(".framework") or x.name.endswith(".app"), fileName.parents))
+        bundleDir = list(
+            filter(
+                lambda x: x.name.endswith(".framework") or x.name.endswith(".app"),
+                fileName.parents,
+            )
+        )
         if bundleDir:
             suffix = ""
             # if we are a .app in a .framework we put the smbols in the same location
             if len(bundleDir) > 1:
                 suffix = f"-{'.'.join([x.name for x in reversed(bundleDir[0:-1])])}"
-            isBundle = True
-            symFile = Path(f"{bundleDir[-1]}{suffix}.dSYM")
+            return Path(f"{bundleDir[-1]}{suffix}{CraftCore.compiler.symbolsSuffix}") / "Contents/Resources/DWARF" / fileName.name
         else:
-            symFile = Path(f"{fileName}.dSYM")
+            return Path(f"{fileName}{CraftCore.compiler.symbolsSuffix}")
     else:
-        symFile = Path(f"{fileName}.debug")
+        return Path(f"{fileName}{CraftCore.compiler.symbolsSuffix}")
 
-    if not isBundle and symFile.exists():
-        return True
-    elif (symFile / "Contents/Resources/DWARF" / fileName.name).exists():
-        return True
 
+def strip(fileName: Path, destFileName: Path = None) -> Path:
+    """strip debugging informations from shared libraries and executables"""
+    """ Returns the path to the sym file on success, None on error"""
+    if CraftCore.compiler.isMSVC() or not CraftCore.compiler.isGCCLike():
+        raise Exception(f"Skipping stripping of {fileName} -- either disabled or unsupported with this compiler")
+
+    fileName = Path(fileName)
+    if not destFileName:
+        destFileName = symFileName(fileName)
+    if destFileName.exists():
+        return destFileName
 
     if CraftCore.compiler.isMacOS:
-        return (system(["dsymutil", fileName, "-o", symFile]) and
-                system(["strip", "-x", "-S", fileName]))
+        if not (system(["/usr/bin/dsymutil", fileName, "-o", destFileName]) and system(["strip", "-x", "-S", fileName]) and localSignMac([fileName])):
+            return None
     else:
-        return (system(["objcopy", "--only-keep-debug", fileName, symFile]) and
-                system(["strip", "--strip-debug", "--strip-unneeded", fileName]) and
-                system(["objcopy", "--add-gnu-debuglink", symFile, fileName]))
+        if CraftCore.compiler.isAndroid:
+            toolchain_path = os.path.join(os.environ["ANDROID_NDK"], "toolchains/llvm/prebuilt", os.environ.get("ANDROID_NDK_HOST", "linux-x86_64"), "bin")
+            if CraftCore.compiler.architecture == CraftCore.compiler.Architecture.arm64:
+                toolchain = "aarch64-linux-android"
+            elif CraftCore.compiler.architecture == CraftCore.compiler.Architecture.arm32:
+                toolchain = "arm-linux-androideabi"
+            elif CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_32:
+                toolchain = "i686-linux-android"
+            else:
+                toolchain = f"{CraftCore.compiler.androidArchitecture}-linux-android"
+            objcopy = os.path.join(toolchain_path, f"{toolchain}-objcopy")
+            strip = os.path.join(toolchain_path, f"{toolchain}-strip")
+        else:
+            objcopy = "objcopy"
+            strip = "strip"
+        if not (
+            system([objcopy, "--only-keep-debug", fileName, destFileName])
+            and system([strip, "--strip-debug", "--strip-unneeded", fileName])
+            and system([objcopy, "--add-gnu-debuglink", destFileName, fileName])
+        ):
+            return None
+    return destFileName
 
 
 def urljoin(root, path):
     return "/".join([root.rstrip("/"), path])
 
-def redact(input : str , secrests : {str}):
+
+def redact(input: str, secrests: {str}):
     if secrests is None:
         return input
     if isinstance(input, str):
@@ -1132,3 +1301,12 @@ def redact(input : str , secrests : {str}):
             for s in secrests:
                 out.append(var.replace(s, "***"))
         return out
+
+
+def localSignMac(binaries):
+    # TODO: this rather fits to CodeSign.py but we would end up with circular import in utils.strip
+    signCommand = ["codesign", "-s", "-", "-f", "--deep", "--preserve-metadata=identifier,entitlements", "--verbose=99"]
+    for command in limitCommandLineLength(signCommand, binaries):
+        if not system(command):
+            return False
+    return True

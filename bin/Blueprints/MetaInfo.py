@@ -26,8 +26,10 @@ import os
 
 from VersionInfo import VersionInfo
 
+
 class MetaInfo(object):
     """Wrapper for infoclass and CategoryPackageObject"""
+
     def __init__(self, package):
         self.__package = package
 
@@ -76,4 +78,3 @@ class MetaInfo(object):
         else:
             return list(self.__package.subinfo.svnTargets.keys()) + list(self.__package.subinfo.targets.keys())
         return []
-

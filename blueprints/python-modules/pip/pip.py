@@ -3,7 +3,6 @@ import subprocess
 
 import info
 import utils
-
 from Package.PipPackageBase import PipPackageBase
 from Utils import CraftHash
 
@@ -18,6 +17,7 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-utils/python3"] = None
         self.buildDependencies["python-modules/virtualenv"] = None
 
+
 class Package(PipPackageBase):
     def __init__(self):
         PipPackageBase.__init__(self)
@@ -31,4 +31,3 @@ class Package(PipPackageBase):
                     if not utils.system([python, "-m", "ensurepip"]):
                         return False
         return True
-

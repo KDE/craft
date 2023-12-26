@@ -1,11 +1,15 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
-from CraftBase import *
+from pathlib import Path
+
+import utils
+from CraftBase import CraftBase
+from CraftCore import CraftCore
 
 
 class SourceBase(CraftBase):
-    """ implements basic stuff required for all sources"""
+    """implements basic stuff required for all sources"""
 
     def __init__(self):
         CraftCore.debug.trace("SourceBase.__init__ called")
@@ -24,10 +28,10 @@ class SourceBase(CraftBase):
         utils.abstract()
 
     def sourceDir(self, dummyIndex=0) -> Path:
-        """ return absolute path of the directory where sources are fetched into.
+        """return absolute path of the directory where sources are fetched into.
         utils.trace( "SourceBase.sourceDir called", 0 )
         The subinfo class members @ref targetSrcSuffic and @ref targetInstSrc
-        controls parts of the name of the generated path. """
+        controls parts of the name of the generated path."""
 
         sourcedir = self.workDir()
 
@@ -44,6 +48,8 @@ class SourceBase(CraftBase):
         CraftCore.debug.trace("SourceBase.applyPatches called")
         if self.subinfo.hasTarget() or self.subinfo.hasSvnTarget():
             patches = self.subinfo.patchesToApply()
+            if not patches:
+                return True
             if not isinstance(patches, list):
                 patches = list([patches])
             # pylint: disable=W0142
@@ -58,7 +64,7 @@ class SourceBase(CraftBase):
             return True
         if not srcdir:
             srcdir = self.sourceDir()
-        patchfile = os.path.join(self.packageDir(), fileName)
+        patchfile = self.packageDir() / fileName
         # TODO: integrate utils.applyPatch() here and remove it from utils().
         # and change packages in blueprints accordingly
         return utils.applyPatch(srcdir, patchfile, patchdepth)
@@ -80,8 +86,8 @@ class SourceBase(CraftBase):
         utils.abstract()
 
     def sourceVersion(self):
-        """ return the current revision or version of the source directory,
-            return True in case it is not applicable and give out nothing """
+        """return the current revision or version of the source directory,
+        return True in case it is not applicable and give out nothing"""
         return True
 
     def sourceRevision(self):
@@ -91,7 +97,7 @@ class SourceBase(CraftBase):
         return None
 
     def printSourceVersion(self):
-        """ return the current revision or version of the source directory,
-            return True in case it is not applicable and give out nothing """
+        """return the current revision or version of the source directory,
+        return True in case it is not applicable and give out nothing"""
         print(self.sourceVersion())
         return True

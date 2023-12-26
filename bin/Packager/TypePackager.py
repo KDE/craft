@@ -23,24 +23,26 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-from Packager.CreateArchivePackager import *
+from CraftCore import CraftCore
+from Packager.AppImagePackager import AppImagePackager
+from Packager.AppxPackager import AppxPackager
+from Packager.CMakeApkPackager import CMakeApkPackager
+from Packager.CreateArchivePackager import CreateArchivePackager
+from Packager.DesktopEntry import DesktopEntry
+from Packager.InnoSetupPackager import InnoSetupPackager
 from Packager.MacDMGPackager import MacDMGPackager
 from Packager.MacPkgPackager import MacPkgPackager
-from Packager.MSIFragmentPackager import *
-from Packager.NullsoftInstallerPackager import *
-from Packager.PortablePackager import *
-from Packager.SevenZipPackager import *
-from Packager.QtIFPackager import *
-from Packager.AppxPackager import *
-from Packager.DesktopEntry import *
-from Packager.AppImagePackager import *
-from Packager.CMakeApkPackager import *
+from Packager.MSIFragmentPackager import MSIFragmentPackager
+from Packager.NullsoftInstallerPackager import NullsoftInstallerPackager
+from Packager.PackagerBase import PackagerBase
+from Packager.PortablePackager import PortablePackager
+from Packager.SevenZipPackager import SevenZipPackager
 
 
 class TypePackager(PackagerBase):
     """packager that is used in place of different other packagers
-The packager used can be decided at runtime
-"""
+    The packager used can be decided at runtime"""
+
     def __init__(self):
         CraftCore.log.debug("TypePackager __init__")
         self.__packager = None

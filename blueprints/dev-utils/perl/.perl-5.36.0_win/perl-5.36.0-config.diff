@@ -1,0 +1,76 @@
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x '*\.o' -x '*\.pyc' -x CMakeLists.txt.user perl-5.36.0.orig/win32/GNUmakefile perl-5.36.0/win32/GNUmakefile
+--- perl-5.36.0.orig/win32/GNUmakefile	2022-05-21 23:27:09.000000000 +0200
++++ perl-5.36.0/win32/GNUmakefile	2022-06-22 10:04:36.642411700 +0200
+@@ -46,7 +46,7 @@
+ # newly built perl.
+ #
+ INST_DRV := c:
+-INST_TOP := $(INST_DRV)\perl
++INST_TOP := $(CRAFT_DESTDIR)
+ 
+ #
+ # Uncomment if you want to build a 32-bit Perl using a 32-bit compiler
+@@ -148,14 +148,15 @@
+ # Comment this out if you want the legacy default behavior of including '.' at
+ # the end of @INC.
+ #
+-DEFAULT_INC_EXCLUDES_DOT := define
++## Craft: Not sure about the implictaions
++#DEFAULT_INC_EXCLUDES_DOT := define
+ 
+ #
+ # Uncomment this if you want to disable looking up values from
+ # HKEY_CURRENT_USER\Software\Perl and HKEY_LOCAL_MACHINE\Software\Perl in
+ # the Registry.
+ #
+-#USE_NO_REGISTRY := define
++USE_NO_REGISTRY := define
+ 
+ #
+ # uncomment exactly one of the following
+@@ -613,7 +614,7 @@
+ LINK_DBG	= -s
+ endif
+ 
+-EXTRACFLAGS	=
++EXTRACFLAGS	= $(CRAFT_CFLAGS)
+ ifeq ($(USE_CPLUSPLUS),define)
+ EXTRACFLAGS	+= $(CXX_FLAG)
+ endif
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x '*\.o' -x '*\.pyc' -x CMakeLists.txt.user perl-5.36.0.orig/win32/Makefile perl-5.36.0/win32/Makefile
+--- perl-5.36.0.orig/win32/Makefile	2022-05-21 23:27:09.000000000 +0200
++++ perl-5.36.0/win32/Makefile	2022-06-22 10:04:11.464086900 +0200
+@@ -20,13 +20,13 @@
+ # newly built perl.
+ #
+ INST_DRV	= c:
+-INST_TOP	= $(INST_DRV)\perl
++INST_TOP	= $(CRAFT_DESTDIR)
+ 
+ #
+ # Uncomment if you want to build a 32-bit Perl using a 32-bit compiler
+ # on a 64-bit version of Windows.
+ #
+-#WIN64		= undef
++WIN64		= $(CRAFT_WIN64)
+ 
+ #
+ # Comment this out if you DON'T want your perl installation to be versioned.
+@@ -90,14 +90,15 @@
+ # Comment this out if you want the legacy default behavior of including '.' at
+ # the end of @INC.
+ #
+-DEFAULT_INC_EXCLUDES_DOT = define
++## Craft: Not sure about the implictaions
++#DEFAULT_INC_EXCLUDES_DOT = define
+ 
+ #
+ # Uncomment this if you want to disable looking up values from
+ # HKEY_CURRENT_USER\Software\Perl and HKEY_LOCAL_MACHINE\Software\Perl in
+ # the Registry.
+ #
+-#USE_NO_REGISTRY = define
++USE_NO_REGISTRY = define
+ 
+ #
+ # uncomment exactly one of the following

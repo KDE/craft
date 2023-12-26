@@ -10,7 +10,9 @@ if [[ -z "$craftRoot" ]];then
     exit 1
 fi
 
-if command -v python3.7 >/dev/null; then
+if [ -n "$CRAFT_PYTHON_BIN" ]; then
+    echo "Using user-provided CRAFT_PYTHON_BIN: $CRAFT_PYTHON_BIN";
+elif command -v python3.7 >/dev/null; then
     CRAFT_PYTHON_BIN=$(command -v python3.7)
 elif command -v python3.6 >/dev/null; then
     CRAFT_PYTHON_BIN=$(command -v python3.6)
@@ -38,62 +40,46 @@ if [[ ! -d "$craftRoot" ]]; then
 fi
 
 export craftRoot
+
+
+while read -r -d '' env_var; do
+    # environment variable keys may not contain =, therefore parsing is relatively easy
+    key="$(cut -d= -f1 <<<"$env_var")"
+    value="$(cut -d= -f2- <<<"$env_var")"
+    export "$key"="$value"
+done < <("${CRAFT_PYTHON_BIN}" "$craftRoot/bin/CraftSetupHelper.py" --setup --format null)
+
 if [[ -n "$PS1" ]]; then
     export PS1="CRAFT: $PS1"
 fi
 
-CRAFT_ENV=$(${CRAFT_PYTHON_BIN} "$craftRoot/bin/CraftSetupHelper.py" --setup)
-function unset_env() {
-    local lines=($(env | awk -F= '/\w+=/{print $1}'))
-    local i
-    for (( i=0; i<${#lines[@]}; i++ )) ; do
-        local line=${lines[$i]}
-        if [[ "${line}" == "" ]] ; then
-            continue
-        fi
-        if [[ "${line}" == "PATH" ]] ; then
-            continue
-        fi
-        unset "${line}" || true
-    done
-}
-function export_lines() {
-    local lines=($(echo ${1} | sed 's/\n/ /g'))
-    local i
-    for (( i=0; i<${#lines[@]}; i++ )) ; do
-        local line=${lines[$i]}
-        if [[ "${line}"  =~ "=" ]] && [[ $line != _=* ]] ; then
-            export "${line}" || true
-        fi
-    done
-}
-unset_env
-export_lines "$CRAFT_ENV"
 
 craft() {
-    ${CRAFT_PYTHON_BIN} "$craftRoot/bin/craft.py" $@
+    local python="$KDEROOT/dev-utils/bin/python3"
+    if [[ ! -f "$python" ]]; then
+      local python=${CRAFT_PYTHON_BIN}
+    fi
+    ${python} "$craftRoot/bin/craft.py" "$@"
 }
 
 cs() {
-    dir=$(craft -q --ci-mode --get "sourceDir()" $1)
-    if (($? > 0));then
-        echo $dir
+    if ! dir="$(craft -q --ci-mode --get "sourceDir()" "$1")"; then
+        echo "$dir"
     else
-        cd "$dir"
+        cd "$dir" || exit 2
     fi
 }
 
 cb() {
-    dir=$(craft -q --ci-mode --get "buildDir()" $1)
-    if (($? > 0));then
-        echo $dir
+    if ! dir="$(craft -q --ci-mode --get "buildDir()" "$1")"; then
+        echo "$dir"
     else
-        cd "$dir"
+        cd "$dir" || exit 2
     fi
 }
 
 cr() {
-    cd "$KDEROOT"
+    cd "$KDEROOT" || exit 2
 }
 
 cr

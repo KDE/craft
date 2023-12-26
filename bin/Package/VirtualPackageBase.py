@@ -1,5 +1,6 @@
 from Package.SourceOnlyPackageBase import *
 
+
 # a special package providing source components for another module.
 # see clang
 class SourceComponentPackageBase(SourceOnlyPackageBase):
@@ -21,9 +22,11 @@ class SourceComponentPackageBase(SourceOnlyPackageBase):
 
 class VirtualPackageBase(SourceComponentPackageBase):
     """provides a base class for virtual packages"""
+
     def __init__(self):
         CraftCore.log.debug("VirtualPackageBase.__init__ called")
         SourceComponentPackageBase.__init__(self)
+        self.subinfo.shelveAble = False
 
     def createPatch(self):
         return True
@@ -42,4 +45,3 @@ class VirtualPackageBase(SourceComponentPackageBase):
 
     def sourceRevision(self):
         return ""
-

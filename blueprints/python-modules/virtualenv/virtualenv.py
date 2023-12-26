@@ -4,18 +4,23 @@ from Package.PipPackageBase import *
 
 
 class subinfo(info.infoclass):
-
     def setTargets(self):
-        self.svnTargets['master'] = ''
-        self.defaultTarget = 'master'
+        self.svnTargets["master"] = ""
+        self.defaultTarget = "master"
 
     def setDependencies(self):
         # install a system whide pip
         self.runtimeDependencies["python-modules/pip-system"] = None
 
+
 class Package(PipPackageBase):
     def __init__(self, **args):
         PipPackageBase.__init__(self)
+
+    def install(self):
+        if CraftCore.compiler.isLinux:
+            return True
+        return super().install()
 
     def postInstall(self):
         for ver, python in self._pythons:

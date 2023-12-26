@@ -3,9 +3,8 @@ import subprocess
 
 import info
 import utils
-
+from CraftCore import CraftCore
 from Package.PipPackageBase import PipPackageBase
-from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
@@ -15,6 +14,7 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["core/cacert"] = None
+
 
 class Package(PipPackageBase):
     def __init__(self):
@@ -31,3 +31,7 @@ class Package(PipPackageBase):
                         return False
         return True
 
+    def install(self):
+        if CraftCore.compiler.isLinux:
+            return True
+        return super().install()

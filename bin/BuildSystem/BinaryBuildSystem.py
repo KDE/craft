@@ -18,7 +18,7 @@ class BinaryBuildSystem(BuildSystemBase):
 
     def install(self):
         if not BuildSystemBase.install(self):
-          return False
+            return False
         return utils.copyDir(self.sourceDir(), self.installDir(), linkOnly=False)
 
     def internalPostInstall(self):

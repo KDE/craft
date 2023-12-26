@@ -1,0 +1,4 @@
+# blacklist
+lib/.*
+# strip most executables
+bin/(?!(pkg-config)).*\.exe

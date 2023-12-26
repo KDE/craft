@@ -1,9 +1,10 @@
-
-from CraftCore import CraftCore
 import subprocess
 
+from CraftCore import CraftCore
+
+
 class Arguments(object):
-    def __init__(self, args:[str]=None):
+    def __init__(self, args: [str] = None):
         self.__args = []
         self.__legacyString = None
         if args:
@@ -16,27 +17,31 @@ class Arguments(object):
             self.__legacyString = subprocess.list2cmdline([str(x) for x in self.__args])
 
     def toSetting(self):
-        return ";".join(self.get())
+        return str(self)
 
     @staticmethod
-    def fromSetting(data : str):
-        return Arguments(CraftCore.settings._parseList(data))
+    def fromSetting(data: str):
+        return Arguments(data)
 
     def append(self, other):
         if not other:
             return self
         if self.__legacyString is not None:
+
+            def join(rhs: str, lhs: str):
+                if not rhs:
+                    return lhs
+                return " ".join([rhs.rstrip(), lhs.lstrip()])
+
             if isinstance(other, str):
-                if not other.startswith(" "):
-                    self.__legacyString += " "
-                self.__legacyString += other
+                self.__legacyString = join(self.__legacyString, other)
             elif isinstance(other, list):
-                self.__legacyString += " " + subprocess.list2cmdline([str(x) for x in other])
+                self.__legacyString = join(self.__legacyString, subprocess.list2cmdline([str(x) for x in other]))
             elif isinstance(other, Arguments):
                 if other.__legacyString is not None:
-                    self.__legacyString += " " + other.__legacyString
+                    self.__legacyString = join(self.__legacyString, other.__legacyString)
                 else:
-                    self.__legacyString += " " + subprocess.list2cmdline(other.__args)
+                    self.__legacyString = join(self.__legacyString, subprocess.list2cmdline(other.__args))
             else:
                 raise Exception("error unsupported argumen" + other)
         else:
@@ -69,11 +74,11 @@ class Arguments(object):
 
     def get(self):
         if self.__legacyString:
-            return self.__legacyString           
+            return self.__legacyString
         else:
             return self.__args
 
     @staticmethod
-    def formatCommand(command:[str], args):
+    def formatCommand(command: [str], args):
         tmp = Arguments(command) + args
         return tmp.get()

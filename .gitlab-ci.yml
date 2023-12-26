@@ -1,0 +1,17 @@
+run-tests:
+  stage: test
+  image: python:latest
+  tags:
+    - Linux
+  interruptible: true
+  before_script:
+    - python3 --version  # For debugging
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
+    - pip install unittest-xml-reporting
+  script:
+    - python3 bin/test/runtests.py
+  artifacts:
+    reports:
+      junit: JUnit*Results.xml

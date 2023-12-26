@@ -20,8 +20,8 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
-from CraftCore import CraftCore
 import info
+from CraftCore import CraftCore
 from Package.PipPackageBase import PipPackageBase
 
 
@@ -31,7 +31,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = "master"
 
     def setDependencies(self):
-        self.runtimeDependencies["virtual/bin-base"] = None
+        self.runtimeDependencies["virtual/base"] = None
         self.runtimeDependencies["dev-utils/pkg-config"] = None
         self.buildDependencies["python-modules/pip"] = None
         self.buildDependencies["python-modules/virtualenv"] = None
@@ -41,5 +41,3 @@ class Package(PipPackageBase):
     def __init__(self, **args):
         PipPackageBase.__init__(self)
         self.python2 = False
-
-

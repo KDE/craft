@@ -12,27 +12,28 @@ class PipBuildSystem(BuildSystemBase):
 
         self.pipPackageName = self.package.name
 
-
     def _getPython2(self):
         if CraftPackageObject.get("dev-utils/python2").isInstalled:
             return "python2"
         python2 = CraftCore.cache.findApplication("python2.7")
         if CraftCore.compiler.isWindows:
-                if os.path.exists("C:/python27/python.exe"):
-                    python2 = "C:/python27/python.exe"
-                if not python2 and ("Paths", "PYTHON27") in CraftCore.settings:
-                    python2 = CraftCore.cache.findApplication("python", CraftCore.settings.get("Paths", "PYTHON27"))
+            if os.path.exists("C:/python27/python.exe"):
+                python2 = "C:/python27/python.exe"
+            if not python2 and ("Paths", "PYTHON27") in CraftCore.settings:
+                python2 = CraftCore.cache.findApplication("python", CraftCore.settings.get("Paths", "PYTHON27"))
         if not python2:
-            CraftCore.log.critical(f"Please have a look on {CraftCore.settings.iniPath} and make sure that\n"
-                                   "\t[Paths]\n"
-                                   "\tPYTHON27\n"
-                                   "Points to a valid Python installation.")
+            CraftCore.log.critical(
+                f"Please have a look on {CraftCore.settings.iniPath} and make sure that\n" "\t[Paths]\n" "\tPYTHON27\n" "Points to a valid Python installation."
+            )
             return None
         return python2
 
     def _getPython3(self):
-        if CraftPackageObject.get("dev-utils/python3").isInstalled:
-            return Path(CraftCore.standardDirs.craftRoot()) / "dev-utils/bin/python3"
+        if CraftPackageObject.get("python-modules/virtualenv").isInstalled:
+            if CraftCore.compiler.isWindows:
+                return Path(CraftCore.standardDirs.craftRoot()) / f"etc/virtualenv/3/Scripts/python"
+            else:
+                return Path(CraftCore.standardDirs.craftRoot()) / f"etc/virtualenv/3/bin/python3"
         return sys.executable
 
     @property
@@ -55,15 +56,26 @@ class PipBuildSystem(BuildSystemBase):
         return True
 
     def install(self):
-        env  = {}
+        env = {}
         if CraftCore.compiler.isMSVC():
-            env.update({
-                "LIB" : f"{os.environ['LIB']};{CraftStandardDirs.craftRoot() / 'lib'}",
-                "INCLUDE" : f"{os.environ['INCLUDE']};{CraftStandardDirs.craftRoot() / 'include'}"})
+            env.update(
+                {
+                    "LIB": f"{os.environ['LIB']};{CraftStandardDirs.craftRoot() / 'lib'}",
+                    "INCLUDE": f"{os.environ['INCLUDE']};{CraftStandardDirs.craftRoot() / 'include'}",
+                }
+            )
         with ScopedEnv(env):
             ok = True
             for ver, python in self._pythons:
-                command = [python, "-m", "pip", "install", "--upgrade", "--upgrade-strategy", "only-if-needed"]
+                command = [
+                    python,
+                    "-m",
+                    "pip",
+                    "install",
+                    "--upgrade",
+                    "--upgrade-strategy",
+                    "only-if-needed",
+                ]
                 if not self.venvDir(ver).exists():
                     command += ["--user"]
                 if self.subinfo.svnTarget():

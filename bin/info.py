@@ -2,21 +2,29 @@
 #
 # @package  this module contains the information class
 
+import os
+
 # the current work here is to access members only
 # by methods to be able to separate the access from
 # the definition
 from enum import Enum, unique
+from pathlib import Path
+from typing import *
 
 import VersionInfo
-from Utils import CraftHash, CraftManifest
-from options import *
+from Blueprints.CraftPackageObject import BlueprintException, CraftPackageObject
+from CraftCompiler import CraftCompiler, CraftCompilerSignature
+from CraftCore import CraftCore
 from CraftDebug import deprecated
+from options import Options
+from Utils import CraftHash, CraftManifest
 
 
 @unique
 class DependencyRequirementType(Enum):
     Optional = 0
     Required = 1
+
 
 class infoclass(object):
     """this module contains the information class"""
@@ -41,7 +49,6 @@ class infoclass(object):
         self.targetInstallPath = {}
 
         self.targetDigests = {}
-        self.targetDigestsX64 = {}
         self.targetDigestUrls = {}
         ## \todo prelimary
         self.svnTargets = {}
@@ -51,6 +58,7 @@ class infoclass(object):
 
         # the build prefix, may differ for for cached files
         self.buildPrefix = str(CraftCore.standardDirs.craftRoot())
+        self.revision = None
         self.isCachedBuild = False
 
         # runtimeDependencies and buildDependencies are not different when looking
@@ -75,7 +83,6 @@ class infoclass(object):
         self.registerOptions()
 
         self.setTargets()
-        self.setBuildOptions()
 
         # do this after buildTarget is set so that some dependencies can be set depending on self.buildTarget
         self.setDependencies()
@@ -92,19 +99,23 @@ class infoclass(object):
         # TODO: legacy behaviour
         if ("BlueprintVersions", self.parent.package.path) in CraftCore.settings:
             target = CraftCore.settings.get("BlueprintVersions", self.parent.package.path)
-            CraftCore.log.warning(f"You are using the depreaced:\n"
-                                f"[BlueprintVersions]\n"
-                                f"{self.parent.package.path} = {target}\n\n"
-                                f"Please use CraftOptions.ini\n"
-                                f"[{self.parent.package.path}]\n"
-                                f"version = {target}")
+            CraftCore.log.warning(
+                f"You are using the depreaced:\n"
+                f"[BlueprintVersions]\n"
+                f"{self.parent.package.path} = {target}\n\n"
+                f"Please use CraftOptions.ini\n"
+                f"[{self.parent.package.path}]\n"
+                f"version = {target}"
+            )
         if target:
             if target in self.targets or target in self.svnTargets:
                 return target
             elif not self.parent.package.isIgnored():
-                raise BlueprintException(f"You defined an invalid target {target} for {self.parent.package.path}, avaialble versions are {list(self.targets.keys()) + list(self.svnTargets.keys())} ", self.parent.package)
+                raise BlueprintException(
+                    f"You defined an invalid target {target} for {self.parent.package.path}, avaialble versions are {list(self.targets.keys()) + list(self.svnTargets.keys())} ",
+                    self.parent.package,
+                )
         return self._defaultTarget
-
 
     @defaultTarget.setter
     def defaultTarget(self, value):
@@ -126,10 +137,6 @@ class infoclass(object):
     def setTargets(self):
         """default method for setting targets, override to set individual targets"""
 
-    def setBuildOptions(self):
-        """default method for setting build options, override to set individual targets"""
-        return
-
     def hasTarget(self) -> bool:
         """return true if archive targets for the currently selected build target is available"""
         return self.buildTarget in self.targets
@@ -140,7 +147,7 @@ class infoclass(object):
             return self.targets[self.buildTarget]
         return ""
 
-    def archiveName(self) -> [str]:
+    def archiveName(self) -> List[str]:
         """returns the archive file name"""
         if self.buildTarget in self.archiveNames:
             name = self.archiveNames[self.buildTarget]
@@ -180,8 +187,7 @@ class infoclass(object):
 
     def configurePath(self) -> str:
         """return relative path appendable to local source path for the recent target"""
-        if (self.hasTarget() or self.hasSvnTarget()) and \
-                        self.buildTarget in self.targetConfigurePath:
+        if (self.hasTarget() or self.hasSvnTarget()) and self.buildTarget in self.targetConfigurePath:
             return self.targetConfigurePath[self.buildTarget]
 
     def hasInstallPath(self) -> bool:
@@ -198,26 +204,21 @@ class infoclass(object):
         """return state for having patches for the recent target"""
         return (self.hasTarget() or self.hasSvnTarget()) and self.buildTarget in self.patchToApply
 
-    def patchesToApply(self) -> [tuple]:
+    def patchesToApply(self) -> List[tuple]:
         """return patch informations for the recent build target"""
         if self.hasPatches():
             out = self.patchToApply[self.buildTarget]
             return out if type(out) == list else [out]
-        return [("", "")]
+        return []
 
     def hasTargetDigests(self) -> bool:
         """return state if target has digest(s) for the recent build target"""
-        if CraftCore.compiler.isX64() and self.buildTarget in self.targetDigestsX64:
-            return True
         return self.buildTarget in self.targetDigests
 
-    def targetDigest(self) -> ([str], CraftHash.HashAlgorithm):
+    def targetDigest(self) -> Tuple[List[str], CraftHash.HashAlgorithm]:
         """return digest(s) for the recent build target. The return value could be a string or a list"""
         if self.hasTargetDigests():
-            if CraftCore.compiler.isX64() and self.buildTarget in self.targetDigestsX64:
-                out = self.targetDigestsX64[self.buildTarget]
-            else:
-                out = self.targetDigests[self.buildTarget]
+            out = self.targetDigests[self.buildTarget]
             if type(out) == str:
                 out = [out]
             if not type(out) == tuple:
@@ -229,7 +230,7 @@ class infoclass(object):
         """return state if target has digest url(s) for the recent build target"""
         return self.buildTarget in self.targetDigestUrls
 
-    def targetDigestUrl(self) -> ([str], CraftHash.HashAlgorithm):
+    def targetDigestUrl(self) -> Tuple[List[str], CraftHash.HashAlgorithm]:
         """return digest url(s) for the recent build target.  The return value could be a string or a list"""
         if self.hasTargetDigestUrls():
             out = self.targetDigestUrls[self.buildTarget]
@@ -270,21 +271,30 @@ class infoclass(object):
                 CraftCore.log.error(f"Failed to load manifest for {self.package} {manifestUrl}")
                 continue
             manifest = CraftManifest.CraftManifest.fromJson(json)
-            if packageName not in manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"]:
+            compiler = CraftCompilerSignature(
+                CraftCompiler.Platforms.Windows,
+                CraftCompiler.Compiler.GCC,
+                None,
+                CraftCore.compiler.architecture,
+            )
+            if packageName not in manifest.packages[str(compiler)]:
                 del self.targets[key]
                 CraftCore.log.debug(f"Failed to find {packageName} on {url}")
                 continue
-            data = manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"][packageName].latest
-            self.targets[key] = f"{url}/{data.fileName}"
-            self.targetDigests[key] = ([data.checksum], CraftHash.HashAlgorithm.SHA256)
+            data = manifest.packages[str(compiler)][packageName].latest
+            binaryFile = data.files[CraftManifest.FileType.Binary]
+            self.targets[key] = f"{url}/{binaryFile.fileName}"
+            self.targetDigests[key] = (
+                [binaryFile.checksum],
+                CraftHash.HashAlgorithm.SHA256,
+            )
             if packageName != self.parent.package:
                 if data.version in package.subinfo.patchLevel:
                     self.patchLevel[key] = package.subinfo.patchLevel[data.version]
             if targetInstallPath:
                 self.targetInstallPath[key] = os.path.join(targetInstallPath, self.parent.package.name)
 
-
-    def addCachedBuild(self, url, packageName = None, packagePath=None, targetInstallPath=None):
+    def addCachedBuild(self, url, packageName=None, packagePath=None, targetInstallPath=None, architecture=None):
         if packageName:
             package = CraftPackageObject._allLeaves.get(packageName, None)
             if not package:
@@ -294,13 +304,23 @@ class infoclass(object):
         elif not packagePath:
             packagePath = self.parent.package.path
 
-
         if url.endswith("/"):
-                url = url[:-1]
+            url = url[:-1]
         manifest = CraftManifest.CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json"))
-        latest = manifest.packages[f"windows-mingw_{CraftCore.compiler.bits}-gcc"][packagePath].latest
-        self.targets[latest.version] = f"{url}/{latest.fileName}"
-        self.targetDigests[latest.version] = ([latest.checksum], CraftHash.HashAlgorithm.SHA256)
-        self.defaultTarget = latest.version
-        if targetInstallPath:
-                self.targetInstallPath[latest.version] = os.path.join(targetInstallPath, self.parent.package.name)
+        compiler = CraftCompilerSignature(
+            CraftCompiler.Platforms.Windows,
+            CraftCompiler.Compiler.GCC,
+            None,
+            architecture or CraftCore.compiler.architecture,
+        )
+        if str(compiler) in manifest.packages:
+            latest = manifest.packages[str(compiler)].get(str(packagePath)).latest
+            binaryFile = latest.files[CraftManifest.FileType.Binary]
+            self.targets[latest.version] = f"{url}/{binaryFile.fileName}"
+            self.targetDigests[latest.version] = (
+                [binaryFile.checksum],
+                CraftHash.HashAlgorithm.SHA256,
+            )
+            self.defaultTarget = latest.version
+            if targetInstallPath:
+                self.targetInstallPath[latest.version] = Path(targetInstallPath) / self.parent.package.name

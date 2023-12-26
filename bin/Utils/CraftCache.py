@@ -5,22 +5,22 @@ import pickle
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 import time
 import urllib.error
 import urllib.request
-import sys
 from pathlib import Path
 
-from CraftCore import CraftCore, AutoImport
-
 from Blueprints.CraftVersion import CraftVersion
+from CraftCore import AutoImport, CraftCore
 from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 from Utils import GetFiles
 
+
 class CraftCache(object):
-    RE_TYPE = re.Pattern if sys.version_info >= (3,7) else re._pattern_type
+    RE_TYPE = re.Pattern
     _version = 9
     _cacheLifetime = (60 * 60 * 24) * 1  # days
 
@@ -63,8 +63,7 @@ class CraftCache(object):
                     CraftCore.log.warning(f"Cache corrupted: {e}")
                     return utilsCache
 
-            if data.version != CraftCache._version or (
-                time.time() - data.cacheCreationTime) > CraftCache._cacheLifetime:
+            if data.version != CraftCache._version or (time.time() - data.cacheCreationTime) > CraftCache._cacheLifetime:
                 CraftCore.log.debug("Clear cache")
             else:
                 utilsCache = data
@@ -93,7 +92,7 @@ class CraftCache(object):
         CraftCore.log.debug("Clear utils cache")
         CraftCore.cache = CraftCache()
 
-    def findApplication(self, app, path=None, forceCache:bool=False) -> str:
+    def findApplication(self, app, path=None, forceCache: bool = False) -> str:
         if app in self._nonPersistentCache.applicationLocations:
             appLocation = self._nonPersistentCache.applicationLocations[app]
             if os.path.exists(appLocation):
@@ -120,21 +119,28 @@ class CraftCache(object):
             return None
         return appLocation
 
-    def getCommandOutput(self, app:str, command:str, testName:str=None) -> (int, str):
+    def getCommandOutput(self, app: str, command: str, testName: str = None) -> (int, str):
         if not testName:
-            testName = f"\"{app}\" {command}"
+            testName = f'"{app}" {command}'
         app = self.findApplication(app)
         if not app:
             return (-1, None)
         if testName not in self._outputCache:
-            CraftCore.log.debug(f"\"{app}\" {command}")
+            CraftCore.log.debug(f'"{app}" {command}')
             # TODO: port away from shell=True
-            completeProcess = subprocess.run(f"\"{app}\" {command}",
-                                             shell=True,
-                                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                             universal_newlines=True, errors="backslashreplace")
+            completeProcess = subprocess.run(
+                f'"{app}" {command}',
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                universal_newlines=True,
+                errors="backslashreplace",
+            )
             CraftCore.log.debug(f"{testName} Result: ExitedCode: {completeProcess.returncode} Output: {completeProcess.stdout}")
-            self._outputCache[testName] = (completeProcess.returncode, completeProcess.stdout)
+            self._outputCache[testName] = (
+                completeProcess.returncode,
+                completeProcess.stdout,
+            )
         return self._outputCache[testName]
 
     # TODO: rename, cleanup
@@ -211,7 +217,6 @@ class CraftCache(object):
                     data = str(fh.read(), "UTF-8")
                     vers = re.findall(pattern, data)
                     if not vers:
-                        print(data)
                         raise Exception("Pattern %s does not match." % pattern)
                     out = list(set(vers))
                     self._nightlyVersions[url] = out

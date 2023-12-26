@@ -5,7 +5,13 @@ class subinfo(info.infoclass):
     def setTargets(self):
         for ver in ["dev", "master"]:
             self.svnTargets[ver] = f"https://invent.kde.org/packaging/craft-blueprints-kde.git|{ver}|"
-            self.targetUpdatedRepoUrl[ver] = (["git://anongit.kde.org/craft-blueprints-kde", "https://invent.kde.org/kde/craft-blueprints-kde.git"], "https://invent.kde.org/packaging/craft-blueprints-kde.git")
+            self.targetUpdatedRepoUrl[ver] = (
+                [
+                    "git://anongit.kde.org/craft-blueprints-kde",
+                    "https://invent.kde.org/kde/craft-blueprints-kde.git",
+                ],
+                "https://invent.kde.org/packaging/craft-blueprints-kde.git",
+            )
         self.defaultTarget = "master"
 
     def setDependencies(self):

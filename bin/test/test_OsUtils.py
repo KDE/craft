@@ -1,15 +1,15 @@
 import os
 import subprocess
 import tempfile
-import time
 import threading
+import time
 import unittest
 
 import CraftTestBase
 import utils
 from CraftCore import CraftCore
-from CraftOS.osutils import OsUtils, LockFile
 from CraftOS.OsDetection import OsDetection
+from CraftOS.osutils import LockFile, OsUtils
 
 
 class OsUtilsTest(CraftTestBase.CraftTestBase):
@@ -32,15 +32,15 @@ class OsUtilsTest(CraftTestBase.CraftTestBase):
                     cmd = CraftCore.cache.findApplication("cmd")
                     self.assertEqual(utils.copyFile(cmd, test1, linkOnly=False), True)
                     self.assertEqual(utils.copyFile(cmd, test2, linkOnly=False), True)
-                    process = subprocess.Popen([test1,"/K"], creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
-                    process2 = subprocess.Popen([test2,"/K"], creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+                    process = subprocess.Popen([test1, "/K"], creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+                    process2 = subprocess.Popen([test2, "/K"], creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
                     try:
                         self.assertEqual(process.poll(), None)
                         self.assertEqual(process2.poll(), None)
                         self.assertEqual(OsUtils.killProcess("craft_test", tmp2), True)
                         self.assertEqual(process.poll(), None)
-                        #ensure that process 2 was killed
-                        self.assertNotEquals(process2.poll(), None)
+                        # ensure that process 2 was killed
+                        self.assertNotEqual(process2.poll(), None)
                     except subprocess.SubprocessError as e:
                         CraftCore.log.warning(e)
                     finally:
@@ -58,10 +58,12 @@ class OsUtilsTest(CraftTestBase.CraftTestBase):
             def _delayedUnlock():
                 print("unlock1")
                 lock.unlock()
+
             threading.Timer(5, _delayedUnlock).start()
             with LockFile("foo") as lock2:
-               print("locked lock2")
+                print("locked lock2")
             print("end")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

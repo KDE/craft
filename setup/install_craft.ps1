@@ -11,11 +11,11 @@ $Script:PythonInstallDir = "C:\python36"
 
 if($env:PROCESSOR_ARCHITECTURE.contains("64"))
 {
-    $Script:pythonUrl = "https://www.python.org/ftp/python/3.6.6/python-3.6.6-amd64.exe"
+    $Script:pythonUrl = "https://www.python.org/ftp/python/3.11.1/python-3.11.1-amd64.exe"
 }
 else
 {
-    $Script:pythonUrl = "https://www.python.org/ftp/python/3.6.6/python-3.6.6.exe"
+    $Script:pythonUrl = "https://www.python.org/ftp/python/3.11.1/python-3.11.1.exe"
 }
 #####
 $Script:pythonVersion = "0"

@@ -30,16 +30,22 @@ class MSInstallerPackager(CollectionPackagerBase):
             return fixedName
 
     def generateMSInstaller(self):
-        """ runs tools to generate the installer itself """
+        """runs tools to generate the installer itself"""
         shortPackage = self.package
         if not "setupname" in self.defines or not self.defines["setupname"]:
-            self.defines["setupname"] = "%s-setup-%s.msi" % (shortPackage, self.buildTarget)
+            self.defines["setupname"] = "%s-setup-%s.msi" % (
+                shortPackage,
+                self.buildTarget,
+            )
         if not "srcdir" in self.defines or not self.defines["srcdir"]:
             self.defines["srcdir"] = self.imageDir()
         if not "company" in self.defines or not self.defines["company"]:
             self.defines["company"] = "KDE"
         if not "productname" in self.defines or not self.defines["productname"]:
-            self.defines["productname"] = "%s %s" % (shortPackage.capitalize(), self.buildTarget)
+            self.defines["productname"] = "%s %s" % (
+                shortPackage.capitalize(),
+                self.buildTarget,
+            )
         if not "executable" in self.defines or not self.defines["executable"]:
             self.defines["executable"] = ""
         if not "productuid" in self.defines or not self.defines["productuid"]:
@@ -79,7 +85,8 @@ class MSInstallerPackager(CollectionPackagerBase):
         componentRoot.setAttribute("Level", "1")
 
         for root, dirs, files in os.walk(self.imageDir()):
-            if root == self.imageDir(): continue
+            if root == self.imageDir():
+                continue
             if files or dirs:
                 currentDirectory = wxs.createElement("Directory")
                 currentDirectory.setAttribute("Id", self.__getUniqueIdString(os.path.basename(root)))
@@ -103,15 +110,17 @@ class MSInstallerPackager(CollectionPackagerBase):
 
                     currentFile = wxs.createElement("File")
                     currentFile.setAttribute("Id", _fileId)
-                    currentFile.setAttribute("Source",
-                                             os.path.join("SourceDir", os.path.relpath(root, self.imageDir()), _f))
+                    currentFile.setAttribute(
+                        "Source",
+                        os.path.join("SourceDir", os.path.relpath(root, self.imageDir()), _f),
+                    )
                     currentComponent.appendChild(currentFile)
 
         if self.scriptname.endswith(".template"):
             outName = os.path.join(self.buildDir(), os.path.basename(self.scriptname)[:-9])
         else:
             outName = os.path.join(self.buildDir(), self.scriptname)
-        out = open(outName, 'w')
+        out = open(outName, "w")
 
         filelistString = StringIO()
         componentlistString = StringIO()
@@ -124,7 +133,7 @@ class MSInstallerPackager(CollectionPackagerBase):
         filelistString.close()
         componentlistString.close()
 
-        templateFile = open(self.scriptname, 'r')
+        templateFile = open(self.scriptname, "r")
         scriptTemplate = Template(templateFile.read())
 
         substitutedScript = scriptTemplate.safe_substitute(self.defines)
@@ -132,11 +141,17 @@ class MSInstallerPackager(CollectionPackagerBase):
         out.close()
 
         utils.system("candle -o %s.wixobj %s" % (outName, outName))
-        utils.system("light -b %s -o %s %s.wixobj" % (
-        self.imageDir(), os.path.join(self.packageDir(), self.defines["setupname"]), outName))
+        utils.system(
+            "light -b %s -o %s %s.wixobj"
+            % (
+                self.imageDir(),
+                os.path.join(self.packageDir(), self.defines["setupname"]),
+                outName,
+            )
+        )
 
     def createPackage(self):
-        """ create a package """
+        """create a package"""
         print("packaging using the MSInstallerPackager")
 
         self.internalCreatePackage()

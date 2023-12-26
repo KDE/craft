@@ -22,14 +22,22 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-import os
+import glob
 import mimetypes
+import os
+import re
+import subprocess
+from pathlib import Path
 
-
-from Utils import CraftHash, CodeSign
-from Packager.CollectionPackagerBase import *
-from Packager.PortablePackager import *
+import utils
+from Blueprints.CraftDependencyPackage import CraftDependencyPackage, DependencyType
 from Blueprints.CraftVersion import CraftVersion
+from CraftBase import InitGuard
+from CraftCompiler import CraftCompiler
+from CraftCore import CraftCore
+from Packager.CollectionPackagerBase import CollectionPackagerBase
+from Packager.PortablePackager import PortablePackager
+from Utils import CodeSign
 
 
 class AppxPackager(CollectionPackagerBase):
@@ -69,14 +77,14 @@ class AppxPackager(CollectionPackagerBase):
         <com:Extension Category="windows.comServer">
           <com:ComServer>
             <com:ExeServer Executable="bin\snoretoast.exe" DisplayName="SnoreToast activator">
-              <com:Class Id="eb1fdd5b-8f70-4b5a-b230-998a2dc19303" DisplayName="Toast activator"/>
+              <com:Class Id="@{SNORETOAST_CALLBACK_GUID}" DisplayName="Toast activator"/>
             </com:ExeServer>
           </com:ComServer>
         </com:Extension>
 
         <!--Specify which CLSID to activate when toast clicked-->
         <desktop:Extension Category="windows.toastNotificationActivation">
-          <desktop:ToastNotificationActivation ToastActivatorCLSID="eb1fdd5b-8f70-4b5a-b230-998a2dc19303" />
+          <desktop:ToastNotificationActivation ToastActivatorCLSID="@{SNORETOAST_CALLBACK_GUID}" />
         </desktop:Extension>"""
 
     Aliases = r"""<uap3:Extension Category="windows.appExecutionAlias" Executable="@{alias_executable}" EntryPoint="Windows.FullTrustApplication">
@@ -106,20 +114,27 @@ class AppxPackager(CollectionPackagerBase):
         if "file_types" in defines:
             CraftCore.log.info("The package will support the following file types:")
             CraftCore.log.info(defines["file_types"])
-            defines["file_types"] = "\n".join([f"""<uap:FileType>{t}</uap:FileType>""" if t != "*" else f"""<uap10:FileType>{t}</uap10:FileType>""" for t in set(defines["file_types"])])
+            defines["file_types"] = "\n".join(
+                [f"""<uap:FileType>{t}</uap:FileType>""" if t != "*" else f"""<uap10:FileType>{t}</uap10:FileType>""" for t in set(defines["file_types"])]
+            )
             defines.setdefault("extensions", AppxPackager.Extensions)
         else:
             defines.setdefault("file_types", "")
             defines.setdefault("extensions", "")
 
-
-
-    def setDefaults(self, defines : dict) -> dict:
+    def setDefaults(self, defines: dict) -> dict:
         defines = super().setDefaults(defines)
         defines.setdefault("additional_xmlns", "")
+        architectures = {
+            CraftCompiler.Architecture.x86_32: "x86",
+            CraftCompiler.Architecture.x86_64: "x64",
+            CraftCompiler.Architecture.arm32: "arm",
+            CraftCompiler.Architecture.arm64: "arm64",
+        }
+        defines.setdefault("architecture", architectures[CraftCore.compiler.architecture])
         version = [int(x) for x in CraftVersion(defines.get("version", self.version)).normalizedVersion.versionstr.split(".")]
         # we require a version of the format 1.2.3.4
-        version += [0] * (4-len(version))
+        version += [0] * (4 - len(version))
         version[1] = version[1] * 100 + version[2]
         if self.buildNumber():
             version[2] = self.buildNumber()
@@ -138,7 +153,16 @@ class AppxPackager(CollectionPackagerBase):
 
         self._setupFileTypes(defines)
 
-        if (Path(self.archiveDir()) /"bin/snoretoast.exe").exists():
+        if "dev-utils/snoretoast" in CraftDependencyPackage(self.package).getDependencies(DependencyType.Runtime):
+            # versions < 0.9 did not print the clsi, use the one from 0.8
+            clsid = "eb1fdd5b-8f70-4b5a-b230-998a2dc19303"
+            result = subprocess.run(["snoretoast.exe", "-v"], capture_output=True, encoding="UTF-8")
+            if result.returncode == 0:
+                clsidPattern = re.compile(r"\{(.*?)\}")
+                clsids = clsidPattern.findall(result.stderr)
+                if clsids:
+                    clsid = clsids[0]
+            defines["SNORETOAST_CALLBACK_GUID"] = clsid
             defines["extensions"] += AppxPackager.SnoreToast
         if "startup_task" in defines:
             defines["extensions"] += AppxPackager.StartUp
@@ -148,7 +172,10 @@ class AppxPackager(CollectionPackagerBase):
                 defines["alias"] += CraftCore.compiler.executableSuffix
             defines["extensions"] += AppxPackager.Aliases
             defines["additional_xmlns"] += """xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"\n"""
-            defines.setdefault("alias_executable", self.defines["executable"] if "executable" in self.defines else self.defines["shortcuts"][0]["target"])
+            defines.setdefault(
+                "alias_executable",
+                self.defines["executable"] if "executable" in self.defines else self.defines["shortcuts"][0]["target"],
+            )
 
         extensions = defines["extensions"]
         if extensions:
@@ -181,19 +208,20 @@ class AppxPackager(CollectionPackagerBase):
 
     def __prepareIcons(self, defines):
         utils.createDir(os.path.join(self.archiveDir(), "Assets"))
-        defines["logo"] = os.path.join('Assets', os.path.basename(defines["icon_png"]))
-        for propertyName, define, required in [ ("Square150x150Logo", "icon_png", True),
-                                                ("Square44x44Logo", "icon_png_44", True),
-                                                ("Wide310x150Logo", "icon_png_310x150", False),
-                                                ("Square310x310Logo", "icon_png_310x310", False),
-                                                ]:
+        defines["logo"] = os.path.join("Assets", os.path.basename(defines["icon_png"]))
+        for propertyName, define, required in [
+            ("Square150x150Logo", "icon_png", True),
+            ("Square44x44Logo", "icon_png_44", True),
+            ("Wide310x150Logo", "icon_png_310x150", False),
+            ("Square310x310Logo", "icon_png_310x310", False),
+        ]:
             if define not in defines:
                 if required:
-                    CraftCore.log.info(f"Please add defines[\"{define}]\"")
+                    CraftCore.log.info(f'Please add defines["{define}]"')
                     return False
                 else:
-                  defines[define] = ""
-                  continue
+                    defines[define] = ""
+                    continue
 
             icon = defines[define]
             defines[define] = f"{propertyName}=\"{os.path.join('Assets', os.path.basename(icon))}\""
@@ -210,8 +238,11 @@ class AppxPackager(CollectionPackagerBase):
         archive = defines["setupname"]
         if os.path.isfile(archive):
             utils.deleteFile(archive)
-        return (utils.configureFile(os.path.join(os.path.dirname(__file__), "AppxManifest.xml"), os.path.join(self.archiveDir(), "AppxManifest.xml"), defines) and
-                utils.system(["makeappx", "pack", "/d", self.archiveDir(), "/p", archive]))
+        return utils.configureFile(
+            os.path.join(os.path.dirname(__file__), "AppxManifest.xml"),
+            os.path.join(self.archiveDir(), "AppxManifest.xml"),
+            defines,
+        ) and utils.system(["makeappx", "pack", "/d", self.archiveDir(), "/p", archive])
 
     def __createSideloadAppX(self, defines) -> bool:
         def appendToPublisherString(publisher: [str], field: str, key: str) -> None:
@@ -228,21 +259,26 @@ class AppxPackager(CollectionPackagerBase):
         appendToPublisherString(publisher, "PostalCode", "PostalCode")
         appendToPublisherString(publisher, "C", "Country")
         defines["publisher"] = ", ".join(publisher)
-        setupName = os.path.join(self.packageDestinationDir(), "{0}-sideload{1}".format(*os.path.splitext(os.path.basename(defines["setupname"]))))
-        defines["setupname"] =  setupName
+        setupName = os.path.join(
+            self.packageDestinationDir(),
+            "{0}-sideload{1}".format(*os.path.splitext(os.path.basename(defines["setupname"]))),
+        )
+        defines["setupname"] = setupName
         return self.__createAppX(defines) and CodeSign.signWindows([setupName])
 
     def createPackage(self):
         defines = self.setDefaults(self.defines)
 
         if not "executable" in defines:
-            CraftCore.log.error("Please add self.defines['shortcuts'] to the installer defines. e.g.\n"
-                                """self.defines["shortcuts"] = [{"name" : "Kate", "target":"bin/kate.exe", "description" : self.subinfo.description}]""")
+            CraftCore.log.error(
+                "Please add self.defines['shortcuts'] to the installer defines. e.g.\n"
+                """self.defines["shortcuts"] = [{"name" : "Kate", "target":"bin/kate.exe", "description" : self.subinfo.description}]"""
+            )
             return False
         publisherId = CraftCore.settings.get("Packager", "AppxPublisherId", "")
         createStorePackage = bool(publisherId)
         utils.cleanDirectory(self.artifactsDir())
-        if not self.internalCreatePackage(defines, seperateSymbolFiles=createStorePackage, packageSymbols=False):
+        if not self.internalCreatePackage(defines):
             return False
 
         if not self.__prepareIcons(defines):
@@ -260,8 +296,7 @@ class AppxPackager(CollectionPackagerBase):
             appxUpload = (Path(self.packageDestinationDir()) / os.path.basename(defines["setupname"])).with_suffix(".appxupload")
             if appxUpload.exists():
                 appxUpload.unlink()
-            if not utils.compress(appxUpload, self.artifactsDir()):
+            if not utils.compress(appxUpload, [defines["setupname"], appxSym]):
                 return False
 
         return self.__createSideloadAppX(defines)
-

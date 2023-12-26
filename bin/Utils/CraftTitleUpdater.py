@@ -2,8 +2,8 @@ import threading
 import time
 
 import utils
-
 from CraftCore import CraftCore
+
 
 class CraftTitleUpdater(object):
     def __init__(self):
@@ -23,7 +23,7 @@ class CraftTitleUpdater(object):
         utils.OsUtils.setConsoleTitle(str(self))
 
     def run(self):
-        while (self.doUpdateTitle):
+        while self.doUpdateTitle:
             self.updateTitle()
             time.sleep(10)
 
@@ -33,8 +33,7 @@ class CraftTitleUpdater(object):
         if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
             return
         self.doUpdateTitle = True
-        tittleThread = threading.Thread(target=self.run)
-        tittleThread.setDaemon(True)
+        tittleThread = threading.Thread(target=self.run, daemon=True)
         tittleThread.start()
 
     def stop(self):
@@ -42,10 +41,10 @@ class CraftTitleUpdater(object):
             CraftCore.log.info(self.dynamicStopMessage())
         self.doUpdateTitle = False
 
-
     @staticmethod
     def usePackageProgressTitle(packages):
         initialSize = len(packages)
+
         def title():
             if not packages:
                 CraftTitleUpdater.instance.dynamicMessage = None
@@ -57,5 +56,6 @@ class CraftTitleUpdater(object):
             if not packages:
                 return ""
             return f"Craft stopped with out completing {[x.path for x in packages]}"
+
         CraftTitleUpdater.instance.dynamicMessage = title
         CraftTitleUpdater.instance.dynamicStopMessage = stopMessage

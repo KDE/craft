@@ -22,12 +22,11 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 import io
-
 from pathlib import Path
 
 from Packager.PackagerBase import *
-
 from shells import Powershell
+
 
 class DesktopEntry(PackagerBase):
     def createPackage(self):
@@ -38,28 +37,50 @@ class DesktopEntry(PackagerBase):
             targetBundle = Path(self.getMacAppPath(defines, root / "Applications"))
             targetPlist = targetBundle / "Contents/Info.plist"
             with io.StringIO() as binaryLog:
-                utils.system(["defaults", "read", targetPlist, "CFBundleExecutable"], stdout=binaryLog)
+                utils.system(
+                    ["defaults", "read", targetPlist, "CFBundleExecutable"],
+                    stdout=binaryLog,
+                )
                 targetBinary = binaryLog.getvalue().strip()
             with io.StringIO() as iconLog:
-                utils.system(["defaults", "read", targetPlist, "CFBundleIconFile"], stdout=iconLog)
+                utils.system(
+                    ["defaults", "read", targetPlist, "CFBundleIconFile"],
+                    stdout=iconLog,
+                )
                 targetIcon = iconLog.getvalue().strip()
             if not targetBinary:
                 return False
             # install shim to allow invocation of the bunde from the craft env
-            if not utils.createShim(root / "bin" / defines["display_name"],
-                    targetBundle / "Contents/MacOS" / targetBinary , useAbsolutePath=True):
+            if not utils.createShim(
+                root / "bin" / defines["display_name"],
+                targetBundle / "Contents/MacOS" / targetBinary,
+                useAbsolutePath=True,
+            ):
                 return False
             targetShimBundle = Path("/Applications/Craft", f"{craftName} {defines['display_name']}.app")
             shim = targetShimBundle / "Contents/MacOS" / targetBinary
-            if not utils.createDir(targetShimBundle/ "Contents/MacOS"):
+            if not utils.createDir(targetShimBundle / "Contents/MacOS"):
                 return False
             if not utils.createDir(targetShimBundle / "Contents/Resources"):
                 return False
-            if not utils.createShim(shim, sys.executable, [CraftCore.standardDirs.craftBin()/  "craft.py", "--run-detached", targetBundle / "Contents/MacOS" / targetBinary ], useAbsolutePath=True):
+            if not utils.createShim(
+                shim,
+                sys.executable,
+                [
+                    CraftCore.standardDirs.craftBin() / "craft.py",
+                    "--run-detached",
+                    targetBundle / "Contents/MacOS" / targetBinary,
+                ],
+                useAbsolutePath=True,
+            ):
                 return False
-            if not utils.copyFile(targetPlist, targetShimBundle /"Contents/Info.plist", linkOnly=False):
+            if not utils.copyFile(targetPlist, targetShimBundle / "Contents/Info.plist", linkOnly=False):
                 return False
-            if targetIcon and not utils.copyFile(targetBundle / "Contents/Resources" / targetIcon, targetShimBundle / "Contents/Resources" / targetIcon, linkOnly=False):
+            if targetIcon and not utils.copyFile(
+                targetBundle / "Contents/Resources" / targetIcon,
+                targetShimBundle / "Contents/Resources" / targetIcon,
+                linkOnly=False,
+            ):
                 return False
         elif CraftCore.compiler.isWindows:
             shortcuts = defines["shortcuts"] or []
@@ -69,10 +90,26 @@ class DesktopEntry(PackagerBase):
             for shortcut in shortcuts:
                 shim = CraftCore.standardDirs.craftRoot() / "wrapper" / shortcut["name"]
                 target = CraftCore.standardDirs.craftRoot() / shortcut["target"]
-                if not utils.createShim(shim, sys.executable, [CraftCore.standardDirs.craftBin() / "craft.py", "--run-detached", target], guiApp=True):
+                if not utils.createShim(
+                    shim,
+                    sys.executable,
+                    [
+                        CraftCore.standardDirs.craftBin() / "craft.py",
+                        "--run-detached",
+                        target,
+                    ],
+                    guiApp=True,
+                ):
                     return False
-                if not utils.installShortcut(f"{craftName}/{shortcut['name']} {craftName}", shim, target.parent,
-                                             os.path.join(CraftCore.standardDirs.craftRoot(), shortcut["target"]),
-                                             shortcut.get("desciption", f"{shortcut['name']} from {CraftCore.standardDirs.craftRoot()}")):
+                if not utils.installShortcut(
+                    f"{craftName}/{shortcut['name']} {craftName}",
+                    shim,
+                    target.parent,
+                    os.path.join(CraftCore.standardDirs.craftRoot(), shortcut["target"]),
+                    shortcut.get(
+                        "desciption",
+                        f"{shortcut['name']} from {CraftCore.standardDirs.craftRoot()}",
+                    ),
+                ):
                     return False
         return True

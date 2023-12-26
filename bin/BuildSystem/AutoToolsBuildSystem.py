@@ -1,39 +1,49 @@
 # -*- coding: utf-8 -*-
 # definitions for the autotools build system
 
+import glob
+import os
+import stat
+from pathlib import Path
+
+import utils
 from BuildSystem.BuildSystemBase import BuildSystemBase
+from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from shells import BashShell
-import utils
 from Utils.Arguments import Arguments
-
-import os
-import glob
-import stat
-
-from pathlib import Path
 
 
 class AutoToolsBuildSystem(BuildSystemBase):
     def __init__(self):
         BuildSystemBase.__init__(self, "autotools")
         self._shell = BashShell()
-        self.platform = ""# hope for auto detection
-        if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative() and CraftCore.compiler.isX86():
+        self.platform = ""  # hope for auto detection
+        if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative() and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
             self.platform = Arguments(["--host=i686-pc-linux-gnu"])
         elif CraftCore.compiler.isWindows:
-            if CraftCore.compiler.isX86():
-                self.platform = Arguments(["--host=i686-w64-mingw32", "--build=i686-w64-mingw32", "--target=i686-w64-mingw32"])
+            if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
+                self.platform = Arguments(
+                    [
+                        "--host=i686-w64-mingw32",
+                        "--build=i686-w64-mingw32",
+                        "--target=i686-w64-mingw32",
+                    ]
+                )
             else:
-                self.platform = Arguments(["--host=x86_64-w64-mingw32", "--build=x86_64-w64-mingw32", "--target=x86_64-w64-mingw32"])
+                self.platform = Arguments(
+                    [
+                        "--host=x86_64-w64-mingw32",
+                        "--build=x86_64-w64-mingw32",
+                        "--target=x86_64-w64-mingw32",
+                    ]
+                )
         elif CraftCore.compiler.isAndroid:
-            if CraftCore.compiler.architecture == "arm":
-                self.platform = Arguments(["--host=arm-linux-androideabi"])
-            elif CraftCore.compiler.architecture == "arm64":
+            if CraftCore.compiler.architecture == CraftCompiler.Architecture.arm64:
                 self.platform = Arguments(["--host=aarch64-linux-android"])
             else:
-                self.platform = Arguments([f"--host={CraftCore.compiler.architecture}-linux-android"])
+                self.platform = Arguments([f"--host={CraftCore.compiler.androidArchitecture}-linux-android"])
 
     @property
     def makeProgram(self):
@@ -64,7 +74,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
         env = {"CLICOLOR_FORCE": None}
         if self.supportsCCACHE:
-            cxx = CraftCore.standardDirs.craftRoot()/ "dev-utils/ccache/bin" / Path(os.environ["CXX"]).name
+            cxx = CraftCore.standardDirs.craftRoot() / "dev-utils/ccache/bin" / Path(os.environ["CXX"]).name
             if CraftCore.compiler.isWindows and not cxx.suffix:
                 cxx = Path(str(cxx) + CraftCore.compiler.executableSuffix)
             if cxx.exists():
@@ -91,37 +101,39 @@ class AutoToolsBuildSystem(BuildSystemBase):
                         if aclocalDir.is_dir():
                             includes += [f"-I{self.shell.toNativePath(aclocalDir)}"]
                     includesArgs += includes
-                if not self.shell.execute(self.sourceDir(), "autoreconf", Arguments(self.subinfo.options.configure.autoreconfArgs) + includesArgs):
+                if not self.shell.execute(
+                    self.sourceDir(),
+                    "autoreconf",
+                    Arguments(self.subinfo.options.configure.autoreconfArgs) + includesArgs,
+                ):
                     return False
 
             return self.shell.execute(self.buildDir(), configure, self.configureOptions(self))
 
-
     def make(self, dummyBuildType=None):
         """Using the *make program"""
         self.enterBuildDir()
-
-        command = self.makeProgram
-        args = self.makeOptions(self.subinfo.options.make.args)
-
         # adding Targets later
         if not self.subinfo.options.useShadowBuild:
             if not self.shell.execute(self.buildDir(), self.makeProgram, "clean"):
                 return False
-        return self.shell.execute(self.buildDir(), command, args)
+        return self.shell.execute(
+            self.buildDir(),
+            self.makeProgram,
+            self.makeOptions(self.subinfo.options.make.args),
+        )
 
     def install(self):
         """Using *make install"""
         self.cleanImage()
         self.enterBuildDir()
 
-        command = self.makeProgram
         args = self.makeOptions(self.subinfo.options.install.args)
 
         destDir = self.shell.toNativePath(self.installDir())
         args += [f"DESTDIR={destDir}"]
-        with utils.ScopedEnv({"DESTDIR" : destDir}):
-            if not self.shell.execute(self.buildDir(), command, args):
+        with utils.ScopedEnv({"DESTDIR": destDir}):
+            if not self.shell.execute(self.buildDir(), self.makeProgram, args):
                 return False
 
         # la files aren't relocatable and until now we lived good without them
@@ -130,17 +142,32 @@ class AutoToolsBuildSystem(BuildSystemBase):
             if not utils.deleteFile(laFile):
                 return False
 
-        return self._fixInstallPrefix(self.shell.toNativePath(self.installPrefix()))
+        if not self._fixInstallPrefix(self.shell.toNativePath(self.installPrefix())):
+            return False
+        if CraftCore.compiler.isMSVC():
+            # libtool produces intl.dll.lib while we expect intl.lib
+            lib = glob.glob(os.path.join(self.imageDir(), "lib/**/*.dll.lib"), recursive=True)
+            for src in lib:
+                src = Path(src)
+                dest = src.with_suffix("").with_suffix(".lib")
+                if not dest.exists():
+                    if not utils.moveFile(src, dest):
+                        return False
+        return True
 
     def unittest(self):
         """running unittests"""
-        return self.shell.execute(self.buildDir(), self.makeProgram, "check")
+        return self.shell.execute(self.buildDir(), self.makeProgram, self.makeOptions("check"))
 
     def configureOptions(self, defines=""):
         """returns default configure options"""
         options = BuildSystemBase.configureOptions(self)
         prefix = self.shell.toNativePath(self.installPrefix())
-        options += [f"--prefix={prefix}", f"--libdir={prefix}/lib"]
+        options += [f"--prefix={prefix}"]
+        if not self.subinfo.options.configure.noCacheFile:
+            options += [f"--cache-file={self.shell.toNativePath(self.buildDir())}/config.cache"]
+        if not self.subinfo.options.configure.noLibDir:
+            options += [f"--libdir={prefix}/lib"]
         if OsUtils.isWin() and not self.subinfo.options.configure.noDataRootDir:
             options += [f"--datarootdir={self.shell.toNativePath(CraftCore.standardDirs.locations.data)}"]
         options += self.platform

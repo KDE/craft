@@ -1,7 +1,6 @@
 import argparse
 import configparser
 import os
-from pathlib import Path
 import platform
 import re
 import shutil
@@ -9,10 +8,12 @@ import subprocess
 import sys
 import urllib.parse
 import urllib.request
+from pathlib import Path
 
 if not platform.machine().endswith("64"):
     print(f"Craft requires a 64bit operating system. You are using: {platform.machine()}")
     exit(1)
+
 
 class CraftBootstrap(object):
     def __init__(self, craftRoot, branch, dryRun):
@@ -21,66 +22,70 @@ class CraftBootstrap(object):
         self.dryRun = dryRun
 
         if not dryRun:
-            with open(os.path.join(craftRoot, f"craft-{branch}", "CraftSettings.ini.template"), "rt", encoding="UTF-8") as ini:
+            with open(
+                os.path.join(craftRoot, f"craft-tmp", "CraftSettings.ini.template"),
+                "rt",
+                encoding="UTF-8",
+            ) as ini:
                 self.settings = ini.read().splitlines()
         else:
             with open(dryRun, "rt", encoding="UTF-8") as ini:
                 self.settings = ini.read().splitlines()
 
-
     @staticmethod
     def isWin():
-        return os.name == 'nt'
+        return os.name == "nt"
 
     @staticmethod
     def isUnix():
-        return os.name == 'posix'
+        return os.name == "posix"
 
     @staticmethod
     def isFreeBSD():
-        return CraftBootstrap.isUnix() and platform.system() == 'FreeBSD'
+        return CraftBootstrap.isUnix() and platform.system() == "FreeBSD"
 
     @staticmethod
     def isMac():
-        return CraftBootstrap.isUnix() and platform.system() == 'Darwin'
+        return CraftBootstrap.isUnix() and platform.system() == "Darwin"
 
     @staticmethod
     def isAndroid():
-        return 'ANDROID_SDK_ROOT' in os.environ
+        return "ANDROID_SDK_ROOT" in os.environ
 
     @staticmethod
     def isLinux():
-        return CraftBootstrap.isUnix() and platform.system() == 'Linux' and not CraftBootstrap.isAndroid()
+        return CraftBootstrap.isUnix() and platform.system() == "Linux" and not CraftBootstrap.isAndroid()
 
     @staticmethod
     def printProgress(percent):
         width, _ = shutil.get_terminal_size((80, 20))
         width -= 20  # margin
         times = int(width / 100 * percent)
-        sys.stdout.write("\r[{progress}{space}]{percent}%".format(progress="#" * times, space=" " * (width - times),
-                                                                  percent=percent))
+        sys.stdout.write("\r[{progress}{space}]{percent}%".format(progress="#" * times, space=" " * (width - times), percent=percent))
         sys.stdout.flush()
 
     @staticmethod
     def promptForChoice(title, choices, default=None, returnDefaultWithoutPrompt=False):
+        CraftBootstrap.startSection()
         if not default:
             if isinstance(choices[0], tuple):
                 default, _ = choices[0]
             else:
                 default = choices[0]
-                
+
         if returnDefaultWithoutPrompt:
             return default
-                
-        selection = ", ".join(["[{index}] {value}".format(index=index,
-                                                          value=value[0] if isinstance(value, tuple) else value)
-                               for index, value in enumerate(choices)])
-        promp = "{selection} (Default is {default}): ".format(selection=selection,
-                                                              default=default[0] if isinstance(default,
-                                                                                               tuple) else default)
+
+        selection = ", ".join(
+            ["[{index}] {value}".format(index=index, value=value[0] if isinstance(value, tuple) else value) for index, value in enumerate(choices)]
+        )
+        promp = "{selection} (Default is {default}): ".format(
+            selection=selection,
+            default=default[0] if isinstance(default, tuple) else default,
+        )
 
         print()
-        while (True):
+        while True:
             print(title)
             choice = input(promp)
             try:
@@ -101,7 +106,12 @@ class CraftBootstrap(object):
                 else:
                     return choices[choiceInt]
 
-    def setSettignsValue(self, section, key, value):
+    @staticmethod
+    def startSection():
+        width, _ = shutil.get_terminal_size((80, 20))
+        print("-" * width)
+
+    def setSettingsValue(self, section, key, value):
         reKey = re.compile(r"^[\#;]?\s*{key}\s*=.*$".format(key=key), re.IGNORECASE)
         reSection = re.compile(r"^\[(.*)\]$".format(section=section))
         inSection = False
@@ -112,21 +122,22 @@ class CraftBootstrap(object):
             elif inSection and reKey.match(line):
                 self.settings[i] = f"{key} = {value}"
                 return
-        print(f"Unable to locate\n"
-              f"\t[{section}]\n"
-              f"\t{key}")
+        print(f"Unable to locate\n" f"\t[{section}]\n" f"\t{key}")
         exit(1)
 
     def writeSettings(self):
         if not os.path.isdir(os.path.join(self.craftRoot, "etc")):
             os.makedirs(os.path.join(self.craftRoot, "etc"), exist_ok=True)
         if not self.dryRun:
-            with open(os.path.join(self.craftRoot, "etc", "CraftSettings.ini"), "wt+", encoding="UTF-8") as out:
+            with open(
+                os.path.join(self.craftRoot, "etc", "CraftSettings.ini"),
+                "wt+",
+                encoding="UTF-8",
+            ) as out:
                 out.write("\n".join(self.settings))
         else:
             with open(self.dryRun + ".dry_run", "wt+", encoding="UTF-8") as out:
                 out.write("\n".join(self.settings))
-
 
     @staticmethod
     def downloadFile(url, destdir, filename=None):
@@ -155,13 +166,23 @@ class CraftBootstrap(object):
 
     @staticmethod
     def enableANSISupport():
-        subprocess.run([sys.executable, "-m", "pip", "install", "--user", "--upgrade", "coloredlogs"])
+        subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "pip",
+                "install",
+                "--user",
+                "--upgrade",
+                "coloredlogs",
+            ]
+        )
 
 
 def run(args, command):
     root = os.path.join(args.prefix, "craft")
     if not os.path.isdir(root):
-        root = os.path.join(args.prefix, f"craft-{args.branch}")
+        root = os.path.join(args.prefix, f"craft-tmp")
     script = os.path.join(root, "bin", "craft.py")
     command = [sys.executable, script] + command
     commandStr = " ".join(command)
@@ -170,35 +191,75 @@ def run(args, command):
         if not subprocess.run(command).returncode == 0:
             exit(1)
 
-def getABI(args):
+
+def getABI(args, qtMajorVersion):
+    arch = "x86_64"
+    abi = None
     if CraftBootstrap.isWin():
         platform = "windows"
-        abi, compiler = CraftBootstrap.promptForChoice("Select compiler",
-                                                       [("Mingw-w64", ("mingw", "gcc")),
-                                                        ("Microsoft Visual Studio 2019", ("msvc2019", "cl")),
-                                                        ("Microsoft Visual Studio 2022", ("msvc2022", "cl")),
-                                                        ], "Microsoft Visual Studio 2019", returnDefaultWithoutPrompt=args.use_defaults)
-        abi += f"_64"
+        msvcVer = "Microsoft Visual Studio 2019" if qtMajorVersion == "5" else "Microsoft Visual Studio 2022"
+        abi, compiler = CraftBootstrap.promptForChoice(
+            "Select compiler",
+            [("Mingw-w64", (None, "gcc")), (msvcVer, ("msvc2019" if qtMajorVersion == "5" else "msvc2022", "cl"))],
+            msvcVer,
+            returnDefaultWithoutPrompt=args.use_defaults,
+        )
 
     elif CraftBootstrap.isAndroid():
         platform = "android"
         compiler = "clang"
-        abi = CraftBootstrap.promptForChoice("Select target architecture",
-                                             ["arm", "arm64", "x86", "x86_64"], "arm64", returnDefaultWithoutPrompt=args.use_defaults)
+        arch = CraftBootstrap.promptForChoice(
+            "Select target architecture",
+            ["arm32", "arm64", "x86_32", "x86_64"],
+            "arm64",
+            returnDefaultWithoutPrompt=args.use_defaults,
+        )
     elif CraftBootstrap.isUnix():
         if CraftBootstrap.isMac():
             platform = "macos"
             compiler = "clang"
+            arch = CraftBootstrap.promptForChoice(
+                "Select target architecture",
+                ["x86_64", "arm64"],
+                "x86_64",
+                returnDefaultWithoutPrompt=args.use_defaults,
+            )
         else:
             if CraftBootstrap.isLinux():
                 platform = "linux"
             elif CraftBootstrap.isFreeBSD():
                 platform = "freebsd"
-            compiler = CraftBootstrap.promptForChoice("Select compiler",
-                                                      ["gcc", "clang"], returnDefaultWithoutPrompt=args.use_defaults)
-        abi = "64"
+            compiler = CraftBootstrap.promptForChoice(
+                "Select compiler",
+                ["gcc", "clang"],
+                returnDefaultWithoutPrompt=args.use_defaults,
+            )
+    if abi:
+        return f"{platform}-{compiler}-{abi}-{arch}"
+    else:
+        return f"{platform}-{compiler}-{arch}"
 
-    return f"{platform}-{abi}-{compiler}"
+
+def windowsSetup():
+    # Used on Windows to generate shorter paths in order to workaround issues with some tools
+    if not CraftBootstrap.isWin():
+        return "", False
+
+    CraftBootstrap.startSection()
+    shortPath = Path(Path(args.prefix).drive) / "/_"
+    shortPath = (
+        shortPath
+        if args.use_defaults
+        else input(f"Craft will use {shortPath} to create shorter path during builds.\n" f"Specify short path root: [{shortPath}]: ") or shortPath
+    )
+    installShortCut = CraftBootstrap.promptForChoice(
+        "Do you want to install a StartMenu entry",
+        [("Yes", True), ("No", False)],
+        default="Yes",
+        returnDefaultWithoutPrompt=args.use_defaults,
+    )
+    return shortPath, installShortCut
+
 
 def setUp(args):
     while not args.prefix:
@@ -210,55 +271,79 @@ def setUp(args):
         os.makedirs(args.prefix)
 
     for d in os.listdir(args.prefix):
-        if d != "download":#generated by the windows script
+        if d != "download":  # generated by the windows script
             print("Error: you are trying to install Craft into an non empty directory")
             exit(1)
 
-
     print("Welcome to the Craft setup wizard!")
     print(f"Craft will be installed to: {args.prefix}")
-    abi = getABI(args)
+    qtMajorVersion = CraftBootstrap.promptForChoice(
+        "Select the version of Qt you want to use (Craft can't mix Qt5 and Qt6). This will change the cache version used by craft",
+        [("Qt5", "5"), ("Qt6", "6")],
+        default="Qt5",
+        returnDefaultWithoutPrompt=args.use_defaults,
+    )
 
-    useANSIColor = CraftBootstrap.promptForChoice("Do you want to enable the support for colored logs",
-                                                [("Yes", True), ("No", False)],
-                                                        default="Yes", returnDefaultWithoutPrompt=args.use_defaults)
+    abi = getABI(args, qtMajorVersion)
+
+    shortPath, installShortCut = windowsSetup()
+
+    useANSIColor = CraftBootstrap.promptForChoice(
+        "Do you want to enable the support for colored logs",
+        [("Yes", True), ("No", False)],
+        default="Yes",
+        returnDefaultWithoutPrompt=args.use_defaults,
+    )
     if useANSIColor:
         CraftBootstrap.enableANSISupport()
 
-    installShortCut = False
-    if CraftBootstrap.isWin():
-        installShortCut = CraftBootstrap.promptForChoice("Do you want to install a StartMenu entry",
-                                                         [("Yes", True), ("No", False)],
-                                                         default="Yes", returnDefaultWithoutPrompt=args.use_defaults)
     if not args.dry_run:
         if args.localDev:
-            shutil.copytree(args.localDev, os.path.join(args.prefix, f"craft-{args.branch}"),
-                            ignore=shutil.ignore_patterns(".git"))
+            shutil.copytree(
+                args.localDev,
+                os.path.join(args.prefix, f"craft-tmp"),
+                ignore=shutil.ignore_patterns(".git"),
+            )
             print("Getting code from local {}".format(args.localDev))
         else:
-            CraftBootstrap.downloadFile(f"https://github.com/KDE/craft/archive/{args.branch}.zip",
-                                        os.path.join(args.prefix, "download"),
-                                        f"craft-{args.branch}.zip")
-            shutil.unpack_archive(os.path.join(args.prefix, "download", f"craft-{args.branch}.zip"), args.prefix)
+            branchName = f"craft-{args.branch.replace('/', '-')}"
+            zipName = f"{branchName}.zip"
+            CraftBootstrap.downloadFile(
+                f"https://invent.kde.org/packaging/craft/-/archive/{args.branch}/{zipName}",
+                os.path.join(args.prefix, "download"),
+                zipName,
+            )
+            shutil.unpack_archive(
+                os.path.join(args.prefix, "download", zipName),
+                args.prefix,
+            )
+            shutil.move(os.path.join(args.prefix, branchName), os.path.join(args.prefix, "craft-tmp"))
 
     boot = CraftBootstrap(args.prefix, args.branch, args.dry_run)
-    boot.setSettignsValue("Paths", "Python", os.path.dirname(sys.executable))
-    boot.setSettignsValue("General", "ABI", abi)
-    boot.setSettignsValue("General", "AllowAnsiColor", useANSIColor)
+    boot.setSettingsValue("Paths", "Python", os.path.dirname(sys.executable))
+    boot.setSettingsValue("General", "ABI", abi)
+    boot.setSettingsValue("General", "AllowAnsiColor", useANSIColor)
     py = shutil.which("py")
     if py:
         py2 = subprocess.getoutput(f"""{py} -2 -c "import sys; print(sys.executable)" """)
         if os.path.isfile(py2):
-            boot.setSettignsValue("Paths", "Python27", os.path.dirname(py2))
+            boot.setSettingsValue("Paths", "Python27", os.path.dirname(py2))
 
     if CraftBootstrap.isWin():
-        boot.setSettignsValue("Compile", "MakeProgram", "mingw32-make" if "mingw" in abi else "jom")
+        boot.setSettingsValue("Compile", "MakeProgram", "mingw32-make" if "mingw" in abi else "jom")
     else:
-        boot.setSettignsValue("Compile", "MakeProgram", "make")
+        boot.setSettingsValue("Compile", "MakeProgram", "make")
 
     if CraftBootstrap.isAndroid():
         # default to MinSizeRel on Android, as that's what we have cached there
-        boot.setSettignsValue("Compile", "BuildType", "MinSizeRel")
+        boot.setSettingsValue("Compile", "BuildType", "MinSizeRel")
+
+    boot.setSettingsValue("ShortPath", "JunctionDir", shortPath)
+
+    if qtMajorVersion == "6":
+        boot.setSettingsValue("Packager", "RepositoryUrl", "https://files.kde.org/craft/Qt6/")
+    else:
+        boot.setSettingsValue("Packager", "RepositoryUrl", "https://files.kde.org/craft/Qt5/")
 
     boot.writeSettings()
 
@@ -268,8 +353,8 @@ def setUp(args):
     cmd += ["craft"]
     run(args, cmd)
     if not args.dry_run:
-        shutil.rmtree(os.path.join(args.prefix, f"craft-{args.branch}"))
-    if installShortCut:
+        shutil.rmtree(os.path.join(args.prefix, f"craft-tmp"))
+    if installShortCut:  # Windows only
         run(args, ["craft-startmenu-entry"])
 
     # install toast notifications
@@ -277,6 +362,8 @@ def setUp(args):
         run(args, ["dev-utils/snoretoast"])
     elif CraftBootstrap.isMac():
         run(args, ["dev-utils/terminal-notifier"])
+
+    run(args, ["--set", f"qtMajorVersion={qtMajorVersion}", "libs/qt"])
 
     print("Setup complete")
     print()
@@ -294,10 +381,22 @@ if __name__ == "__main__":
     parser.add_argument("--prefix", action="store", help="The installation directory.")
     parser.add_argument("--branch", action="store", default="master", help="The branch to install")
     parser.add_argument("--verbose", action="store_true", help="The verbosity.")
-    parser.add_argument("--dry-run", action="store", help="Configure the passed CraftSettings.ini and exit.")
+    parser.add_argument(
+        "--dry-run",
+        action="store",
+        help="Configure the passed CraftSettings.ini and exit.",
+    )
     parser.add_argument("--version", action="version", version="%(prog)s master")
-    parser.add_argument("--localDev", action="store", help="Path to a local directory to use instead of fetching from github")
-    parser.add_argument("--use-defaults", action="store_true", help="Use all default options instead of asking")
+    parser.add_argument(
+        "--localDev",
+        action="store",
+        help="Path to a local directory to use instead of fetching from github",
+    )
+    parser.add_argument(
+        "--use-defaults",
+        action="store_true",
+        help="Use all default options instead of asking",
+    )
 
     args = parser.parse_args()
     if args.root:

@@ -1,9 +1,10 @@
 import os
-import zlib
 import subprocess
+import zlib
 
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
+
 
 class CraftShortPath(object):
     _useShortpaths = OsUtils.isWin()
@@ -11,7 +12,7 @@ class CraftShortPath(object):
 
     def __init__(self, path, createShortPath=None) -> None:
         self._longPath = path
-        self._shortPath = None # type: Path
+        self._shortPath = None  # type: Path
         if not createShortPath:
             self._createShortPathLambda = CraftShortPath._createShortPath
         else:
@@ -41,14 +42,14 @@ class CraftShortPath(object):
         if not CraftShortPath._useShortpaths:
             return longPath
         import utils
+
         utils.createDir(CraftCore.standardDirs.junctionsDir())
         longPath = OsUtils.toNativePath(longPath)
         path = CraftCore.standardDirs.junctionsDir() / hex(zlib.crc32(bytes(str(longPath), "UTF-8")))[2:]
         delta = len(str(longPath)) - len(str(path))
         if delta <= 0:
             CraftCore.debug.log.debug(f"Using junctions for {longPath} wouldn't save characters returning original path")
-            CraftCore.debug.log.debug(f"{longPath}\n"
-                                      f"{path}, gain: {delta}")
+            CraftCore.debug.log.debug(f"{longPath}\n" f"{path}, gain: {delta}")
             return longPath
         utils.createDir(longPath)
         if not os.path.isdir(path):
@@ -56,7 +57,12 @@ class CraftShortPath(object):
                 ok = utils.createSymlink(longPath, path, useAbsolutePath=True, targetIsDirectory=True)
             else:
                 # note: mklink is a CMD command => needs shell
-                ok = utils.system(["mklink", "/J", path, longPath], shell=True, stdout=subprocess.DEVNULL, logCommand=False)
+                ok = utils.system(
+                    ["mklink", "/J", path, longPath],
+                    shell=True,
+                    stdout=subprocess.DEVNULL,
+                    logCommand=False,
+                )
 
             if not ok:
                 CraftCore.debug.log.critical(f"Could not create shortpath {path}, for {longPath}")
@@ -65,7 +71,5 @@ class CraftShortPath(object):
             if not os.path.samefile(path, longPath):
                 CraftCore.debug.log.critical(f"Existing short path {path}, did not match {longPath}")
                 return longPath
-        CraftCore.debug.log.debug(f"Mapped \n"
-                            f"{longPath} to\n"
-                            f"{path}, gained {delta}")
+        CraftCore.debug.log.debug(f"Mapped \n" f"{longPath} to\n" f"{path}, gained {delta}")
         return path

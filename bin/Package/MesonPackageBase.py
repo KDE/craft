@@ -22,12 +22,11 @@
 # SUCH DAMAGE.
 from BuildSystem.MesonBuildSystem import *
 from Package.PackageBase import *
-from Packager.TypePackager import *
+from Packager.TypePackager import TypePackager
 from Source.MultiSource import *
 
 
 class MesonPackageBase(PackageBase, MultiSource, MesonBuildSystem, TypePackager):
-
     def __init__(self):
         CraftCore.log.debug("MesonPackageBase.__init__ called")
         PackageBase.__init__(self)

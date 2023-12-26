@@ -2,10 +2,11 @@ import ctypes
 import os
 import subprocess
 
+import utils
+from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from Notifier.NotificationInterface import *
-from CraftCore import CraftCore
-import utils
+
 
 class Snore(NotificationInterface):
     def __init__(self):
@@ -17,16 +18,32 @@ class Snore(NotificationInterface):
             snore = CraftCore.cache.findApplication("snoresend")
             if not snore:
                 return
-            command = [snore, "-t", title, "-m", message, "-i", self.icon, "-a", "Craft", "--silent"]
+            command = [
+                snore,
+                "-t",
+                title,
+                "-m",
+                message,
+                "-i",
+                self.icon,
+                "-a",
+                "Craft",
+                "--silent",
+            ]
             if alertClass:
                 command += ["-c", alertClass]
             if OsUtils.isWin():
-                command += ["--bring-window-to-front", str(ctypes.windll.kernel32.GetConsoleWindow())]
+                command += [
+                    "--bring-window-to-front",
+                    str(ctypes.windll.kernel32.GetConsoleWindow()),
+                ]
             CraftCore.log.debug(command)
-            subprocess.Popen(command,
-                            stdout=subprocess.DEVNULL,
-                            stderr=subprocess.DEVNULL,
-                            cwd=CraftCore.standardDirs.craftRoot())  # make sure that nothing is spawned in a build dir
+            subprocess.Popen(
+                command,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                cwd=CraftCore.standardDirs.craftRoot(),
+            )  # make sure that nothing is spawned in a build dir
         except Exception as e:
             CraftCore.log.debug(e)
             return

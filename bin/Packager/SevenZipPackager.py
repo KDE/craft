@@ -33,9 +33,13 @@
 import json
 import subprocess
 
-from Packager.PackagerBase import *
-from Utils import CraftHash
+from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
+from Package.PackageBase import InitGuard
+from Packager.PackagerBase import PackagerBase
+from Utils import CraftHash
+from Utils.CraftManifest import CraftManifest, FileType
+
 
 class SevenZipPackager(PackagerBase):
     """Packager using the 7za command line tool from the dev-utils/7zip package"""
@@ -54,8 +58,70 @@ class SevenZipPackager(PackagerBase):
         else:
             dstpath = self.packageDestinationDir()
 
-        if not self._createArchive(self.binaryArchiveName(fileType=self.archiveExtension, includePackagePath=cacheMode, includeTimeStamp=cacheMode), self.imageDir(), dstpath):
-            return False
-        if not self.subinfo.options.package.packSources and CraftCore.settings.getboolean("Packager", "PackageSrc", "True"):
-            return self._createArchive(self.binaryArchiveName("-src", fileType=self.archiveExtension, includePackagePath=cacheMode, includeTimeStamp=cacheMode), self.sourceDir(), dstpath)
+        files = [
+            (
+                FileType.Binary,
+                self.binaryArchiveName(
+                    fileType=self.archiveExtension,
+                    includePackagePath=cacheMode,
+                    includeTimeStamp=cacheMode,
+                ),
+                self.imageDir(),
+            )
+        ]
+
+        if (
+            CraftCore.settings.getboolean("Packager", "PackageDebugSymbols", False)
+            and self.symbolsImageDir().exists()
+            and any(self.symbolsImageDir().iterdir())
+        ):
+            files += [
+                (
+                    FileType.Debug,
+                    self.binaryArchiveName(
+                        "-dbg",
+                        fileType=self.archiveExtension,
+                        includePackagePath=cacheMode,
+                        includeTimeStamp=cacheMode,
+                    ),
+                    self.symbolsImageDir(),
+                )
+            ]
+
+        if self.subinfo.options.package.packSources and CraftCore.settings.getboolean("Packager", "PackageSrc", "True") and self.sourceDir().exists():
+            files += [
+                (
+                    FileType.Source,
+                    self.binaryArchiveName(
+                        "-src",
+                        fileType=self.archiveExtension,
+                        includePackagePath=cacheMode,
+                        includeTimeStamp=cacheMode,
+                    ),
+                    self.sourceDir(),
+                )
+            ]
+
+        for _, archive, sourceDir in files:
+            if not self._createArchive(archive, sourceDir, dstpath, createDigests=not cacheMode):
+                return False
+
+        if cacheMode:
+            if CraftCore.settings.getboolean("ContinuousIntegration", "UpdateRepository", False):
+                manifestUrls = [self.cacheRepositoryUrls()[0]]
+            else:
+                CraftCore.log.warning(f'Creating new cache, if you want to extend an existing cache, set "[ContinuousIntegration]UpdateRepository = True"')
+                manifestUrls = None
+
+            manifestLocation = dstpath / "manifest.json"
+            manifest = CraftManifest.load(manifestLocation, urls=manifestUrls)
+            entry = manifest.get(str(self))
+            package = entry.addBuild(self.version, self.subinfo.options.dynamic, revision=self.sourceRevision())
+            for type, archiveName, _ in files:
+                package.addFile(
+                    type,
+                    archiveName,
+                    CraftHash.digestFile(dstpath / archiveName, CraftHash.HashAlgorithm.SHA256),
+                )
+            manifest.dump(manifestLocation)
         return True

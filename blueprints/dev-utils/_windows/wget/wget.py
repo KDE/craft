@@ -20,9 +20,13 @@ from Package.BinaryPackageBase import *
 class Package(BinaryPackageBase):
     def __init__(self):
         BinaryPackageBase.__init__(self)
+        self.subinfo.shelveAble = False
 
     def postInstall(self):
-        return utils.createShim(self.imageDir() / "dev-utils/bin/wget.exe", self.imageDir() / "dev-utils/wget/bin/wget.exe")
+        return utils.createShim(
+            self.imageDir() / "dev-utils/bin/wget.exe",
+            self.imageDir() / "dev-utils/wget/bin/wget.exe",
+        )
 
     def postQmerge(self):
         CraftCore.cache.clear()
