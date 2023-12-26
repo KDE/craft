@@ -1,4 +1,11 @@
+import os
+from pathlib import Path
+
 import info
+import utils
+from CraftCore import CraftCore
+from Package.MakeFilePackageBase import MakeFilePackageBase
+from Source.GitSource import GitSource
 
 
 class subinfo(info.infoclass):
@@ -15,19 +22,16 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = f"[git]https://github.com/packagesdev/packages.git||v{ver}"
         self.description = "Integrated Packaging Environment for OS X"
         self.webpage = "https://github.com/packagesdev/packages"
-        self.defaultTarget = '1.2.10'
+        self.defaultTarget = "1.2.102"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
         self.buildDependencies["libs/libxml2"] = None
 
 
-from Package.MakeFilePackageBase import *
-
-
 class Package(MakeFilePackageBase):
     def __init__(self):
-        MakeFilePackageBase.__init__(self)
+        super().__init__()
         self.subinfo.options.fetch.checkoutSubmodules = True
         self.subinfo.options.useShadowBuild = False
 
