@@ -12,3 +12,8 @@ share/icons/.*
 # libs/qt6/qtbase: lib/objects-RelWithDebInfo/ExampleIconsPrivate_resources_1/.rcc/qrc_example_icons.cpp.o
 # libs/qt6/qtdeclarative: qml/Qt/test/controls/objects-RelWithDebInfo/QuickControlsTestUtilsPrivate_resources_1/.rcc/qrc_qmake_Qt_test_controls.cpp.o
 .*/objects-RelWithDebInfo/.*
+
+# gpg-wks-client exists in libexec and bin which are both merged to Contents/MacOS so this will cause a conflict
+# libexec/gpg-wks-client is a simple shell wrapper script to bin/gpg-wks-client so we ignore it to solve the problem
+# See https://github.com/gpg/gnupg/blob/6ddaf2be9f484eb7a38f2bda0bb70f2d7b4c4511/tools/Makefile.am#L208
+libexec/gpg-wks-client
