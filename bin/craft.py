@@ -292,7 +292,7 @@ def main(timer):
     parser.add_argument(
         "--version",
         action="version",
-        version=f"%(prog)s {CraftSetupHelper.SetupHelper.CraftVersion}",
+        version=f"%(prog)s",
     )
     parser.add_argument("packageNames", nargs=argparse.REMAINDER)
 
