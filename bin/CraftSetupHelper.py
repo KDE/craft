@@ -62,7 +62,6 @@ if not platform.machine().endswith("64"):
 
 
 class SetupHelper(object):
-    CraftVersion = "master"
     NeedsSetup = "KDEROOT" not in os.environ
 
     def __init__(self, args=None):
@@ -142,7 +141,6 @@ class SetupHelper(object):
             log(f"{name:20}: {value}")
 
         printRow("Craft", CraftCore.standardDirs.craftRoot())
-        printRow("Version", SetupHelper.CraftVersion)
         printRow("ABI", CraftCore.compiler)
         printRow("Download directory", CraftCore.standardDirs.downloadDir())
         printRow("Cache repository", ", ".join(CraftCore.settings.cacheRepositoryUrls()))
