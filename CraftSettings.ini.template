@@ -240,6 +240,17 @@ Enabled = False
 Protected = False
 ## Already sign the cache, this speeds up packaging on Windows as most deployed binaries won't need signing every time
 SignCache = ${CodeSigning:Enabled}
+## If the custom command is not empty it will be used instead of signtool; the
+## command can contain the placeholder %F; %F will be replaced with the name of
+## a (UTF-8 encoded) file listing the files to sign; if no placeholder is specified
+## then the files to sign will be appended to the custom command
+## Examples (where a.exe and b.dll shall be signed):
+## * WindowsCustomSignCommand = mysigntool.exe
+##   Craft runs "mysigntool.exe a.exe b.dll"
+## * WindowsCustomSignCommand = mysigntool.exe --files-from %F --sign
+##   Craft writes "a.exe" and "b.dll" to a text file, e.g. files.txt, and runs
+##   "mysigntool.exe --files-from files.txt --sign"
+#WindowsCustomSignCommand =
 #Certificate = C:\CraftRoot\mycert.pfx
 ## Attributes of the certificate's DN (aka Subject)
 CommonName = K Desktop Environment e. V.

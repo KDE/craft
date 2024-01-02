@@ -27,6 +27,7 @@ import re
 import secrets
 import shlex
 import subprocess
+import tempfile
 from pathlib import Path
 
 import utils
@@ -43,6 +44,14 @@ def signWindows(fileNames: [str]) -> bool:
         CraftCore.log.warning("Code signing is currently only supported on Windows")
         return True
 
+    customComand = CraftCore.settings.get("CodeSigning", "WindowsCustomSignCommand", "")
+    if customComand:
+        return __signWindowsWithCustomCommand(fileNames)
+    else:
+        return __signWindowsWithSignTool(fileNames)
+
+
+def __signWindowsWithSignTool(fileNames: [str]) -> bool:
     signTool = CraftCore.cache.findApplication("signtool", forceCache=True)
     if not signTool:
         env = SetupHelper.getMSVCEnv()
@@ -84,6 +93,35 @@ def signWindows(fileNames: [str]) -> bool:
     for args in utils.limitCommandLineLength(command, fileNames):
         if not utils.system(args, **kwargs):
             return False
+    return True
+
+
+def __signWindowsWithCustomCommand(fileNames: [str]) -> bool:
+    CraftCore.log.info(f"Signing with custom command")
+    cmd = shlex.split(customComand)
+    if "%F" in cmd:
+        filelistFile = None
+        try:
+            filelistContent = b"\n".join(name.encode() for name in fileNames)
+            filelistFile = tempfile.NamedTemporaryFile(prefix="sign-filelist-", delete=False)
+            filelistFile.write(filelistContent)
+            filelistFile.write(b"\n")
+            filelistFile.close()
+            cmd = [filelistFile.name if s == "%F" else s for s in cmd]
+            if not utils.system(cmd):
+                return False
+        finally:
+            if filelistFile is not None:
+                print(f"Deleting {filelistFile.name}")
+                try:
+                    os.unlink(filelistFile.name)
+                except FileNotFoundError:
+                    pass
+    else:
+        cmd += fileNames
+        if not utils.system(cmd):
+            return False
+
     return True
 
 
