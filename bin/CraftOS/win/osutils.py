@@ -1,6 +1,7 @@
 import ctypes
 import os
 import shutil
+import sys
 import tempfile
 import uuid
 from enum import IntFlag
@@ -129,7 +130,7 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
         CraftCore.log.info(f"Killing processes {name} in {prefix}")
         return shells.Powershell().execute(
             [
-                f"Get-Process '{name}' | Where-Object {{$_.Path -like '{prefix}*'}} |"
+                f"Get-Process '{name}' | Where-Object {{$_.Path -and [IO.Path]::GetFullPath($_.Path) -like '{prefix.absolute()}*' -and (-not [IO.Path]::GetFullPath($_.Path) -like '{Path(sys.executable).absolute()}')}} |"
                 f" %{{ Write-Output ('\tKilling: {{0}}' -f $_.Path); Stop-Process -Force $_;}}"
             ],
             logCommand=False,

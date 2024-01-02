@@ -185,15 +185,14 @@ def destroyCraftRoot() -> bool:
     settingsFiles = {"kdesettings.ini", "CraftSettings.ini", "BlueprintSettings.ini"}
     dirsToKeep = [
         CraftCore.standardDirs.downloadDir(),
-        os.path.join(CraftCore.standardDirs.craftBin(), ".."),
-        os.path.join(CraftCore.standardDirs.craftRoot(), "python"),
+        CraftCore.standardDirs.craftBin().parent,
         CraftCore.standardDirs.blueprintRoot(),
     ]
     # dirs with possible interesting sub dirs
     maybeKeepDir = [
         CraftCore.standardDirs.craftRoot(),
         CraftCore.standardDirs.etcDir(),
-        os.path.join(CraftCore.standardDirs.etcDir(), "blueprints"),  # might contain blueprintRoot
+        CraftCore.standardDirs.etcDir() / "blueprints",  # might contain blueprintRoot
     ]
 
     def deleteEntry(path):
