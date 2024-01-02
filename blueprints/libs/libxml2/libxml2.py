@@ -30,7 +30,7 @@ class subinfo(info.infoclass):
 
 class Package(CMakePackageBase):
     def __init__(self, **args):
-        CMakePackageBase.__init__(self)
+        super().__init__()
         self.subinfo.options.configure.args += [
             "-DLIBXML2_WITH_PYTHON=OFF",
             f"-DLIBXML2_WITH_ICU={'ON' if self.subinfo.options.isActive('libs/icu') else 'OFF'}",

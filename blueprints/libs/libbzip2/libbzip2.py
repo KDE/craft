@@ -19,10 +19,10 @@ class subinfo(info.infoclass):
 
 class Package(CMakePackageBase):
     def __init__(self):
-        CMakePackageBase.__init__(self)
+        super().__init__()
 
     def install(self):
-        ret = CMakePackageBase.install(self)
+        ret = super().install()
 
         # Install bunzip2 symlink to bzip2, the behavior is altered in bzip2.c code by checking the program name.
         # See https://gitlab.com/bzip2/bzip2/-/blob/master/CMakeLists.txt?ref_type=heads#L378

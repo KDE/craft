@@ -75,7 +75,7 @@ from Package.BinaryPackageBase import *
 
 class MsysPackage(BinaryPackageBase):
     def __init__(self):
-        BinaryPackageBase.__init__(self)
+        super().__init__()
 
     def postQmerge(self):
         return self.subinfo.updateMsys()
@@ -83,10 +83,10 @@ class MsysPackage(BinaryPackageBase):
 
 class UpdatePackage(VirtualPackageBase):
     def __init__(self):
-        VirtualPackageBase.__init__(self)
+        super().__init__()
 
     def install(self):
-        if not VirtualPackageBase.install(self):
+        if not super().install():
             return False
         return self.subinfo.updateMsys()
 

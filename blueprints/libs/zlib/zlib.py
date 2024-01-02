@@ -37,14 +37,14 @@ if CraftCore.compiler.isWindows:
 
     class Package(CMakePackageBase):
         def __init__(self, **args):
-            CMakePackageBase.__init__(self)
+            super().__init__()
             self.subinfo.options.configure.args += [f"-DINSTALL_PKGCONFIG_DIR={CraftCore.standardDirs.craftRoot() / 'lib/pkgconfig'}"]
 
 else:
 
     class Package(AutoToolsPackageBase):
         def __init__(self, **args):
-            AutoToolsPackageBase.__init__(self)
+            super().__init__()
             self.subinfo.options.configure.autoreconf = False
             self.subinfo.options.configure.noCacheFile = True
             self.supportsCCACHE = False

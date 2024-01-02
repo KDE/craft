@@ -42,11 +42,11 @@ if CraftCore.compiler.isMSVC():
 
     class Package(BinaryPackageBase):
         def __init__(self):
-            BinaryPackageBase.__init__(self)
+            super().__init__()
 
 else:
 
     class Package(AutoToolsPackageBase):
         def __init__(self):
-            AutoToolsPackageBase.__init__(self)
+            super().__init__()
             self.subinfo.options.configure.autoreconf = False

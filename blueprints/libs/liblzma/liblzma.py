@@ -51,16 +51,16 @@ from Package.MSBuildPackageBase import *
 
 class PackageMSBuild(MSBuildPackageBase):
     def __init__(self, **args):
-        MSBuildPackageBase.__init__(self)
+        super().__init__()
         self.subinfo.options.configure.projectFile = os.path.join(self.sourceDir(), "windows", "xz_win.sln")
         self.msbuildTargets = ["liblzma_dll"]
 
     def install(self):
-        if not MSBuildPackageBase.install(self, installHeaders=False):
+        if not super().install(installHeaders=False):
             return False
 
-        headerDir = os.path.join(self.sourceDir(), "src", "liblzma", "api")
-        includeDir = os.path.join(self.installDir(), "include")
+        headerDir = self.sourceDir() / "src/liblzma/api"
+        includeDir = self.installDir() / "include"
         header = glob.glob(os.path.join(headerDir, f"**/*.h"), recursive=True)
         for h in header:
             utils.copyFile(h, h.replace(headerDir, includeDir), linkOnly=False)
@@ -72,7 +72,7 @@ from Package.AutoToolsPackageBase import *
 
 class PackageAutotools(AutoToolsPackageBase):
     def __init__(self, **args):
-        AutoToolsPackageBase.__init__(self)
+        super().__init__()
         self.subinfo.options.configure.autoreconf = False
         self.subinfo.options.configure.args += ["--enable-shared", "--disable-static"]
         if not self.subinfo.options.dynamic.buildPrograms:

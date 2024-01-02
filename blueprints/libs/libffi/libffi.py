@@ -20,7 +20,7 @@ class subinfo(info.infoclass):
 
 class Package(AutoToolsPackageBase):
     def __init__(self):
-        AutoToolsPackageBase.__init__(self)
+        super().__init__()
         self.shell.useMSVCCompatEnv = True
         if CraftCore.compiler.isMSVC():
             wrapper = self.shell.toNativePath(self.sourceDir() / "msvcc.sh")
