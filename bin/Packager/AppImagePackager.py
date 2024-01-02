@@ -1,3 +1,5 @@
+import CraftCore
+import utils
 from Packager.CollectionPackagerBase import *
 
 
@@ -41,6 +43,35 @@ class AppImagePackager(CollectionPackagerBase):
             return False
         return True
 
+    def _fixRpath(self):
+        patchElf = CraftCore.standardDirs.craftRoot() / "dev-utils/bin/patchelf"
+        if not patchElf.exists():
+            CraftCore.log.info("Skipping elf patching during bootstrapping")
+            return True
+        for elfFile in utils.filterDirectoryContent(
+            self.archiveDir(),
+            lambda x, root: utils.isBinary(x.path),
+            lambda x, root: True,
+        ):
+            elfFile = Path(elfFile)
+            if elfFile.is_symlink():
+                continue
+            currentRpath = utils.getRpath(elfFile)
+            if currentRpath is None:
+                return False
+            if not currentRpath:
+                continue
+            newRpaths = currentRpath.copy()
+            rPathToRemove = str(CraftCore.standardDirs.craftRoot() / "lib")
+            if rPathToRemove in newRpaths:
+                newRpaths.remove(rPathToRemove)
+            # add the new prefix
+            # Path.relative_to(elfFile, walk_up=True) requires python 3.12
+            newRpaths.add(os.path.join("$ORIGIN", os.path.relpath(self.archiveDir() / "usr/lib", elfFile.parent)))
+            if not utils.updateRpath(elfFile, currentRpath, newRpaths):
+                return False
+        return True
+
     def createPackage(self):
         """create a package"""
         if not self.isLinuxdeployInstalled():
@@ -58,6 +89,9 @@ class AppImagePackager(CollectionPackagerBase):
         if etc.exists():
             if not utils.createSymlink(etc, archiveDir / "etc", useAbsolutePath=False, targetIsDirectory=True):
                 return False
+
+        if not self._fixRpath():
+            return False
         if "runenv" in defines:
             if not utils.createDir(archiveDir / "apprun-hooks"):
                 return False

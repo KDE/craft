@@ -356,17 +356,11 @@ class BuildSystemBase(CraftBase):
                 continue
             # replace the old prefix or add it if missing
             craftRpath = os.path.join(newPrefix, "lib")
-            with io.StringIO() as log:
-                if not utils.system([patchElf, "--print-rpath", f], stdout=log, stderr=subprocess.STDOUT, logCommand=False):
-                    if f.endswith(".cpp.o"):
-                        CraftCore.log.info("Ignoring rpath error on .o file. This is a workaround for Qt installing garbage.")
-                        continue
-                    elif "The input file is most likely statically linked" in log.getvalue():
-                        CraftCore.log.info("Ignoring rpath error on statically linked file.")
-                        continue
-                    else:
-                        return False
-                currentRpath = set(filter(None, log.getvalue().strip().split(":")))
+            currentRpath = utils.getRpath(f)
+            if currentRpath is None:
+                return False
+            if not currentRpath:
+                continue
             newRpath = currentRpath.copy()
             if self.subinfo.buildPrefix != newPrefix:
                 # remove the old prefix
@@ -375,10 +369,8 @@ class BuildSystemBase(CraftBase):
                     newRpath.remove(rPathToRemove)
             # add the new prefix
             newRpath.add(craftRpath)
-            if newRpath != currentRpath:
-                CraftCore.log.info(f"Updating rpath: {currentRpath} -> {newRpath}")
-                if not utils.system([patchElf, "--set-rpath", ":".join(newRpath), f], logCommand=False):
-                    return False
+            if not utils.updateRpath(f, currentRpath, newRpath):
+                return False
         return True
 
     def internalPostInstall(self):

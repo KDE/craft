@@ -1098,6 +1098,28 @@ def getLibraryDeps(path):
                 deps.append(match[1])
     return deps
 
+def getRpath(path : Path):
+    patchElf = CraftCore.standardDirs.craftRoot() / "dev-utils/bin/patchelf"
+    with io.StringIO() as log:
+        if not system([patchElf, "--print-rpath", path], stdout=log, stderr=subprocess.STDOUT, logCommand=False):
+            if path.endswith(".cpp.o"):
+                CraftCore.log.info("Ignoring rpath error on .o file. This is a workaround for Qt installing garbage.")
+                return {}
+            elif "The input file is most likely statically linked" in log.getvalue():
+                CraftCore.log.info("Ignoring rpath error on statically linked file.")
+                return {}
+            else:
+                return None
+        return set(filter(None, log.getvalue().strip().split(":")))
+
+def updateRpath(path : Path, oldRpath : set, newRpath : set):
+    patchElf = CraftCore.standardDirs.craftRoot() / "dev-utils/bin/patchelf"
+    if newRpath != oldRpath:
+        CraftCore.log.info(f"Updating rpath: {oldRpath} -> {newRpath}")
+        if not system([patchElf, "--set-rpath", ":".join(newRpath), path], logCommand=False):
+            return False
+    return True
+
 
 def regexFileFilter(filename: os.DirEntry, root: str, patterns: [re] = None) -> bool:
     """return False if file does not match pattern"""
