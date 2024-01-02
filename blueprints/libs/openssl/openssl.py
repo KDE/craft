@@ -86,10 +86,7 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["virtual/base"] = None
         self.buildDependencies["dev-utils/perl"] = None
         self.runtimeDependencies["libs/zlib"] = None
-        if CraftCore.compiler.isMinGW():
-            # TODO: remove when we drop < 1.1
-            self.buildDependencies["dev-utils/msys"] = None
-        elif CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.isMSVC():
             self.buildDependencies["dev-utils/nasm"] = None
 
 

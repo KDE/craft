@@ -30,7 +30,6 @@ class subinfo(info.infoclass):
         self.defaultTarget = "3.11.5"
 
     def setDependencies(self):
-        # self.buildDependencies["dev-utils/msys"] = None
         self.buildDependencies["dev-utils/automake"] = None
         self.runtimeDependencies["libs/libbzip2"] = None
         self.runtimeDependencies["libs/expat"] = None

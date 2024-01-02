@@ -86,7 +86,6 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["virtual/base"] = None
         self.runtimeDependencies["libs/iconv"] = None
         self.runtimeDependencies["libs/libxml2"] = None
-        self.buildDependencies["dev-utils/msys"] = None
 
 
 class Package(AutoToolsPackageBase):

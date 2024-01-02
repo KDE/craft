@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.runtimeDependencies["dev-utils/msys-base"] = None
+        self.runtimeDependencies["dev-utils/python3"] = None
 
 
 class Package(BinaryPackageBase):
