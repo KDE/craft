@@ -54,7 +54,10 @@ class subinfo(info.infoclass):
                     ("disable-install-docs.patch", 1)
                 ]  # https://github.com/microsoft/vcpkg/blob/9055f88ba53a99f51e3c733fe9c79703dc23d57d/ports/openssl/disable-install-docs.patch
 
+        self.patchToApply["3.2.0"] = [("fix-msvc.patch", 1)]  # https://bugreports.qt.io/browse/QTBUG-119510
+
         self.patchLevel["3.1.1"] = 1
+        self.patchLevel["3.2.0"] = 1
 
         self.description = "The OpenSSL runtime environment"
         self.webpage = "https://openssl.org"
