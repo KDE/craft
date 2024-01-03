@@ -44,7 +44,7 @@ class SvnSource(VersionSystemSourceBase):
         """apply a patch to a svn repository checkout"""
         CraftCore.debug.trace("SvnSource.applyPatch")
         if fileName:
-            return utils.applyPatch(self.sourceDir(), os.path.join(self.packageDir(), fileName), patchdepth)
+            return utils.applyPatch(self.sourceDir(), os.path.join(self.blueprintDir(), fileName), patchdepth)
         return True
 
     def fetch(self):
@@ -179,7 +179,7 @@ class SvnSource(VersionSystemSourceBase):
         cmd = "svn diff %s > %s" % (
             self.checkoutDir(),
             os.path.join(
-                self.packageDir(),
+                self.blueprintDir(),
                 "%s-%s.patch" % (self.package, str(datetime.date.today()).replace("-", "")),
             ),
         )

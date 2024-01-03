@@ -145,7 +145,7 @@ class MSInstallerPackager(CollectionPackagerBase):
             "light -b %s -o %s %s.wixobj"
             % (
                 self.imageDir(),
-                os.path.join(self.packageDir(), self.defines["setupname"]),
+                os.path.join(self.blueprintDir(), self.defines["setupname"]),
                 outName,
             )
         )

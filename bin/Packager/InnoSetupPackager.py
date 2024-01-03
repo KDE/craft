@@ -167,7 +167,7 @@ class InnoSetupPackager(PortablePackager):
 
         if not utils.systemWithoutShell(
             [self.innoExe, verboseString] + cmdDefines + [configuredScrip],
-            cwd=os.path.abspath(self.packageDir()),
+            cwd=os.path.abspath(self.blueprintDir()),
         ):
             CraftCore.log.critical("Error in ISCC execution")
             return False

@@ -165,7 +165,7 @@ class CollectionPackagerBase(PackagerBase):
 
     def read_whitelist(self, fname: str) -> re:
         if not os.path.isabs(fname):
-            fname = os.path.join(self.packageDir(), fname)
+            fname = os.path.join(self.blueprintDir(), fname)
         """ Read regular expressions from fname """
         try:
             return toRegExp(fname, "whitelist")
@@ -174,7 +174,7 @@ class CollectionPackagerBase(PackagerBase):
 
     def read_blacklist(self, fname: str) -> re:
         if not os.path.isabs(fname):
-            fname = os.path.join(self.packageDir(), fname)
+            fname = os.path.join(self.blueprintDir(), fname)
         """ Read regular expressions from fname """
         try:
             return toRegExp(fname, "blacklist")

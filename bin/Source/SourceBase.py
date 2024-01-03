@@ -64,7 +64,7 @@ class SourceBase(CraftBase):
             return True
         if not srcdir:
             srcdir = self.sourceDir()
-        patchfile = self.packageDir() / fileName
+        patchfile = self.blueprintDir() / fileName
         # TODO: integrate utils.applyPatch() here and remove it from utils().
         # and change packages in blueprints accordingly
         return utils.applyPatch(srcdir, patchfile, patchdepth)

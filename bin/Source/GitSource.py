@@ -195,7 +195,7 @@ class GitSource(VersionSystemSourceBase):
     def applyPatch(self, fileName, patchdepth, unusedSrcDir=None):
         """apply single patch o git repository"""
         CraftCore.debug.trace("GitSource ")
-        patchfile = self.packageDir() / fileName
+        patchfile = self.blueprintDir() / fileName
         if os.path.isdir(patchfile):
             # apply a whole dir of patches
             out = True
@@ -219,7 +219,7 @@ class GitSource(VersionSystemSourceBase):
         The patch file is named autocreated.patch"""
         CraftCore.debug.trace("GitSource createPatch")
         patchFileName = os.path.join(
-            self.packageDir(),
+            self.blueprintDir(),
             "%s-%s.patch" % (self.package.name, str(datetime.date.today()).replace("-", "")),
         )
         CraftCore.log.debug("git diff %s" % patchFileName)

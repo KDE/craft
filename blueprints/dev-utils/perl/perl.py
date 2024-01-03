@@ -60,7 +60,7 @@ class PackageMSVC(MakeFilePackageBase):
     def _globEnv(self):
         env = {}
         if CraftCore.compiler.isMSVC():
-            env = {"PATH": f"{self.packageDir()};{os.environ['PATH']}"}
+            env = {"PATH": f"{self.blueprintDir()};{os.environ['PATH']}"}
         return env
 
     def make(self):

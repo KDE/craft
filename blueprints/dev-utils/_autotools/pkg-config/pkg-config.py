@@ -34,5 +34,5 @@ class Package(AutoToolsPackageBase):
 
     def createPackage(self):
         # TODO: reduce package size
-        self.blacklist_file.append(os.path.join(self.packageDir(), "blacklist.txt"))
+        self.blacklist_file.append(os.path.join(self.blueprintDir(), "blacklist.txt"))
         return TypePackager.createPackage(self)

@@ -80,7 +80,7 @@ class Package(BinaryPackageBase):
             "REPO_NAME": self.subinfo.options.dynamic.repositoryName,
         }
         if not utils.configureFile(
-            os.path.join(self.packageDir(), "config.xml"),
+            os.path.join(self.blueprintDir(), "config.xml"),
             os.path.join(qtifDir, "config.xml"),
             vars,
         ):

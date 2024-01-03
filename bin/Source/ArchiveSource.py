@@ -282,7 +282,7 @@ class ArchiveSource(SourceBase):
             # make the patch a -p1 patch
             patchContent = patchContent.replace(tmpSourceDir.encode(), f"{srcSubDir}.orig".encode())
             patchContent = patchContent.replace(str(self.sourceDir()).encode(), srcSubDir.encode())
-            patchPath = os.path.join(self.packageDir(), _patchName)
+            patchPath = os.path.join(self.blueprintDir(), _patchName)
             with open(patchPath, "wb") as out:
                 out.write(patchContent)
 

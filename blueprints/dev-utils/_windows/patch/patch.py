@@ -31,7 +31,7 @@ class Package(BinaryPackageBase):
         if not BinaryPackageBase.install(self):
             return False
         if self.buildTarget == "2.5.9":
-            manifest = os.path.join(self.packageDir(), "patch.exe.manifest")
+            manifest = os.path.join(self.blueprintDir(), "patch.exe.manifest")
             patch = os.path.join(self.installDir(), "bin", "patch.exe")
             return utils.embedManifest(patch, manifest)
         else:
