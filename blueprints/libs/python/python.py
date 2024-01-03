@@ -129,3 +129,7 @@ else:
                 # if needed we can still call python3 -m ensurepip
                 "--with-ensurepip=no",
             ]
+
+        def install(self):
+            self.subinfo.options.make.supportsMultijob = False
+            return super().install()
