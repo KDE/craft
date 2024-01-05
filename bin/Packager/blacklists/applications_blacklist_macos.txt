@@ -17,3 +17,6 @@ share/icons/.*
 # libexec/gpg-wks-client is a simple shell wrapper script to bin/gpg-wks-client so we ignore it to solve the problem
 # See https://github.com/gpg/gnupg/blob/6ddaf2be9f484eb7a38f2bda0bb70f2d7b4c4511/tools/Makefile.am#L208
 libexec/gpg-wks-client
+
+# Similar case fo p11-kit the file bin/p11-kit and the dir libexec/p11-kit are both merged to Content/MacOS which causes a conflict
+libexec/p11-kit/.*
