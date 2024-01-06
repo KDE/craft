@@ -63,7 +63,8 @@ class PackageMSBuild(MSBuildPackageBase):
         includeDir = self.installDir() / "include"
         header = glob.glob(os.path.join(headerDir, f"**/*.h"), recursive=True)
         for h in header:
-            utils.copyFile(h, h.replace(headerDir, includeDir), linkOnly=False)
+            h = Path(h)
+            utils.copyFile(h, includeDir / h.relative_to(headerDir), linkOnly=False)
         return True
 
 
