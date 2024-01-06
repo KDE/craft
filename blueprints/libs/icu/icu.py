@@ -11,13 +11,15 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
-        for ver in ["71.1"]:
+        for ver in ["71.1", "74.1"]:
             major, minor = ver.split(".")
             self.targets[ver] = f"https://github.com/unicode-org/icu/releases/download/release-{major}-{minor}/icu4c-{major}_{minor}-src.tgz"
             self.targetInstSrc[ver] = os.path.join("icu", "source")
-            self.targetDigests[ver] = (["67a7e6e51f61faf1306b6935333e13b2c48abd8da6d2f46ce6adca24b1e21ebf"], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigests["71.1"] = (["67a7e6e51f61faf1306b6935333e13b2c48abd8da6d2f46ce6adca24b1e21ebf"], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigests["74.1"] = (["86ce8e60681972e60e4dcb2490c697463fcec60dd400a5f9bffba26d0b52b8d0"], CraftHash.HashAlgorithm.SHA256)
         self.patchToApply["71.1"] = [("icu-71.1-20221112.diff", 1)]
-        self.defaultTarget = "71.1"
+        self.patchToApply["74.1"] = [("icu-71.1-20221112.diff", 1)]
+        self.defaultTarget = "74.1"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = None
