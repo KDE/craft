@@ -44,9 +44,9 @@ def signWindows(fileNames: [str]) -> bool:
         CraftCore.log.warning("Code signing is currently only supported on Windows")
         return True
 
-    customComand = CraftCore.settings.get("CodeSigning", "WindowsCustomSignCommand", "")
-    if customComand:
-        return __signWindowsWithCustomCommand(fileNames)
+    customCommand = CraftCore.settings.get("CodeSigning", "WindowsCustomSignCommand", "")
+    if customCommand:
+        return __signWindowsWithCustomCommand(customCommand, fileNames)
     else:
         return __signWindowsWithSignTool(fileNames)
 
@@ -96,9 +96,9 @@ def __signWindowsWithSignTool(fileNames: [str]) -> bool:
     return True
 
 
-def __signWindowsWithCustomCommand(fileNames: [str]) -> bool:
+def __signWindowsWithCustomCommand(customCommand: str, fileNames: [str]) -> bool:
     CraftCore.log.info(f"Signing with custom command")
-    cmd = shlex.split(customComand)
+    cmd = shlex.split(customCommand)
     if "%F" in cmd:
         filelistFile = None
         try:
