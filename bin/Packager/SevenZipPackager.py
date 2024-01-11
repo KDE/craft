@@ -67,7 +67,17 @@ class SevenZipPackager(PackagerBase):
                     includeTimeStamp=cacheMode,
                 ),
                 self.imageDir(),
-            )
+            ),
+            (
+                FileType.Logs,
+                self.binaryArchiveName(
+                    "-logs",
+                    fileType=self.archiveExtension,
+                    includePackagePath=cacheMode,
+                    includeTimeStamp=cacheMode,
+                ),
+                self.logDir(),
+            ),
         ]
 
         if (

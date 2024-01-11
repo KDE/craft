@@ -13,7 +13,7 @@ class StageLogger(object):
 
     def __init__(self, name: str):
         self.__logFile = None  # type: io.TextIOBase
-        self._logPath = (CraftCore.standardDirs.craftRoot() / "logs" / name).with_suffix(".log")
+        self._logPath = (CraftCore.standardDirs.logDir() / name).with_suffix(".log")
         if not self._logPath.parent.exists():
             self._logPath.parent.mkdir(parents=True)
 

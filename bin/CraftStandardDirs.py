@@ -91,3 +91,7 @@ class CraftStandardDirs(object):
     @staticmethod
     def junctionsDir() -> Path:
         return CraftCore.standardDirs._junctionDir
+
+    @staticmethod
+    def logDir() -> Path:
+        return CraftCore.standardDirs.craftRoot() / "logs"

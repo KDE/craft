@@ -83,6 +83,9 @@ class CraftBase(object):
     def sourceDir(self, dummyIndex=0) -> Path:
         utils.abstract()
 
+    def logDir(self) -> Path:
+        return CraftCore.standardDirs.logDir() / self.package.path
+
     def blueprintDir(self):
         """The folder containing this blueprint"""
         return Path(self.package.source).parent

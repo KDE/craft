@@ -17,6 +17,7 @@ class FileType(Enum):
     Binary = auto()
     Debug = auto()
     Source = auto()
+    Logs = auto()
 
     @classmethod
     def fromString(cls, name):
