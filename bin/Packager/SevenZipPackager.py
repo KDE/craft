@@ -71,7 +71,7 @@ class SevenZipPackager(PackagerBase):
             (
                 FileType.Logs,
                 self.binaryArchiveName(
-                    "-logs",
+                    pkgSuffix="-logs",
                     fileType=self.archiveExtension,
                     includePackagePath=cacheMode,
                     includeTimeStamp=cacheMode,
@@ -89,7 +89,7 @@ class SevenZipPackager(PackagerBase):
                 (
                     FileType.Debug,
                     self.binaryArchiveName(
-                        "-dbg",
+                        pkgSuffix="-dbg",
                         fileType=self.archiveExtension,
                         includePackagePath=cacheMode,
                         includeTimeStamp=cacheMode,
