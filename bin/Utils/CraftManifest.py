@@ -14,6 +14,9 @@ from CraftCore import CraftCore
 
 @unique
 class FileType(Enum):
+    # Fallback for unsupported types
+    Unknown = auto()
+
     Binary = auto()
     Debug = auto()
     Source = auto()
@@ -23,7 +26,7 @@ class FileType(Enum):
     def fromString(cls, name):
         if not hasattr(cls, "__sting_map"):
             cls.__sting_map = dict([(k.lower(), v) for k, v in cls.__members__.items()])
-        return cls.__sting_map[name.lower()]
+        return cls.__sting_map.get(name.lower(), FileType.Unknown)
 
 
 class CraftManifestEntryFile(object):
