@@ -14,6 +14,10 @@ class subinfo(info.infoclass):
         self.buildDependencies["python-modules/pip-system"] = None
         self.buildDependencies["python-modules/virtualenv"] = None
         self.buildDependencies["python-modules/pip"] = None
+        # Python modules needed by custom signing
+        self.runtimeDependencies["python-modules/paramiko"] = None
+        self.runtimeDependencies["python-modules/pyyaml"] = None
+        self.runtimeDependencies["python-modules/requests"] = None
 
 
 class Package(BinaryPackageBase):
