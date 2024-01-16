@@ -113,7 +113,6 @@ def __signWindowsWithCustomCommand(customCommand: str, fileNames: Union[Path, st
                 return False
         finally:
             if filelistFile is not None:
-                print(f"Deleting {filelistFile.name}")
                 try:
                     os.unlink(filelistFile.name)
                 except FileNotFoundError:
