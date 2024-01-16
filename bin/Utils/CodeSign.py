@@ -29,6 +29,7 @@ import shlex
 import subprocess
 import tempfile
 from pathlib import Path
+from typing import Union
 
 import utils
 from CraftCore import CraftCore
@@ -37,7 +38,7 @@ from CraftSetupHelper import SetupHelper
 from Utils import CraftCache, CraftChoicePrompt
 
 
-def signWindows(fileNames: [str]) -> bool:
+def signWindows(fileNames: Union[Path, str]) -> bool:
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
         return True
     if not CraftCore.compiler.isWindows:
@@ -51,7 +52,7 @@ def signWindows(fileNames: [str]) -> bool:
         return __signWindowsWithSignTool(fileNames)
 
 
-def __signWindowsWithSignTool(fileNames: [str]) -> bool:
+def __signWindowsWithSignTool(fileNames: Union[Path, str]) -> bool:
     signTool = CraftCore.cache.findApplication("signtool", forceCache=True)
     if not signTool:
         env = SetupHelper.getMSVCEnv()
@@ -96,13 +97,13 @@ def __signWindowsWithSignTool(fileNames: [str]) -> bool:
     return True
 
 
-def __signWindowsWithCustomCommand(customCommand: str, fileNames: [str]) -> bool:
+def __signWindowsWithCustomCommand(customCommand: str, fileNames: Union[Path, str]) -> bool:
     CraftCore.log.info(f"Signing with custom command")
     cmd = shlex.split(customCommand)
     if "%F" in cmd:
         filelistFile = None
         try:
-            filelistContent = b"\n".join(name.encode() for name in fileNames)
+            filelistContent = b"\n".join(str(name).encode() for name in fileNames)
             filelistFile = tempfile.NamedTemporaryFile(prefix="sign-filelist-", delete=False)
             filelistFile.write(filelistContent)
             filelistFile.write(b"\n")
