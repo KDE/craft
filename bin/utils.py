@@ -181,7 +181,14 @@ def compress(archive: Path, source: str) -> bool:
             )
             command = [app, "a", "-si", archive] + flags
         else:
-            command = [app, "a", "-r", archive] + flags
+            command = [
+                app,
+                "a",
+                # allow to compress files that are open (like log files)
+                "-ssw",
+                "-r",
+                archive,
+            ] + flags
 
         if isinstance(source, list):
             command += source
@@ -1098,7 +1105,8 @@ def getLibraryDeps(path):
                 deps.append(match[1])
     return deps
 
-def getRpath(path : Path):
+
+def getRpath(path: Path):
     patchElf = CraftCore.standardDirs.craftRoot() / "dev-utils/bin/patchelf"
     with io.StringIO() as log:
         if not system([patchElf, "--print-rpath", path], stdout=log, stderr=subprocess.STDOUT, logCommand=False):
@@ -1112,7 +1120,8 @@ def getRpath(path : Path):
                 return None
         return set(filter(None, log.getvalue().strip().split(":")))
 
-def updateRpath(path : Path, oldRpath : set, newRpath : set):
+
+def updateRpath(path: Path, oldRpath: set, newRpath: set):
     patchElf = CraftCore.standardDirs.craftRoot() / "dev-utils/bin/patchelf"
     if newRpath != oldRpath:
         CraftCore.log.info(f"Updating rpath: {oldRpath} -> {newRpath}")
