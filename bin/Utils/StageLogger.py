@@ -11,10 +11,11 @@ from CraftCore import CraftCore
 class StageLogger(object):
     ActiveLogs = []  # type: List[StageLogger]
 
-    def __init__(self, name: str, buffered: bool = False):
+    def __init__(self, name: str, buffered: bool = False, outputOnFailure: bool = False):
         self.__logFile = None  # type: io.TextIOBase
         self._logPath = (CraftCore.standardDirs.logDir() / name).with_suffix(".log")
         self.buffered = buffered
+        self.outputOnFailure = outputOnFailure
         if not self._logPath.parent.exists():
             self._logPath.parent.mkdir(parents=True)
         # delete previous log
@@ -80,4 +81,6 @@ class StageLogger(object):
 
     @staticmethod
     def isOutputOnFailure():
+        if StageLogger.ActiveLogs and StageLogger.ActiveLogs[-1].outputOnFailure:
+            return True
         return CraftCore.settings.getboolean("ContinuousIntegration", "OutputOnFailure", False)
