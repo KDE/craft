@@ -36,13 +36,14 @@ class StageLogger(object):
         self.__logFile.write(s)
 
     def dump(self):
-        pos = self.__logFile.tell()
-        self.__logFile.seek(0)
-        for l in self.__logFile.readlines():
-            # linebased printing as workaround for gitlab logs dropping logs
-            CraftCore.log.info(l.strip())
-        assert self.__logFile.tell() == pos
-        self.__logFile.seek(pos)
+        if self.__logFile:
+            pos = self.__logFile.tell()
+            self.__logFile.seek(0)
+            for l in self.__logFile.readlines():
+                # linebased printing as workaround for gitlab logs dropping logs
+                CraftCore.log.info(l.strip())
+            assert self.__logFile.tell() == pos
+            self.__logFile.seek(pos)
 
     def __enter__(self):
         if StageLogger.ActiveLogs:
