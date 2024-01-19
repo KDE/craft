@@ -232,6 +232,7 @@ def systemWithoutShell(
     acceptableExitCodes=None,
     secretCommand=False,
     secret=None,
+    outputOnFailure=None,
     **kw,
 ):
     """execute cmd. All keywords are passed to Popen. stdout and stderr
@@ -242,6 +243,8 @@ def systemWithoutShell(
 
     ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
     needsAnsiFix = OsUtils.isWin() and CraftCore.settings.getboolean("General", "AllowAnsiColor", True)
+    if outputOnFailure is None:
+        outputOnFailure = StageLogger.isOutputOnFailure()
 
     def ansiFix():
         if needsAnsiFix:
@@ -329,7 +332,7 @@ def systemWithoutShell(
             lineUtf8 = line.decode("utf-8", errors="backslashreplace")
             StageLogger.log(lineUtf8)
             if isinstance(stdout, io.TextIOWrapper):
-                if not StageLogger.isOutputOnFailure() and CraftCore.debug.verbose() < 3:  # don't print if we write the debug log to stdout anyhow
+                if not outputOnFailure and CraftCore.debug.verbose() < 3:  # don't print if we write the debug log to stdout anyhow
                     ansiFix()
                     stdout.buffer.write(line)
                     stdout.flush()
@@ -362,7 +365,7 @@ def systemWithoutShell(
         return True
     resultMessage = f"Command {redact(cmd, secret)} failed with exit code {proc.returncode}"
     StageLogger.logLine(resultMessage)
-    if not StageLogger.isOutputOnFailure():
+    if not outputOnFailure:
         CraftCore.log.info(resultMessage)
     return False
 
