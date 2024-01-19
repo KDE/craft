@@ -329,11 +329,18 @@ class SetupHelper(object):
             # https://developer.apple.com/documentation/xcode-release-notes/xcode-15-release-notes
             # Binaries using symbols with a weak definition crash at runtime on iOS 14/macOS 12 or older. This impacts primarily C++ projects due to their extensive use of weak symbols. (114813650) (FB13097713)
             # Workaround: Bump the minimum deployment target to iOS 15, macOS 12, watchOS 8 or tvOS 15, or add -Wl,-ld_classic to the OTHER_LDFLAGS build setting.
-            self.prependEnvVar(
-                "LDFLAGS",
-                ["-Wl,-ld_classic"],
-                sep=" ",
-            )
+            try:
+                # does ld support -ld_classic
+                subprocess.check_call(
+                    """echo "int main() {}" | /usr/bin/clang "-Wl,-ld_classic" -x c++ - -o /dev/null""", shell=True, stderr=subprocess.DEVNULL
+                )
+                self.prependEnvVar(
+                    "LDFLAGS",
+                    ["-Wl,-ld_classic"],
+                    sep=" ",
+                )
+            except:
+                pass
         self.addEnvVar(
             "MACOSX_DEPLOYMENT_TARGET",
             CraftCore.settings.get("General", "MacDeploymentTarget", "10.15"),
