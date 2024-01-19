@@ -327,8 +327,8 @@ def systemWithoutShell(
             pipeProcess.stdout.close()
         for line in proc.stdout:
             lineUtf8 = line.decode("utf-8", errors="backslashreplace")
+            StageLogger.log(lineUtf8)
             if isinstance(stdout, io.TextIOWrapper):
-                StageLogger.log(lineUtf8)
                 if not StageLogger.isOutputOnFailure() and CraftCore.debug.verbose() < 3:  # don't print if we write the debug log to stdout anyhow
                     ansiFix()
                     stdout.buffer.write(line)
@@ -1098,7 +1098,8 @@ def getLibraryDeps(path):
                 deps.append(match[1])
     return deps
 
-def getRpath(path : Path):
+
+def getRpath(path: Path):
     patchElf = CraftCore.standardDirs.craftRoot() / "dev-utils/bin/patchelf"
     with io.StringIO() as log:
         if not system([patchElf, "--print-rpath", path], stdout=log, stderr=subprocess.STDOUT, logCommand=False):
@@ -1112,7 +1113,8 @@ def getRpath(path : Path):
                 return None
         return set(filter(None, log.getvalue().strip().split(":")))
 
-def updateRpath(path : Path, oldRpath : set, newRpath : set):
+
+def updateRpath(path: Path, oldRpath: set, newRpath: set):
     patchElf = CraftCore.standardDirs.craftRoot() / "dev-utils/bin/patchelf"
     if newRpath != oldRpath:
         CraftCore.log.info(f"Updating rpath: {oldRpath} -> {newRpath}")
