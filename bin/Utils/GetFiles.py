@@ -57,8 +57,6 @@ def getFile(url, destdir, filename="", quiet=None) -> bool:
 
     if pUrl.scheme == "s3":
         return s3File(url, destdir, filename)
-    elif pUrl.scheme == "minio":
-        return minioGet(pUrl.netloc + pUrl.path, destdir, filename)
 
     absFilename = Path(destdir) / filename
     # try the other methods as fallback if we are bootstrapping
@@ -193,15 +191,3 @@ def s3File(url: str, destdir: str, filename: str) -> bool:
         CraftCore.log.critical('aws not found, please install awscli. "pip install awscli" ')
         return False
     return utils.system([aws, "s3", "cp", url, os.path.join(destdir, filename)])
-
-
-def minioGet(url: str, destdir: str, filename: str) -> bool:
-    minio = None
-    if CraftCore.compiler.isWindows:
-        minio = CraftCore.cache.findApplication("minio")
-    if not minio:
-        minio = CraftCore.cache.findApplication("mc")
-    if not minio:
-        CraftCore.log.critical("minio client not found, please install minio")
-        return False
-    return utils.system([minio, "cp", url, os.path.join(destdir, filename)])
