@@ -93,8 +93,11 @@ if CraftCore.compiler.isMSVC():
             verMinor = self.subinfo.buildTarget.split(".")[1]
             debugSuffix = "_d" if self.buildType() == "Debug" else ""
             for p in ["python", "pythonw", "venvlauncher", "venvwlauncher"]:
-                if not utils.copyFile(self.sourceDir() / f"PCbuild/amd64/{p}{debugSuffix}.exe", self.imageDir() / f"bin/{p}.exe"):
+                if not utils.copyFile(self.sourceDir() / f"PCbuild/amd64/{p}{debugSuffix}.exe", self.imageDir() / f"bin/{p}{debugSuffix}.exe"):
                     return False
+                if self.buildType() == "Debug":
+                    if not utils.createShim(self.imageDir() / f"bin/{p}.exe", self.imageDir() / f"bin/{p}{debugSuffix}.exe"):
+                        return False
             if not self._globCopy(self.sourceDir() / "PCbuild/amd64/", self.imageDir() / "bin", ["*.dll"]):
                 return False
             for p in ["python3", f"python3{verMinor}"]:
