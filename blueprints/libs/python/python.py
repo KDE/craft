@@ -91,13 +91,14 @@ if CraftCore.compiler.isMSVC():
         def install(self):
             self.cleanImage()
             verMinor = self.subinfo.buildTarget.split(".")[1]
-            for p in ["python.exe", "pythonw.exe", "venvlauncher.exe", "venvwlauncher.exe"]:
-                if not utils.copyFile(self.sourceDir() / f"PCbuild/amd64/{p}", self.imageDir() / f"bin/{p}"):
+            debugSuffix = "_d" if self.buildType() == "Debug" else ""
+            for p in ["python", "pythonw", "venvlauncher", "venvwlauncher"]:
+                if not utils.copyFile(self.sourceDir() / f"PCbuild/amd64/{p}{debugSuffix}.exe", self.imageDir() / f"bin/{p}.exe"):
                     return False
             if not self._globCopy(self.sourceDir() / "PCbuild/amd64/", self.imageDir() / "bin", ["*.dll"]):
                 return False
-            for p in ["python3.lib", f"python3{verMinor}.lib"]:
-                if not utils.copyFile(self.sourceDir() / f"PCbuild/amd64/{p}", self.imageDir() / f"lib/{p}"):
+            for p in ["python3", f"python3{verMinor}"]:
+                if not utils.copyFile(self.sourceDir() / f"PCbuild/amd64/{p}{debugSuffix}.lib", self.imageDir() / f"lib/{p}.lib"):
                     return False
             if not self._globCopy(self.sourceDir() / "PCbuild/amd64/", self.imageDir() / f"bin/DLLs", ["*.pyd"]):
                 return False
