@@ -1120,7 +1120,7 @@ def getRpath(path: Path):
 def updateRpath(path: Path, oldRpath: set, newRpath: set):
     patchElf = CraftCore.standardDirs.craftRoot() / "dev-utils/bin/patchelf"
     if newRpath != oldRpath:
-        CraftCore.log.info(f"Updating rpath: {oldRpath} -> {newRpath}")
+        CraftCore.log.info(f"Updating rpath for {path}: {oldRpath} -> {newRpath}")
         if not system([patchElf, "--set-rpath", ":".join(newRpath), path], logCommand=False):
             return False
     return True
@@ -1326,6 +1326,7 @@ def localSignMac(binaries):
     # TODO: this rather fits to CodeSign.py but we would end up with circular import in utils.strip
     signCommand = ["codesign", "-s", "-", "-f", "--deep", "--preserve-metadata=identifier,entitlements", "--verbose=99"]
     for command in limitCommandLineLength(signCommand, binaries):
-        if not system(command):
-            return False
+        with StageLogger("localSignMac", buffered=True, outputOnFailure=True) as log:
+            if not system(command, logCommand=False):
+                return False
     return True

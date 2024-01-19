@@ -36,6 +36,7 @@ from CraftBase import *
 from CraftOS.osutils import OsUtils
 from Utils import CodeSign
 from Utils.Arguments import Arguments
+from Utils.StageLogger import StageLogger
 
 
 class BuildSystemBase(CraftBase):
@@ -297,53 +298,56 @@ class BuildSystemBase(CraftBase):
                 continue
             # replace the old prefix or add it if missing
             craftRpath = os.path.join(newPrefix, "lib")
-            if not utils.system(
-                [
-                    "install_name_tool",
-                    "-rpath",
-                    os.path.join(self.subinfo.buildPrefix, "lib"),
-                    craftRpath,
-                    f,
-                ],
-                logCommand=False,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-            ):
-                CraftCore.log.info(f"Adding rpath {craftRpath} to {f}")
-                utils.system(
-                    ["install_name_tool", "-add_rpath", craftRpath, f],
+            oldRpath = os.path.join(self.subinfo.buildPrefix, "lib")
+            CraftCore.log.info(f"Updating rpath for {f}: {oldRpath} -> {craftRpath}")
+            with StageLogger("Fix rpath", buffered=True, outputOnFailure=True):
+                if not utils.system(
+                    [
+                        "install_name_tool",
+                        "-rpath",
+                        oldRpath,
+                        craftRpath,
+                        f,
+                    ],
                     logCommand=False,
-                )
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                ):
+                    CraftCore.log.info(f"Adding rpath {craftRpath} to {f}")
+                    utils.system(
+                        ["install_name_tool", "-add_rpath", craftRpath, f],
+                        logCommand=False,
+                    )
 
-            # update prefix
-            if self.subinfo.buildPrefix != newPrefix:
-                if os.path.splitext(f)[1] in {".dylib", ".so"}:
-                    # fix dylib id
-                    with io.StringIO() as log:
-                        utils.system(["otool", "-D", f], stdout=log, logCommand=False)
-                        oldId = log.getvalue().strip().split("\n")
-                    # the first line is the file name
-                    # the second the id, if we only get one line, there is no id to fix
-                    if len(oldId) == 2:
-                        oldId = oldId[1].strip()
-                        newId = oldId.replace(self.subinfo.buildPrefix, newPrefix)
-                        if newId != oldId:
-                            if not utils.system(
-                                ["install_name_tool", "-id", newId, f],
-                                logCommand=False,
-                            ):
-                                return False
+                # update prefix
+                if self.subinfo.buildPrefix != newPrefix:
+                    if os.path.splitext(f)[1] in {".dylib", ".so"}:
+                        # fix dylib id
+                        with io.StringIO() as log:
+                            utils.system(["otool", "-D", f], stdout=log, logCommand=False)
+                            oldId = log.getvalue().strip().split("\n")
+                        # the first line is the file name
+                        # the second the id, if we only get one line, there is no id to fix
+                        if len(oldId) == 2:
+                            oldId = oldId[1].strip()
+                            newId = oldId.replace(self.subinfo.buildPrefix, newPrefix)
+                            if newId != oldId:
+                                if not utils.system(
+                                    ["install_name_tool", "-id", newId, f],
+                                    logCommand=False,
+                                ):
+                                    return False
 
-                # fix dependencies
-                for dep in utils.getLibraryDeps(f):
-                    if dep.startswith(self.subinfo.buildPrefix):
-                        newDep = dep.replace(self.subinfo.buildPrefix, newPrefix)
-                        if newDep != dep:
-                            if not utils.system(
-                                ["install_name_tool", "-change", dep, newDep, f],
-                                logCommand=False,
-                            ):
-                                return False
+                    # fix dependencies
+                    for dep in utils.getLibraryDeps(f):
+                        if dep.startswith(self.subinfo.buildPrefix):
+                            newDep = dep.replace(self.subinfo.buildPrefix, newPrefix)
+                            if newDep != dep:
+                                if not utils.system(
+                                    ["install_name_tool", "-change", dep, newDep, f],
+                                    logCommand=False,
+                                ):
+                                    return False
         return True
 
     def __patchRpathLinux(self, binaryFiles, newPrefix):
