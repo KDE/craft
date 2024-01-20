@@ -1,5 +1,7 @@
 import shutil
 
+import info
+import options
 from BuildSystem.BuildSystemBase import *
 from utils import ScopedEnv
 
@@ -29,17 +31,19 @@ class PipBuildSystem(BuildSystemBase):
         return python2
 
     def _getPython3(self):
+        craftPython = CraftPackageObject.get("libs/python")
+        suffix = "_d" if CraftCore.compiler.isWindows and craftPython.instance.subinfo.options.dynamic.buildType == "Debug" else ""
         if CraftPackageObject.get("python-modules/virtualenv").isInstalled:
             if CraftCore.compiler.isWindows:
-                return Path(CraftCore.standardDirs.craftRoot()) / f"etc/virtualenv/3/Scripts/python"
+                return Path(CraftCore.standardDirs.craftRoot()) / f"etc/virtualenv/3/Scripts/python{suffix}"
             else:
                 return Path(CraftCore.standardDirs.craftRoot()) / f"etc/virtualenv/3/bin/python3"
-        craftPython = CraftPackageObject.get("libs/python")
+
         if craftPython.isInstalled:
-            python = CraftCore.standardDirs.craftRoot() / f"bin/python{CraftCore.compiler.executableSuffix}"
+            python = CraftCore.standardDirs.craftRoot() / f"bin/python{suffix}{CraftCore.compiler.executableSuffix}"
             if python.exists():
                 return python
-            python = CraftCore.standardDirs.craftRoot() / f"bin/python3{CraftCore.compiler.executableSuffix}"
+            python = CraftCore.standardDirs.craftRoot() / f"bin/python3{suffix}{CraftCore.compiler.executableSuffix}"
             if python.exists():
                 return python
         if not craftPython.categoryInfo.isActive:
