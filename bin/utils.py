@@ -1106,7 +1106,7 @@ def getRpath(path: Path):
     patchElf = CraftCore.standardDirs.craftRoot() / "dev-utils/bin/patchelf"
     with io.StringIO() as log:
         if not system([patchElf, "--print-rpath", path], stdout=log, stderr=subprocess.STDOUT, logCommand=False):
-            if path.endswith(".cpp.o"):
+            if str(path).endswith(".cpp.o"):
                 CraftCore.log.info("Ignoring rpath error on .o file. This is a workaround for Qt installing garbage.")
                 return {}
             elif "The input file is most likely statically linked" in log.getvalue():
