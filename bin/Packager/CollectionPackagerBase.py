@@ -27,6 +27,8 @@
 import glob
 import inspect
 import types
+from pathlib import Path
+from typing import List
 
 from Blueprints.CraftDependencyPackage import CraftDependencyPackage, DependencyType
 from Blueprints.CraftPackageObject import *
@@ -208,18 +210,17 @@ class CollectionPackagerBase(PackagerBase):
                 return True
         return False
 
-    def copyFiles(self, srcDir, destDir) -> bool:
+    def copyFiles(self, srcDir: Path, destDir: Path, filesToSign: List[Path]) -> bool:
         """
         Copy the binaries for the Package from srcDir to the imageDir
         directory
         """
         CraftCore.log.debug("Copying %s -> %s" % (srcDir, destDir))
 
-        filesToSign = []
         # Only sign all files on Windows. On MacOS we recursively sign the whole .app Folder
         doSign = CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "Enabled", False)
         if doSign and CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
-            # files from the cache are already signed
+            # files from the cache are already signed, but files from this package need to be signed
             doSign = os.path.samefile(srcDir, self.imageDir())
 
         for entry in utils.filterDirectoryContent(srcDir, self.whitelisted, self.blacklisted, handleAppBundleAsFile=True):
@@ -235,9 +236,7 @@ class CollectionPackagerBase(PackagerBase):
                 assert CraftCore.compiler.isMacOS
                 if not utils.copyDir(entry, entry_target, linkOnly=False):
                     return False
-        if filesToSign:
-            if not CodeSign.signWindows(filesToSign):
-                return False
+
         return True
 
     def internalCreatePackage(self, defines=None) -> bool:
@@ -251,19 +250,26 @@ class CollectionPackagerBase(PackagerBase):
         if packageSymbols:
             utils.cleanDirectory(self.archiveDebugDir())
 
+        filesToSign = []
+
         for package in self.__getImageDirectories():
             if package.imageDir().exists():
-                if not self.copyFiles(package.imageDir(), archiveDir):
+                if not self.copyFiles(package.imageDir(), archiveDir, filesToSign):
                     return False
             else:
                 CraftCore.log.critical("image directory %s does not exist!" % package.imageDir())
                 return False
             if packageSymbols:
                 if package.symbolsImageDir().exists():
-                    if not self.copyFiles(package.symbolsImageDir(), self.archiveDebugDir()):
+                    if not self.copyFiles(package.symbolsImageDir(), self.archiveDebugDir(), filesToSign):
                         return False
                 else:
                     CraftCore.log.warning("symbols directory %s does not exist!" % package.symbolsImageDir())
+
+        if filesToSign:
+            if not CodeSign.signWindows(filesToSign):
+                return False
+
         # TODO: find a better name for the hooks
         if not self.preArchiveMove():
             return False
