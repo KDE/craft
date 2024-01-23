@@ -62,6 +62,9 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
         if OsUtils.InDocker is None:
             if Path("/.dockerenv").exists():
                 OsUtils.InDocker = True
+            if Path("/run/.containerenv").exists():
+                # This is really for Podman - but given the behaviour changes we need to make are the same it should be fine
+                OsUtils.InDocker = True
             if OsUtils.InDocker is None:
                 with open("/proc/self/cgroup", "rt") as f:
                     lines = f.read()
