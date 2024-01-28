@@ -20,3 +20,7 @@ libexec/gpg-wks-client
 
 # Similar case fo p11-kit the file bin/p11-kit and the dir libexec/p11-kit are both merged to Content/MacOS which causes a conflict
 libexec/p11-kit/.*
+
+# Some plasma kcms cause problems with signing on macOS and it is very unlikely that they are needed there. This is the error:
+# failed with LinkOutsideDestinationError("'kmymoney.app/Contents/PlugIns/plasma/kcms/systemsettings_qwidgets/kcm_proxy.so' would link to '/kcm_proxy.so', which is outside the destination"). Giving up.
+plugins/plasma/kcms/.*
