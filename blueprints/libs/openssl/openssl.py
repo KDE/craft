@@ -45,7 +45,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = f"openssl-{ver}"
             self.targetDigestUrls[ver] = ([f"https://openssl.org/source/openssl-{ver}.tar.gz.sha256"], CraftHash.HashAlgorithm.SHA256)
 
-        for ver in ["3.1.1", "3.1.2", "3.1.3", "3.1.4", "3.2.0"]:
+        for ver in ["3.1.1", "3.1.2", "3.1.3", "3.1.4", "3.2.0", "3.2.1"]:
             self.targets[ver] = f"https://openssl.org/source/openssl-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"openssl-{ver}"
             self.targetDigestUrls[ver] = ([f"https://openssl.org/source/openssl-{ver}.tar.gz.sha256"], CraftHash.HashAlgorithm.SHA256)
@@ -80,7 +80,7 @@ class subinfo(info.infoclass):
             # Qt 5 on Android isn't ready for OpenSSL3 yet
             self.defaultTarget = "1.1.1v"
         else:
-            self.defaultTarget = "3.2.0"
+            self.defaultTarget = "3.2.1"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
