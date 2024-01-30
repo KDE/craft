@@ -9,10 +9,18 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
-        for ver in ["1.3"]:
+        for ver in ["1.3", "1.3.1"]:
             self.targets[ver] = f"https://www.zlib.net/zlib-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"zlib-{ver}"
         self.patchToApply["1.3"] = [
+            ("zlib-1.2.12-20220404.diff", 1),
+            (
+                # don't conditonlessly define Z_HAVE_UNISTD_H
+                "zlib-1.2.12-20220503.diff",
+                1,
+            ),
+        ]
+        self.patchToApply["1.3.1"] = [
             ("zlib-1.2.12-20220404.diff", 1),
             (
                 # don't conditonlessly define Z_HAVE_UNISTD_H
@@ -24,10 +32,14 @@ class subinfo(info.infoclass):
             ["8a9ba2898e1d0d774eca6ba5b4627a11e5588ba85c8851336eb38de4683050a7"],
             CraftHash.HashAlgorithm.SHA256,
         )
+        self.targetDigests["1.3.1"] = (
+            ["38ef96b8dfe510d42707d9c781877914792541133e1870841463bfa73f883e32"],
+            CraftHash.HashAlgorithm.SHA256,
+        )
 
         self.description = "The zlib compression and decompression library"
         self.webpage = "https://www.zlib.net"
-        self.defaultTarget = "1.3"
+        self.defaultTarget = "1.3.1"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
