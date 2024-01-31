@@ -263,7 +263,15 @@ def unShelve(shelve, args):
                 continue
             opt.append(o)
         skip = False
-    if not __recurseCraft(["--options", "virtual.ignored=True", "--update"] + opt, ["craft"]):
+
+    # first lets check out the blueprints before we setup the rest
+    updateCommand = ["--update"] + opt
+    # workaround
+    # we use craft to update the blueprints, to prevent config issues with blueprints we disable them
+    # this is only a subsection of categories prone to act up
+    for category in ["virtual", "libs", "dev-utils"]:
+        updateCommand += ["--options", f"{category}.ignored=True"]
+    if not __recurseCraft(updateCommand, ["craft"]):
         return False
     return __recurseCraft(opt, list(packages.keys()))
 
