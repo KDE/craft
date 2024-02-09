@@ -1324,6 +1324,7 @@ def redact(input: str, secrests: {str}):
 
 def localSignMac(binaries):
     # TODO: this rather fits to CodeSign.py but we would end up with circular import in utils.strip
+    CraftCore.log.info(f"Local signing {[str(x) for x in binaries]}")
     signCommand = ["codesign", "-s", "-", "-f", "--deep", "--preserve-metadata=identifier,entitlements", "--verbose=99"]
     for command in limitCommandLineLength(signCommand, binaries):
         with StageLogger("localSignMac", buffered=True, outputOnFailure=True) as log:
