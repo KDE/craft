@@ -20,12 +20,17 @@ class subinfo(info.infoclass):
             self.parent.package.categoryInfo.compiler = CraftCore.compiler.Compiler.NoCompiler
 
     def setTargets(self):
-        for ver in ["3.11.5"]:
+        for ver in ["3.11.5", "3.11.7"]:
             self.targets[ver] = f"https://www.python.org/ftp/python/{ver}/Python-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"Python-{ver}"
         self.targetDigests["3.11.5"] = (["85cd12e9cf1d6d5a45f17f7afe1cebe7ee628d3282281c492e86adf636defa3f"], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigests["3.11.7"] = (["18e1aa7e66ff3a58423d59ed22815a6954e53342122c45df20c96877c062b9b7"], CraftHash.HashAlgorithm.SHA256)
         if CraftCore.compiler.isMSVC():
             self.patchToApply["3.11.5"] = [(".msvc/patches", 1)]
+            self.patchToApply["3.11.7"] = [(".msvc/patches", 1)]
+
+        self.patchLevel["3.11.5"] = 1
+
         self.description = "Python is a high-level, general-purpose programming language"
         self.defaultTarget = "3.11.5"
 
@@ -122,7 +127,6 @@ else:
             # we call it specially in configure
             self.subinfo.options.configure.autoreconf = False
             self.subinfo.options.configure.args += [
-                "--enable-shared",
                 "--without-static-libpython",
                 "--enable-ipv6",
                 "--with-system-expat",
@@ -133,7 +137,24 @@ else:
                 # if needed we can still call python3 -m ensurepip
                 "--with-ensurepip=no",
             ]
+            if CraftCore.compiler.isMacOS:
+                self.subinfo.options.configure.noLibDir = True
+                self.subinfo.options.configure.args += [f"--enable-framework={CraftCore.standardDirs.craftRoot()}/lib"]
+                self.subinfo.options.install.args += [f"PYTHONAPPSDIR={CraftCore.standardDirs.craftRoot()}"]
+            else:
+                self.subinfo.options.configure.args += [
+                    "--enable-shared",
+                ]
 
         def install(self):
             self.subinfo.options.make.supportsMultijob = False
-            return super().install()
+            if not super().install():
+                return False
+            if CraftCore.compiler.isMacOS:
+                pkgconfigDir = self.imageDir() / "lib/Python.framework/Versions/Current/lib/pkgconfig/"
+                pkgconfigDirDest = self.imageDir() / "lib/pkgconfig"
+                pkgconfigDirDest.mkdir(exist_ok=True, parents=True)
+                for x in pkgconfigDir.glob("*.pc"):
+                    if not utils.createSymlink(x, pkgconfigDirDest / x.name):
+                        return False
+            return True
