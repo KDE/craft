@@ -32,7 +32,6 @@ from Packager.DesktopEntry import DesktopEntry
 from Packager.InnoSetupPackager import InnoSetupPackager
 from Packager.MacDMGPackager import MacDMGPackager
 from Packager.MacPkgPackager import MacPkgPackager
-from Packager.MSIFragmentPackager import MSIFragmentPackager
 from Packager.NullsoftInstallerPackager import NullsoftInstallerPackager
 from Packager.PackagerBase import PackagerBase
 from Packager.PortablePackager import PortablePackager
