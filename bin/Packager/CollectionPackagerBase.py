@@ -254,7 +254,7 @@ class CollectionPackagerBase(PackagerBase):
 
         return True
 
-    def internalCreatePackage(self, defines=None) -> bool:
+    def internalCreatePackage(self, defines) -> bool:
         """create a package"""
 
         packageSymbols = CraftCore.settings.getboolean("Packager", "PackageDebugSymbols", False)
