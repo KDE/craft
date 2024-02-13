@@ -32,7 +32,7 @@ class subinfo(info.infoclass):
         self.patchLevel["3.11.5"] = 1
 
         self.description = "Python is a high-level, general-purpose programming language"
-        self.defaultTarget = "3.11.5"
+        self.defaultTarget = "3.11.7"
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/automake"] = None
