@@ -107,11 +107,8 @@ class CollectionPackagerBase(PackagerBase):
             Path(__file__).absolute().parent / "blacklists" / f"applications_blacklist_{CraftCore.compiler.platform.name.lower()}.txt",
         ]
         if self.sourceDir():
-            bls.append(Path(self.sourceDir() / ".craft.exclude"))
-        return filter(
-            lambda x: x.exists(),
-            bls,
-        )
+            bls.append(Path(self.sourceDir()) / ".craftignore")
+        return [path for path in bls if path.exists()]
 
     def defaultBlacklist(self):
         return [toRegExp(x, x.name) for x in self.runtimeBlacklist()]
