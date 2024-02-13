@@ -41,7 +41,8 @@ class CMakeApkPackager(CollectionPackagerBase):
         return self.__androidApkTargets
 
     def createPackage(self):
-        if not self.internalCreatePackage():
+        defines = self.setDefaults(self.defines)
+        if not self.internalCreatePackage(defines):
             return False
         if self.androidApkTargets:
             self.enterBuildDir()

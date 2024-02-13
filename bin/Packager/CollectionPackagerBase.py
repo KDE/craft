@@ -90,7 +90,7 @@ class CollectionPackagerBase(PackagerBase):
         if not whitelists:
             whitelists = [PackagerLists.defaultWhitelist]
         if not blacklists:
-            blacklists = [PackagerLists.defaultBlacklist]
+            blacklists = [self.defaultBlacklist]
         if not self.whitelist_file:
             self.whitelist_file = whitelists
         if not self.blacklist_file:
@@ -100,6 +100,21 @@ class CollectionPackagerBase(PackagerBase):
         self._blacklist = []
         self._blacklist_filters = set()
         self.scriptname = None
+
+    def runtimeBlacklist(self):
+        bls = [
+            Path(__file__).absolute().parent / "blacklists" / "applications_blacklist.txt",
+            Path(__file__).absolute().parent / "blacklists" / f"applications_blacklist_{CraftCore.compiler.platform.name.lower()}.txt",
+        ]
+        if self.sourceDir():
+            bls.append(Path(self.sourceDir() / ".craft.exclude"))
+        return filter(
+            lambda x: x.exists(),
+            bls,
+        )
+
+    def defaultBlacklist(self):
+        return [toRegExp(x, x.name) for x in self.runtimeBlacklist()]
 
     def addBlacklistFilter(self, x):
         assert callable(x) and len(inspect.signature(x).parameters) == 2
@@ -134,11 +149,11 @@ class CollectionPackagerBase(PackagerBase):
             for entry in self.blacklist_file:
                 CraftCore.log.debug("reading blacklist: %s" % entry)
                 if callable(entry):
-                    if entry == PackagerLists.runtimeBlacklist:
+                    if entry == self.runtimeBlacklist:
                         CraftCore.log.warn(
                             'Compat mode for PackagerLists.runtimeBlacklist -- please just use self.blacklist_file.append("myblacklist.txt") instead of self.blacklist_file = [...]'
                         )
-                        self._blacklist += PackagerLists.defaultBlacklist()
+                        self._blacklist += self.defaultBlacklist()
                         continue
 
                     for line in entry():
@@ -239,7 +254,7 @@ class CollectionPackagerBase(PackagerBase):
 
         return True
 
-    def internalCreatePackage(self, defines=None) -> bool:
+    def internalCreatePackage(self, defines) -> bool:
         """create a package"""
 
         packageSymbols = CraftCore.settings.getboolean("Packager", "PackageDebugSymbols", False)
