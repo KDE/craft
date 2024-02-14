@@ -29,7 +29,7 @@ class subinfo(info.infoclass):
             self.patchToApply["3.11.5"] = [(".msvc/patches", 1)]
             self.patchToApply["3.11.7"] = [(".msvc/patches", 1)]
 
-        self.patchLevel["3.11.5"] = 1
+        self.patchLevel["3.11.5"] = 2
 
         self.description = "Python is a high-level, general-purpose programming language"
         self.defaultTarget = "3.11.5"
@@ -151,10 +151,27 @@ else:
             if not super().install():
                 return False
             if CraftCore.compiler.isMacOS:
+                # python needs argv0 to be the location of the binary
+                # this doesn't work with symlinks, therefor we use shims
+                binDir = self.imageDir() / "bin"
+                for x in binDir.iterdir():
+                    if x.is_symlink():
+                        dest = x.readlink()
+                        x.unlink()
+                        if not utils.createShim(x, dest):
+                            return False
+
                 pkgconfigDir = self.imageDir() / "lib/Python.framework/Versions/Current/lib/pkgconfig/"
                 pkgconfigDirDest = self.imageDir() / "lib/pkgconfig"
                 pkgconfigDirDest.mkdir(exist_ok=True, parents=True)
                 for x in pkgconfigDir.glob("*.pc"):
                     if not utils.createSymlink(x, pkgconfigDirDest / x.name):
                         return False
+            return True
+
+        def unittest(self):
+            # https://github.com/Homebrew/homebrew-core/blob/6cf9a08bcd4afc6633d45ec31aba27e7b3beda78/Formula/p/python@3.11.rb#L496
+            for module in ["sqlite3", "_ctypes", "_decimal", "pyexpat", "readline", "zlib"]:
+                if not utils.system([self.imageDir() / "bin/python3", "-c", f"import {module}"]):
+                    return False
             return True
