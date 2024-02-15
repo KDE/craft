@@ -29,7 +29,8 @@ class subinfo(info.infoclass):
             self.patchToApply["3.11.5"] = [(".msvc/patches", 1)]
             self.patchToApply["3.11.7"] = [(".msvc/patches", 1)]
 
-        self.patchLevel["3.11.5"] = 2
+        self.patchLevel["3.11.5"] = 3
+        self.patchLevel["3.11.7"] = 1
 
         self.description = "Python is a high-level, general-purpose programming language"
         self.defaultTarget = "3.11.5"
@@ -156,9 +157,11 @@ else:
                 binDir = self.imageDir() / "bin"
                 for x in binDir.iterdir():
                     if x.is_symlink():
-                        dest = x.readlink()
+                        # the link points to the installation prefix...
+                        dest = Path(x.readlink()).relative_to(CraftCore.standardDirs.craftRoot())
                         x.unlink()
-                        if not utils.createShim(x, dest):
+                        # now we are located in bin, but dest is relative to the root
+                        if not utils.createShim(x, Path("..") / dest):
                             return False
 
                 pkgconfigDir = self.imageDir() / "lib/Python.framework/Versions/Current/lib/pkgconfig/"
