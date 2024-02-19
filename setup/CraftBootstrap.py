@@ -341,6 +341,7 @@ def setUp(args):
     boot.setSettingsValue("ShortPath", "JunctionDir", shortPath)
 
     if qtMajorVersion == "6":
+        boot.setSettingsValue("General", "KFHostToolingVersion", "6")
         boot.setSettingsValue("Packager", "RepositoryUrl", "https://files.kde.org/craft/Qt6/")
     else:
         boot.setSettingsValue("Packager", "RepositoryUrl", "https://files.kde.org/craft/Qt5/")
