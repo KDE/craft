@@ -14,6 +14,22 @@ if not platform.machine().endswith("64"):
     print(f"Craft requires a 64bit operating system. You are using: {platform.machine()}")
     exit(1)
 
+if platform.system() == "Windows":
+    # On Windows, try to use the ca files from certifi. Otherwise, it may
+    # complain about invent.kde.org having invalid certificates
+    try:
+        import certifi
+        import ssl
+        from urllib.request import HTTPSHandler
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        context.options |= ssl.OP_NO_SSLv2
+        context.verify_mode = ssl.CERT_REQUIRED
+        context.load_verify_locations(certifi.where(), None)
+        https_handler = HTTPSHandler(context=context,  check_hostname=True)
+        opener = urllib.request.build_opener(https_handler)
+        urllib.request.install_opener(opener)
+    except ImportError:
+        pass
 
 class CraftBootstrap(object):
     def __init__(self, craftRoot, branch, dryRun):
