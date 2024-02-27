@@ -44,6 +44,8 @@ def signWindows(fileNames: Union[Path, str]) -> bool:
     if not CraftCore.compiler.isWindows:
         CraftCore.log.warning("Code signing is currently only supported on Windows")
         return True
+    if not fileNames:
+        return True
 
     customCommand = CraftCore.settings.get("CodeSigning", "WindowsCustomSignCommand", "")
     if customCommand:

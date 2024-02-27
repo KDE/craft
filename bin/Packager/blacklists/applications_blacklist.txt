@@ -105,6 +105,8 @@ bin/xmlpatterns(\.exe)?
 bin/xmlpatternsvalidator(\.exe)?
 bin/qvkgen(\.exe)?
 bin/windeployqt(\.exe)?
+bin/tracegen(\.exe)?
+bin/tracepointgen(\.exe)?
 lib/.*\.sh
 
 # QML development files
