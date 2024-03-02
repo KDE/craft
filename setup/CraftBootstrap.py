@@ -227,6 +227,12 @@ def getABI(args, qtMajorVersion):
         else:
             if CraftBootstrap.isLinux():
                 platform = "linux"
+                arch = CraftBootstrap.promptForChoice(
+                    "Select target architecture",
+                    ["x86_64", ("arm64 (binary cache unsupported)", "arm64")],
+                    "x86_64",
+                    returnDefaultWithoutPrompt=args.use_defaults,
+                )
             elif CraftBootstrap.isFreeBSD():
                 platform = "freebsd"
             compiler = CraftBootstrap.promptForChoice(
