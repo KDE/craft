@@ -78,3 +78,61 @@ diff -ur gettext-0.22.orig/gettext-tools/src/Makefile.am gettext-0.22/gettext-to
  
  # How to build libgettextsrc.la.
  # Need ../gnulib-lib/libgettextlib.la.
+--- a/gettext-tools/libgettextpo/textstyle.in.h.orig	2023-09-18 22:36:31.000000000 +0200
++++ b/gettext-tools/libgettextpo/textstyle.in.h	2023-09-21 10:11:20.611665975 +0200
+@@ -255,7 +255,8 @@
+ static inline file_ostream_t
+ file_ostream_create (FILE *fp)
+ {
+-  return fp;
++  /* Closing the stream we return should not close 'fp'.  */
++  return fdopen (dup (fileno (fp)), "w");
+ }
+ 
+ static inline bool
+@@ -673,14 +674,6 @@
+   return true;
+ }
+ 
+-static inline noop_styled_ostream_t
+-noop_styled_ostream_create (ostream_t destination, bool pass_ownership)
+-{
+-  if (!pass_ownership)
+-    /* Not supported without the real libtextstyle.  */
+-    abort ();
+-  return destination;
+-}
+ 
+ static inline bool
+ is_instance_of_noop_styled_ostream (_GL_ATTRIBUTE_MAYBE_UNUSED ostream_t stream)
+@@ -688,6 +689,30 @@
+   return false;
+ }
+ 
++/* ----------------------- From noop-styled-ostream.h ----------------------- */
++
++/* noop_styled_ostream_t is a subtype of ostream_t.  */
++typedef ostream_t noop_styled_ostream_t;
++
++#define noop_styled_ostream_write_mem ostream_write_mem
++#define noop_styled_ostream_flush ostream_flush
++#define noop_styled_ostream_free ostream_free
++#define noop_styled_ostream_begin_use_class styled_ostream_begin_use_class
++#define noop_styled_ostream_end_use_class styled_ostream_end_use_class
++#define noop_styled_ostream_get_hyperlink_ref styled_ostream_get_hyperlink_ref
++#define noop_styled_ostream_get_hyperlink_id styled_ostream_get_hyperlink_id
++#define noop_styled_ostream_set_hyperlink styled_ostream_set_hyperlink
++#define noop_styled_ostream_flush_to_current_style styled_ostream_flush_to_current_style
++
++static inline ostream_t
++noop_styled_ostream_create (ostream_t destination, bool pass_ownership)
++{
++  if (pass_ownership)
++    return destination;
++  else
++    return fdopen (dup (fileno (destination)), "w");
++}
++
+ /* ------------------------------ From color.h ------------------------------ */
+ 
+ #define color_test_mode false
