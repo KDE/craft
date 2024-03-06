@@ -20,7 +20,12 @@ class AutoToolsBuildSystem(BuildSystemBase):
         BuildSystemBase.__init__(self, "autotools")
         self._shell = BashShell()
         self.platform = ""  # hope for auto detection
-        if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative() and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
+        if (
+            CraftCore.compiler.isLinux
+            and CraftCore.compiler.isGCC()
+            and not CraftCore.compiler.isNative()
+            and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32
+        ):
             self.platform = Arguments(["--host=i686-pc-linux-gnu"])
         elif CraftCore.compiler.isWindows:
             if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:

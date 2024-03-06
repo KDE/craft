@@ -43,7 +43,6 @@ class CMakeBuildSystem(BuildSystemBase):
         options += [
             "-DBUILD_TESTING={testing}".format(testing="ON" if self.buildTests else "OFF"),
             "-DBUILD_SHARED_LIBS={shared}".format(shared="OFF" if self.subinfo.options.buildStatic else "ON"),
-            BuildSystemBase.configureOptions(self),
             f"-DCMAKE_INSTALL_PREFIX={craftRoot}",
             f"-DCMAKE_PREFIX_PATH={craftRoot}",
             f"-DCMAKE_REQUIRED_INCLUDES={craftRoot}/include",
@@ -69,6 +68,7 @@ class CMakeBuildSystem(BuildSystemBase):
             options += [
                 f"-DKDE_INSTALL_BUNDLEDIR={OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}/Applications/KDE",
                 "-DAPPLE_SUPPRESS_X11_WARNING=ON",
+                f"-DCMAKE_OSX_ARCHITECTURES={CraftCore.compiler.architecture.name.lower()}",
             ]
         elif CraftCore.compiler.isLinux:
             # use the same lib dir on all distributions
@@ -144,6 +144,8 @@ class CMakeBuildSystem(BuildSystemBase):
             options += self.subinfo.options.configure.toolsDefine
         if self.subinfo.options.buildStatic and self.subinfo.options.configure.staticArgs:
             options += self.subinfo.options.configure.staticArgs
+
+        options += [BuildSystemBase.configureOptions(self)]
         options += ["-S", self.configureSourceDir()]
         return options
 

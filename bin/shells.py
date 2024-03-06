@@ -219,6 +219,8 @@ class BashShell(object):
             command = Arguments([self._findBash()] + bashArgs + ["-c", str(Arguments([self.toNativePath(cmd), args]))])
         else:
             command = Arguments(bashArgs + [cmd, args])
+        if CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
+            command = Arguments(["arch", "-arch", CraftCore.compiler.architecture.name.lower()]) + command
         env = dict(os.environ)
         env.update(self.environment)
         env.update(kwargs.get("env", {}))

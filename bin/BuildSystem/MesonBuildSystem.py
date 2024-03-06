@@ -20,8 +20,7 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
-
-
+import utils
 from BuildSystem.BuildSystemBase import *
 from CraftCompiler import CraftCompiler
 
@@ -29,6 +28,11 @@ from CraftCompiler import CraftCompiler
 class MesonBuildSystem(BuildSystemBase):
     def __init__(self):
         BuildSystemBase.__init__(self, "meson")
+
+    def __exec(self, command, **kw):
+        if CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
+            command = Arguments(["arch", "-arch", CraftCore.compiler.architecture.name.lower()]) + command
+        return utils.system(command, **kw)
 
     def __env(self):
         env = {
@@ -125,8 +129,7 @@ class MesonBuildSystem(BuildSystemBase):
             extra_options = []
             if CraftCore.compiler.isAndroid:
                 extra_options = ["--cross-file", self.craftCrossFile()]
-
-            if not utils.system(Arguments(["meson", "setup", extra_options, self.configureOptions(defines)])):
+            if not self.__exec(Arguments(["meson", "setup", extra_options, self.configureOptions(defines)])):
                 logFile = self.buildDir() / "meson-logs/meson-log.txt"
                 if logFile.exists():
                     with logFile.open("rt", encoding="UTF-8") as log:
@@ -140,7 +143,7 @@ class MesonBuildSystem(BuildSystemBase):
     def make(self):
         with utils.ScopedEnv(self.__env()):
             # cwd should not be the build dir as it might confuse the dependencie resolution
-            return utils.system(
+            return self.__exec(
                 Arguments(
                     [
                         "meson",
@@ -160,11 +163,11 @@ class MesonBuildSystem(BuildSystemBase):
         env = self.__env()
         env["DESTDIR"] = self.installDir()
         with utils.ScopedEnv(env):
-            return utils.system(["meson", "install"], cwd=self.buildDir()) and self._fixInstallPrefix()
+            return self.__exec(["meson", "install"], cwd=self.buildDir()) and self._fixInstallPrefix()
 
     def unittest(self):
         """running make tests"""
-        return utils.system(["meson", "test"], cwd=self.buildDir())
+        return self.__exec(["meson", "test"], cwd=self.buildDir())
 
     def makeOptions(self, args):
         defines = Arguments()

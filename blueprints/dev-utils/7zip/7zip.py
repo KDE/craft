@@ -25,12 +25,12 @@ class Package(BinaryPackageBase):
         self.subinfo.shelveAble = False
 
     def postInstall(self):
-        appPath = CraftCore.standardDirs.craftRoot() / "dev-utils/7z"
-        return utils.createShim(
-            self.imageDir() / f"dev-utils/bin/7za{CraftCore.compiler.executableSuffix}",
-            appPath / ("7za.exe" if CraftCore.compiler.isWindows else "7zz"),
-            useAbsolutePath=True,
-        )
+        args = []
+        appPath = CraftCore.standardDirs.craftRoot() / "dev-utils/7z" / ("7za.exe" if CraftCore.compiler.isWindows else "7zz")
+        if CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
+            args = ["-arch", CraftCore.compiler.hostArchitecture.name.lower(), str(appPath)]
+            appPath = "arch"
+        return utils.createShim(self.imageDir() / f"dev-utils/bin/7za{CraftCore.compiler.executableSuffix}", appPath, useAbsolutePath=True, args=args)
 
     def postQmerge(self):
         CraftCore.cache.clear()
