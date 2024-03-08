@@ -29,6 +29,10 @@ class MesonBuildSystem(BuildSystemBase):
     def __init__(self):
         BuildSystemBase.__init__(self, "meson")
 
+    @property
+    def __meson(self):
+        return CraftCore.cache.findApplication("meson")
+
     def __exec(self, command, **kw):
         if CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
             command = Arguments(["arch", "-arch", CraftCore.compiler.architecture.name.lower()]) + command
@@ -129,7 +133,7 @@ class MesonBuildSystem(BuildSystemBase):
             extra_options = []
             if CraftCore.compiler.isAndroid:
                 extra_options = ["--cross-file", self.craftCrossFile()]
-            if not self.__exec(Arguments(["meson", "setup", extra_options, self.configureOptions(defines)])):
+            if not self.__exec(Arguments([self.__meson, "setup", extra_options, self.configureOptions(defines)])):
                 logFile = self.buildDir() / "meson-logs/meson-log.txt"
                 if logFile.exists():
                     with logFile.open("rt", encoding="UTF-8") as log:
@@ -146,7 +150,7 @@ class MesonBuildSystem(BuildSystemBase):
             return self.__exec(
                 Arguments(
                     [
-                        "meson",
+                        self.__meson,
                         "compile",
                         "-C",
                         self.buildDir(),
@@ -163,11 +167,11 @@ class MesonBuildSystem(BuildSystemBase):
         env = self.__env()
         env["DESTDIR"] = self.installDir()
         with utils.ScopedEnv(env):
-            return self.__exec(["meson", "install"], cwd=self.buildDir()) and self._fixInstallPrefix()
+            return self.__exec([self.__meson, "install"], cwd=self.buildDir()) and self._fixInstallPrefix()
 
     def unittest(self):
         """running make tests"""
-        return self.__exec(["meson", "test"], cwd=self.buildDir())
+        return self.__exec([self.__meson, "test"], cwd=self.buildDir())
 
     def makeOptions(self, args):
         defines = Arguments()
