@@ -20,6 +20,9 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
+
+import textwrap
+
 import utils
 from BuildSystem.BuildSystemBase import *
 from CraftCompiler import CraftCompiler
@@ -32,11 +35,6 @@ class MesonBuildSystem(BuildSystemBase):
     @property
     def __meson(self):
         return CraftCore.cache.findApplication("meson")
-
-    def __exec(self, command, **kw):
-        if CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
-            command = Arguments(["arch", "-arch", CraftCore.compiler.architecture.name.lower()]) + command
-        return utils.system(command, **kw)
 
     def __env(self):
         env = {
@@ -89,41 +87,68 @@ class MesonBuildSystem(BuildSystemBase):
     def craftCrossFile(self):
         craftCrossFilePath = CraftStandardDirs.craftRoot() / "etc/craft-cross-file.txt"
 
-        if CraftCore.compiler.architecture == CraftCompiler.Architecture.arm64:
-            toolchain = "aarch64-linux-android"
-            compiler = "aarch64-linux-android"
-        elif CraftCore.compiler.architecture == CraftCompiler.Architecture.arm32:
-            toolchain = "arm-linux-androideabi"
-            compiler = "armv7a-linux-androideabi"
-        elif CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
-            toolchain = "i686-linux-android"
-            compiler = "i686-linux-android"
+        if CraftCore.compiler.isAndroid:
+            if CraftCore.compiler.architecture == CraftCompiler.Architecture.arm64:
+                toolchain = "aarch64-linux-android"
+                compiler = "aarch64-linux-android"
+            elif CraftCore.compiler.architecture == CraftCompiler.Architecture.arm32:
+                toolchain = "arm-linux-androideabi"
+                compiler = "armv7a-linux-androideabi"
+            elif CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
+                toolchain = "i686-linux-android"
+                compiler = "i686-linux-android"
+            else:
+                toolchain = f"{CraftCore.compiler.androidArchitecture}-linux-android"
+                compiler = f"{CraftCore.compiler.androidArchitecture}-linux-android"
+
+            toolchain_path = os.path.join(os.environ["ANDROID_NDK"], "toolchains/llvm/prebuilt", os.environ.get("ANDROID_NDK_HOST", "linux-x86_64"), "bin")
+
+            config = (
+                "[constants]\n"
+                f"android_ndk = '{toolchain_path}/'\n"
+                f"toolchain = '{toolchain}'\n"
+                f"compiler = '{compiler}'\n"
+                f"abiversion = '{CraftCore.compiler.androidApiLevel()}'\n"
+                "[binaries]\n"
+                "c = android_ndk + compiler + abiversion + '-clang'\n"
+                "cpp = android_ndk + compiler + abiversion + '-clang++'\n"
+                "ar = android_ndk + 'llvm-ar'\n"
+                "ld = android_ndk + 'lld'\n"
+                "objcopy = android_ndk + 'llvm-objcopy'\n"
+                "strip = android_ndk + 'llvm-strip'\n"
+                "pkgconfig = '/usr/bin/pkg-config'\n"
+                "[host_machine]\n"
+                "system = 'linux'\n"
+                f"cpu_family = '{CraftCore.compiler.androidArchitecture}'\n"
+                f"cpu = '{CraftCore.compiler.androidArchitecture}'\n"  # according to meson, this value is meaningless (https://github.com/mesonbuild/meson/issues/7037#issuecomment-620137436)
+                "endian = 'little'\n"
+            )
+        elif CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
+            # based on https://github.com/mesonbuild/meson-python/blob/main/mesonpy/__init__.py#L687
+            arch = CraftCore.compiler.architecture.name.lower()
+            if CraftCore.compiler.hostArchitecture == CraftCore.compiler.Architecture.arm64:
+                hostArch = "aarch64"
+            else:
+                hostArch = CraftCore.compiler.hostArchitecture.name.lower()
+            config = textwrap.dedent(
+                f"""
+                        [binaries]
+                        c = ['cc', '-arch', {arch!r}]
+                        cpp = ['c++', '-arch', {arch!r}]
+                        objc = ['cc', '-arch', {arch!r}]
+                        objcpp = ['c++', '-arch', {arch!r}]                        
+                        pkgconfig = {CraftCore.cache.findApplication("pkg-config")!r}
+                        cmake = {CraftCore.cache.findApplication("cmake")!r}
+                        
+                        [host_machine]
+                        system = 'darwin'
+                        cpu = {hostArch!r}
+                        cpu_family = {hostArch!r}
+                        endian = 'little'
+                    """
+            )
         else:
-            toolchain = f"{CraftCore.compiler.androidArchitecture}-linux-android"
-            compiler = f"{CraftCore.compiler.androidArchitecture}-linux-android"
-
-        toolchain_path = os.path.join(os.environ["ANDROID_NDK"], "toolchains/llvm/prebuilt", os.environ.get("ANDROID_NDK_HOST", "linux-x86_64"), "bin")
-
-        config = (
-            "[constants]\n"
-            f"android_ndk = '{toolchain_path}/'\n"
-            f"toolchain = '{toolchain}'\n"
-            f"compiler = '{compiler}'\n"
-            f"abiversion = '{CraftCore.compiler.androidApiLevel()}'\n"
-            "[binaries]\n"
-            "c = android_ndk + compiler + abiversion + '-clang'\n"
-            "cpp = android_ndk + compiler + abiversion + '-clang++'\n"
-            "ar = android_ndk + 'llvm-ar'\n"
-            "ld = android_ndk + 'lld'\n"
-            "objcopy = android_ndk + 'llvm-objcopy'\n"
-            "strip = android_ndk + 'llvm-strip'\n"
-            "pkgconfig = '/usr/bin/pkg-config'\n"
-            "[host_machine]\n"
-            "system = 'linux'\n"
-            f"cpu_family = '{CraftCore.compiler.androidArchitecture}'\n"
-            f"cpu = '{CraftCore.compiler.androidArchitecture}'\n"  # according to meson, this value is meaningless (https://github.com/mesonbuild/meson/issues/7037#issuecomment-620137436)
-            "endian = 'little'\n"
-        )
+            return None
 
         with craftCrossFilePath.open("wt", encoding="UTF-8") as f:
             f.write(config)
@@ -133,9 +158,10 @@ class MesonBuildSystem(BuildSystemBase):
     def configure(self, defines=""):
         with utils.ScopedEnv(self.__env()):
             extra_options = []
-            if CraftCore.compiler.isAndroid:
-                extra_options = ["--cross-file", self.craftCrossFile()]
-            if not self.__exec(Arguments([self.__meson, "setup", extra_options, self.configureOptions(defines)])):
+            crossFile = self.craftCrossFile()
+            if crossFile:
+                extra_options = ["--cross-file", crossFile]
+            if not utils.system(Arguments([self.__meson, "setup", extra_options, self.configureOptions(defines)])):
                 logFile = self.buildDir() / "meson-logs/meson-log.txt"
                 if logFile.exists():
                     with logFile.open("rt", encoding="UTF-8") as log:
@@ -149,7 +175,7 @@ class MesonBuildSystem(BuildSystemBase):
     def make(self):
         with utils.ScopedEnv(self.__env()):
             # cwd should not be the build dir as it might confuse the dependencie resolution
-            return self.__exec(
+            return utils.system(
                 Arguments(
                     [
                         self.__meson,
@@ -169,11 +195,11 @@ class MesonBuildSystem(BuildSystemBase):
         env = self.__env()
         env["DESTDIR"] = self.installDir()
         with utils.ScopedEnv(env):
-            return self.__exec([self.__meson, "install"], cwd=self.buildDir()) and self._fixInstallPrefix()
+            return utils.system([self.__meson, "install"], cwd=self.buildDir()) and self._fixInstallPrefix()
 
     def unittest(self):
         """running make tests"""
-        return self.__exec([self.__meson, "test"], cwd=self.buildDir())
+        return utils.system([self.__meson, "test"], cwd=self.buildDir())
 
     def makeOptions(self, args):
         defines = Arguments()
