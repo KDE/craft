@@ -44,6 +44,8 @@ class MesonBuildSystem(BuildSystemBase):
             "CFLAGS": self.subinfo.options.configure.cflags + " " + os.environ.get("CFLAGS", ""),
             "CXXFLAGS": self.subinfo.options.configure.cxxflags + " " + os.environ.get("CXXFLAGS", ""),
         }
+        if CraftCore.settings.getboolean("General", "AllowAnsiColor", True):
+            env["FORCE_COLOR"] = 1
         if CraftCore.compiler.isMSVC():
             env.update(
                 {
