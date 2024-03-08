@@ -86,6 +86,8 @@ class MesonBuildSystem(BuildSystemBase):
 
     def craftCrossFile(self):
         craftCrossFilePath = CraftStandardDirs.craftRoot() / "etc/craft-cross-file.txt"
+        args = []
+        config = ""
 
         if CraftCore.compiler.isAndroid:
             if CraftCore.compiler.architecture == CraftCompiler.Architecture.arm64:
@@ -123,13 +125,10 @@ class MesonBuildSystem(BuildSystemBase):
                 f"cpu = '{CraftCore.compiler.androidArchitecture}'\n"  # according to meson, this value is meaningless (https://github.com/mesonbuild/meson/issues/7037#issuecomment-620137436)
                 "endian = 'little'\n"
             )
+            args = ["--cross-file", craftCrossFilePath]
         elif CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
             # based on https://github.com/mesonbuild/meson-python/blob/main/mesonpy/__init__.py#L687
             arch = CraftCore.compiler.architecture.name.lower()
-            if CraftCore.compiler.hostArchitecture == CraftCore.compiler.Architecture.arm64:
-                hostArch = "aarch64"
-            else:
-                hostArch = CraftCore.compiler.hostArchitecture.name.lower()
             config = textwrap.dedent(
                 f"""
                         [binaries]
@@ -137,30 +136,18 @@ class MesonBuildSystem(BuildSystemBase):
                         cpp = ['c++', '-arch', {arch!r}]
                         objc = ['cc', '-arch', {arch!r}]
                         objcpp = ['c++', '-arch', {arch!r}]                        
-                        pkgconfig = {CraftCore.cache.findApplication("pkg-config")!r}
-                        cmake = {CraftCore.cache.findApplication("cmake")!r}
-                        
-                        [host_machine]
-                        system = 'darwin'
-                        cpu = {hostArch!r}
-                        cpu_family = {hostArch!r}
-                        endian = 'little'
                     """
             )
-        else:
-            return None
+            args = ["--native-file", craftCrossFilePath]
+        if config:
+            with craftCrossFilePath.open("wt", encoding="UTF-8") as f:
+                f.write(config)
 
-        with craftCrossFilePath.open("wt", encoding="UTF-8") as f:
-            f.write(config)
-
-        return craftCrossFilePath
+        return args
 
     def configure(self, defines=""):
         with utils.ScopedEnv(self.__env()):
-            extra_options = []
-            crossFile = self.craftCrossFile()
-            if crossFile:
-                extra_options = ["--cross-file", crossFile]
+            extra_options = self.craftCrossFile()
             if not utils.system(Arguments([self.__meson, "setup", extra_options, self.configureOptions(defines)])):
                 logFile = self.buildDir() / "meson-logs/meson-log.txt"
                 if logFile.exists():
