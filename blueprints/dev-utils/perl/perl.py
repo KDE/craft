@@ -125,6 +125,9 @@ class PackageAutoTools(AutoToolsPackageBase):
             cflags += " -m32"
             ldflags += " -m32"
             self.subinfo.options.configure.args += ["-Alddlflags=-m32 -shared", "-Uuse64bitint -Uuse64bitall"]
+        if CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
+            self.subinfo.options.configure.args += ["-A", f"cc={self.shell.environment['CC']}", "-A", f"cxx={self.shell.environment['CXX']}"]
+
         self.subinfo.options.configure.args += ["-A", f"ccflags={cflags}", "-A", f"ldflags={ldflags}"]
 
     def configure(self):

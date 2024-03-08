@@ -19,7 +19,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
     def __init__(self):
         BuildSystemBase.__init__(self, "autotools")
         self._shell = BashShell()
-        self.platform = ""  # hope for auto detection
+        self.platform = Arguments()  # hope for auto detection
         if (
             CraftCore.compiler.isLinux
             and CraftCore.compiler.isGCC()
@@ -49,6 +49,14 @@ class AutoToolsBuildSystem(BuildSystemBase):
                 self.platform = Arguments(["--host=aarch64-linux-android"])
             else:
                 self.platform = Arguments([f"--host={CraftCore.compiler.androidArchitecture}-linux-android"])
+        elif CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
+            self.platform = Arguments(
+                [
+                    f"--host={CraftCore.compiler.architecture.name.lower()}-apple-darwin",
+                    f"--build={CraftCore.compiler.architecture.name.lower()}-apple-darwin",
+                    f"--target={CraftCore.compiler.architecture.name.lower()}-apple-darwin",
+                ]
+            )
 
     @property
     def makeProgram(self):
