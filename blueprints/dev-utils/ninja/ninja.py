@@ -58,7 +58,7 @@ class Package(CMakePackageBase):
 
     def postInstall(self):
         if not CraftCore.compiler.isMacOS or CraftCore.compiler.isNative():
-            return
+            return True
         # call ninja through arch to ensure a complete arch switch
         return utils.createShim(
             CraftCore.standardDirs.craftRoot() / "dev-utils/bin/ninja",
