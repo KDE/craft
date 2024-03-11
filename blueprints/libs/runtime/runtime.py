@@ -46,7 +46,6 @@ class Package(BinaryPackageBase):
                 "libstdc++-6.dll",
                 "libwinpthread-1.dll",
                 "libgcc_s_seh-1.dll",
-                "libssp-0.dll",
             ]
             srcdir = os.path.join(self.rootdir, "mingw64", "bin")
         elif CraftCore.compiler.isMSVC():
