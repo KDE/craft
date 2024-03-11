@@ -22,7 +22,10 @@ class subinfo(info.infoclass):
                 self.targetDigestUrls[ver] = f"https://download.kde.org/stable/kshim/kshim-{ver}.tar.xz.sha256"
                 self.targetInstSrc[ver] = f"kshim-{ver}"
         self.patchLevel["0.6.0"] = 1
-        self.defaultTarget = "0.6.0"
+        if CraftCore.compiler.isAndroid:
+            self.defaultTarget = "0.6.0"
+        else:
+            self.defaultTarget = "master"
 
     if not CraftCore.compiler.isAndroid:
 
@@ -45,6 +48,10 @@ else:
     class Package(CMakePackageBase):
         def __init__(self, **args):
             CMakePackageBase.__init__(self)
+            if CraftCore.compiler.isMacOS:
+                self.subinfo.options.configure.args += [
+                    f"-DCMAKE_OSX_ARCHITECTURES={CraftCore.compiler.hostArchitecture.name.lower()};{CraftCore.compiler.architecture.name.lower()}"
+                ]
 
         def configure(self):
             cmakePath = Path(CraftCore.standardDirs.craftRoot()) / "dev-utils/cmake-base"
