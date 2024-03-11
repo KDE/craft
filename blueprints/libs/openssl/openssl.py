@@ -164,6 +164,8 @@ class PackageMSys(AutoToolsPackageBase):
         if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative() and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
             self.subinfo.options.configure.args += ["linux-x86"]
             self.subinfo.options.configure.projectFile = "Configure"
+        if CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
+            self.subinfo.options.configure.args += [f"darwin64-{CraftCore.compiler.architecture.name.lower()}"]
 
     def install(self):
         self.subinfo.options.make.supportsMultijob = False

@@ -56,6 +56,11 @@ class BashShell(object):
                 cflags = f" -isysroot {sdkPath} {deploymentFlag} {cflags} -isystem /usr/include"
                 ldflags = f" -isysroot {sdkPath} {deploymentFlag} {ldflags}"
 
+                if not CraftCore.compiler.isNative():
+                    arch = CraftCore.compiler.architecture.name.lower()
+                    self._environment["CC"] = f"{os.environ['CC']} -arch {arch}"
+                    self._environment["CXX"] = f"{os.environ['CXX']} -arch {arch}"
+
                 # TODO: well that sounded like a good idea, but is broken with recent xcode
                 # when fixed we probably should also set that flag for the rest too?
                 # See https://github.com/Homebrew/homebrew-core/issues/2674 for the -no_weak_imports flag
@@ -219,8 +224,6 @@ class BashShell(object):
             command = Arguments([self._findBash()] + bashArgs + ["-c", str(Arguments([self.toNativePath(cmd), args]))])
         else:
             command = Arguments(bashArgs + [cmd, args])
-        if CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
-            command = Arguments(["arch", "-arch", CraftCore.compiler.architecture.name.lower()]) + command
         env = dict(os.environ)
         env.update(self.environment)
         env.update(kwargs.get("env", {}))

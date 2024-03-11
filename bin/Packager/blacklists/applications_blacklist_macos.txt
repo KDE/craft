@@ -24,3 +24,11 @@ libexec/p11-kit/.*
 # Some plasma kcms cause problems with signing on macOS and it is very unlikely that they are needed there. This is the error:
 # failed with LinkOutsideDestinationError("'kmymoney.app/Contents/PlugIns/plasma/kcms/systemsettings_qwidgets/kcm_proxy.so' would link to '/kcm_proxy.so', which is outside the destination"). Giving up.
 plugins/plasma/kcms/.*
+
+# Qt6: in additon to not been needed some of them cause issues with signing
+libexec/qt-cmake-standalone-test
+libexec/qt-testrunner.py
+libexec/android_emulator_launcher.sh
+libexec/qt-internal-configure-tests
+libexec/sanitizer-testrunner.py
+libexec/qt-cmake-private

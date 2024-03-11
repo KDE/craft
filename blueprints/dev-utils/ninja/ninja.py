@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
             self.targets[ver] = f"https://github.com/ninja-build/ninja/archive/v{ver}.tar.gz"
             self.archiveNames[ver] = f"ninja-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"ninja-{ver}"
-            if CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
+            if CraftCore.compiler.isMacOS:
                 self.targetInstallPath[ver] = "dev-utils/ninja"
             else:
                 self.targetInstallPath[ver] = "dev-utils"
@@ -38,7 +38,7 @@ class subinfo(info.infoclass):
 
         self.patchToApply["1.10.0"] = [("34d1bf2f1dcc138f7cb3a54daf771931cd799785.patch", 1)]
         self.patchLevel["1.10.0"] = 1
-        self.patchLevel["1.11.1"] = 1
+        self.patchLevel["1.11.1"] = 3
 
         self.defaultTarget = "1.11.1"
 
@@ -52,12 +52,13 @@ class Package(CMakePackageBase):
         CMakePackageBase.__init__(self)
         # building ninja with jom is broken
         self.subinfo.options.make.supportsMultijob = not CraftCore.compiler.isWindows
-        if CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
-            self.subinfo.options.configure.args += [f"-DCMAKE_OSX_ARCHITECTURES={CraftCore.compiler.hostArchitecture.name.lower()}"]
-            self.subinfo.options.package.disableBinaryCache = False
+        if CraftCore.compiler.isMacOS:
+            self.subinfo.options.configure.args += [
+                f"-DCMAKE_OSX_ARCHITECTURES={CraftCore.compiler.hostArchitecture.name.lower()};{CraftCore.compiler.architecture.name.lower()}"
+            ]
 
     def postInstall(self):
-        if not CraftCore.compiler.isMacOS or CraftCore.compiler.isNative():
+        if not CraftCore.compiler.isMacOS:
             return True
         # call ninja through arch to ensure a complete arch switch
         return utils.createShim(
