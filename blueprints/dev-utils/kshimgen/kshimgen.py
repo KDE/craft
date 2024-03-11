@@ -49,9 +49,7 @@ else:
         def __init__(self, **args):
             CMakePackageBase.__init__(self)
             if CraftCore.compiler.isMacOS:
-                self.subinfo.options.configure.args += [
-                    f"-DCMAKE_OSX_ARCHITECTURES={CraftCore.compiler.hostArchitecture.name.lower()};{CraftCore.compiler.architecture.name.lower()}"
-                ]
+                self.subinfo.options.configure.args += ["-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64"]
 
         def configure(self):
             cmakePath = Path(CraftCore.standardDirs.craftRoot()) / "dev-utils/cmake-base"

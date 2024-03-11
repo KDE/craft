@@ -53,9 +53,7 @@ class Package(CMakePackageBase):
         # building ninja with jom is broken
         self.subinfo.options.make.supportsMultijob = not CraftCore.compiler.isWindows
         if CraftCore.compiler.isMacOS:
-            self.subinfo.options.configure.args += [
-                f"-DCMAKE_OSX_ARCHITECTURES={CraftCore.compiler.hostArchitecture.name.lower()};{CraftCore.compiler.architecture.name.lower()}"
-            ]
+            self.subinfo.options.configure.args += ["-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64"]
 
     def postInstall(self):
         if not CraftCore.compiler.isMacOS:
