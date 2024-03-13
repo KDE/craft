@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
 
     def setTargets(self):
         self.svnTargets["master"] = "https://invent.kde.org/sdk/kshim.git"
+        self.svnTargets["append"] = "https://invent.kde.org/sdk/kshim.git|work/append|"
 
         for ver in ["0.6.0"]:
             if CraftCore.compiler.isAndroid:
@@ -25,7 +26,7 @@ class subinfo(info.infoclass):
         if CraftCore.compiler.isAndroid:
             self.defaultTarget = "0.6.0"
         else:
-            self.defaultTarget = "master"
+            self.defaultTarget = "append"
 
     if not CraftCore.compiler.isAndroid:
 
