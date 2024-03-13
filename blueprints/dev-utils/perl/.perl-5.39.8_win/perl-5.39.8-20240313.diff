@@ -1,0 +1,30 @@
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x '*\.o' -x '*\.pyc' -x CMakeLists.txt.user perl-5.39.8.orig/win32/GNUmakefile perl-5.39.8/win32/GNUmakefile
+--- perl-5.39.8.orig/win32/GNUmakefile	2024-02-23 07:52:48.000000000 +0100
++++ perl-5.39.8/win32/GNUmakefile	2024-03-13 21:27:49.962656900 +0100
+@@ -46,7 +46,7 @@
+ # newly built perl.
+ #
+ INST_DRV := c:
+-INST_TOP := $(INST_DRV)\perl
++INST_TOP := $(CRAFT_DESTDIR)
+ 
+ #
+ # Uncomment if you want to build a 32-bit Perl using a 32-bit compiler
+@@ -155,7 +155,7 @@
+ # HKEY_CURRENT_USER\Software\Perl and HKEY_LOCAL_MACHINE\Software\Perl in
+ # the Registry.
+ #
+-#USE_NO_REGISTRY := define
++USE_NO_REGISTRY := define
+ 
+ #
+ # uncomment exactly one of the following
+@@ -625,7 +625,7 @@
+ else
+ EXTRACFLAGS	+= -std=c99
+ endif
+-CFLAGS		= $(EXTRACFLAGS) $(INCLUDES) $(DEFINES) $(LOCDEFS) $(OPTIMIZE)
++CFLAGS		= $(CRAFT_CFLAGS) $(EXTRACFLAGS) $(INCLUDES) $(DEFINES) $(LOCDEFS) $(OPTIMIZE)
+ LINK_FLAGS	= $(LINK_DBG) -L"$(INST_COREDIR)" -L"$(subst ;," -L",$(CCLIBDIR))"
+ OBJOUT_FLAG	= -o
+ EXEOUT_FLAG	= -o

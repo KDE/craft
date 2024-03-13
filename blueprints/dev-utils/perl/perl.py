@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
-        for ver in ["5.36.0"]:
+        for ver in ["5.36.0", "5.39.8"]:
             self.targets[ver] = f"https://www.cpan.org/src/5.0/perl-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"perl-{ver}"
 
@@ -21,13 +21,19 @@ class subinfo(info.infoclass):
             self.patchToApply["5.36.0"] = [(".perl-5.36.0_win", 1)]
         else:
             self.patchToApply["5.36.0"] = [(".perl-5.36.0", 1)]
+
+        if CraftCore.compiler.isWindows:
+            self.patchToApply["5.39.8"] = [(".perl-5.39.8_win", 1)]
+        else:
+            self.patchToApply["5.36.0"] = [(".perl-5.36.0", 1)]
         self.targetDigests["5.36.0"] = (["e26085af8ac396f62add8a533c3a0ea8c8497d836f0689347ac5abd7b7a4e00a"], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigests["5.39.8"] = (["25f8b4db7a7d91c051b1c2594ed83c291c74c1012da559a8d580755b598bb7e3"], CraftHash.HashAlgorithm.SHA256)
         self.description = (
             "Perl 5 is a highly capable, feature-rich programming language with over 30 years of "
             "development. Perl 5 runs on over 100 platforms from portables to mainframes and is "
             "suitable for both rapid prototyping and large scale development projects."
         )
-        self.defaultTarget = "5.36.0"
+        self.defaultTarget = "5.39.8"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
