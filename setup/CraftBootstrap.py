@@ -302,7 +302,7 @@ def setUp(args):
     qtMajorVersion = CraftBootstrap.promptForChoice(
         "Select the version of Qt you want to use (Craft can't mix Qt5 and Qt6). This will change the cache version used by craft",
         [("Qt5", "5"), ("Qt6", "6")],
-        default="Qt5",
+        default="Qt6",
         returnDefaultWithoutPrompt=args.use_defaults,
     )
 
