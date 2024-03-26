@@ -3,7 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        for ver in ["dev", "master"]:
+        for ver in ["dev", "master", "qt5-lts"]:
             self.svnTargets[ver] = f"https://invent.kde.org/packaging/craft-blueprints-kde.git|{ver}|"
             self.targetUpdatedRepoUrl[ver] = (
                 [
