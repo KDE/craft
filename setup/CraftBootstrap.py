@@ -303,6 +303,10 @@ def setUp(args):
         default="Qt6",
         returnDefaultWithoutPrompt=args.use_defaults,
     )
+    if qtMajorVersion == "5":
+        args.branch = "qt5-lts"
+        shelf["craft-core"].version = "qt5-lts"
+        shelf["craft-blueprints-kde"].version = "qt5-lts"
 
     abi = getABI(args, qtMajorVersion)
 
