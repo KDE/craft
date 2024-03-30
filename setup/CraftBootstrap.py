@@ -18,21 +18,18 @@ if platform.system() == "Windows":
     # On Windows, try to use the ca files from certifi. Otherwise, it may
     # complain about invent.kde.org having invalid certificates
     try:
+        import certifi
         import ssl
         from urllib.request import HTTPSHandler
-
-        import certifi
-
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
         context.options |= ssl.OP_NO_SSLv2
         context.verify_mode = ssl.CERT_REQUIRED
         context.load_verify_locations(certifi.where(), None)
-        https_handler = HTTPSHandler(context=context, check_hostname=True)
+        https_handler = HTTPSHandler(context=context,  check_hostname=True)
         opener = urllib.request.build_opener(https_handler)
         urllib.request.install_opener(opener)
     except ImportError:
         pass
-
 
 class CraftBootstrap(object):
     def __init__(self, craftRoot, branch, dryRun):
@@ -211,15 +208,15 @@ def run(args, command):
             exit(1)
 
 
-def getABI(args):
+def getABI(args, qtMajorVersion):
     arch = "x86_64"
     abi = None
     if CraftBootstrap.isWin():
         platform = "windows"
-        msvcVer = "Microsoft Visual Studio 2022"
+        msvcVer = "Microsoft Visual Studio 2019" if qtMajorVersion == "5" else "Microsoft Visual Studio 2022"
         abi, compiler = CraftBootstrap.promptForChoice(
             "Select compiler",
-            [("Mingw-w64", (None, "gcc")), (msvcVer, ("msvc2022", "cl"))],
+            [("Mingw-w64", (None, "gcc")), (msvcVer, ("msvc2019" if qtMajorVersion == "5" else "msvc2022", "cl"))],
             msvcVer,
             returnDefaultWithoutPrompt=args.use_defaults,
         )
@@ -302,8 +299,14 @@ def setUp(args):
 
     print("Welcome to the Craft setup wizard!")
     print(f"Craft will be installed to: {args.prefix}")
+    qtMajorVersion = CraftBootstrap.promptForChoice(
+        "Select the version of Qt you want to use (Craft can't mix Qt5 and Qt6). This will change the cache version used by craft",
+        [("Qt5", "5"), ("Qt6", "6")],
+        default="Qt6",
+        returnDefaultWithoutPrompt=args.use_defaults,
+    )
 
-    abi = getABI(args)
+    abi = getABI(args, qtMajorVersion)
 
     shortPath, installShortCut = windowsSetup()
 
@@ -359,8 +362,11 @@ def setUp(args):
 
     boot.setSettingsValue("ShortPath", "JunctionDir", shortPath)
 
-    boot.setSettingsValue("General", "KFHostToolingVersion", "6")
-    boot.setSettingsValue("Packager", "RepositoryUrl", "https://files.kde.org/craft/Qt6/")
+    if qtMajorVersion == "6":
+        boot.setSettingsValue("General", "KFHostToolingVersion", "6")
+        boot.setSettingsValue("Packager", "RepositoryUrl", "https://files.kde.org/craft/Qt6/")
+    else:
+        boot.setSettingsValue("Packager", "RepositoryUrl", "https://files.kde.org/craft/Qt5/")
 
     boot.writeSettings()
 
@@ -379,6 +385,8 @@ def setUp(args):
         run(args, ["dev-utils/snoretoast"])
     elif CraftBootstrap.isMac():
         run(args, ["dev-utils/terminal-notifier"])
+
+    run(args, ["--set", f"qtMajorVersion={qtMajorVersion}", "libs/qt"])
 
     print("Setup complete")
     print()
