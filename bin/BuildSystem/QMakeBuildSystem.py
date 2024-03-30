@@ -14,10 +14,6 @@ class QMakeBuildSystem(BuildSystemBase):
         self._platform = None
 
     @property
-    def __qtBase(self):
-        return CraftPackageObject.get("libs/qt5/qtbase").instance
-
-    @property
     def platform(self):
         if not self._platform:
             if OsUtils.isWin():
@@ -81,13 +77,12 @@ class QMakeBuildSystem(BuildSystemBase):
 
     def configureOptions(self, defines=""):
         """returns default configure options"""
-        buildReleaseAndDebug = self.__qtBase.subinfo.options.dynamic.buildReleaseAndDebug
         if self.buildType() == "Release" or self.buildType() == "RelWithDebInfo":
-            defines += ' "CONFIG -= debug"' if not buildReleaseAndDebug else ' "CONFIG += debug"'
+            defines += ' "CONFIG -= debug"'
             defines += ' "CONFIG += release"'
         elif self.buildType() == "Debug":
             defines += ' "CONFIG += debug"'
-            defines += ' "CONFIG -= release"' if not buildReleaseAndDebug else ' "CONFIG += release"'
+            defines += ' "CONFIG -= release"'
 
         return BuildSystemBase.configureOptions(self, defines)
 

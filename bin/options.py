@@ -62,17 +62,20 @@ class UserOptions(object):
 ##     [libs]
 ##     ignored = True
 ##
-##     [libs/qt5]
-##     version = 5.9.3
+
+##     [libs/qt6]
 ##     ignored = False
-##     withMySQL = True
+##
+##     [libs/qt6/qtbase]
+##     version = 6.6.2
+##     withPCRE2 = True
 ##
 ##     [kde/pim/akonadi]
 ##     args = -DAKONADI_BUILD_QSQLITE=On
 ##
 #
 # Settings are inherited, so you can set them for a whole sub branch or a single blueprint.
-# While blueprint from [libs] are all ignored blueprint from [libs/qt5] are not.
+# While blueprint from [libs] are all ignored blueprint from [libs/qt6] are not.
 #
 """
 
@@ -488,7 +491,7 @@ class OptionsConfigure(OptionsBase):
 
         # whether to not pass --cache-file configure
         self.noCacheFile = False
-        
+
 
 ## options for the make action
 class OptionsMake(OptionsBase):
