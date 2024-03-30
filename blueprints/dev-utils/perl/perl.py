@@ -44,7 +44,6 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
-        self.runtimeDependencies["libs/gettext"] = None
 
 
 class PackageMSVC(MakeFilePackageBase):
@@ -130,8 +129,6 @@ class PackageAutoTools(AutoToolsPackageBase):
                 "default_inc_excludes_dot",
                 "-D",
                 "usethreads",
-                "-A",
-                "prepend:libswanted='intl '",
             ]
         )
 
