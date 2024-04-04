@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
-        for ver in ["1.16.1", "1.16.3"]:
+        for ver in ["1.16.1", "1.16.3", "1.16.5"]:
             self.targets[ver] = f"https://ftp.gnu.org/gnu/automake/automake-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"automake-{ver}"
 
@@ -21,9 +21,13 @@ class subinfo(info.infoclass):
             ["ff2bf7656c4d1c6fdda3b8bebb21f09153a736bcba169aaf65eab25fa113bf3a"],
             CraftHash.HashAlgorithm.SHA256,
         )
+        self.targetDigests["1.16.5"] = (
+            ["f01d58cd6d9d77fbdca9eb4bbd5ead1988228fdb73d6f7a201f5f8d6b118b469"],
+            CraftHash.HashAlgorithm.SHA256,
+        )
         self.patchLevel["1.16.3"] = 1
         self.description = "Automake is a tool for automatically generating Makefile.in files compliant with the GNU Coding Standards."
-        self.defaultTarget = "1.16.3"
+        self.defaultTarget = "1.16.5"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
@@ -38,7 +42,7 @@ class Package(AutoToolsPackageBase):
     def __init__(self):
         AutoToolsPackageBase.__init__(self)
         self.subinfo.options.configure.autoreconf = False
-        self.subinfo.options.configure.args += " --disable-static --enable-shared "
+        self.subinfo.options.configure.args += ["--disable-static", "--enable-shared"]
 
     def postInstall(self):
         return self.patchInstallPrefix(
