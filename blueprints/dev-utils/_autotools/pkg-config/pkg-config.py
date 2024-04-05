@@ -31,6 +31,10 @@ class Package(AutoToolsPackageBase):
         self.subinfo.options.configure.args += ["--disable-static", "--enable-shared", "--with-internal-glib", "PKG_CONFIG=:"]
         if not CraftCore.compiler.isMacOS:
             self.subinfo.options.configure.args += ["-with-libiconv=gnu"]
+        else:
+            # work around https://gitlab.freedesktop.org/pkg-config/pkg-config/-/issues/81
+            self.subinfo.options.configure.cflags += "-Wno-int-conversion"
+            self.subinfo.options.configure.cxxflags += "-Wno-int-conversion"
 
     def createPackage(self):
         # TODO: reduce package size
