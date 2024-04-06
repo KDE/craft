@@ -52,9 +52,9 @@ class AutoToolsBuildSystem(BuildSystemBase):
         elif CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
             self.platform = Arguments(
                 [
-                    f"--host={CraftCore.compiler.architecture.name.lower()}-apple-darwin",
-                    f"--build={CraftCore.compiler.architecture.name.lower()}-apple-darwin",
-                    f"--target={CraftCore.compiler.architecture.name.lower()}-apple-darwin",
+                    f"--host={CraftCore.compiler.architecture.name.lower()}-apple-darwin{os.uname().release}",
+                    f"--build={CraftCore.compiler.architecture.name.lower()}-apple-darwin{os.uname().release}",
+                    f"--target={CraftCore.compiler.architecture.name.lower()}-apple-darwin{os.uname().release}",
                 ]
             )
 
