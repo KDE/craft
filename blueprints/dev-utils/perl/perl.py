@@ -36,7 +36,7 @@ class subinfo(info.infoclass):
             "development. Perl 5 runs on over 100 platforms from portables to mainframes and is "
             "suitable for both rapid prototyping and large scale development projects."
         )
-        self.patchLevel["5.38.2"] = 2
+        self.patchLevel["5.38.2"] = 3
         if CraftCore.compiler.isMinGW():
             # 5.39.8 is a dev release but required for mingw
             self.defaultTarget = "5.39.8"
@@ -146,7 +146,13 @@ class PackageAutoTools(AutoToolsPackageBase):
             lddflags = f"-dylib"
         else:
             lddflags = f"-shared"
-        self.subinfo.options.configure.args += ["-A", f"ccflags={cflags}", "-D", f"ldflags={ldflags}", "-D", f"lddflags={lddflags} {ldflags}"]
+        self.subinfo.options.configure.args += [
+            f"-Accflags={cflags}",
+            f"-Dldflags={ldflags}",
+            ## dynamic flags. basically undocumented
+            f"-Dccdlflags={cflags}",
+            f"-Dlddflags={lddflags} {ldflags}",
+        ]
 
     def configure(self):
         self.enterBuildDir()
