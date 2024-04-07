@@ -36,7 +36,7 @@ class subinfo(info.infoclass):
             "development. Perl 5 runs on over 100 platforms from portables to mainframes and is "
             "suitable for both rapid prototyping and large scale development projects."
         )
-        self.patchLevel["5.38.2"] = 3
+        self.patchLevel["5.38.2"] = 4
         if CraftCore.compiler.isMinGW():
             # 5.39.8 is a dev release but required for mingw
             self.defaultTarget = "5.39.8"
@@ -142,16 +142,18 @@ class PackageAutoTools(AutoToolsPackageBase):
         if CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
             cflags = f"-arch {CraftCore.compiler.architecture.name.lower()} {cflags}"
             ldflags = f"-arch {CraftCore.compiler.architecture.name.lower()} {ldflags}"
+            self.subinfo.options.configure.args += [
+                f"-Dcc={os.environ['CC']} -arch {CraftCore.compiler.architecture.name.lower()}",
+                f"-Dcxx={os.environ['CXX']} -arch {CraftCore.compiler.architecture.name.lower()}",
+                f"-Dld={os.environ['CC']} -arch {CraftCore.compiler.architecture.name.lower()}",
+            ]
         if CraftCore.compiler.isMacOS:
             lddflags = f"-dylib"
         else:
             lddflags = f"-shared"
         self.subinfo.options.configure.args += [
             f"-Accflags={cflags}",
-            f"-Dldflags={ldflags}",
-            ## dynamic flags. basically undocumented
-            f"-Dccdlflags={cflags}",
-            f"-Dlddflags={lddflags} {ldflags}",
+            f"-Aldflags={ldflags}",
         ]
 
     def configure(self):
