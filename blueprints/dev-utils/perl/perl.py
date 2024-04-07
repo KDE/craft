@@ -36,6 +36,7 @@ class subinfo(info.infoclass):
             "development. Perl 5 runs on over 100 platforms from portables to mainframes and is "
             "suitable for both rapid prototyping and large scale development projects."
         )
+        self.patchLevel["5.38.2"] = 1
         if CraftCore.compiler.isMinGW():
             # 5.39.8 is a dev release but required for mingw
             self.defaultTarget = "5.39.8"
@@ -139,8 +140,8 @@ class PackageAutoTools(AutoToolsPackageBase):
             ldflags += " -m32"
             self.subinfo.options.configure.args += ["-Alddlflags=-m32 -shared", "-Uuse64bitint -Uuse64bitall"]
         if CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
-            self.subinfo.options.configure.args += ["-A", f"cc={self.shell.environment['CC']}", "-A", f"cxx={self.shell.environment['CXX']}"]
-
+            cflags = f"-arch {CraftCore.compiler.architecture.name.lower()} {cflags}"
+            ldflags = f"-arch {CraftCore.compiler.architecture.name.lower()} {ldflags}"
         self.subinfo.options.configure.args += ["-A", f"ccflags={cflags}", "-A", f"ldflags={ldflags}"]
 
     def configure(self):
