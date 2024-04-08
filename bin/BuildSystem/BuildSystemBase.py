@@ -299,7 +299,7 @@ class BuildSystemBase(CraftBase):
             # replace the old prefix or add it if missing
             craftRpath = os.path.join(newPrefix, "lib")
             oldRpath = os.path.join(self.subinfo.buildPrefix, "lib")
-            CraftCore.log.info(f"Updating rpath for {f}: {oldRpath} -> {craftRpath}")
+            CraftCore.log.debug(f"Updating rpath for {f}: {oldRpath} -> {craftRpath}")
             with StageLogger("Fix rpath", buffered=True, outputOnFailure=True):
                 if not utils.system(
                     [

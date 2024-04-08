@@ -1120,7 +1120,7 @@ def getRpath(path: Path):
 def updateRpath(path: Path, oldRpath: set, newRpath: set):
     patchElf = CraftCore.standardDirs.craftRoot() / "dev-utils/bin/patchelf"
     if newRpath != oldRpath:
-        CraftCore.log.info(f"Updating rpath for {path}: {oldRpath} -> {newRpath}")
+        CraftCore.log.debug(f"Updating rpath for {path}: {oldRpath} -> {newRpath}")
         if not system([patchElf, "--set-rpath", ":".join(newRpath), path], logCommand=False):
             return False
     return True
