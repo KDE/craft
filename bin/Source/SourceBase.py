@@ -4,10 +4,9 @@
 from pathlib import Path
 
 import utils
+from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftBase import CraftBase
 from CraftCore import CraftCore
-
-from Blueprints import CraftPackageObject
 
 
 class SourceBase(CraftBase):
