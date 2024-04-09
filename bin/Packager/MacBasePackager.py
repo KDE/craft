@@ -199,20 +199,18 @@ class MacDylibBundler(object):
         return True
 
     @staticmethod
-    def _updateLibraryReference(fileToFix: Path, oldRef: str, newRef: str = None) -> bool:
-        if newRef is None:
-            newRef = "@executable_path/../Frameworks/" + os.path.basename(oldRef)
+    def _updateLibraryReferences(fileToFix: Path, changedRefs: List) -> bool:
+        args = []
+        for oldRef, newRef in changedRefs:
+            if newRef is None:
+                newRef = "@executable_path/../Frameworks/" + os.path.basename(oldRef)
+            args += ["-change", oldRef, newRef]
         with utils.makeTemporaryWritable(fileToFix):
             if not utils.system(
-                ["install_name_tool", "-change", oldRef, newRef, str(fileToFix)],
+                ["install_name_tool"] + args + [str(fileToFix)],
                 logCommand=False,
             ):
-                CraftCore.log.error(
-                    "%s: failed to update library dependency path from '%s' to '%s'",
-                    fileToFix,
-                    oldRef,
-                    newRef,
-                )
+                CraftCore.log.error("%s: failed to update library dependency paths")
                 return False
         return True
 
@@ -266,6 +264,7 @@ class MacDylibBundler(object):
         # Ensure we have the current library ID since we need to skip it in the otool -L output
         libraryId = self._getLibraryNameId(fileToFix)
 
+        changedRefs = []
         for path in utils.getLibraryDeps(str(fileToFix)):
             if path == libraryId:
                 # The first line of the otool output is (usually?) the library itself:
@@ -288,12 +287,7 @@ class MacDylibBundler(object):
             if path.startswith("@executable_path/"):
                 continue  # already fixed
             if path.startswith("@rpath/"):
-                if not self._updateLibraryReference(
-                    fileToFix,
-                    path,
-                    "@executable_path/../Frameworks/" + path[len("@rpath/") :],
-                ):
-                    return False
+                changedRefs.append((path, "@executable_path/../Frameworks/" + path[len("@rpath/") :]))
             elif path.startswith("/usr/lib/") or path.startswith("/System/Library/Frameworks/"):
                 CraftCore.log.debug("%s: allowing dependency on system library '%s'", fileToFix, path)
             elif path.startswith("@loader_path/"):
@@ -323,7 +317,9 @@ class MacDylibBundler(object):
                 if not self._addLibToAppImage(Path(guessedPath)):
                     CraftCore.log.error(f"{fileToFix}: Failed to add library dependency '{guessedPath}' into bundle")
                     return False
-                if not self._updateLibraryReference(fileToFix, path, guessedNewRef):
+                changedRefs.append((path, guessedNewRef))
+            if changedRefs:
+                if not self._updateLibraryReferences(fileToFix, changedRefs):
                     return False
         return True
 
