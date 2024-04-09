@@ -59,9 +59,9 @@ class BuildSystemBase(CraftBase):
         ".py",
     }
 
-    def __init__(self, typeName=""):
+    def __init__(self, package: CraftPackageObject, typeName=""):
         """constructor"""
-        CraftBase.__init__(self)
+        CraftBase.__init__(self, package)
         self.supportsNinja = False
         self.supportsCCACHE = CraftCore.settings.getboolean("Compile", "UseCCache", False) and CraftCore.compiler.isGCCLike()
         self.supportsClang = True

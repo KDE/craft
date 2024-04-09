@@ -18,8 +18,8 @@ class subinfo(info.infoclass):
 
 
 class Package(PipPackageBase):
-    def __init__(self):
-        PipPackageBase.__init__(self)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def make(self):
         for ver, python in self._pythons:

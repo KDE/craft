@@ -49,8 +49,8 @@ from Package.BinaryPackageBase import *
 
 
 class GitPackage(BinaryPackageBase):
-    def __init__(self):
-        BinaryPackageBase.__init__(self)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def postInstall(self):
         env = None
@@ -79,5 +79,5 @@ class GitPackage(BinaryPackageBase):
 
 
 class Package(VirtualIfSufficientVersion):
-    def __init__(self):
-        VirtualIfSufficientVersion.__init__(self, app="git", version="2.27.0", classA=GitPackage)
+    def __init__(self, **kwargs):
+        VirtualIfSufficientVersion.__init__(self, **kwargs, app="git", version="2.27.0", classA=GitPackage)

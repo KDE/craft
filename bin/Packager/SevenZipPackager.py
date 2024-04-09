@@ -33,6 +33,7 @@
 import json
 import subprocess
 
+from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from Package.PackageBase import InitGuard
@@ -45,8 +46,8 @@ class SevenZipPackager(PackagerBase):
     """Packager using the 7za command line tool from the dev-utils/7zip package"""
 
     @InitGuard.init_once
-    def __init__(self):
-        PackagerBase.__init__(self)
+    def __init__(self, package: CraftPackageObject):
+        PackagerBase.__init__(self, package)
 
     def createPackage(self):
         """create 7z package with digest files located in the manifest subdir"""

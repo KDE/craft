@@ -7,8 +7,8 @@ from utils import ScopedEnv
 
 
 class PipBuildSystem(BuildSystemBase):
-    def __init__(self):
-        BuildSystemBase.__init__(self, "pip")
+    def __init__(self, package: CraftPackageObject):
+        BuildSystemBase.__init__(self, package, "pip")
         self.python2 = False
         self.python3 = True
 

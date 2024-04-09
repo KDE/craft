@@ -47,8 +47,8 @@ if CraftCore.compiler.isAndroid:
 else:
 
     class Package(CMakePackageBase):
-        def __init__(self, **args):
-            CMakePackageBase.__init__(self)
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs)
             if CraftCore.compiler.isMacOS:
                 self.subinfo.options.configure.args += ["-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64"]
 

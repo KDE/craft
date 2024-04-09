@@ -8,7 +8,6 @@ class subinfo(info.infoclass):
         # host and target binaries, so on Android we have host tools in the docker image.
         self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.NotAndroid
 
-
     def setTargets(self):
         for ver in ["2.69", "2.71"]:
             self.targets[ver] = f"https://ftp.gnu.org/gnu/autoconf/autoconf-{ver}.tar.xz"
@@ -35,8 +34,8 @@ from Package.AutoToolsPackageBase import *
 
 
 class Package(AutoToolsPackageBase):
-    def __init__(self):
-        AutoToolsPackageBase.__init__(self)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.subinfo.options.configure.autoreconf = False
         self.subinfo.options.configure.args += " --disable-static --enable-shared "
 

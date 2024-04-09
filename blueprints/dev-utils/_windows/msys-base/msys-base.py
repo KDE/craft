@@ -74,16 +74,16 @@ from Package.BinaryPackageBase import *
 
 
 class MsysPackage(BinaryPackageBase):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def postQmerge(self):
         return self.subinfo.updateMsys()
 
 
 class UpdatePackage(VirtualPackageBase):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def install(self):
         if not super().install():
@@ -98,10 +98,10 @@ class UpdatePackage(VirtualPackageBase):
 
 
 class Package(MaybeVirtualPackageBase):
-    def __init__(self):
+    def __init__(self, **kwargs):
         useExternalMsys = ("Paths", "Msys") in CraftCore.settings
         installMsys = not useExternalMsys and not CraftCore.installdb.isInstalled("dev-utils/msys")
-        MaybeVirtualPackageBase.__init__(self, condition=installMsys, classA=MsysPackage, classB=UpdatePackage)
+        MaybeVirtualPackageBase.__init__(self, **kwargs, condition=installMsys, classA=MsysPackage, classB=UpdatePackage)
         if useExternalMsys:
             # override the install method
             def install():

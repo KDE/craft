@@ -4,18 +4,19 @@ from Package.VirtualPackageBase import *
 
 
 class MaybeVirtualPackageBase(object):
-    def __init__(self, condition, classA, classB=VirtualPackageBase):
+    def __init__(self, package: CraftPackageObject, condition, classA, classB=VirtualPackageBase):
         if condition:
             self.baseClass = classA
         else:
             self.baseClass = classB
         self.__class__.__bases__ = (self.baseClass,)
-        self.__class__.__bases__[0].__init__(self)
+        self.__class__.__bases__[0].__init__(self, package=package)
 
 
 class VirtualIfSufficientVersion(MaybeVirtualPackageBase):
     def __init__(
         self,
+        package: CraftPackageObject,
         app,
         version,
         classA,
@@ -30,7 +31,7 @@ class VirtualIfSufficientVersion(MaybeVirtualPackageBase):
             newer = appVersion and appVersion >= CraftVersion(version)
         self.skipCondition = not newer or not CraftCore.settings.getboolean("CraftDebug", "AllowToSkipPackages", True)
         self.checkVersion = version
-        MaybeVirtualPackageBase.__init__(self, condition=self.skipCondition, classA=classA, classB=classB)
+        MaybeVirtualPackageBase.__init__(self, package, condition=self.skipCondition, classA=classA, classB=classB)
 
         if not self.skipCondition:
             # override the install method

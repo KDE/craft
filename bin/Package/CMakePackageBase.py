@@ -10,9 +10,9 @@ from Source.MultiSource import *
 class CMakePackageBase(PackageBase, MultiSource, CMakeBuildSystem, TypePackager):
     """provides a base class for cmake packages from any source"""
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         CraftCore.log.debug("CMakePackageBase.__init__ called")
-        PackageBase.__init__(self)
-        MultiSource.__init__(self)
-        CMakeBuildSystem.__init__(self)
-        TypePackager.__init__(self)
+        PackageBase.__init__(self, **kwargs)
+        MultiSource.__init__(self, **kwargs)
+        CMakeBuildSystem.__init__(self, **kwargs)
+        TypePackager.__init__(self, **kwargs)

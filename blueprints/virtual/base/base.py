@@ -57,5 +57,5 @@ class subinfo(info.infoclass):
 
 
 class Package(VirtualPackageBase):
-    def __init__(self):
-        VirtualPackageBase.__init__(self)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)

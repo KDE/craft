@@ -22,7 +22,7 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
-
+from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftCore import CraftCore
 from Packager.AppImagePackager import AppImagePackager
 from Packager.AppxPackager import AppxPackager
@@ -42,9 +42,10 @@ class TypePackager(PackagerBase):
     """packager that is used in place of different other packagers
     The packager used can be decided at runtime"""
 
-    def __init__(self):
+    def __init__(self, package: CraftPackageObject):
         CraftCore.log.debug("TypePackager __init__")
         self.__packager = None
+        self.__packageObject = package
         self.changePackager(None)
 
     def changePackager(self, packager=None):
@@ -78,7 +79,7 @@ class TypePackager(PackagerBase):
             self.__class__.__bases__ = tuple(bases)
         else:
             self.__class__.__bases__ += (packager,)
-        packager.__init__(self)
+        packager.__init__(self, self.__packageObject)
         self.__packager = packager
 
     def createPackage(self):

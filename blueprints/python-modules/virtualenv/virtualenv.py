@@ -14,8 +14,8 @@ class subinfo(info.infoclass):
 
 
 class Package(PipPackageBase):
-    def __init__(self, **args):
-        PipPackageBase.__init__(self)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def install(self):
         if CraftCore.compiler.isLinux:

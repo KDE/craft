@@ -17,9 +17,9 @@ from Utils.PostInstallRoutines import *
 class CMakeBuildSystem(BuildSystemBase):
     """cmake build support"""
 
-    def __init__(self):
+    def __init__(self, package: CraftPackageObject):
         """constructor. configureOptions are added to the configure command line and makeOptions are added to the make command line"""
-        BuildSystemBase.__init__(self, "cmake")
+        BuildSystemBase.__init__(self, package, "cmake")
         self.supportsNinja = True
 
     def __makeFileGenerator(self):

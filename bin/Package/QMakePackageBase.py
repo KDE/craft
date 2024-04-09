@@ -10,9 +10,9 @@ from Source.MultiSource import *
 class QMakePackageBase(PackageBase, MultiSource, QMakeBuildSystem, TypePackager):
     """provides a base class for qmake packages from any source"""
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         CraftCore.log.debug("QMakePackageBase.__init__ called")
-        PackageBase.__init__(self)
-        MultiSource.__init__(self)
-        QMakeBuildSystem.__init__(self)
-        TypePackager.__init__(self)
+        PackageBase.__init__(self, **kwargs)
+        MultiSource.__init__(self, **kwargs)
+        QMakeBuildSystem.__init__(self, **kwargs)
+        TypePackager.__init__(self, **kwargs)

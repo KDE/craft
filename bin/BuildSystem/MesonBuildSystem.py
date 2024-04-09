@@ -29,8 +29,8 @@ from CraftCompiler import CraftCompiler
 
 
 class MesonBuildSystem(BuildSystemBase):
-    def __init__(self):
-        BuildSystemBase.__init__(self, "meson")
+    def __init__(self, **kwargs):
+        BuildSystemBase.__init__(self, **kwargs, typeName="meson")
 
     @property
     def __meson(self):

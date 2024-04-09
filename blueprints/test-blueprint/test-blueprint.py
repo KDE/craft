@@ -18,8 +18,8 @@ from Package.VirtualPackageBase import *
 
 
 class Package(VirtualPackageBase):
-    def __init__(self):
-        VirtualPackageBase.__init__(self)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def make(self):
         CraftCore.log.warning("This blueprint does nothing. It is designed to be used by the automated tests only.")

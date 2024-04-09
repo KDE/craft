@@ -50,8 +50,8 @@ from Package.MSBuildPackageBase import *
 
 
 class PackageMSBuild(MSBuildPackageBase):
-    def __init__(self, **args):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.subinfo.options.configure.projectFile = os.path.join(self.sourceDir(), "windows", "xz_win.sln")
         self.msbuildTargets = ["liblzma_dll"]
 
@@ -72,8 +72,8 @@ from Package.AutoToolsPackageBase import *
 
 
 class PackageAutotools(AutoToolsPackageBase):
-    def __init__(self, **args):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.subinfo.options.configure.autoreconf = False
         self.subinfo.options.configure.args += ["--enable-shared", "--disable-static"]
         if not self.subinfo.options.dynamic.buildPrograms:

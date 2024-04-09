@@ -12,8 +12,8 @@ from Source.SvnSource import SvnSource
 class MultiSource(SourceBase):
     """provides multi source type api"""
 
-    def __init__(self):
-        SourceBase.__init__(self)
+    def __init__(self, package: CraftPackageObject):
+        SourceBase.__init__(self, package)
         CraftCore.debug.trace("MultiSource __init__")
         self.__sourceClass = None
 
@@ -35,7 +35,7 @@ class MultiSource(SourceBase):
 
             if self.__sourceClass:
                 self.__class__.__bases__ += (self.__sourceClass,)
-                self.__sourceClass.__init__(self)
+                self.__sourceClass.__init__(self, self.package)
         return self.__sourceClass
 
     # todo: find a more general way to publish all members

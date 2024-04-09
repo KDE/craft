@@ -91,8 +91,8 @@ class subinfo(info.infoclass):
 
 
 class PackageCMake(CMakePackageBase):
-    def __init__(self, **args):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.staticBuild = False
         self.supportsNinja = False
         self.subinfo.options.make.supportsMultijob = False
@@ -143,8 +143,8 @@ class PackageCMake(CMakePackageBase):
 
 
 class PackageMSys(AutoToolsPackageBase):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         # https://github.com/openssl/openssl/issues/18720
         self.subinfo.options.configure.cflags += "-Wno-error=implicit-function-declaration"
         if CraftCore.compiler.isMinGW():

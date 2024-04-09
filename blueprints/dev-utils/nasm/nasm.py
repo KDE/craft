@@ -41,12 +41,12 @@ class subinfo(info.infoclass):
 if CraftCore.compiler.isMSVC():
 
     class Package(BinaryPackageBase):
-        def __init__(self):
-            super().__init__()
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs)
 
 else:
 
     class Package(AutoToolsPackageBase):
-        def __init__(self):
-            super().__init__()
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs)
             self.subinfo.options.configure.autoreconf = False

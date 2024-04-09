@@ -39,11 +39,9 @@ from Utils.CraftShortPath import CraftShortPath
 class GitSource(VersionSystemSourceBase):
     """git support"""
 
-    def __init__(self, subinfo=None):
+    def __init__(self, package: CraftPackageObject):
         CraftCore.debug.trace("GitSource __init__")
-        if subinfo:
-            self.subinfo = subinfo
-        VersionSystemSourceBase.__init__(self)
+        VersionSystemSourceBase.__init__(self, package)
 
     def __getCurrentBranch(self):
         if os.path.exists(self.checkoutDir()):

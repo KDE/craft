@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
         self.svnTargets["master"] = "[git]https://github.com/packagesdev/packages.git"
         self.patchToApply["master"] = [("packagesdev-20191209.patch", 1)]
         for ver in ["1.2.6", "1.2.7", "1.2.10"]:
-           # self.patchToApply[ver] = [("packagesdev-20191209.patch", 1)]
+            # self.patchToApply[ver] = [("packagesdev-20191209.patch", 1)]
             self.svnTargets[ver] = f"[git]https://github.com/packagesdev/packages.git||v{ver}"
         self.description = "Integrated Packaging Environment for OS X "
         self.webpage = "https://github.com/packagesdev/packages"
@@ -29,8 +29,8 @@ class subinfo(info.infoclass):
 
 
 class Package(MakeFilePackageBase):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.subinfo.options.fetch.checkoutSubmodules = True
         self.subinfo.options.useShadowBuild = False
 

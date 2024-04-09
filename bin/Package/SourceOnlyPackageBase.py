@@ -8,12 +8,12 @@ from Source.MultiSource import *
 class SourceOnlyPackageBase(PackageBase, MultiSource, BuildSystemBase, PackagerBase):
     """provides a base class for source dependency packages"""
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         CraftCore.log.debug("SourceOnlyPackageBase.__init__ called")
-        PackageBase.__init__(self)
-        MultiSource.__init__(self)
-        BuildSystemBase.__init__(self, "")
-        PackagerBase.__init__(self)
+        PackageBase.__init__(self, **kwargs)
+        MultiSource.__init__(self, **kwargs)
+        BuildSystemBase.__init__(self, **kwargs, typeName="")
+        PackagerBase.__init__(self, **kwargs)
 
     # from BuildSystemBase:
     def configure(self):

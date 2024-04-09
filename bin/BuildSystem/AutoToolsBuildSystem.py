@@ -7,6 +7,7 @@ import stat
 from pathlib import Path
 
 import utils
+from Blueprints.CraftPackageObject import CraftPackageObject
 from BuildSystem.BuildSystemBase import BuildSystemBase
 from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
@@ -16,8 +17,8 @@ from Utils.Arguments import Arguments
 
 
 class AutoToolsBuildSystem(BuildSystemBase):
-    def __init__(self):
-        BuildSystemBase.__init__(self, "autotools")
+    def __init__(self, package: CraftPackageObject):
+        BuildSystemBase.__init__(self, package, "autotools")
         self._shell = BashShell()
         self.platform = Arguments()  # hope for auto detection
         if (

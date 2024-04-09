@@ -29,9 +29,9 @@ class PackageBase(CraftBase):
     # packagedir -> PackageBase
     # imagedir   -> PackageBase
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         CraftCore.log.debug("PackageBase.__init__ called")
-        CraftBase.__init__(self)
+        CraftBase.__init__(self, **kwargs)
 
     def qmerge(self, dbOnly=False):
         """mergeing the imagedirectory into the filesystem"""

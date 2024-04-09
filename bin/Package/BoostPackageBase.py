@@ -11,9 +11,9 @@ from Source.MultiSource import *
 class BoostPackageBase(PackageBase, MultiSource, BoostBuildSystem, TypePackager):
     """provides a base class for cmake packages from any source"""
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         CraftCore.log.debug("BoostPackageBase.__init__ called")
-        PackageBase.__init__(self)
-        MultiSource.__init__(self)
-        BoostBuildSystem.__init__(self)
-        TypePackager.__init__(self)
+        PackageBase.__init__(self, **kwargs)
+        MultiSource.__init__(self, **kwargs)
+        BoostBuildSystem.__init__(self, **kwargs)
+        TypePackager.__init__(self, **kwargs)

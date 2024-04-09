@@ -34,9 +34,9 @@ class PerlPackageBase(PackageBase, MultiSource, PerlBuildSystem, TypePackager):
     # TODO: follow https://wiki.archlinux.org/index.php/Perl_package_guidelines
     # instead of calling cpan
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         CraftCore.log.debug("PerlPackageBase.__init__ called")
-        PackageBase.__init__(self)
-        MultiSource.__init__(self)
-        PerlBuildSystem.__init__(self)
-        TypePackager.__init__(self)
+        PackageBase.__init__(self, **kwargs)
+        MultiSource.__init__(self, **kwargs)
+        PerlBuildSystem.__init__(self, **kwargs)
+        TypePackager.__init__(self, **kwargs)

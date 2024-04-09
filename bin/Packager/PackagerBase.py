@@ -18,8 +18,8 @@ class PackagerBase(CraftBase):
     """provides a generic interface for packagers and implements basic package creating stuff"""
 
     @InitGuard.init_once
-    def __init__(self):
-        CraftBase.__init__(self)
+    def __init__(self, package: CraftPackageObject):
+        CraftBase.__init__(self, package)
         self.whitelist_file = []
         self.blacklist_file = []
         self.defines = {}

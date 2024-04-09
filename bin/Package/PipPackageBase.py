@@ -8,12 +8,12 @@ from Source.MultiSource import *
 class PipPackageBase(PackageBase, MultiSource, PipBuildSystem, PackagerBase):
     """provides a base class for pip packages"""
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         CraftCore.log.debug("PipPackageBase.__init__ called")
-        PackageBase.__init__(self)
-        MultiSource.__init__(self)
-        PipBuildSystem.__init__(self)
-        PackagerBase.__init__(self)
+        PackageBase.__init__(self, **kwargs)
+        MultiSource.__init__(self, **kwargs)
+        PipBuildSystem.__init__(self, **kwargs)
+        PackagerBase.__init__(self, **kwargs)
 
     def fetch(self):
         if self._sourceClass:

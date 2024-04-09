@@ -89,8 +89,8 @@ class subinfo(info.infoclass):
 
 
 class Package(AutoToolsPackageBase):
-    def __init__(self, **args):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.shell.useMSVCCompatEnv = True
         # we call it specially in configure
         self.subinfo.options.configure.autoreconf = False

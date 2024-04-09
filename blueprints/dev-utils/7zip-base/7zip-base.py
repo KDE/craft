@@ -22,7 +22,7 @@ class subinfo(info.infoclass):
                     self.targets[ver] = f"https://github.com/fmoc/prebuilt-7z/releases/download/continuous/prebuilt-7z-{ver}-x86_64-asm.tar.gz"
                 elif CraftCore.compiler.architecture & CraftCore.compiler.Architecture.arm:
                     self.targets[ver] = f"https://www.7-zip.org/a/7z{verNoDot}-linux-arm64.tar.xz"
-                    self.targetDigests["23.01"] = (['34e938fc4ba8ca6a835239733d9c1542ad8442cc037f43ca143a119bdf322b63'], CraftHash.HashAlgorithm.SHA256)
+                    self.targetDigests["23.01"] = (["34e938fc4ba8ca6a835239733d9c1542ad8442cc037f43ca143a119bdf322b63"], CraftHash.HashAlgorithm.SHA256)
             else:
                 self.targets[ver] = f"https://files.kde.org/craft/3rdparty/7zip/{verNoDot}/7z{verNoDot}-mac.tar.xz"
                 self.targetDigestUrls[ver] = self.targets[ver] + ".sha256"
@@ -32,11 +32,9 @@ class subinfo(info.infoclass):
         self.defaultTarget = "23.01"
 
 
-
-
 class Package(BinaryPackageBase):
-    def __init__(self):
-        BinaryPackageBase.__init__(self)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.subinfo.shelveAble = False
 
     def binaryArchiveName(self, **kwargs):

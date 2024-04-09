@@ -27,9 +27,9 @@ from Source.MultiSource import *
 
 
 class MesonPackageBase(PackageBase, MultiSource, MesonBuildSystem, TypePackager):
-    def __init__(self):
+    def __init__(self, **kwargs):
         CraftCore.log.debug("MesonPackageBase.__init__ called")
-        PackageBase.__init__(self)
-        MultiSource.__init__(self)
-        MesonBuildSystem.__init__(self)
-        TypePackager.__init__(self)
+        PackageBase.__init__(self, **kwargs)
+        MultiSource.__init__(self, **kwargs)
+        MesonBuildSystem.__init__(self, **kwargs)
+        TypePackager.__init__(self, **kwargs)

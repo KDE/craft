@@ -38,9 +38,9 @@ from Utils.CraftManifest import CraftManifest
 class ArchiveSource(SourceBase):
     """file download source"""
 
-    def __init__(self):
+    def __init__(self, package: CraftPackageObject):
         CraftCore.log.debug("ArchiveSource.__init__ called")
-        SourceBase.__init__(self)
+        SourceBase.__init__(self, package)
         self.__archiveDir = Path(CraftCore.standardDirs.downloadDir()) / "archives"
         self.__downloadDir = self.__archiveDir / self.package.path
 

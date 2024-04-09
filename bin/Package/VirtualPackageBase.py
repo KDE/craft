@@ -4,9 +4,9 @@ from Package.SourceOnlyPackageBase import *
 # a special package providing source components for another module.
 # see clang
 class SourceComponentPackageBase(SourceOnlyPackageBase):
-    def __init__(self):
+    def __init__(self, **kwargs):
         CraftCore.log.debug("SourceComponentPackageBase.__init__ called")
-        SourceOnlyPackageBase.__init__(self)
+        SourceOnlyPackageBase.__init__(self, **kwargs)
         self.subinfo.options.package.disableBinaryCache = True
 
     def fetch(self, noop=True):
@@ -23,9 +23,9 @@ class SourceComponentPackageBase(SourceOnlyPackageBase):
 class VirtualPackageBase(SourceComponentPackageBase):
     """provides a base class for virtual packages"""
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         CraftCore.log.debug("VirtualPackageBase.__init__ called")
-        SourceComponentPackageBase.__init__(self)
+        SourceComponentPackageBase.__init__(self, **kwargs)
         self.subinfo.shelveAble = False
 
     def createPatch(self):

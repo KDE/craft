@@ -48,8 +48,8 @@ class subinfo(info.infoclass):
 
 
 class Package(CMakePackageBase):
-    def __init__(self, **args):
-        CMakePackageBase.__init__(self)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         # building ninja with jom is broken
         self.subinfo.options.make.supportsMultijob = not CraftCore.compiler.isWindows
         if CraftCore.compiler.isMacOS:

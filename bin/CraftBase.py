@@ -49,14 +49,14 @@ class CraftBase(object):
     """base class for craft system - holds attributes and methods required by base classes"""
 
     @InitGuard.init_once
-    def __init__(self):
+    def __init__(self, package: CraftPackageObject):
         # TODO: some __init__  of subclasses need to already have been
         # called here. That is really the wrong way round.
         object.__init__(self)
         CraftCore.log.debug("CraftBase.__init__ called")
 
         # ugly workaround we need to replace the constructor
-        self.package = CraftCore._CurrentPackage  # type: CraftPackageObject
+        self.package = package
         self.subinfo = self.package._Module.subinfo(self)  # type: info.infoclass
 
         self.buildSystemType = None

@@ -328,9 +328,8 @@ class CraftPackageObject(object):
             except Exception as e:
                 raise BlueprintException(f"Failed to load file {self.source}", self, e)
             if not self._Module is None:
-                CraftCore._CurrentPackage = self
                 if hasattr(self._Module, "Package"):
-                    pack = self._Module.Package()
+                    pack = self._Module.Package(package=self)
                     # poor mans inheritance check
                     if self.children and "VirtualPackageBase" not in [x.__name__ for x in pack.__class__.__bases__]:
                         raise BlueprintException(

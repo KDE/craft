@@ -17,8 +17,8 @@ class subinfo(info.infoclass):
 
 
 class Package(BinaryPackageBase):
-    def __init__(self):
-        BinaryPackageBase.__init__(self)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def postInstall(self):
         return utils.createShim(os.path.join(self.imageDir(), "dev-utils", "bin", "pkg-config.exe"), os.path.join(self.installDir(), "bin", "pkg-config.exe"))

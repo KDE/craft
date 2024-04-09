@@ -49,8 +49,8 @@ class subinfo(info.infoclass):
 if CraftCore.compiler.isMSVC():
 
     class Package(MSBuildPackageBase):
-        def __init__(self, **args):
-            super().__init__()
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs)
             # msvc support and patches are based on https://github.com/microsoft/vcpkg/tree/0e47c1985273129e4d0ee52ff73bed9125555de8/ports/python3
             self.subinfo.options.configure.projectFile = self.sourceDir() / "PCbuild/pcbuild.proj"
             self.subinfo.options.configure.args += [
@@ -122,8 +122,8 @@ if CraftCore.compiler.isMSVC():
 else:
 
     class Package(AutoToolsPackageBase):
-        def __init__(self, **args):
-            super().__init__()
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs)
             self.shell.useMSVCCompatEnv = True
             # we call it specially in configure
             self.subinfo.options.configure.autoreconf = False

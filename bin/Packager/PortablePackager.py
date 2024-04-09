@@ -9,8 +9,8 @@ class PortablePackager(CollectionPackagerBase, SevenZipPackager):
     """Packager for portal 7zip archives"""
 
     @InitGuard.init_once
-    def __init__(self, whitelists=None, blacklists=None):
-        SevenZipPackager.__init__(self)
+    def __init__(self, package: CraftPackageObject, whitelists=None, blacklists=None):
+        SevenZipPackager.__init__(self, package)
         CollectionPackagerBase.__init__(self, whitelists, blacklists)
 
     def setDefaults(self, defines: {str: str}) -> {str: str}:

@@ -25,8 +25,8 @@ from Package.BinaryPackageBase import *
 
 
 class Package(BinaryPackageBase):
-    def __init__(self):
-        BinaryPackageBase.__init__(self)
+    def __init__(self, **args):
+        super().__init__(**args)
         self.subinfo.options.package.disableBinaryCache = CraftCore.compiler.isMSVC()
 
     def fetch(self):

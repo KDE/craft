@@ -26,8 +26,8 @@ from Package.SourceOnlyPackageBase import *
 
 
 class BlueprintRepositoryPackageBase(SourceOnlyPackageBase):
-    def __init__(self):
-        SourceOnlyPackageBase.__init__(self)
+    def __init__(self, **kwargs):
+        SourceOnlyPackageBase.__init__(self, **kwargs)
         self.subinfo.options.package.disableBinaryCache = True
         self.subinfo.options.dailyUpdate = True
 

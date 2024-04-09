@@ -48,8 +48,8 @@ class subinfo(info.infoclass):
 
 
 class PackageMSVC(MakeFilePackageBase):
-    def __init__(self, **args):
-        MakeFilePackageBase.__init__(self)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.subinfo.options.make.supportsMultijob = False
         self.subinfo.options.useShadowBuild = False
 
@@ -113,8 +113,8 @@ class PackageMSVC(MakeFilePackageBase):
 
 
 class PackageAutoTools(AutoToolsPackageBase):
-    def __init__(self, **args):
-        AutoToolsPackageBase.__init__(self)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         # https://metacpan.org/pod/distribution/perl/INSTALL
         self.subinfo.options.install.args = Arguments(["install.perl"])
         self.subinfo.options.configure.args = Arguments(

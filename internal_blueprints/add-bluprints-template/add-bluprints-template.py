@@ -18,8 +18,8 @@ from Package.BlueprintRepositoryPackageBase import *
 class Package(BlueprintRepositoryPackageBase):
     NameRegex = re.compile(r".*[\/:](.+?(?=[\||\:|\.]))")
 
-    def __init__(self):
-        BlueprintRepositoryPackageBase.__init__(self)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.subinfo.options.package.disableBinaryCache = True
         if (
             "InternalTemp",

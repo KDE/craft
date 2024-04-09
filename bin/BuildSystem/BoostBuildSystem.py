@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 # this package contains functions to check the current compiler
 # copyright:
@@ -15,9 +14,9 @@ from CraftStandardDirs import CraftStandardDirs
 class BoostBuildSystem(BuildSystemBase):
     """cmake build support"""
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         """constructor. configureOptions are added to the configure command line and makeOptions are added to the make command line"""
-        BuildSystemBase.__init__(self, "boost")
+        BuildSystemBase.__init__(self, **kwargs, typeName="boost")
         self.subinfo.options.package.packSources = False
 
     def craftUserConfig(self):

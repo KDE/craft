@@ -10,9 +10,9 @@ from BuildSystem.BuildSystemBase import *
 class MakeFileBuildSystem(BuildSystemBase):
     """make file build support"""
 
-    def __init__(self):
+    def __init__(self, package: CraftPackageObject):
         """constructor. configureOptions are added to the configure command line and makeOptions are added to the make command line"""
-        BuildSystemBase.__init__(self, "makefile")
+        BuildSystemBase.__init__(self, package, "makefile")
 
     def configure(self, dummyDefines=""):
         """implements configure step for cmake projects"""

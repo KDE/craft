@@ -59,8 +59,8 @@ from Package.MaybeVirtualPackageBase import *
 
 
 class Package(BinaryPackageBase):
-    def __init__(self):
-        BinaryPackageBase.__init__(self)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def createPackage(self):
         # TODO: don't run this in package but in a different ways....

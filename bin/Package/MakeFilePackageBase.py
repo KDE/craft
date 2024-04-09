@@ -10,9 +10,9 @@ from Source.MultiSource import *
 class MakeFilePackageBase(PackageBase, MultiSource, MakeFileBuildSystem, TypePackager):
     """provides a base class for simple makefile based packages from any source"""
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         CraftCore.log.debug("MakeFilePackageBase.__init__ called")
-        PackageBase.__init__(self)
-        MultiSource.__init__(self)
-        MakeFileBuildSystem.__init__(self)
-        TypePackager.__init__(self)
+        PackageBase.__init__(self, **kwargs)
+        MultiSource.__init__(self, **kwargs)
+        MakeFileBuildSystem.__init__(self, **kwargs)
+        TypePackager.__init__(self, **kwargs)

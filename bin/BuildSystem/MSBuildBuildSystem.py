@@ -29,8 +29,8 @@ from CraftCompiler import CraftCompiler
 
 
 class MSBuildBuildSystem(BuildSystemBase):
-    def __init__(self):
-        BuildSystemBase.__init__(self, "msbuild")
+    def __init__(self, package: CraftPackageObject):
+        BuildSystemBase.__init__(self, package, "msbuild")
         self.msbuildTargets = ["Rebuild"]
         self.buildTypes = {
             "Release": "Release",

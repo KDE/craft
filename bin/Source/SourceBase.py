@@ -7,13 +7,15 @@ import utils
 from CraftBase import CraftBase
 from CraftCore import CraftCore
 
+from Blueprints import CraftPackageObject
+
 
 class SourceBase(CraftBase):
     """implements basic stuff required for all sources"""
 
-    def __init__(self):
+    def __init__(self, package: CraftPackageObject):
         CraftCore.debug.trace("SourceBase.__init__ called")
-        CraftBase.__init__(self)
+        CraftBase.__init__(self, package)
 
     def fetch(self):
         """fetch the source from a remote host and save it into a local destination"""

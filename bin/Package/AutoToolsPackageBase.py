@@ -10,12 +10,12 @@ from Source.MultiSource import *
 class AutoToolsPackageBase(PackageBase, MultiSource, AutoToolsBuildSystem, TypePackager):
     """provides a base class for autotools based packages from any source"""
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         CraftCore.log.debug("AutoToolsPackageBase.__init__ called")
-        PackageBase.__init__(self)
-        MultiSource.__init__(self)
-        AutoToolsBuildSystem.__init__(self)
-        TypePackager.__init__(self)
+        PackageBase.__init__(self, **kwargs)
+        MultiSource.__init__(self, **kwargs)
+        AutoToolsBuildSystem.__init__(self, **kwargs)
+        TypePackager.__init__(self, **kwargs)
         # needed to run autogen sh, this is needed in all checkouts but normaly not in a tarball
         if self.subinfo.hasSvnTarget():
             self.subinfo.options.configure.bootstrap = True

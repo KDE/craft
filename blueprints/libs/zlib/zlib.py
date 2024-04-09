@@ -48,15 +48,15 @@ class subinfo(info.infoclass):
 if CraftCore.compiler.isWindows:
 
     class Package(CMakePackageBase):
-        def __init__(self, **args):
-            super().__init__()
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs)
             self.subinfo.options.configure.args += [f"-DINSTALL_PKGCONFIG_DIR={CraftCore.standardDirs.craftRoot() / 'lib/pkgconfig'}"]
 
 else:
 
     class Package(AutoToolsPackageBase):
-        def __init__(self, **args):
-            super().__init__()
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs)
             self.subinfo.options.configure.autoreconf = False
             self.subinfo.options.configure.noCacheFile = True
             self.supportsCCACHE = False

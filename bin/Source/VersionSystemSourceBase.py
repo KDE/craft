@@ -7,9 +7,9 @@ from Source.SourceBase import *
 class VersionSystemSourceBase(SourceBase):
     """abstract base class for version system support"""
 
-    def __init__(self):
+    def __init__(self, package: CraftPackageObject):
         CraftCore.debug.trace("VersionSystemSourceBase __init__")
-        SourceBase.__init__(self)
+        SourceBase.__init__(self, package)
 
     def getUrl(self, index):
         """get the url at position 'index' from a ';' separated list of urls"""

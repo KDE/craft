@@ -13,12 +13,12 @@ from Source.MultiSource import *
 class BinaryPackageBase(PackageBase, MultiSource, BinaryBuildSystem, TypePackager):
     """provides a base class for binary packages"""
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         CraftCore.log.debug("BinaryPackageBase.__init__ called")
-        PackageBase.__init__(self)
-        BinaryBuildSystem.__init__(self)
-        MultiSource.__init__(self)
-        TypePackager.__init__(self)
+        PackageBase.__init__(self, **kwargs)
+        BinaryBuildSystem.__init__(self, **kwargs)
+        MultiSource.__init__(self, **kwargs)
+        TypePackager.__init__(self, **kwargs)
 
     def install(self):
         if not BinaryBuildSystem.install(self):

@@ -26,8 +26,8 @@ from BuildSystem.MakeFileBuildSystem import *
 
 # based on https://wiki.archlinux.org/index.php/Perl_package_guidelines
 class PerlBuildSystem(MakeFileBuildSystem):
-    def __init__(self):
-        MakeFileBuildSystem.__init__(self)
+    def __init__(self, **kwargs):
+        MakeFileBuildSystem.__init__(self, **kwargs)
         self.subinfo.options.make.supportsMultijob = False
         self.subinfo.options.useShadowBuild = False
 
