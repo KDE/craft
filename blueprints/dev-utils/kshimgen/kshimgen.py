@@ -38,8 +38,8 @@ class subinfo(info.infoclass):
 if CraftCore.compiler.isAndroid:
 
     class Package(BinaryPackageBase):
-        def __init__(self):
-            BinaryPackageBase.__init__(self)
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs)
 
         def install(self):
             return utils.copyDir(self.sourceDir(), self.installDir())
