@@ -329,7 +329,10 @@ class CraftPackageObject(object):
                 raise BlueprintException(f"Failed to load file {self.source}", self, e)
             if not self._Module is None:
                 if hasattr(self._Module, "Package"):
-                    pack = self._Module.Package(package=self)
+                    try:
+                        pack = self._Module.Package(package=self)
+                    except Exception as e:
+                        raise BlueprintException(f"Failed to load package {self.source}", self, e)
                     # poor mans inheritance check
                     if self.children and "VirtualPackageBase" not in [x.__name__ for x in pack.__class__.__bases__]:
                         raise BlueprintException(
