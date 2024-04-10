@@ -64,7 +64,7 @@ class StageLogger(object):
                     chunk = self.__logFile.read(1024)
                     if not chunk:
                         break
-                    activeLog.__logFile.write(chunk)
+                    activeLog.write(chunk)
             self.__logFile.close()
 
     @staticmethod
