@@ -85,8 +85,8 @@ class PackagerLists(object):
 
 class CollectionPackagerBase(PackagerBase):
     @InitGuard.init_once
-    def __init__(self, whitelists=None, blacklists=None):
-        PackagerBase.__init__(self)
+    def __init__(self, package: CraftPackageObject, whitelists=None, blacklists=None):
+        PackagerBase.__init__(self, package)
         if not whitelists:
             whitelists = [PackagerLists.defaultWhitelist]
         if not blacklists:
