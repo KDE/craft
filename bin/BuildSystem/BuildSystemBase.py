@@ -231,66 +231,67 @@ class BuildSystemBase(CraftBase):
         return True
 
     def __internalPostInstallHandleSymbols(self, binaryFiles):
-        symbolsPattern = re.compile(r".*\{0}$".format(CraftCore.compiler.symbolsSuffix), re.IGNORECASE)
+        with StageLogger("__internalPostInstallHandleSymbols", buffered=True, outputOnFailure=True):
+            symbolsPattern = re.compile(r".*\{0}$".format(CraftCore.compiler.symbolsSuffix), re.IGNORECASE)
 
-        def symFilter(x: os.DirEntry, root):
-            if CraftCore.compiler.isMacOS:
-                if x.is_file():
-                    return False
-            else:
-                if x.is_dir():
-                    return False
-            return utils.regexFileFilter(x, root, [symbolsPattern])
-
-        for f in utils.filterDirectoryContent(self.imageDir(), symFilter, lambda x, root: True):
-            dest = self.symbolsImageDir() / Path(f).relative_to(self.imageDir())
-            if not dest.parent.exists():
-                if not utils.createDir(dest.parent):
-                    return False
-            if not utils.moveFile(f, dest):
-                return False
-        if CraftCore.compiler.isMSVC():
-            # static libs might also have pdbs
-            def staticLibsFilter(p: Path):
-                if p.suffix == ".lib":
-                    with io.StringIO() as log:
-                        utils.system(["lib", "-list", "-nologo", p], stdout=log, logCommand=False)
-                        if ".dll" in log.getvalue():
-                            return False
-                        return True
-                return False
-
-            staticLibs = list(utils.filterDirectoryContent(self.installDir(), lambda x, root: staticLibsFilter(Path(x.path)), lambda x, root: True))
-            for f in binaryFiles + staticLibs:
-                pdb = utils.getPDBForBinary(f)
-                if not pdb:
-                    CraftCore.log.warning(f"Could not find a PDB for {f}")
-                    continue
-                pdbDestination = self.symbolsImageDir() / Path(f).parent.relative_to(self.imageDir()) / os.path.basename(pdb)
-                if not pdbDestination.exists():
-                    if not pdb.exists():
-                        CraftCore.log.warning(f"PDB {pdb} for {f} does not exist")
-                        continue
-                    CraftCore.log.info(f"Install pdb: {pdbDestination} for {os.path.basename(f)}")
-                    if not utils.copyFile(pdb, pdbDestination, linkOnly=False):
+            def symFilter(x: os.DirEntry, root):
+                if CraftCore.compiler.isMacOS:
+                    if x.is_file():
                         return False
-        else:
-            if not self.subinfo.options.package.disableStriping:
-                for f in binaryFiles:
-                    f = Path(f)
-                    symFile = utils.symFileName(f)
-                    symFileDest = self.symbolsImageDir() / symFile.relative_to(self.imageDir())
-                    if symFileDest.exists():
-                        return True
-
-                    if not symFileDest.parent.exists() and not utils.createDir(symFileDest.parent):
+                else:
+                    if x.is_dir():
                         return False
-                    if not utils.strip(f, symFileDest):
-                        if CraftCore.compiler.isAndroid:
-                            CraftCore.log.warning(f"Failed to strip {f}. Is {f} a host tool?")
+                return utils.regexFileFilter(x, root, [symbolsPattern])
+
+            for f in utils.filterDirectoryContent(self.imageDir(), symFilter, lambda x, root: True):
+                dest = self.symbolsImageDir() / Path(f).relative_to(self.imageDir())
+                if not dest.parent.exists():
+                    if not utils.createDir(dest.parent):
+                        return False
+                if not utils.moveFile(f, dest):
+                    return False
+            if CraftCore.compiler.isMSVC():
+                # static libs might also have pdbs
+                def staticLibsFilter(p: Path):
+                    if p.suffix == ".lib":
+                        with io.StringIO() as log:
+                            utils.system(["lib", "-list", "-nologo", p], stdout=log, logCommand=False)
+                            if ".dll" in log.getvalue():
+                                return False
                             return True
-                        return False
-        return True
+                    return False
+
+                staticLibs = list(utils.filterDirectoryContent(self.installDir(), lambda x, root: staticLibsFilter(Path(x.path)), lambda x, root: True))
+                for f in binaryFiles + staticLibs:
+                    pdb = utils.getPDBForBinary(f)
+                    if not pdb:
+                        CraftCore.log.warning(f"Could not find a PDB for {f}")
+                        continue
+                    pdbDestination = self.symbolsImageDir() / Path(f).parent.relative_to(self.imageDir()) / os.path.basename(pdb)
+                    if not pdbDestination.exists():
+                        if not pdb.exists():
+                            CraftCore.log.warning(f"PDB {pdb} for {f} does not exist")
+                            continue
+                        CraftCore.log.info(f"Install pdb: {pdbDestination} for {os.path.basename(f)}")
+                        if not utils.copyFile(pdb, pdbDestination, linkOnly=False):
+                            return False
+            else:
+                if not self.subinfo.options.package.disableStriping:
+                    for f in binaryFiles:
+                        f = Path(f)
+                        symFile = utils.symFileName(f)
+                        symFileDest = self.symbolsImageDir() / symFile.relative_to(self.imageDir())
+                        if symFileDest.exists():
+                            return True
+
+                        if not symFileDest.parent.exists() and not utils.createDir(symFileDest.parent):
+                            return False
+                        if not utils.strip(f, symFileDest):
+                            if CraftCore.compiler.isAndroid:
+                                CraftCore.log.warning(f"Failed to strip {f}. Is {f} a host tool?")
+                                return True
+                            return False
+            return True
 
     def __patchRpathMac(self, binaryFiles, newPrefix):
         for f in binaryFiles:
