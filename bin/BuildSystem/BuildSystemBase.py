@@ -232,7 +232,7 @@ class BuildSystemBase(CraftBase):
 
     def __internalPostInstallHandleSymbols(self, binaryFiles):
         with StageLogger("__internalPostInstallHandleSymbols", buffered=True, outputOnFailure=True):
-            symbolsPattern = re.compile(r".*\{0}$".format(CraftCore.compiler.symbolsSuffix), re.IGNORECASE)
+            symbolsPattern = re.compile(r".*{0}$".format(re.escape(CraftCore.compiler.symbolsSuffix)), re.IGNORECASE)
 
             def symFilter(x: os.DirEntry, root):
                 if CraftCore.compiler.isMacOS:
