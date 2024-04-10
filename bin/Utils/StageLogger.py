@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2023 Hannah von Reth <vonreth@kde.org>
 
 import io
+import tempfile
 from pathlib import Path
 
 from CraftCore import CraftCore
@@ -27,7 +28,8 @@ class StageLogger(object):
         if not self.buffered:
             self.__logFile = self._logPath.open(mode, encoding="UTF-8", newline="\n")
         else:
-            self.__logFile = io.StringIO(newline="\n")
+            # write 10 mb to ram then use a file
+            self.__logFile = tempfile.SpooledTemporaryFile(mode=mode, max_size=10000000, encoding="UTF-8", newline="\n")
 
     def write(self, s: str):
         # only create the log file if anything is written
