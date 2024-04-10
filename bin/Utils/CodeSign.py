@@ -35,7 +35,8 @@ import utils
 from CraftCore import CraftCore
 from CraftOS.osutils import LockFile, OsUtils
 from CraftSetupHelper import SetupHelper
-from Utils import CraftCache, CraftChoicePrompt
+from Utils import CraftChoicePrompt
+from Utils.StageLogger import StageLogger
 
 
 def signWindows(fileNames: Union[Path, str]) -> bool:
@@ -47,11 +48,12 @@ def signWindows(fileNames: Union[Path, str]) -> bool:
     if not fileNames:
         return True
 
-    customCommand = CraftCore.settings.get("CodeSigning", "WindowsCustomSignCommand", "")
-    if customCommand:
-        return __signWindowsWithCustomCommand(customCommand, fileNames)
-    else:
-        return __signWindowsWithSignTool(fileNames)
+    with StageLogger("SignWindows", buffered=True, outputOnFailure=True):
+        customCommand = CraftCore.settings.get("CodeSigning", "WindowsCustomSignCommand", "")
+        if customCommand:
+            return __signWindowsWithCustomCommand(customCommand, fileNames)
+        else:
+            return __signWindowsWithSignTool(fileNames)
 
 
 def __signWindowsWithSignTool(fileNames: Union[Path, str]) -> bool:
@@ -322,23 +324,24 @@ def signMacApp(appPath: Path):
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
         return utils.localSignMac([appPath])
 
-    customComand = CraftCore.settings.get("CodeSigning", "MacCustomSignCommand", "")
-    if customComand:
-        CraftCore.log.info(f"Sign {appPath} with custom command")
-        cmd = shlex.split(customComand)
-        cmd += [appPath]
-        if not utils.system(cmd):
-            return False
+    with StageLogger("SignMacApp", buffered=True, outputOnFailure=True):
+        customComand = CraftCore.settings.get("CodeSigning", "MacCustomSignCommand", "")
+        if customComand:
+            CraftCore.log.info(f"Sign {appPath} with custom command")
+            cmd = shlex.split(customComand)
+            cmd += [appPath]
+            if not utils.system(cmd):
+                return False
 
-        if __verifyMacApp(appPath):
-            CraftCore.log.info(f"Signature of {appPath} was succesfully verfied")
+            if __verifyMacApp(appPath):
+                CraftCore.log.info(f"Signature of {appPath} was succesfully verfied")
+            else:
+                CraftCore.log.warning(f"Signature verification of {appPath} failed!")
+            return True
         else:
-            CraftCore.log.warning(f"Signature verification of {appPath} failed!")
-        return True
-    else:
-        # special case, two independent setups of craft might want to sign at the same time and only one keychain can be unlocked at a time
-        with _MacSignScope() as scope:
-            return __signMacApp(appPath, scope)
+            # special case, two independent setups of craft might want to sign at the same time and only one keychain can be unlocked at a time
+            with _MacSignScope() as scope:
+                return __signMacApp(appPath, scope)
 
 
 def __signMacPackage(packagePath: Path, scope: _MacSignScope):
@@ -400,13 +403,14 @@ def signMacPackage(packagePath: str):
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
         return utils.localSignMac([packagePath])
 
-    customComand = CraftCore.settings.get("CodeSigning", "MacCustomSignCommand", "")
-    if customComand:
-        CraftCore.log.info(f"Sign {packagePath} with custom command")
-        cmd = shlex.split(customComand)
-        cmd += [packagePath]
-        return utils.system(cmd)
-    else:
-        # special case, two independent setups of craft might want to sign at the same time and only one keychain can be unlocked at a time
-        with _MacSignScope() as scope:
-            return __signMacPackage(Path(packagePath), scope)
+    with StageLogger("SignMacPackage", buffered=True, outputOnFailure=True):
+        customComand = CraftCore.settings.get("CodeSigning", "MacCustomSignCommand", "")
+        if customComand:
+            CraftCore.log.info(f"Sign {packagePath} with custom command")
+            cmd = shlex.split(customComand)
+            cmd += [packagePath]
+            return utils.system(cmd)
+        else:
+            # special case, two independent setups of craft might want to sign at the same time and only one keychain can be unlocked at a time
+            with _MacSignScope() as scope:
+                return __signMacPackage(Path(packagePath), scope)
