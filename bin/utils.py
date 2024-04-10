@@ -358,10 +358,13 @@ def systemWithoutShell(
     # if there was no output
     ansiFix()
 
-    if acceptableExitCodes and proc.returncode in acceptableExitCodes:
-        CraftCore.log.info(f"Command {redact(cmd, secret)} succeeded with exit code {proc.returncode}")
+    if proc.returncode == 0:
         return True
-    elif proc.returncode == 0:
+    if acceptableExitCodes and proc.returncode in acceptableExitCodes:
+        resultMessage = f"Command {redact(cmd, secret)} succeeded with exit code {proc.returncode}"
+        StageLogger.logLine(resultMessage)
+        if not outputOnFailure:
+            CraftCore.log.info(resultMessage)
         return True
     resultMessage = f"Command {redact(cmd, secret)} failed with exit code {proc.returncode}"
     StageLogger.logLine(resultMessage)
