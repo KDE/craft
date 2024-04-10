@@ -46,11 +46,6 @@ class StageLogger(object):
             self.__logFile.seek(pos)
 
     def __enter__(self):
-        if StageLogger.ActiveLogs:
-            activeLog = StageLogger.ActiveLogs[-1]
-            if activeLog.__logFile:
-                activeLog.__logFile.close()
-                activeLog.__logFile = None
         StageLogger.ActiveLogs.append(self)
         return self
 
@@ -60,7 +55,6 @@ class StageLogger(object):
             if StageLogger.ActiveLogs:
                 # append to parent log
                 activeLog = StageLogger.ActiveLogs[-1]
-                activeLog.__open("at+")
                 line = "*" * CraftCore.debug.lineWidth
                 activeLog.write(f"\n{line}\n{self._logPath.name}\n{line}\n")
                 self.__logFile.seek(0)
