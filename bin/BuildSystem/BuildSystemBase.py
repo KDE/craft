@@ -314,7 +314,7 @@ class BuildSystemBase(CraftBase):
                     stdout=subprocess.DEVNULL,
                     stderr=subprocess.DEVNULL,
                 ):
-                    CraftCore.log.info(f"Adding rpath {craftRpath} to {f}")
+                    CraftCore.log.debug(f"Adding rpath {craftRpath} to {f}")
                     utils.system(
                         ["install_name_tool", "-add_rpath", craftRpath, f],
                         logCommand=False,
