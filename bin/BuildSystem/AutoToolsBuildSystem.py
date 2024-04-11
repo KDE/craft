@@ -28,6 +28,23 @@ class AutoToolsBuildSystem(BuildSystemBase):
             and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32
         ):
             self.platform = Arguments(["--host=i686-pc-linux-gnu"])
+        elif CraftCore.compiler.isWindows:
+            if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
+                self.platform = Arguments(
+                    [
+                        "--host=i686-w64-mingw32",
+                        "--build=i686-w64-mingw32",
+                        "--target=i686-w64-mingw32",
+                    ]
+                )
+            else:
+                self.platform = Arguments(
+                    [
+                        "--host=x86_64-w64-mingw32",
+                        "--build=x86_64-w64-mingw32",
+                        "--target=x86_64-w64-mingw32",
+                    ]
+                )
         elif CraftCore.compiler.isAndroid:
             if CraftCore.compiler.architecture == CraftCompiler.Architecture.arm64:
                 self.platform = Arguments(["--host=aarch64-linux-android"])
