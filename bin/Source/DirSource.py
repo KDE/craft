@@ -1,11 +1,12 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # SPDX-FileCopyrightText: 2023 Julius Künzel <jk.kdedev@smartlab.uber.space>
 
-from pathlib import Path
-import os
 import io
-import utils
+import os
+from pathlib import Path
 
+import utils
+from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftCore import CraftCore
 from Source.SourceBase import SourceBase
 
@@ -13,9 +14,9 @@ from Source.SourceBase import SourceBase
 class DirSource(SourceBase):
     """existing directory as source"""
 
-    def __init__(self):
+    def __init__(self, package: CraftPackageObject):
         CraftCore.debug.trace("DirSource.__init__ called")
-        SourceBase.__init__(self)
+        super().__init__(package=package)
 
     def sourceDir(self, dummyIndex=0) -> Path:
         if ("ContinuousIntegration", "SourceDir") in CraftCore.settings:

@@ -11,11 +11,9 @@ from Source.VersionSystemSourceBase import *
 class SvnSource(VersionSystemSourceBase):
     """subversion support"""
 
-    def __init__(self, subinfo=None):
+    def __init__(self, package: CraftPackageObject):
         CraftCore.debug.trace("SvnSource.__init__")
-        if subinfo:
-            self.subinfo = subinfo
-        VersionSystemSourceBase.__init__(self)
+        super().__init__(package=package)
 
     def checkoutDir(self, index=0):
         CraftCore.debug.trace("SvnSource.checkoutDir")
