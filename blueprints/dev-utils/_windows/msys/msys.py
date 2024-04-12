@@ -14,6 +14,8 @@ class subinfo(info.infoclass):
 class Package(BinaryPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.subinfo.options.package.disableBinaryCache = True
+        self.subinfo.shelveAble = False
 
     def postInstall(self):
         return utils.createShim(
