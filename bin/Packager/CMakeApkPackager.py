@@ -11,8 +11,8 @@ from Utils.Arguments import Arguments
 
 class CMakeApkPackager(CollectionPackagerBase):
     @InitGuard.init_once
-    def __init__(self):
-        CollectionPackagerBase.__init__(self)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.__androidApkTargets = set()
         self.__androidApkDirs = set()
 
