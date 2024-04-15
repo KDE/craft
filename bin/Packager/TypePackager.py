@@ -79,7 +79,7 @@ class TypePackager(PackagerBase):
             self.__class__.__bases__ = tuple(bases)
         else:
             self.__class__.__bases__ += (packager,)
-        packager.__init__(self, self.__packageObject)
+        packager.__init__(self, package=self.__packageObject)
         self.__packager = packager
 
     def createPackage(self):
