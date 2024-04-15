@@ -11,8 +11,8 @@ from Utils import CodeSign
 
 class MacBasePackager(CollectionPackagerBase):
     @InitGuard.init_once
-    def __init__(self, whitelists, blacklists):
-        CollectionPackagerBase.__init__(self, whitelists, blacklists)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.externalLibs = {}
 
     def internalCreatePackage(self, defines):

@@ -7,8 +7,8 @@ class CreateArchivePackager(CollectionPackagerBase):
     This packager collects everything and puts into the archive dir of the resp. package"""
 
     @InitGuard.init_once
-    def __init__(self, whitelists=None, blacklists=None):
-        CollectionPackagerBase.__init__(self, whitelists, blacklists)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def createPackage(self):
         """create a package"""

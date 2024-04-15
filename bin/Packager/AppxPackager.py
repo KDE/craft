@@ -94,8 +94,8 @@ class AppxPackager(CollectionPackagerBase):
           </uap3:Extension>"""
 
     @InitGuard.init_once
-    def __init__(self, whitelists=None, blacklists=None):
-        CollectionPackagerBase.__init__(self, whitelists, blacklists)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     @staticmethod
     def _setupFileTypes(defines):
