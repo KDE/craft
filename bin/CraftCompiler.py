@@ -21,7 +21,7 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
-
+import os
 import platform
 import re
 from enum import Enum, IntFlag, auto, unique
@@ -354,7 +354,7 @@ class CraftCompiler(object):
 
     def getVersion(self):
         if self.isGCCLike():
-            return self.getGCCLikeVersion(self.compiler.name)
+            return self.getGCCLikeVersion(os.environ.get("CXX"))
         elif self.isMSVC():
             return self.getInternalVersion()
         else:
