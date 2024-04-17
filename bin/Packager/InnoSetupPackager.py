@@ -64,8 +64,8 @@ class InnoSetupPackager(PortablePackager):
     registry_keys:  Array of dict ("name", "value") of custom registry keys to add on installation."""
 
     @InitGuard.init_once
-    def __init__(self, whitelists=None, blacklists=None):
-        PortablePackager.__init__(self, whitelists, blacklists)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.nsisExe = None
         self._isInstalled = False
 
