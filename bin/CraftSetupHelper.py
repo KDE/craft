@@ -312,10 +312,10 @@ class SetupHelper(object):
             os.path.join(CraftCore.standardDirs.craftRoot(), "share", "bison"),
         )
         self.prependEnvVar("M4", os.path.join(CraftCore.standardDirs.craftRoot(), "bin", "m4"))
-        self.prependEnvVar(
-            "FONTCONFIG_PATH",
-            os.path.join(CraftCore.standardDirs.craftRoot(), "etc", "fonts"),
-        )
+
+        # use the system fonts, keep the logic in sync with AppImagePackager
+        fontConfigPath = Path("/etc/fonts")
+        self.addEnvVar("FONTCONFIG_PATH", fontConfigPath if fontConfigPath.exists() else CraftCore.standardDirs.craftRoot() / "etc/fonts")
 
     def _setupMac(self):
         # self.prependEnvVar("DYLD_LIBRARY_PATH", os.path.join(CraftCore.standardDirs.craftRoot(), "lib"))
