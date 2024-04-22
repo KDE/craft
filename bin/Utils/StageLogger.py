@@ -66,8 +66,6 @@ class StageLogger(object):
                 activeLog = StageLogger.ActiveLogs[-1]
                 if not activeLog.buffered:
                     activeLog.__open("at+")
-                else:
-                    assert activeLog.__logFile
                 line = "*" * CraftCore.debug.lineWidth
                 activeLog.write(f"\n{line}\n{self._logPath.name}\n{line}\n")
                 self.__logFile.seek(0)
@@ -75,7 +73,7 @@ class StageLogger(object):
                     chunk = self.__logFile.read(1024)
                     if not chunk:
                         break
-                    activeLog.__logFile.write(chunk)
+                    activeLog.write(chunk)
             self.__logFile.close()
 
     @staticmethod
