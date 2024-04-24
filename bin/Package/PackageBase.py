@@ -35,6 +35,7 @@ class PackageBase(CraftBase):
 
     def qmerge(self, dbOnly=False):
         """mergeing the imagedirectory into the filesystem"""
+        CraftCore.log.debug("PackageBase.qmerge called")
         ## \todo is this the optimal place for creating the post install scripts ?
 
         if self.package.isInstalled:
@@ -67,7 +68,7 @@ class PackageBase(CraftBase):
 
     def unmerge(self, dbOnly=False):
         """unmergeing the files from the filesystem"""
-        CraftCore.log.debug("Packagebase unmerge called")
+        CraftCore.log.debug("PackageBase.unmerge called")
         packageList = CraftCore.installdb.getInstalledPackages(self.package)
         for package in packageList:
             if not dbOnly:
