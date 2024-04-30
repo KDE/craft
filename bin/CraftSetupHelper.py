@@ -393,11 +393,9 @@ class SetupHelper(object):
         os.environ.update(self.getEnv())
 
         self.addEnvVar("KDEROOT", CraftCore.standardDirs.craftRoot())
-        self.addEnvVar("SSL_CERT_FILE", os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem"))
-        self.addEnvVar(
-            "REQUESTS_CA_BUNDLE",
-            os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem"),
-        )
+        # only set if not already explicitly set
+        self.addDefaultEnvVar("SSL_CERT_FILE", CraftCore.standardDirs.etcDir() / "cacert.pem")
+        self.addDefaultEnvVar("REQUESTS_CA_BUNDLE", CraftCore.standardDirs.etcDir() / "cacert.pem")
 
         if CraftCore.settings.getboolean("Compile", "UseCCache", False):
             self.addDefaultEnvVar(
