@@ -154,7 +154,7 @@ class SetupHelper(object):
 
     def addDefaultEnvVar(self, key, val):
         if not key in os.environ:
-            os.environ[key] = val
+            self.addEnvVar(key, val)
 
     def prependEnvVar(self, key: str, var: str, sep: str = os.path.pathsep) -> None:
         if not type(var) == list:
