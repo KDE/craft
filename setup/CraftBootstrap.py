@@ -392,10 +392,13 @@ def setUp(args):
     cmd = []
     if args.verbose:
         cmd.append("-vvv")
-    run(args, cmd + ["--unshelve", tmpShelf])
-
+    # bootstrap
+    run(args, cmd + ["craft"])
     if not args.dry_run:
         shutil.rmtree(os.path.join(args.prefix, f"craft-tmp"))
+
+    # install optional packages from shelve
+    run(args, cmd + ["--unshelve", tmpShelf])
 
     print("Setup complete")
     print()
