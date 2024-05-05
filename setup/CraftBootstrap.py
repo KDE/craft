@@ -305,8 +305,8 @@ def setUp(args):
     )
     if qtMajorVersion == "5":
         args.branch = "qt5-lts"
-        shelf["craft-core"].version = "qt5-lts"
-        shelf["craft-blueprints-kde"].version = "qt5-lts"
+        shelf["craft/craft-core"].version = "qt5-lts"
+        shelf["craft/craft-blueprints-kde"].version = "qt5-lts"
 
     abi = getABI(args, qtMajorVersion)
 
@@ -371,7 +371,7 @@ def setUp(args):
     boot.writeSettings()
 
     if installShortCut:  # Windows only
-        shelf["craft-startmenu-entry"]
+        shelf["dev-utils/craft-startmenu-entry"]
 
     # install toast notifications
     if CraftBootstrap.isWin():
@@ -392,13 +392,9 @@ def setUp(args):
     cmd = []
     if args.verbose:
         cmd.append("-vvv")
-    # bootstrap
-    run(args, cmd + ["craft"])
+    run(args, cmd + ["--unshelve", tmpShelf])
     if not args.dry_run:
         shutil.rmtree(os.path.join(args.prefix, f"craft-tmp"))
-
-    # install optional packages from shelve
-    run(args, cmd + ["--unshelve", tmpShelf])
 
     print("Setup complete")
     print()
