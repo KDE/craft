@@ -1,6 +1,6 @@
 import info
-from Package.BinaryPackageBase import *
 from Package.CMakePackageBase import *
+from Package.BinaryPackageBase import *
 
 
 class subinfo(info.infoclass):
@@ -25,14 +25,12 @@ class subinfo(info.infoclass):
         self.defaultTarget = "0.6.0"
 
     if not CraftCore.compiler.isAndroid:
-
         def setDependencies(self):
             self.buildDependencies["dev-utils/cmake-base"] = None
             self.buildDependencies["dev-utils/mingw-w64"] = None
 
 
 if CraftCore.compiler.isAndroid:
-
     class Package(BinaryPackageBase):
         def __init__(self):
             BinaryPackageBase.__init__(self)
@@ -41,7 +39,6 @@ if CraftCore.compiler.isAndroid:
             return utils.copyDir(self.sourceDir(), self.installDir())
 
 else:
-
     class Package(CMakePackageBase):
         def __init__(self, **args):
             CMakePackageBase.__init__(self)

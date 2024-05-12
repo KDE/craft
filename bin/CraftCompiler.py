@@ -178,7 +178,6 @@ class CraftCompiler(object):
 
     def __init__(self):
         self.signature = CraftCompilerSignature.parseAbi(CraftCore.settings.get("General", "ABI"))
-        self._hostArchitecture = None
 
         self._MSVCToolset = None
         self._apiLevel = None
@@ -204,23 +203,17 @@ class CraftCompiler(object):
 
     @property
     def hostArchitecture(self) -> Architecture:
-        if not self._hostArchitecture:
-            # if we are in a x64 binary on mac the platform class will not report the correct arch
-            if self.isMacOS and self.architecture == CraftCompiler.Architecture.x86_64:
-                if "RELEASE_ARM64" in platform.uname().version:
-                    self._hostArchitecture = CraftCompiler.Architecture.arm64
-            if not self._hostArchitecture:
-                arch_map = {
-                    "i386": CraftCompiler.Architecture.x86_32,
-                    "amd64": CraftCompiler.Architecture.x86_64,
-                    "x86_64": CraftCompiler.Architecture.x86_64,
-                    "arm64": CraftCompiler.Architecture.arm64,
-                }
-                self._hostArchitecture = arch_map.get(platform.machine().lower())
-                if not self._hostArchitecture:
-                    print("Unsupported host platform:", platform.machine())
-                    exit(1)
-        return self._hostArchitecture
+        arch_map = {
+            "i386": CraftCompiler.Architecture.x86_32,
+            "amd64": CraftCompiler.Architecture.x86_64,
+            "x86_64": CraftCompiler.Architecture.x86_64,
+            "arm64": CraftCompiler.Architecture.arm64,
+        }
+        out = arch_map.get(platform.machine().lower())
+        if not out:
+            print("Unsupported host platform:", platform.machine())
+            exit(1)
+        return out
 
     @property
     def rpmArchitecture(self):
@@ -310,7 +303,7 @@ class CraftCompiler(object):
             return ".debug"
 
     def isNative(self):
-        return self.architecture == self.hostArchitecture and CraftCore.settings.getboolean("General", "Native", True)
+        return CraftCore.settings.getboolean("General", "Native", True)
 
     def isGCC(self) -> bool:
         return self.compiler == CraftCompiler.Compiler.GCC

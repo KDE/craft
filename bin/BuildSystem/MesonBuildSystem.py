@@ -21,9 +21,8 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-import textwrap
-
 import utils
+import textwrap
 from BuildSystem.BuildSystemBase import *
 from CraftCompiler import CraftCompiler
 
@@ -31,10 +30,6 @@ from CraftCompiler import CraftCompiler
 class MesonBuildSystem(BuildSystemBase):
     def __init__(self):
         BuildSystemBase.__init__(self, "meson")
-
-    @property
-    def __meson(self):
-        return CraftCore.cache.findApplication("meson")
 
     def __env(self):
         env = {
@@ -147,8 +142,11 @@ class MesonBuildSystem(BuildSystemBase):
 
     def configure(self, defines=""):
         with utils.ScopedEnv(self.__env()):
-            extra_options = self.craftCrossFile()
-            if not utils.system(Arguments([self.__meson, "setup", extra_options, self.configureOptions(defines)])):
+            extra_options = []
+            if CraftCore.compiler.isAndroid:
+                extra_options = ["--cross-file", self.craftCrossFile()]
+
+            if not utils.system(Arguments(["meson", "setup", extra_options, self.configureOptions(defines)])):
                 logFile = self.buildDir() / "meson-logs/meson-log.txt"
                 if logFile.exists():
                     with logFile.open("rt", encoding="UTF-8") as log:
@@ -182,11 +180,11 @@ class MesonBuildSystem(BuildSystemBase):
         env = self.__env()
         env["DESTDIR"] = self.installDir()
         with utils.ScopedEnv(env):
-            return utils.system([self.__meson, "install"], cwd=self.buildDir()) and self._fixInstallPrefix()
+            return utils.system(["meson", "install"], cwd=self.buildDir()) and self._fixInstallPrefix()
 
     def unittest(self):
         """running make tests"""
-        return utils.system([self.__meson, "test"], cwd=self.buildDir())
+        return utils.system(["meson", "test"], cwd=self.buildDir())
 
     def makeOptions(self, args):
         defines = Arguments()

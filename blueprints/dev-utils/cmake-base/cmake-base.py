@@ -17,10 +17,10 @@ class subinfo(info.infoclass):
                 self.targets[ver] = f"https://www.cmake.org/files/v{majorMinorStr}/cmake-{ver}-macos-universal.tar.gz"
                 self.targetInstSrc[ver] = f"cmake-{ver}-macos-universal"
             elif CraftCore.compiler.isLinux:
-                if CraftCore.compiler.hostArchitecture == CraftCore.compiler.Architecture.x86_64:
+                if CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_64:
                     self.targets[ver] = f"https://cmake.org/files/v{majorMinorStr}/cmake-{ver}-linux-x86_64.tar.gz"
                     self.targetInstSrc[ver] = f"cmake-{ver}-linux-x86_64"
-                if CraftCore.compiler.hostArchitecture & CraftCore.compiler.Architecture.arm:
+                if CraftCore.compiler.architecture & CraftCore.compiler.Architecture.arm:
                     self.targets[ver] = f"https://cmake.org/files/v{majorMinorStr}/cmake-{ver}-linux-aarch64.tar.gz"
                     self.targetInstSrc[ver] = f"cmake-{ver}-linux-aarch64"
 

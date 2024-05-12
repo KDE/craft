@@ -34,14 +34,15 @@ class Package(BinaryPackageBase):
             cmakePath /= "bin"
 
         for name in ["cmake", "cmake-gui", "cmcldeps", "cpack", "ctest"]:
-            args = []
             sourceBinary = cmakePath / f"{name}{CraftCore.compiler.executableSuffix}"
-            targetBinary = self.imageDir() / f"dev-utils/bin/{name}{CraftCore.compiler.executableSuffix}"
-            if sourceBinary.exists():
-                if CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
-                    args = ["-arch", CraftCore.compiler.hostArchitecture.name.lower(), str(sourceBinary)]
-                    sourceBinary = "arch"
-                if not utils.createShim(targetBinary, sourceBinary, useAbsolutePath=True, args=args):
+            targetBinary = os.path.join(
+                self.imageDir(),
+                "dev-utils",
+                "bin",
+                f"{name}{CraftCore.compiler.executableSuffix}",
+            )
+            if os.path.exists(sourceBinary):
+                if not utils.createShim(targetBinary, sourceBinary, useAbsolutePath=True):
                     return False
         return True
 
