@@ -163,7 +163,7 @@ class MesonBuildSystem(BuildSystemBase):
             return utils.system(
                 Arguments(
                     [
-                        self.__meson,
+                        "meson",
                         "compile",
                         "-C",
                         self.buildDir(),
