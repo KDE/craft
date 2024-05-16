@@ -78,7 +78,7 @@ def unpackFiles(downloaddir, filenames, workdir):
     return True
 
 
-def unpackFile(downloaddir, filename, workdir):
+def unpackFile(downloaddir, filename, workdir, keepSymlinksOnWindows=True):
     """unpack file specified by 'filename' from 'downloaddir' into 'workdir'"""
     CraftCore.log.debug(f"unpacking this file: {filename}")
     if not filename:
@@ -103,7 +103,7 @@ def unpackFile(downloaddir, filename, workdir):
             or (OsUtils.supportsSymlinks() and CraftCore.cache.getVersion(__locate7z(), versionCommand="-version") >= "16")
             or not re.match(r"(.*\.tar.*$|.*\.tgz$)", filename)
         ):
-            return un7zip(os.path.join(downloaddir, filename), workdir, ext)
+            return un7zip(os.path.join(downloaddir, filename), workdir, ext, keepSymlinksOnWindows=keepSymlinksOnWindows)
     try:
         shutil.unpack_archive(os.path.join(downloaddir, filename), workdir)
     except Exception as e:
@@ -112,14 +112,13 @@ def unpackFile(downloaddir, filename, workdir):
     return True
 
 
-def un7zip(fileName, destdir, flag=None):
+def un7zip(fileName, destdir, flag=None, keepSymlinksOnWindows=True):
     ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
     createDir(destdir)
     kw = {}
     progressFlags = []
     type = []
     app = __locate7z()
-    resolveSymlinks = False
     if not ciMode and CraftCore.cache.checkCommandOutputFor(app, "-bs"):
         progressFlags = ["-bso2", "-bsp1"]
         kw["stderr"] = subprocess.PIPE
@@ -137,8 +136,7 @@ def un7zip(fileName, destdir, flag=None):
                 # print progress to stderr
                 progressFlags = ["-bsp2"]
         kw["pipeProcess"] = subprocess.Popen([app, "x", fileName, "-so"] + progressFlags, stdout=subprocess.PIPE)
-        if OsUtils.isWin():
-            resolveSymlinks = True
+        if CraftCore.compiler.isWindows:
             if progressFlags:
                 progressFlags = ["-bsp0"]
             command = [app, "x", "-si", f"-o{destdir}", "-ttar"] + progressFlags
@@ -150,7 +148,11 @@ def un7zip(fileName, destdir, flag=None):
         command = [app, "x", "-r", "-y", f"-o{destdir}", fileName] + type + progressFlags
 
     # While 7zip supports symlinks cmake 3.8.0 does not support symlinks
-    return system(command, **kw) and (not resolveSymlinks or replaceSymlinksWithCopies(destdir))
+    if not system(command, **kw):
+        return False
+    if CraftCore.compiler.isWindows and not keepSymlinksOnWindows:
+        return replaceSymlinksWithCopies(destdir)
+    return True
 
 
 def compress(archive: Path, source: str) -> bool:
@@ -866,6 +868,8 @@ def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False, kee
 
 
 def replaceSymlinksWithCopies(path, _replaceDirs=False):
+    assert CraftCore.compiler.isWindows
+
     def resolveLink(path):
         while os.path.islink(path):
             toReplace = os.readlink(path)
