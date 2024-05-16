@@ -27,10 +27,14 @@ import importlib.util
 import os
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import utils
 from CraftCore import CraftCore
 from CraftStandardDirs import CraftStandardDirs
+
+if TYPE_CHECKING:
+    from BuildSystem.BuildSystemBase import BuildSystemBase
 
 
 class CategoryPackageObject(object):
@@ -133,7 +137,7 @@ class CraftPackageObject(object):
         self.__path = None
 
     @property
-    def pattern(self):
+    def pattern(self) -> "BuildSystemBase":
         if not self.source:
             raise BlueprintException(f"{self.source} dos not provide a Pattern", self)
         if not self.isCategory():
