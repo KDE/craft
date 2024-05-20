@@ -549,11 +549,6 @@ class OptionsPackage(OptionsBase):
         ##disable the binary cache for this package
         self.disableBinaryCache = False
 
-        ## whether to move the plugins to bin
-        self.movePluginsToBin = utils.OsUtils.isWin()
-        ## whether to move the translations to bin
-        self.moveTranslationsToBin = utils.OsUtils.isWin()
-
 
 ## main option class
 class Options(object):

@@ -285,25 +285,12 @@ class CollectionPackagerBase(PackagerBase):
         # TODO: find a better name for the hooks
         if not self.preArchiveMove():
             return False
-        pathsToMoveToBinPath = []
-        if self.subinfo.options.package.movePluginsToBin:
-            # Qt expects plugins and qml files below bin, on the target system
-            pathsToMoveToBinPath += [
-                os.path.join(archiveDir, "plugins"),
-                os.path.join(archiveDir, "qml"),
-            ]
-        binPath = os.path.join(archiveDir, "bin")
-        for path in pathsToMoveToBinPath:
-            if os.path.isdir(path):
-                if not utils.mergeTree(path, binPath):
-                    return False
 
-        if self.subinfo.options.package.moveTranslationsToBin:
-            # Qt expects translations directory below bin, on the target system
-            translationsPath = os.path.join(archiveDir, "translations")
-            if os.path.isdir(translationsPath):
-                if not utils.mergeTree(translationsPath, os.path.join(binPath, "translations")):
-                    return False
+        if CraftCore.compiler.isWindows:
+            qt_conf = open(os.path.join(archiveDir, "bin", "qt.conf"), "w")
+            qt_conf.write("[Paths]\n")
+            qt_conf.write("Prefix = ..\n") # relative from QCoreApplication::applicationDirPath(), which will be in ./bin
+            qt_conf.close()
 
         if not self.preArchive():
             return False
