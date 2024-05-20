@@ -38,7 +38,6 @@ SolidCompression=yes
 AppPublisher=@{company}
 AppSupportURL=@{website}
 PrivilegesRequiredOverridesAllowed=commandline dialog
-SetupIconFile=@{icon}
 ArchitecturesInstallIn64BitMode=x64 ia64
 @{associations}
 
