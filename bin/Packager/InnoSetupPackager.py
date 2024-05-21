@@ -64,8 +64,8 @@ class InnoSetupPackager(PortablePackager):
     registry_keys:  Array of dict ("name", "value") of custom registry keys to add on installation."""
 
     @InitGuard.init_once
-    def __init__(self, whitelists=None, blacklists=None):
-        PortablePackager.__init__(self, whitelists, blacklists)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.nsisExe = None
         self._isInstalled = False
 
@@ -134,7 +134,7 @@ class InnoSetupPackager(PortablePackager):
                 f"""Root: HKA; Subkey: "Software\\Classes\\{ftype_id}"; ValueType: string; ValueName: ""; ValueData: "{ftype} file"; Flags: uninsdeletekey ; Tasks: {ftype_id}"""
             )
             registry_keys.append(
-                f"""Root: HKA; Subkey: "Software\\Classes\\{ftype_id}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{{app}}\\{defines["executable"]},0" ; Tasks: {ftype_id}"""
+                f"""Root: HKA; Subkey: "Software\\Classes\\{ftype_id}\\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{{app}}\\{defines["executable"]},0" ; Tasks: {ftype_id}"""
             )
             registry_keys.append(
                 f"""Root: HKA; Subkey: "Software\\Classes\\{ftype_id}\\shell\\open\\command"; ValueType: string; ValueName: ""; ValueData: \"""{{app}}\\{defines["executable"]}"" ""%1""\" ; Tasks: {ftype_id}"""

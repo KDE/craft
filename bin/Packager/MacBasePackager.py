@@ -11,8 +11,8 @@ from Utils import CodeSign
 
 class MacBasePackager(CollectionPackagerBase):
     @InitGuard.init_once
-    def __init__(self, whitelists, blacklists):
-        CollectionPackagerBase.__init__(self, whitelists, blacklists)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.externalLibs = {}
 
     def internalCreatePackage(self, defines):
@@ -318,9 +318,11 @@ class MacDylibBundler(object):
                     CraftCore.log.error(f"{fileToFix}: Failed to add library dependency '{guessedPath}' into bundle")
                     return False
                 changedRefs.append((path, guessedNewRef))
-            if changedRefs:
-                if not self._updateLibraryReferences(fileToFix, changedRefs):
-                    return False
+
+        if changedRefs:
+            if not self._updateLibraryReferences(fileToFix, changedRefs):
+                return False
+
         return True
 
     def areLibraryDepsOkay(self, fullPath: Path):

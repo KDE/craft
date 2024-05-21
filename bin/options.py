@@ -430,6 +430,9 @@ class OptionsUnpack(OptionsBase):
     def __init__(self):
         #  Use this option to run 3rd party installers
         self.runInstaller = False
+        # CMake on Windows still has no proper support for symlinks, so we replace them with copies
+        # The option is only supported on Windows
+        self.keepSymlinksOnWindows = False
 
 
 ## options for the configure action

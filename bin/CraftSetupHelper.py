@@ -154,7 +154,7 @@ class SetupHelper(object):
 
     def addDefaultEnvVar(self, key, val):
         if not key in os.environ:
-            os.environ[key] = val
+            self.addEnvVar(key, val)
 
     def prependEnvVar(self, key: str, var: str, sep: str = os.path.pathsep) -> None:
         if not type(var) == list:
@@ -312,10 +312,10 @@ class SetupHelper(object):
             os.path.join(CraftCore.standardDirs.craftRoot(), "share", "bison"),
         )
         self.prependEnvVar("M4", os.path.join(CraftCore.standardDirs.craftRoot(), "bin", "m4"))
-        self.prependEnvVar(
-            "FONTCONFIG_PATH",
-            os.path.join(CraftCore.standardDirs.craftRoot(), "etc", "fonts"),
-        )
+
+        # use the system fonts, keep the logic in sync with AppImagePackager
+        fontConfigPath = Path("/etc/fonts")
+        self.addEnvVar("FONTCONFIG_PATH", fontConfigPath if fontConfigPath.exists() else CraftCore.standardDirs.craftRoot() / "etc/fonts")
 
     def _setupMac(self):
         # self.prependEnvVar("DYLD_LIBRARY_PATH", os.path.join(CraftCore.standardDirs.craftRoot(), "lib"))
@@ -393,11 +393,9 @@ class SetupHelper(object):
         os.environ.update(self.getEnv())
 
         self.addEnvVar("KDEROOT", CraftCore.standardDirs.craftRoot())
-        self.addEnvVar("SSL_CERT_FILE", os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem"))
-        self.addEnvVar(
-            "REQUESTS_CA_BUNDLE",
-            os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem"),
-        )
+        # only set if not already explicitly set
+        self.addDefaultEnvVar("SSL_CERT_FILE", CraftCore.standardDirs.etcDir() / "cacert.pem")
+        self.addDefaultEnvVar("REQUESTS_CA_BUNDLE", CraftCore.standardDirs.etcDir() / "cacert.pem")
 
         if CraftCore.settings.getboolean("Compile", "UseCCache", False):
             self.addDefaultEnvVar(

@@ -76,7 +76,7 @@ class subinfo(info.infoclass):
             #   which is now unmaintained and has known security bugs.
             #   Obsolete libtextstyle and libtextstyle-devel packages.
             self.patchToApply["0.22.3"] += [("gettext-0.22-disable-libtextstyle.patch", 1)]
-        self.patchLevel["0.22.3"] = 2
+        self.patchLevel["0.22.3"] = 3
 
         self.description = "GNU internationalization (i18n)"
         self.defaultTarget = "0.22.3"
@@ -86,6 +86,7 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["virtual/base"] = None
         self.runtimeDependencies["libs/iconv"] = None
         self.runtimeDependencies["libs/libxml2"] = None
+        self.runtimeDependencies["libs/libunistring"] = None
 
 
 class Package(AutoToolsPackageBase):

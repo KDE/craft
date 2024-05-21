@@ -5,8 +5,8 @@ from Packager.CollectionPackagerBase import *
 
 class AppImagePackager(CollectionPackagerBase):
     @InitGuard.init_once
-    def __init__(self, whitelists=None, blacklists=None):
-        CollectionPackagerBase.__init__(self, whitelists, blacklists)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.linuxdeployExe = None
         self._isInstalled = False
 

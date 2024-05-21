@@ -16,8 +16,8 @@ from Utils import CodeSign, CraftHash
 
 class MacDMGPackager(MacBasePackager):
     @InitGuard.init_once
-    def __init__(self, whitelists=None, blacklists=None):
-        MacBasePackager.__init__(self, whitelists, blacklists)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def setDefaults(self, defines: {str: str}) -> {str: str}:
         defines = super().setDefaults(defines)
