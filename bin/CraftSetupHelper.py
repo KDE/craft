@@ -371,6 +371,11 @@ class SetupHelper(object):
         if not "HOME" in os.environ:
             self.addEnvVar("HOME", os.getenv("USERPROFILE"))
 
+        self.addEnvVar(
+            "QTWEBENGINE_RESOURCES_PATH",
+            os.path.join(CraftCore.standardDirs.craftRoot(), "bin"),
+        )
+
         if CraftCore.compiler.isMinGW():
             self.prependEnvVar(
                 "PATH",
