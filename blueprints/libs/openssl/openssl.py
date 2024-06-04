@@ -72,15 +72,13 @@ class subinfo(info.infoclass):
             "no-weak-ssl-ciphers",
             "no-heartbeats",
             "no-dynamic-engine",
+            "no-docs",
+            "no-tests",
             "--libdir=lib",
             f"--openssldir={OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}/etc/ssl",
         ]
 
-        if CraftCore.compiler.isAndroid:
-            # Qt 5 on Android isn't ready for OpenSSL3 yet
-            self.defaultTarget = "1.1.1v"
-        else:
-            self.defaultTarget = "3.2.1"
+        self.defaultTarget = "3.2.1"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
@@ -102,12 +100,12 @@ class PackageCMake(CMakePackageBase):
         if CraftCore.compiler.isAndroid:
             ndkToolchainPath = os.path.join(os.environ["ANDROID_NDK"], "toolchains/llvm/prebuilt", os.environ.get("ANDROID_NDK_HOST", "linux-x86_64"), "bin")
             self.env["PATH"] = os.pathsep.join([ndkToolchainPath, os.environ["PATH"]])
+            self.env["CFLAGS"] = "-Os"
             self.subinfo.options.configure.args += [
                 f"android-{CraftCore.compiler.androidArchitecture}",
                 f"-D__ANDROID_API__={CraftCore.compiler.androidApiLevel()}",
+                "no-apps",
             ]
-            self.subinfo.options.make.args += " SHLIB_VERSION_NUMBER= SHLIB_EXT=_1_1.so"
-            self.subinfo.options.install.args += ["SHLIB_VERSION_NUMBER=", "SHLIB_EXT=_1_1.so", f"DESTDIR={self.installDir()}"]
 
     def configure(self, defines=""):
         self.enterBuildDir()
