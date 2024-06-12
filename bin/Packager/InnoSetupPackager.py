@@ -134,7 +134,7 @@ class InnoSetupPackager(PortablePackager):
                 f"""Root: HKA; Subkey: "Software\\Classes\\{ftype_id}"; ValueType: string; ValueName: ""; ValueData: "{ftype} file"; Flags: uninsdeletekey ; Tasks: {ftype_id}"""
             )
             registry_keys.append(
-                f"""Root: HKA; Subkey: "Software\\Classes\\{ftype_id}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{{app}}\\{defines["executable"]},0" ; Tasks: {ftype_id}"""
+                f"""Root: HKA; Subkey: "Software\\Classes\\{ftype_id}\\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{{app}}\\{defines["executable"]},0" ; Tasks: {ftype_id}"""
             )
             registry_keys.append(
                 f"""Root: HKA; Subkey: "Software\\Classes\\{ftype_id}\\shell\\open\\command"; ValueType: string; ValueName: ""; ValueData: \"""{{app}}\\{defines["executable"]}"" ""%1""\" ; Tasks: {ftype_id}"""

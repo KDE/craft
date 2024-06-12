@@ -176,7 +176,7 @@ class VersionInfo(object):
         Available variables:
         ${PACKAGE_NAME} : The name of the package
         ${VERSION} : The version of the package defined in version.ini
-        If the version matches \d.\d.\d there is also avalible:
+        If the version matches \\d.\\d.\\d there is also avalible:
             ${VERSION_MAJOR} : The first part of ${VERSION}
             ${VERSION_MINOR} : The secon part of ${VERSION}
             ${VERSION_PATCH_LEVEL} : The the third part of ${VERSION}
