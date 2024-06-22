@@ -141,7 +141,7 @@ def setOption(packageNames: [str], option: str) -> bool:
     if "=" not in option:
         CraftCore.log.error(f"Invalid option {option}")
         return False
-    key, value = option.split("=", 1)
+    kvs = option.split(";")
     for name in packageNames:
         package = CraftPackageObject.get(name)
         if not package:
@@ -152,9 +152,13 @@ def setOption(packageNames: [str], option: str) -> bool:
         if package.source:
             _ = package.instance
         options = UserOptions.get(package)
-        if not options.setOption(key, value):
-            return False
-        CraftCore.log.info(f"[{package}]\n{key}={getattr(options, key)}")
+        infoString = f"[{package}]"
+        for kv in kvs:
+            key, value = kv.split("=", 1)
+            if not options.setOption(key, value):
+                return False
+            infoString += f"\n{key}={getattr(options, key)}"
+        CraftCore.log.info(infoString)
     return True
 
 
