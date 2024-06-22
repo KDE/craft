@@ -270,7 +270,7 @@ def main(timer):
     # read-only actions
     actionHandler.addActionWithArg("search-file", help="Print packages owning the file")
     actionHandler.addActionWithArg("get", help="Get any value from a Blueprint")
-    actionHandler.addActionWithArg("set", help="Permanently set a config value of a Blueprint")
+    actionHandler.addActionWithArg("set", help="Permanently set a config value of a Blueprint. Set multiple at once by using semicolons.")
     actionHandler.addActionWithArg(
         "run",
         nargs=argparse.REMAINDER,
