@@ -29,22 +29,6 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.targets["3.31.1"] = "https://sqlite.org/2020/sqlite-amalgamation-3310100.zip"
-        self.targetInstSrc["3.31.1"] = "sqlite-amalgamation-3310100"
-        self.targetDigests["3.31.1"] = (["f3c79bc9f4162d0b06fa9fe09ee6ccd23bb99ce310b792c5145f87fbcc30efca"], CraftHash.HashAlgorithm.SHA256)
-        self.patchToApply["3.31.1"] = [("sqlite-3.26.0-20181216.diff", 1), ("sqlite-3.31.1-20201026.diff", 1)]
-        self.patchLevel["3.31.1"] = 1
-
-        self.targets["3.35.4"] = "https://sqlite.org/2021/sqlite-amalgamation-3350400.zip"
-        self.targetInstSrc["3.35.4"] = "sqlite-amalgamation-3350400"
-        self.targetDigests["3.35.4"] = (["f3bf0df69f5de0675196f4644e05d07dbc698d674dc563a12eff17d5b215cdf5"], CraftHash.HashAlgorithm.SHA256)
-        self.patchToApply["3.35.4"] = [("sqlite-3.26.0-20181216.diff", 1), ("sqlite-3.31.1-20201026.diff", 1)]
-
-        self.targets["3.36.0"] = "https://sqlite.org/2021/sqlite-amalgamation-3360000.zip"
-        self.targetInstSrc["3.36.0"] = "sqlite-amalgamation-3360000"
-        self.targetDigests["3.36.0"] = (["999826fe4c871f18919fdb8ed7ec9dd8217180854dd1fe21eea96aed36186729"], CraftHash.HashAlgorithm.SHA256)
-        self.patchToApply["3.36.0"] = [("sqlite-3.26.0-20181216.diff", 1), ("sqlite-3.31.1-20201026.diff", 1)]
-
         self.targets["3.39.2"] = "https://sqlite.org/2022/sqlite-amalgamation-3390200.zip"
         self.targetInstSrc["3.39.2"] = "sqlite-amalgamation-3390200"
         self.targetDigests["3.39.2"] = (["87775784f8b22d0d0f1d7811870d39feaa7896319c7c20b849a4181c5a50609b"], CraftHash.HashAlgorithm.SHA256)
@@ -54,6 +38,11 @@ class subinfo(info.infoclass):
         self.targetInstSrc["3.42.0"] = "sqlite-amalgamation-3420000"
         self.targetDigests["3.42.0"] = (["1cc824d0f5e675829fa37018318fda833ea56f7e9de2b41eddd9f7643b5ec29e"], CraftHash.HashAlgorithm.SHA256)
         self.patchToApply["3.42.0"] = [(".3.42", 1)]
+
+        self.targets["3.46.0"] = "https://sqlite.org/2024/sqlite-amalgamation-3460000.zip"
+        self.targetInstSrc["3.46.0"] = "sqlite-amalgamation-3420000"
+        self.targetDigests["3.46.0"] = (["1221eed70de626871912bfca144c00411f0c30d3c2b7935cff3963b63370ef7c"], CraftHash.HashAlgorithm.SHA256)
+        self.patchToApply["3.46.0"] = [(".3.42", 1)]
 
         self.description = "a library providing a self-contained, serverless, zero-configuration, transactional SQL database engine"
         self.defaultTarget = "3.42.0"
