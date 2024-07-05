@@ -19,9 +19,7 @@ class subinfo(info.infoclass):
         self.patchLevel["2.10.3"] = 3
 
         self.description = "XML C parser and toolkit (runtime and applications)"
-        self.defaultTarget = "2.10.3"
-        if CraftCore.compiler.isAndroid:
-            self.defaultTarget = "2.12.7"
+        self.defaultTarget = "2.12.7"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
