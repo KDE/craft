@@ -360,19 +360,6 @@ class CraftCompiler(object):
         else:
             return None
 
-    def getVersionWithName(self):
-        if self.isGCCLike():
-            return f"{self.getCompilerName()} {self.getVersion()}"
-        elif self.isMSVC():
-            return f"Microsoft Visual Studio {self.getVersion()}"
-        else:
-            return None
-
-    def getShortName(self):
-        if not self.isMSVC():
-            return self.getCompilerName()
-        return f"vc{self.getInternalVersion()}"
-
     def getInternalVersion(self):
         if not self.isMSVC():
             return self.getVersion()
@@ -422,8 +409,6 @@ class CraftCompiler(object):
 if __name__ == "__main__":
     print("Testing Compiler.py")
     print(f"Configured compiler (ABI): {CraftCore.compiler}")
-    print("Version: %s" % CraftCore.compiler.getVersionWithName())
-    print("Compiler Name: %s" % CraftCore.compiler.getCompilerName())
     print("Architecture: %s" % CraftCore.compiler.architecture)
     print("HostArchitecture: %s" % CraftCore.compiler.hostArchitecture)
     print("Native compiler: %s" % ("No", "Yes")[CraftCore.compiler.isNative()])
