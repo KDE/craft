@@ -2,6 +2,7 @@ import shutil
 
 import info
 import options
+from Blueprints.CraftVersion import CraftVersion
 from BuildSystem.BuildSystemBase import *
 from utils import ScopedEnv
 
@@ -97,7 +98,11 @@ class PipBuildSystem(BuildSystemBase):
                 elif self.subinfo.hasTarget():
                     command += ["-e", self.sourceDir()]
                 else:
-                    command += [self.pipPackageName]
+                    targetVersion = CraftVersion(self.version)
+                    if targetVersion.isBranch:
+                        command += [self.pipPackageName]
+                    else:
+                        command += [self.pipPackageName + "==" + self.version]
                 ok = ok and utils.system(command)
             return ok
 

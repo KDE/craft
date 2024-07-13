@@ -27,8 +27,14 @@ from Package.PipPackageBase import PipPackageBase
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.svnTargets["master"] = ""
-        self.defaultTarget = "master"
+        for ver in ["1.4.2", "master"]:
+            self.svnTargets[ver] = ""
+
+        if not CraftCore.compiler.isAndroid:
+            self.defaultTarget = "master"
+        else:
+            # 1.5.0 breaks cross-compilation
+            self.defaultTarget = "1.4.2"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
