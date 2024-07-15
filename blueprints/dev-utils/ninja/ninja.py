@@ -10,6 +10,8 @@ from Package.CMakePackageBase import *
 class subinfo(info.infoclass):
     def registerOptions(self):
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
+        # don't build and install gmock
+        self.options.dynamic.setDefault("buildTests", False)
 
     def setTargets(self):
         """ """
@@ -43,6 +45,7 @@ class subinfo(info.infoclass):
         self.patchToApply["1.10.0"] = [("34d1bf2f1dcc138f7cb3a54daf771931cd799785.patch", 1)]
         self.patchLevel["1.10.0"] = 1
         self.patchLevel["1.11.1"] = 3
+        self.patchLevel["1.12.1"] = 1
 
         self.defaultTarget = "1.12.1"
 
