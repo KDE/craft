@@ -12,6 +12,9 @@ class subinfo(info.infoclass):
         self.targetDigests["3.4.6"] = (["b0dea9df23c863a7a50e825440f3ebffabd65df1497108e5d437747843895a4e"], CraftHash.HashAlgorithm.SHA256)
         self.patchToApply["3.3"] = [("libffi-3.3-20210126.diff", 1)]
         self.patchLevel["3.3"] = 2
+
+        self.webpage = "https://github.com/libffi/libffi/"
+        self.description = "A portable foreign-function interface library."
         self.defaultTarget = "3.4.6"
 
     def setDependencies(self):
@@ -27,7 +30,12 @@ class Package(AutoToolsPackageBase):
             arch = ""
             if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64:
                 arch = " -m64"
-            self.subinfo.options.configure.args += [f"CC={wrapper}{arch}", f"CXX={wrapper}{arch}"]
-            self.subinfo.options.configure.args += ["--enable-static", "--disable-shared"]
-        else:
-            self.subinfo.options.configure.args += ["--enable-shared", "--disable-static", "--disable-multi-os-directory"]
+            self.subinfo.options.configure.args += [f"CCAS={wrapper}{arch}"]
+            self.subinfo.options.configure.cflags += " -DFFI_BUILDING_DLL"
+        self.subinfo.options.configure.args += [
+            "--enable-shared",
+            "--disable-static",
+            "--enable-portable-binary",
+            "--disable-docs",
+            "--disable-multi-os-directory",
+        ]
