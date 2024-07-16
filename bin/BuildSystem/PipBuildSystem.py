@@ -97,7 +97,10 @@ class PipBuildSystem(BuildSystemBase):
                 elif self.subinfo.hasTarget():
                     command += ["-e", self.sourceDir()]
                 else:
-                    command += [self.pipPackageName]
+                    if self.buildTarget in {"master", "latest"}:
+                        command += [self.pipPackageName]
+                    else:
+                        command += [f"{self.pipPackageName}=={self.buildTarget}"]
                 ok = ok and utils.system(command)
             return ok
 
