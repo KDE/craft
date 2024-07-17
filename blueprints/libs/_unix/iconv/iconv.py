@@ -17,9 +17,6 @@ class subinfo(info.infoclass):
         self.description = "GNU internationalization (i18n)"
         self.defaultTarget = "1.15"
 
-    def setDependencies(self):
-        self.runtimeDependencies["virtual/base"] = None
-
 
 class Package(AutoToolsPackageBase):
     def __init__(self, **kwargs):

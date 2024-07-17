@@ -43,6 +43,8 @@ class subinfo(info.infoclass):
 
         self.runtimeDependencies["libs/runtime"] = None
 
+        self.buildDependencies["libs/iconv"] = None
+
         self.buildDependencies["libs/python"] = None
 
         # install the shim to libs/python  or the system python
