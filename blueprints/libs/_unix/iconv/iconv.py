@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["core/cacert"] = None
-        self.buildDependencies["dev-utils/7zip-base"] = None
+        self.buildDependencies["dev-utils/7zip"] = None
 
 
 class Package(AutoToolsPackageBase):
