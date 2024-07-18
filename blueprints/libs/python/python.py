@@ -44,6 +44,7 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["libs/sqlite"] = None
         self.runtimeDependencies["libs/libffi"] = None
         self.runtimeDependencies["libs/liblzma"] = None
+        self.runtimeDependencies["libs/iconv"] = None
 
 
 if CraftCore.compiler.isMSVC():
