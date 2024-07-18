@@ -33,6 +33,8 @@ class subinfo(info.infoclass):
             self.buildDependencies["dev-utils/automake"] = None
             self.buildDependencies["dev-utils/libtool"] = None
 
+        self.buildDependencies["libs/iconv"] = None
+
         if CraftCore.compiler.isMacOS:
             self.buildDependencies["dev-utils/create-dmg"] = None
 
@@ -42,8 +44,6 @@ class subinfo(info.infoclass):
             self.buildDependencies["dev-utils/ninja"] = None
 
         self.runtimeDependencies["libs/runtime"] = None
-
-        self.buildDependencies["libs/iconv"] = None
 
         self.buildDependencies["libs/python"] = None
 
