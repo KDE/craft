@@ -18,9 +18,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = "1.15"
 
     def setDependencies(self):
-        self.buildDependencies["core/cacert"] = None
-        self.buildDependencies["dev-utils/7zip"] = None
-        self.buildDependencies["dev-utils/libtool"] = None
+        self.buildDependencies["dev-utils/automake"] = None
 
 
 class Package(AutoToolsPackageBase):
