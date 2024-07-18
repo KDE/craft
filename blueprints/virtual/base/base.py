@@ -33,8 +33,6 @@ class subinfo(info.infoclass):
             self.buildDependencies["dev-utils/automake"] = None
             self.buildDependencies["dev-utils/libtool"] = None
 
-        self.buildDependencies["libs/iconv"] = None
-
         if CraftCore.compiler.isMacOS:
             self.buildDependencies["dev-utils/create-dmg"] = None
 
