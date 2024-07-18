@@ -17,6 +17,10 @@ class subinfo(info.infoclass):
         self.description = "GNU internationalization (i18n)"
         self.defaultTarget = "1.15"
 
+    def setDependencies(self):
+        self.buildDependencies["core/cacert"] = None
+        self.buildDependencies["dev-utils/7zip-base"] = None
+
 
 class Package(AutoToolsPackageBase):
     def __init__(self, **kwargs):
