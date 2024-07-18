@@ -18,12 +18,11 @@ class subinfo(info.infoclass):
         self.defaultTarget = "1.15"
 
     def setDependencies(self):
-        self.runtimeDependencies["virtual/base"] = None
+        self.buildDependencies["dev-utils/automake"] = None
 
 
 class Package(AutoToolsPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.subinfo.options.configure.autoreconf = False
-        self.subinfo.options.configure.args += " --disable-static --enable-shared "
-        self.subinfo.shelveAble = False
+        self.subinfo.options.configure.args += ["--disable-static", "--enable-shared"]
