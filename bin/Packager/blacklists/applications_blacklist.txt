@@ -41,6 +41,7 @@ lib/metatypes/.*
 
 # docbook stuff
 (bin/data|share)/kf5/kdoctools/.*
+(bin/data|share)/kf6/kdoctools/.*
 (bin/data|share)/xml/.*
 
 # other documentation (we prefer the online documentation atm)
