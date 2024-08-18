@@ -1,0 +1,31 @@
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x '*\.o' -x '*\.pyc' -x CMakeLists.txt.user zlib-1.3.1.orig/CMakeLists.txt zlib-1.3.1/CMakeLists.txt
+--- zlib-1.3.1.orig/CMakeLists.txt	2024-08-18 14:56:28.112621000 +0200
++++ zlib-1.3.1/CMakeLists.txt	2024-08-18 14:56:07.317464300 +0200
+@@ -76,7 +76,7 @@
+   endif()
+ endif()
+ 
+-if(MSVC)
++if(WIN32)
+     set(ZLIB_NAME zlib)
+ else()
+     set(ZLIB_NAME z)
+@@ -172,7 +172,7 @@
+     set_target_properties(zlib PROPERTIES VERSION ${ZLIB_FULL_VERSION})
+ endif()
+ 
+-if(UNIX OR MINGW)
++if(UNIX)
+     # On unix-like platforms the library is almost always called libz
+    set_target_properties(zlib zlibstatic PROPERTIES OUTPUT_NAME z)
+    if(NOT APPLE AND NOT(CMAKE_SYSTEM_NAME STREQUAL AIX))
+@@ -181,6 +181,9 @@
+ elseif(BUILD_SHARED_LIBS AND WIN32)
+     # Creates zlib1.dll when building shared library version
+     set_target_properties(zlib PROPERTIES SUFFIX "1.dll")
++    if (MINGW)
++        set_target_properties(zlib zlibstatic PROPERTIES PREFIX "")
++   endif()
+ endif()
+ 
+ if(NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL )
