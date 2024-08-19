@@ -58,6 +58,7 @@ class subinfo(info.infoclass):
 
         self.patchLevel["3.1.1"] = 1
         self.patchLevel["3.2.0"] = 1
+        self.patchLevel["3.3.1"] = 1
 
         self.description = "The OpenSSL runtime environment"
         self.webpage = "https://openssl.org"
@@ -94,7 +95,7 @@ class PackageCMake(CMakePackageBase):
         self.staticBuild = False
         self.supportsNinja = False
         self.subinfo.options.make.supportsMultijob = False
-        self.subinfo.options.install.args += ["install_sw"]
+        self.subinfo.options.install.args += ["install_sw", f"DESTDIR={self.installDir()}"]
 
         self.env = {}
         if CraftCore.compiler.isAndroid:
