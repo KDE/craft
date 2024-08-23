@@ -146,7 +146,8 @@ class AppxPackager(CollectionPackagerBase):
         defines["version"] = ".".join([str(x) for x in version])
 
         defines.setdefault("name", f"{defines['company']}{defines['display_name']}".replace(" ", ""))
-
+        defines.setdefault("appx_identity_name", defines["name"])
+        
         utils.createDir(self.artifactsDir())
         defines["setupname"] = self.artifactsDir() / os.path.basename(f"{defines['setupname']}.appx")
         defines.setdefault("craft_id", self.package.path.replace("/", "."))

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Package @{xml_namespaces}>
-  <Identity Name="@{name}"
+  <Identity Name="@{appx_identity_name}"
             Version="@{version}"
             Publisher="@{publisher}"
             ProcessorArchitecture="@{architecture}"/>
