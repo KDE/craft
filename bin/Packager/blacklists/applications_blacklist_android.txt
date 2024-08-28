@@ -7,6 +7,9 @@ qml/QtQuick/Controls/Universal/.*
 share/applications/.*\.desktop
 share/metainfo/.*\.xml
 
+# logging category definitions are for tools not available on Android
+share/qlogging-categories6/.*
+
 # Android-specific development files
 share/ndk-modules/.*
 
