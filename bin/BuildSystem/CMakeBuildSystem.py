@@ -144,7 +144,7 @@ class CMakeBuildSystem(BuildSystemBase):
         if CraftCore.compiler.isWindows or CraftCore.compiler.isMacOS:
             options.append("-DKDE_INSTALL_USE_QT_SYS_PATHS=ON")
 
-        if self.subinfo.options.buildTools:
+        if self.subinfo.options.dynamic.buildTools:
             options += self.subinfo.options.configure.toolsDefine
         if self.subinfo.options.buildStatic and self.subinfo.options.configure.staticArgs:
             options += self.subinfo.options.configure.staticArgs
