@@ -40,8 +40,8 @@ class subinfo(info.infoclass):
         self.patchToApply["3.42.0"] = [(".3.42", 1)]
 
         self.targets["3.46.0"] = "https://sqlite.org/2024/sqlite-amalgamation-3460000.zip"
-        self.targetInstSrc["3.46.0"] = "sqlite-amalgamation-3420000"
-        self.targetDigests["3.46.0"] = (["1221eed70de626871912bfca144c00411f0c30d3c2b7935cff3963b63370ef7c"], CraftHash.HashAlgorithm.SHA256)
+        self.targetInstSrc["3.46.0"] = "sqlite-amalgamation-3460000"
+        self.targetDigests["3.46.0"] = (["712a7d09d2a22652fb06a49af516e051979a3984adb067da86760e60ed51a7f5"], CraftHash.HashAlgorithm.SHA256)
         self.patchToApply["3.46.0"] = [(".3.42", 1)]
 
         self.description = "a library providing a self-contained, serverless, zero-configuration, transactional SQL database engine"
@@ -54,3 +54,7 @@ class subinfo(info.infoclass):
 class Package(CMakePackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        if CraftCore.compiler.isIOS:
+            self.subinfo.options.buildTools = False
+        if not self.subinfo.options.buildTools:
+            self.subinfo.options.configure.args += ["-DENABLE_SHELL=OFF"]
