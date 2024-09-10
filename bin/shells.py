@@ -42,7 +42,7 @@ class BashShell(object):
             ldflags = f" -L{mergeroot}/lib "
             cflags = f" -I{mergeroot}/include "
 
-            if CraftCore.compiler.isMacOS:
+            if CraftCore.compiler.isMacOS or CraftCore.compiler.isIOS:
                 # Only look for includes/libraries in the XCode SDK on MacOS to avoid errors with
                 # libraries installed by homebrew (causes errors e.g. with iconv since headers will be
                 # found in /usr/local/include first but libraries are searched for in /usr/lib before
@@ -50,8 +50,12 @@ class BashShell(object):
                 # Ensure that /usr/include comes before /usr/local/include in the header search path to avoid
                 # pulling in headers from /usr/local/include (e.g. installed by homebrew) that will cause
                 # linker errors later.
-                sdkPath = CraftCore.cache.getCommandOutput("xcrun", "--show-sdk-path")[1].strip()
-                deploymentFlag = f"-mmacosx-version-min={os.environ['MACOSX_DEPLOYMENT_TARGET']}"
+                platform = "macosx" if CraftCore.compiler.isMacOS else "iphonesimulator"
+                sdkPath = CraftCore.cache.getCommandOutput("xcrun", f"--sdk {platform} --show-sdk-path")[1].strip()
+                if CraftCore.compiler.isMacOS:
+                    deploymentFlag = f"-mmacosx-version-min={os.environ['MACOSX_DEPLOYMENT_TARGET']}"
+                else:
+                    deploymentFlag = ""
                 cflags = f" -isysroot {sdkPath} {deploymentFlag} {cflags} -isystem /usr/include"
                 ldflags = f" -isysroot {sdkPath} {deploymentFlag} {ldflags}"
 
