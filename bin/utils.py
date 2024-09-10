@@ -1053,7 +1053,7 @@ def isBinary(fileName: str) -> bool:
         if suffix in {".dll", ".exe"}:
             return True
     else:
-        if CraftCore.compiler.isMacOS:
+        if CraftCore.compiler.isMacOS or CraftCore.compiler.isIOS:
             if ".dSYM/" in str(fileName):
                 return False
         elif suffix == ".debug":
@@ -1061,7 +1061,7 @@ def isBinary(fileName: str) -> bool:
         if suffix in {".so", ".dylib"}:
             return True
         else:
-            if CraftCore.compiler.isMacOS:
+            if CraftCore.compiler.isMacOS or CraftCore.compiler.isIOS:
                 signature = MACH_O_64
             elif CraftCore.compiler.isLinux or CraftCore.compiler.isFreeBSD or CraftCore.compiler.isAndroid:
                 signature = ELF
@@ -1283,7 +1283,7 @@ def strip(fileName: Path, destFileName: Path = None) -> Path:
     if destFileName.exists():
         return destFileName
 
-    if CraftCore.compiler.isMacOS:
+    if CraftCore.compiler.isMacOS or CraftCore.compiler.isIOS:
         if not (system(["/usr/bin/dsymutil", fileName, "-o", destFileName]) and system(["strip", "-x", "-S", fileName]) and localSignMac([fileName])):
             return None
     else:
