@@ -55,7 +55,5 @@ class subinfo(info.infoclass):
 class Package(CMakePackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        if CraftCore.compiler.isIOS:
-            self.subinfo.options.buildTools = False
-        if not self.subinfo.options.buildTools:
+        if not self.subinfo.options.dynamic.buildTools:
             self.subinfo.options.configure.args += ["-DENABLE_SHELL=OFF"]
