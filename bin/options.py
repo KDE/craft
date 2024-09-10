@@ -143,7 +143,7 @@ class UserOptions(object):
         _register("ignored", bool, persist=False, compatible=True)
         _register("buildTests", CraftCore.compiler.isNative(), persist=False, compatible=True)
         _register("buildTools", CraftCore.compiler.isNative(), persist=False, compatible=True)
-        _register("buildStatic", bool, persist=False)
+        _register("buildStatic", CraftCore.compiler.isIOS, persist=False)
 
         _register(
             "buildType",
