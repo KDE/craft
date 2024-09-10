@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
         useCraftPython = self.options.isActive("libs/python")
         if useCraftPython:
             self.parent.package.categoryInfo.compiler = CraftCore.compiler.Compiler.NoCompiler
+            self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.Native
 
     def setTargets(self):
         self.targets["3"] = ""

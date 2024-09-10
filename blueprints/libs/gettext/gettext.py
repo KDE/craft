@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
     def registerOptions(self):
         # On Android we use libintl-lite instead
         # (however gettext added Adnroid support recently so maybe we should look into switching to it?)
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
+        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.Native
 
     def setTargets(self):
         for ver in ["0.21", "0.22.3"]:
