@@ -52,6 +52,7 @@ class UserOptions(object):
 #     patchLevel: int
 #     buildType: [Release|RelWithDebInfo|Debug]     The default is defined by CraftSettings.ini [Compile]BuildType
 #     buildTests: [True|False]
+#     buildTools: [True|False]
 #     buildStatic: [True|False]
 #     # arguments passed to the configure step
 #     args: [str]
@@ -140,7 +141,8 @@ class UserOptions(object):
         _register("branch", str, persist=False)
         _register("revision", str, persist=False)
         _register("ignored", bool, persist=False, compatible=True)
-        _register("buildTests", not CraftCore.compiler.isAndroid, persist=False, compatible=True)
+        _register("buildTests", CraftCore.compiler.isNative(), persist=False, compatible=True)
+        _register("buildTools", CraftCore.compiler.isNative(), persist=False, compatible=True)
         _register("buildStatic", bool, persist=False)
 
         _register(
@@ -573,7 +575,6 @@ class Options(object):
         self.dailyUpdate = False
 
         ## there is a special option available already
-        self.buildTools = False
         self.useShadowBuild = True
 
     @property
