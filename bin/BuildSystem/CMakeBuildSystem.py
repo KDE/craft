@@ -70,6 +70,14 @@ class CMakeBuildSystem(BuildSystemBase):
                 "-DAPPLE_SUPPRESS_X11_WARNING=ON",
                 f"-DCMAKE_OSX_ARCHITECTURES={CraftCore.compiler.architecture.name.lower()}",
             ]
+        elif CraftCore.compiler.isIOS:
+            toolChain = CraftCore.standardDirs.craftRoot() / "lib/cmake/Qt6/qt.toolchain.cmake"
+            if toolChain.exists():
+                options += [f"-DCMAKE_TOOLCHAIN_FILE={toolChain}"]
+            options += [
+                f"-DCMAKE_OSX_SYSROOT=iphonesimulator",
+                "-DCMAKE_OSX_DEPLOYMENT_TARGET=17.5",
+            ]
         elif CraftCore.compiler.isLinux:
             # use the same lib dir on all distributions
             options += ["-DCMAKE_INSTALL_LIBDIR:PATH=lib"]
