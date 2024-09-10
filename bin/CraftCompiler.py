@@ -131,7 +131,9 @@ class CraftCompiler(object):
         MacOS = 0x1 << 2
         FreeBSD = 0x1 << 3
         Android = 0x1 << 4
+        iOS = 0x1 << 5
 
+        Native = ~(iOS | Android)
         Unix = Linux | MacOS | FreeBSD | Android
         All = ~0
 
@@ -142,6 +144,7 @@ class CraftCompiler(object):
         NotWindows = ~Windows
         NotUnix = ~Unix
         NotAndroid = ~Android
+        NotIOS = ~iOS
 
         @classmethod
         def fromString(cls, name):
@@ -225,6 +228,14 @@ class CraftCompiler(object):
         return self._hostArchitecture
 
     @property
+    def hostPlatform(self) -> Platforms:
+        if self.platform == CraftCompiler.Platforms.iOS:
+            return CraftCompiler.Platforms.MacOS
+        if self.platform == CraftCompiler.Platforms.Android:
+            return CraftCompiler.Platforms.Linux
+        return self.platform
+
+    @property
     def rpmArchitecture(self):
         architectures = {
             # values from Fedora, your mileage may vary on other distributions
@@ -286,6 +297,9 @@ class CraftCompiler(object):
     def isLinux(self) -> CraftBool:
         return CraftBool(self.platform == CraftCompiler.Platforms.Linux)
 
+    def isIOS(self) -> bool:
+        return self.platform == CraftCompiler.Platforms.iOS
+
     @property
     def isFreeBSD(self) -> CraftBool:
         return CraftBool(self.platform == CraftCompiler.Platforms.FreeBSD)
@@ -311,8 +325,12 @@ class CraftCompiler(object):
         else:
             return ".debug"
 
-    def isNative(self) -> CraftBool:
-        return CraftBool(self.architecture == self.hostArchitecture and CraftCore.settings.getboolean("General", "Native", True))
+    def isNative(self) -> bool:
+        return bool(
+            self.platform & CraftCompiler.Platforms.Native
+            and self.architecture == self.hostArchitecture
+            and CraftCore.settings.getboolean("General", "Native", True)
+        )
 
     def isGCC(self) -> CraftBool:
         return CraftBool(self.compiler == CraftCompiler.Compiler.GCC)
