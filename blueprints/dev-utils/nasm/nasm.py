@@ -6,7 +6,7 @@ from Package.BinaryPackageBase import *
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
+        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.Native
 
     def setTargets(self):
         for ver in ["2.13.03", "2.14.02", "2.15.05"]:

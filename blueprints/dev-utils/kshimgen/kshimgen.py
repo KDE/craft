@@ -5,6 +5,7 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def registerOptions(self):
+        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.Native | CraftCore.compiler.Platforms.Android
         self.options.dynamic.setDefault("buildType", "Release")
 
     def setTargets(self):
