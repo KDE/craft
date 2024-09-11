@@ -489,6 +489,15 @@ class SetupHelper(object):
         )
 
         # make sure that craftroot bin is the first to look for dlls etc
+        if not CraftCore.compiler.isNative():
+            self.prependEnvVar(
+                "PATH",
+                [
+                    CraftCore.standardDirs.craftHostRoot() / "dev-utils/bin",
+                    CraftCore.standardDirs.craftHostRoot() / "bin",
+                    CraftCore.standardDirs.craftHostRoot() / "libexec",
+                ],
+            )
         self.prependEnvVar(
             "PATH",
             [CraftCore.standardDirs.craftRoot() / "dev-utils/bin", CraftCore.standardDirs.craftRoot() / "bin", CraftCore.standardDirs.craftRoot() / "libexec"],
