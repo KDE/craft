@@ -21,11 +21,16 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
+import multiprocessing
+import os
 import textwrap
 
 import utils
-from BuildSystem.BuildSystemBase import *
+from BuildSystem.BuildSystemBase import BuildSystemBase
 from CraftCompiler import CraftCompiler
+from CraftCore import CraftCore
+from CraftStandardDirs import CraftStandardDirs
+from Utils.Arguments import Arguments
 
 
 class MesonBuildSystem(BuildSystemBase):
@@ -47,8 +52,8 @@ class MesonBuildSystem(BuildSystemBase):
         if CraftCore.compiler.isMSVC():
             env.update(
                 {
-                    "LIB": f"{os.environ['LIB']};{os.path.join(CraftStandardDirs.craftRoot() , 'lib')}",
-                    "INCLUDE": f"{os.environ['INCLUDE']};{os.path.join(CraftStandardDirs.craftRoot() , 'include')}",
+                    "LIB": f"{os.environ['LIB']};{CraftStandardDirs.craftRoot() / 'lib'}",
+                    "INCLUDE": f"{os.environ['INCLUDE']};{CraftStandardDirs.craftRoot() / 'include'}",
                 }
             )
         else:
@@ -135,7 +140,7 @@ class MesonBuildSystem(BuildSystemBase):
                         c = ['cc', '-arch', {arch!r}]
                         cpp = ['c++', '-arch', {arch!r}]
                         objc = ['cc', '-arch', {arch!r}]
-                        objcpp = ['c++', '-arch', {arch!r}]                        
+                        objcpp = ['c++', '-arch', {arch!r}]
                     """
             )
             args = ["--native-file", craftCrossFilePath]

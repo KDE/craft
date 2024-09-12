@@ -3,15 +3,16 @@
 #
 # Packager base
 
-import datetime
 import glob
-import json
+import os
 from pathlib import Path
 
-from CraftBase import *
-from CraftDebug import deprecated
+import utils
+from Blueprints.CraftPackageObject import CraftPackageObject
+from CraftBase import CraftBase, InitGuard
+from CraftCore import CraftCore
 from Utils import CraftHash
-from Utils.CraftManifest import *
+from Utils.CraftManifest import CraftManifest, FileType
 
 
 class PackagerBase(CraftBase):
@@ -31,10 +32,7 @@ class PackagerBase(CraftBase):
         defines = dict(defines)
         defines.setdefault(
             "setupname",
-            os.path.join(
-                self.packageDestinationDir(),
-                self.binaryArchiveName(includeRevision=True, fileType=""),
-            ),
+            self.packageDestinationDir() / self.binaryArchiveName(includeRevision=True, fileType=""),
         )
         defines.setdefault("shortcuts", "")
         defines.setdefault("company", "KDE e.V.")
@@ -43,11 +41,11 @@ class PackagerBase(CraftBase):
         defines.setdefault("description", self.subinfo.description)
         defines.setdefault(
             "icon",
-            os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craft.ico"),
+            CraftCore.standardDirs.craftBin() / "data/icons/craft.ico",
         )
         defines.setdefault(
             "icon_png",
-            os.path.join(CraftCore.standardDirs.craftBin(), "data", "icons", "craftyBENDER.png"),
+            CraftCore.standardDirs.craftBin() / "data/icons/craftyBENDER.png",
         )
         defines.setdefault("icon_png_44", defines["icon_png"])
         defines.setdefault("license", "")
@@ -70,7 +68,7 @@ class PackagerBase(CraftBase):
         lookPath = Path(lookupPath if lookupPath else self.archiveDir())
         appPath = defines["apppath"]
         if not appPath:
-            apps = glob.glob(os.path.join(lookPath, f"**/{defines['appname']}.app"), recursive=True)
+            apps = glob.glob(lookPath / f"**/{defines['appname']}.app", recursive=True)
             if len(apps) != 1:
                 CraftCore.log.error(
                     f"Failed to detect {defines['appname']}.app for {self}, please provide a correct self.defines['apppath'] or a relative path to the app as self.defines['apppath']"
@@ -98,7 +96,7 @@ class PackagerBase(CraftBase):
     def _generateManifest(
         self,
         destDir,
-        archiveName,
+        archiveName: Path,
         manifestLocation=None,
         manifestUrls=None,
         fileType: FileType = FileType.Binary,

@@ -3,16 +3,13 @@
 #
 import datetime
 import functools
-import sys
+import os
 from pathlib import Path
 
-import info
 import utils
 from Blueprints.CraftPackageObject import CraftPackageObject
-from CraftConfig import *
 from CraftCore import CraftCore
 from CraftDebug import deprecated
-from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 from Utils.CraftShortPath import CraftShortPath
 
@@ -261,7 +258,6 @@ class CraftBase(object):
         return Path(os.path.join(cacheDir, version, *CraftCore.compiler.signature, self.buildType()))
 
     def cacheRepositoryUrls(self) -> [str]:
-        version = self.cacheVersion()
         buildType = [self.buildType()]
         if self.buildType() == "RelWithDebInfo":
             buildType += ["Release"]

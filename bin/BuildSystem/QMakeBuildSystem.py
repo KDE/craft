@@ -3,9 +3,13 @@
 #
 # definitions for the qmake build system
 
-from Blueprints.CraftPackageObject import *
-from Blueprints.CraftVersion import CraftVersion
-from BuildSystem.BuildSystemBase import *
+import os
+
+import utils
+from BuildSystem.BuildSystemBase import BuildSystemBase
+from CraftCore import CraftCore
+from CraftOS.osutils import OsUtils
+from Utils.Arguments import Arguments
 
 
 class QMakeBuildSystem(BuildSystemBase):
@@ -38,7 +42,7 @@ class QMakeBuildSystem(BuildSystemBase):
                 if CraftCore.compiler.isClang():
                     compilerPart = "clang"
                 else:
-                    compilerPart = f"g++"
+                    compilerPart = "g++"
                 self._platform = osPart + "-" + compilerPart
         return self._platform
 
@@ -48,7 +52,7 @@ class QMakeBuildSystem(BuildSystemBase):
 
         proFile = self.configureSourceDir()
         if self.subinfo.options.configure.projectFile:
-            proFile = os.path.join(self.configureSourceDir(), self.subinfo.options.configure.projectFile)
+            proFile = self.configureSourceDir() / self.subinfo.options.configure.projectFile
         return utils.system(Arguments(["qmake", "-makefile", proFile, self.configureOptions(configureDefines)]))
 
     def make(self):

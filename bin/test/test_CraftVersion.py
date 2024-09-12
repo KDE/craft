@@ -1,5 +1,7 @@
 import CraftTestBase
-from Blueprints.CraftVersion import *
+from Blueprints.CraftVersion import CraftVersion
+from Blueprints.distutils_version import StrictVersion
+from CraftCore import CraftCore
 
 
 class TestCraftVersion(CraftTestBase.CraftTestBase):

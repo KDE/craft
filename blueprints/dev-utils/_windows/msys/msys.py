@@ -1,4 +1,7 @@
-from Package.BinaryPackageBase import *
+import info
+import utils
+from CraftStandardDirs import CraftStandardDirs
+from Package.BinaryPackageBase import BinaryPackageBase
 
 
 class subinfo(info.infoclass):
