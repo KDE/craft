@@ -79,7 +79,7 @@ class CMakeBuildSystem(BuildSystemBase):
             if toolChain.exists():
                 options += [f"-DCMAKE_TOOLCHAIN_FILE={toolChain}"]
             options += [
-                f"-DCMAKE_OSX_SYSROOT=iphonesimulator",
+                "-DCMAKE_OSX_SYSROOT=iphonesimulator",
                 "-DCMAKE_OSX_DEPLOYMENT_TARGET=17.5",
             ]
         elif CraftCore.compiler.isLinux:
