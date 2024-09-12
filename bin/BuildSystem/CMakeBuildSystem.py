@@ -163,7 +163,7 @@ class CMakeBuildSystem(BuildSystemBase):
         self.enterBuildDir()
         env = {}
         if self.supportsCCACHE:
-            cxx = CraftCore.standardDirs.craftRoot() / "dev-utils/ccache/bin" / Path(os.environ["CXX"]).name
+            cxx = CraftCore.standardDirs.craftHostRoot() / "dev-utils/ccache/bin" / Path(os.environ["CXX"]).name
             if CraftCore.compiler.isWindows and not cxx.suffix:
                 cxx = Path(str(cxx) + CraftCore.compiler.executableSuffix)
             if cxx.exists():
