@@ -42,9 +42,6 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
 
-    def registerOptions(self):
-        self.options.dynamic.registerOption("buildPrograms", not CraftCore.compiler.isAndroid)
-
 
 from Package.MSBuildPackageBase import *
 
@@ -74,9 +71,11 @@ from Package.AutoToolsPackageBase import *
 class PackageAutotools(AutoToolsPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.subinfo.options.configure.autoreconf = False
-        self.subinfo.options.configure.args += ["--enable-shared", "--disable-static"]
-        if not self.subinfo.options.dynamic.buildPrograms:
+        if CraftCore.compiler.isIOS:
+            self.subinfo.options.configure.args += ["--enable-static", "--disable-shared"]
+        else:
+            self.subinfo.options.configure.args += ["--enable-shared", "--disable-static"]
+        if not self.subinfo.options.dynamic.buildTools:
             self.subinfo.options.configure.args += ["--disable-xz", "--disable-lzmadec", "--disable-lzmainfo", "--disable-scripts", "--disable-xzdec"]
 
 
