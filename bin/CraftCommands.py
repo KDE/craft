@@ -30,7 +30,7 @@ import sys
 import tempfile
 from collections import OrderedDict, namedtuple
 from pathlib import Path
-
+import sys
 import CraftBase
 import utils
 from Blueprints.CraftDependencyPackage import CraftDependencyPackage, DependencyType
@@ -41,6 +41,9 @@ from options import UserOptions
 from Utils import CraftTimer
 from Utils.CraftTitleUpdater import CraftTitleUpdater
 from Utils.StageLogger import StageLogger
+import configparser
+import re
+import os
 
 
 def __recurseCraft(command: list[str], args: list[str]):
