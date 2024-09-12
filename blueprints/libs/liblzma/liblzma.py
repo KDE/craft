@@ -49,9 +49,6 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
 
-    def registerOptions(self):
-        self.options.dynamic.registerOption("buildPrograms", not CraftCore.compiler.isAndroid)
-
 
 class PackageMSBuild(MSBuildPackageBase):
     def __init__(self, **kwargs):
@@ -75,8 +72,7 @@ class PackageMSBuild(MSBuildPackageBase):
 class PackageAutotools(AutoToolsPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.subinfo.options.configure.autoreconf = False
-        if not self.subinfo.options.dynamic.buildPrograms:
+        if not self.subinfo.options.dynamic.buildTools:
             self.subinfo.options.configure.args += ["--disable-xz", "--disable-lzmadec", "--disable-lzmainfo", "--disable-scripts", "--disable-xzdec"]
 
 
