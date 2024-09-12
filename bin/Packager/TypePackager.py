@@ -25,16 +25,10 @@
 from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftCore import CraftCore
 from Packager.AppImagePackager import AppImagePackager
-from Packager.AppxPackager import AppxPackager
 from Packager.CMakeApkPackager import CMakeApkPackager
-from Packager.CreateArchivePackager import CreateArchivePackager
-from Packager.DesktopEntry import DesktopEntry
-from Packager.InnoSetupPackager import InnoSetupPackager
 from Packager.MacDMGPackager import MacDMGPackager
-from Packager.MacPkgPackager import MacPkgPackager
 from Packager.NullsoftInstallerPackager import NullsoftInstallerPackager
 from Packager.PackagerBase import PackagerBase
-from Packager.PortablePackager import PortablePackager
 from Packager.SevenZipPackager import SevenZipPackager
 
 

@@ -24,7 +24,6 @@
 # SUCH DAMAGE.
 
 
-import glob
 import io
 import multiprocessing
 import os
@@ -32,8 +31,12 @@ import re
 import subprocess
 from pathlib import Path
 
-from CraftBase import *
+import utils
+from Blueprints.CraftPackageObject import CraftPackageObject
+from CraftBase import CraftBase
+from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
+from CraftStandardDirs import CraftStandardDirs
 from Utils import CodeSign
 from Utils.Arguments import Arguments
 from Utils.StageLogger import StageLogger

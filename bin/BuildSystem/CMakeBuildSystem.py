@@ -5,13 +5,17 @@
 
 """@package provides cmake build system"""
 
+import multiprocessing
 import os
+from pathlib import Path
 
-from BuildSystem.BuildSystemBase import *
+import utils
+from Blueprints.CraftPackageObject import CraftPackageObject
+from BuildSystem.BuildSystemBase import BuildSystemBase
+from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
-from CraftStandardDirs import CraftStandardDirs
 from Utils.Arguments import Arguments
-from Utils.PostInstallRoutines import *
+from Utils.PostInstallRoutines import PostInstallRoutines
 
 
 class CMakeBuildSystem(BuildSystemBase):
@@ -47,7 +51,7 @@ class CMakeBuildSystem(BuildSystemBase):
             f"-DCMAKE_PREFIX_PATH={craftRoot}",
             f"-DCMAKE_REQUIRED_INCLUDES={craftRoot}/include",
             f"-DCMAKE_C_STANDARD_INCLUDE_DIRECTORIES={craftRoot}/include",
-            f"-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+            "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
         ]
 
         if self.buildType() is not None:
@@ -75,7 +79,7 @@ class CMakeBuildSystem(BuildSystemBase):
             if toolChain.exists():
                 options += [f"-DCMAKE_TOOLCHAIN_FILE={toolChain}"]
             options += [
-                f"-DCMAKE_OSX_SYSROOT=iphonesimulator",
+                "-DCMAKE_OSX_SYSROOT=iphonesimulator",
                 "-DCMAKE_OSX_DEPLOYMENT_TARGET=17.5",
             ]
         elif CraftCore.compiler.isLinux:
