@@ -328,7 +328,7 @@ class SetupHelper(object):
             "BISON_PKGDATADIR",
             os.path.join(CraftCore.standardDirs.craftRoot(), "share", "bison"),
         )
-        self.prependEnvVar("M4", os.path.join(CraftCore.standardDirs.craftRoot(), "bin", "m4"))
+        self.addEnvVar("M4", CraftCore.standardDirs.craftHostRoot() / "bin/m4")
 
         # use the system fonts, keep the logic in sync with AppImagePackager
         fontConfigPath = Path("/etc/fonts")
@@ -367,7 +367,7 @@ class SetupHelper(object):
             "BISON_PKGDATADIR",
             os.path.join(CraftCore.standardDirs.craftRoot(), "share", "bison"),
         )
-        self.prependEnvVar("M4", os.path.join(CraftCore.standardDirs.craftRoot(), "bin", "m4"))
+        self.addEnvVar("M4", CraftCore.standardDirs.craftHostRoot() / "bin/m4")
         try:
             dbusInstalled = bool(CraftCore.installdb.isInstalled("libs/dbus"))
         except sqlite3.OperationalError:
