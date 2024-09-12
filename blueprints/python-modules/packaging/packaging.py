@@ -18,4 +18,3 @@ class subinfo(info.infoclass):
 class Package(PipPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.python2 = False

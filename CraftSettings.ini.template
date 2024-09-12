@@ -76,9 +76,6 @@ AllowAnsiColor = 1
 ## This value must be set.
 Python = C:\PROGRA~1\Python36
 
-## Some applications may need python 2.7
-#Python27 = C:\python27
-
 ## Craft ist able to fetch and install Msys itself, but if you prefer to use
 ## your own installation specify it here
 #Msys = C:\msys
