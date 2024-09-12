@@ -345,11 +345,6 @@ def setUp(args):
     boot = CraftBootstrap(args.prefix, args.branch, args.dry_run)
     boot.setSettingsValue("Paths", "Python", os.path.dirname(sys.executable))
     boot.setSettingsValue("General", "ABI", abi)
-    py = shutil.which("py")
-    if py:
-        py2 = subprocess.getoutput(f"""{py} -2 -c "import sys; print(sys.executable)" """)
-        if os.path.isfile(py2):
-            boot.setSettingsValue("Paths", "Python27", os.path.dirname(py2))
 
     if CraftBootstrap.isWin():
         boot.setSettingsValue("Compile", "MakeProgram", "mingw32-make" if "mingw" in abi else "jom")

@@ -21,7 +21,6 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 import info
-from CraftCore import CraftCore
 from Package.PipPackageBase import PipPackageBase
 
 
@@ -41,4 +40,3 @@ class subinfo(info.infoclass):
 class Package(PipPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.python2 = False

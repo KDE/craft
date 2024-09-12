@@ -1,5 +1,4 @@
 import info
-from CraftCore import CraftCore
 from Package.PipPackageBase import PipPackageBase
 
 
@@ -17,4 +16,3 @@ class subinfo(info.infoclass):
 class Package(PipPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.python2 = False
