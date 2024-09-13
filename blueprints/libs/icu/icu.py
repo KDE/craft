@@ -12,7 +12,7 @@ from Utils import CraftHash
 class subinfo(info.infoclass):
     def registerOptions(self):
         # TODO support for cross-compiling to Android not implemented here yet
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.Native
+        self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.Native
 
     def setTargets(self):
         for ver in ["71.1", "74.1", "74.2", "76.1"]:

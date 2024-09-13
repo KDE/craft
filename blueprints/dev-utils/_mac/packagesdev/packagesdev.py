@@ -11,7 +11,7 @@ from Source.GitSource import GitSource
 class subinfo(info.infoclass):
     def registerOptions(self):
         self.options.dynamic.setDefault("buildType", "Release")
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.MacOS
+        self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.MacOS
 
     def setTargets(self):
         self.svnTargets["master"] = "[git]https://github.com/packagesdev/packages.git"

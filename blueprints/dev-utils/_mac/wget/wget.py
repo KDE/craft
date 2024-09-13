@@ -6,7 +6,7 @@ from Package.BinaryPackageBase import BinaryPackageBase
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.architecture = CraftCore.compiler.Architecture.x86_64
+        self.parent.package.categoryInfo.architecture &= CraftCore.compiler.Architecture.x86_64
 
     def setTargets(self):
         for ver in ["1.21.2-18"]:

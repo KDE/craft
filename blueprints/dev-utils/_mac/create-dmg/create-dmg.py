@@ -7,7 +7,7 @@ from Utils import CraftHash
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.MacOS
+        self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.MacOS
 
     def setTargets(self):
         self.svnTargets["master"] = "https://github.com/andreyvit/create-dmg.git"

@@ -15,9 +15,9 @@ from Utils.Arguments import Arguments
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.Native
+        self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.Native
         if CraftCore.compiler.isMinGW():
-            self.parent.package.categoryInfo.compiler = CraftCore.compiler.Compiler.NoCompiler
+            self.parent.package.categoryInfo.compiler &= CraftCore.compiler.Compiler.NoCompiler
 
     def setTargets(self):
         for ver in ["3.11.5", "3.11.7"]:
