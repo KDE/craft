@@ -47,7 +47,7 @@ class Package(BinaryPackageBase):
 
     def postInstall(self):
         env = None
-        if CraftCore.compiler.isLinux:
+        if CraftCore.compiler.platform.isLinux:
             env = {"LD_LIBRARY_PATH": ""}
 
         gitPath = ""

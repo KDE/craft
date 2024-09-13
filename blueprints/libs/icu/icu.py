@@ -43,7 +43,7 @@ class Package(AutoToolsPackageBase):
             "--enable-debug=no",
             "--enable-release=yes",
         ]
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             self.subinfo.options.configure.args += ["--with-data-packaging=dll"]
             if CraftCore.compiler.isMSVC():
                 self.subinfo.options.configure.args += ["--enable-extras=no"]

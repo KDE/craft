@@ -42,7 +42,7 @@ class BashShell(object):
             ldflags = f" -L{mergeroot}/lib "
             cflags = f" -I{mergeroot}/include "
 
-            if CraftCore.compiler.isMacOS or CraftCore.compiler.isIOS:
+            if CraftCore.compiler.platform.isApple:
                 # Only look for includes/libraries in the XCode SDK on MacOS to avoid errors with
                 # libraries installed by homebrew (causes errors e.g. with iconv since headers will be
                 # found in /usr/local/include first but libraries are searched for in /usr/lib before
@@ -50,9 +50,9 @@ class BashShell(object):
                 # Ensure that /usr/include comes before /usr/local/include in the header search path to avoid
                 # pulling in headers from /usr/local/include (e.g. installed by homebrew) that will cause
                 # linker errors later.
-                platform = "macosx" if CraftCore.compiler.isMacOS else "iphonesimulator"
+                platform = "macosx" if CraftCore.compiler.platform.isMacOS else "iphonesimulator"
                 sdkPath = CraftCore.cache.getCommandOutput("xcrun", f"--sdk {platform} --show-sdk-path")[1].strip()
-                if CraftCore.compiler.isMacOS:
+                if CraftCore.compiler.platform.isMacOS:
                     deploymentFlag = f"-mmacosx-version-min={os.environ['MACOSX_DEPLOYMENT_TARGET']}"
                 else:
                     deploymentFlag = ""
@@ -160,7 +160,7 @@ class BashShell(object):
                     if CraftCore.compiler.getMsvcPlatformToolset() > 120:
                         cflags += " -FS"
 
-            if CraftCore.compiler.isAndroid:
+            if CraftCore.compiler.platform.isAndroid:
                 toolchainPath = os.path.join(
                     CraftCore.standardDirs.tmpDir(),
                     f"android-{CraftCore.compiler.architecture}-toolchain",
@@ -220,7 +220,7 @@ class BashShell(object):
         bashArgs = []
         if "bashArguments" in kwargs:
             bashArgs = kwargs.pop("bashArguments")
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             tmp = CraftCore.cache.findApplication(cmd)
             if tmp:
                 cmd = tmp

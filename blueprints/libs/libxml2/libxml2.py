@@ -37,5 +37,5 @@ class Package(CMakePackageBase):
             f"-DLIBXML2_WITH_ICU={'ON' if self.subinfo.options.isActive('libs/icu') else 'OFF'}",
             f"-DLIBXML2_WITH_LZMA={'ON' if self.subinfo.options.isActive('libs/liblzma') else 'OFF'}",
         ]
-        if CraftCore.compiler.isAndroid:
+        if CraftCore.compiler.platform.isAndroid:
             self.subinfo.options.configure.args += ["-DLIBXML2_WITH_ICONV=OFF", "-DLIBXML2_WITH_PROGRAMS=OFF", "-DLIBXML2_WITH_TESTS=OFF"]

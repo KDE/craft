@@ -21,7 +21,7 @@ class subinfo(info.infoclass):
             self.targets[ver] = f"https://github.com/ninja-build/ninja/archive/v{ver}.tar.gz"
             self.archiveNames[ver] = f"ninja-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"ninja-{ver}"
-            if CraftCore.compiler.isMacOS:
+            if CraftCore.compiler.platform.isMacOS:
                 self.targetInstallPath[ver] = "dev-utils/ninja"
             else:
                 self.targetInstallPath[ver] = "dev-utils"
@@ -58,12 +58,12 @@ class Package(CMakePackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # building ninja with jom is broken
-        self.subinfo.options.make.supportsMultijob = not CraftCore.compiler.isWindows
-        if CraftCore.compiler.isMacOS:
+        self.subinfo.options.make.supportsMultijob = not CraftCore.compiler.platform.isWindows
+        if CraftCore.compiler.platform.isMacOS:
             self.subinfo.options.configure.args += ["-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64"]
 
     def postInstall(self):
-        if not CraftCore.compiler.isMacOS:
+        if not CraftCore.compiler.platform.isMacOS:
             return True
         # call ninja through arch to ensure a complete arch switch
         return utils.createShim(

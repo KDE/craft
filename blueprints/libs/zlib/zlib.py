@@ -56,7 +56,7 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["virtual/base"] = None
 
 
-if CraftCore.compiler.isWindows:
+if CraftCore.compiler.platform.isWindows:
 
     class Package(CMakePackageBase):
         def __init__(self, **kwargs):

@@ -230,7 +230,7 @@ class CraftBase(object):
                 fileType = f".{fileType}"
             if fileType == ".7z" and not CraftCore.cache.findApplication("7za"):
                 # we are bootstrapping and can't use 7z yet
-                if CraftCore.compiler.isUnix:
+                if CraftCore.compiler.platform.isUnix:
                     fileType = ".xz"
                 else:
                     fileType = ".zip"

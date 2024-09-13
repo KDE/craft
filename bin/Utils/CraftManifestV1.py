@@ -15,7 +15,7 @@ class CraftManifestEntryFile(object):
         self.configHash = None
         self.config = None
 
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             self.fileName = self.fileName.replace("\\", "/")
 
     @staticmethod
