@@ -56,7 +56,7 @@ class CraftStandardDirs(object):
 
     @staticmethod
     def craftHostRoot() -> Path:
-        if CraftCore.compiler.isNative():
+        if CraftCore.compiler.platform.isNative:
             return CraftCore.standardDirs.craftRoot()
         return Path(CraftCore.settings.get("Paths", "HostRoot"))
 

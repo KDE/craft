@@ -140,11 +140,11 @@ class PackageAutoTools(AutoToolsPackageBase):
 
         cflags = self.shell.environment["CFLAGS"]
         ldflags = self.shell.environment["LDFLAGS"]
-        if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative() and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
+        if CraftCore.compiler.isGCC() and not CraftCore.compiler.platform.isNative and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
             cflags += " -m32"
             ldflags += " -m32"
             self.subinfo.options.configure.args += ["-Alddlflags=-m32 -shared", "-Uuse64bitint -Uuse64bitall"]
-        if CraftCore.compiler.platform.isMacOS and not CraftCore.compiler.isNative():
+        if CraftCore.compiler.platform.isMacOS and not CraftCore.compiler.platform.isNative:
             cflags = f"-arch {CraftCore.compiler.architecture.name.lower()} {cflags}"
             ldflags = f"-arch {CraftCore.compiler.architecture.name.lower()} {ldflags}"
             self.subinfo.options.configure.args += [
