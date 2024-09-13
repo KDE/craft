@@ -10,7 +10,7 @@ from Package.BinaryPackageBase import BinaryPackageBase
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.Windows
+        self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.Windows
 
     def setTargets(self):
         # not used  yet only for reference

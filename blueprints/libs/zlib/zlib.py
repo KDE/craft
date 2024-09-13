@@ -9,7 +9,7 @@ from Utils.Arguments import Arguments
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.Native
+        self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.Native
         # TODO: remove with the next cache rebuild and make it the default
         # https://invent.kde.org/packaging/craft/-/issues/15
         self.options.dynamic.registerOption("msvcCompat", False)
