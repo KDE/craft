@@ -6,7 +6,7 @@ from Package.BinaryPackageBase import BinaryPackageBase
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotFreeBSD & CraftCore.compiler.Platforms.Native
+        self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.NotFreeBSD & CraftCore.compiler.Platforms.Native
 
     def setTargets(self):
         self.targets["latest"] = ""

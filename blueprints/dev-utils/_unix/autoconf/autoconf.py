@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
     def registerOptions(self):
         # We need this as a host tool. Craft at this point isn't set up to produce both
         # host and target binaries, so on Android we have host tools in the docker image.
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.Native
+        self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.Native
 
     def setTargets(self):
         for ver in ["2.69", "2.71"]:
