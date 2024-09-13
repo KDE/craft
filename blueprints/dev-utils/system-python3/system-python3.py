@@ -32,7 +32,6 @@ class Package(BinaryPackageBase):
     def install(self):
         if not super().install():
             return False
-
         binDir = "Scripts" if CraftCore.compiler.isWindows else "bin"
         python3 = CraftCore.standardDirs.etcDir() / f"virtualenv/3/{binDir}/python{CraftCore.compiler.executableSuffix}"
         return utils.createShim(

@@ -27,7 +27,7 @@ class Package(PipPackageBase):
         self.allowNotVenv = True
 
     def install(self):
-        if CraftCore.compiler.isLinux:
+        if CraftCore.compiler.platform.isLinux:
             return True
         return super().install()
 

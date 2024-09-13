@@ -43,6 +43,6 @@ class Package(AutoToolsPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.subinfo.options.configure.autoreconf = False
-        if CraftCore.compiler.isLinux and CraftCore.compiler.isClang():
+        if CraftCore.compiler.platform.isLinux and CraftCore.compiler.isClang():
             self.subinfo.options.configure.cflags += " --rtlib=compiler-rt"
             self.subinfo.options.configure.cxxflags += " --rtlib=compiler-rt"

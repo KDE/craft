@@ -52,7 +52,7 @@ def __locate7z():
     app = CraftCore.cache.findApplication("7za")
     if app:
         return app
-    appPath = CraftCore.standardDirs.craftRoot() / "dev-utils/7z" / ("7za.exe" if CraftCore.compiler.isWindows else "7zz")
+    appPath = CraftCore.standardDirs.craftRoot() / "dev-utils/7z" / ("7za.exe" if CraftCore.compiler.platform.isWindows else "7zz")
     if appPath.exists():
         return appPath
     return None
@@ -129,7 +129,7 @@ def un7zip(fileName, destdir, flag=None, keepSymlinksOnWindows=True):
                 # print progress to stderr
                 progressFlags = ["-bsp2"]
         kw["pipeProcess"] = subprocess.Popen([app, "x", fileName, "-so"] + progressFlags, stdout=subprocess.PIPE)
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             if progressFlags:
                 progressFlags = ["-bsp0"]
             command = [app, "x", "-si", f"-o{destdir}", "-ttar"] + progressFlags
@@ -143,7 +143,7 @@ def un7zip(fileName, destdir, flag=None, keepSymlinksOnWindows=True):
     # While 7zip supports symlinks cmake 3.8.0 does not support symlinks
     if not system(command, **kw):
         return False
-    if CraftCore.compiler.isWindows and not keepSymlinksOnWindows:
+    if CraftCore.compiler.platform.isWindows and not keepSymlinksOnWindows:
         return replaceSymlinksWithCopies(destdir)
     return True
 
@@ -577,7 +577,7 @@ def copyFile(
     try:
         shutil.copy2(src, dest, follow_symlinks=False)
     except PermissionError as e:
-        if CraftCore.compiler.isWindows and dest.exists():
+        if CraftCore.compiler.platform.isWindows and dest.exists():
             return deleteFile(dest) and copyFile(src, dest)
         else:
             raise e
@@ -801,9 +801,9 @@ def notify(title, message, alertClass=None, log=True):
     if log:
         CraftCore.debug.step(f"{title}: {message}")
     default = ""
-    if CraftCore.compiler.isWindows:
+    if CraftCore.compiler.platform.isWindows:
         default = "SnoreToast"
-    elif CraftCore.compiler.isMacOS:
+    elif CraftCore.compiler.platform.isMacOS:
         default = "TerminalNotifier"
     backends = CraftCore.settings.getList("General", "Notify", default)
 
@@ -850,7 +850,7 @@ def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False, kee
         CraftCore.log.error("Please pass args as list[str]")
         return system(f"kshimgen --create {shim} {target} -- {args}")
     command = ["kshimgen", "--create", shim, target]
-    if CraftCore.compiler.isWindows and guiApp:
+    if CraftCore.compiler.platform.isWindows and guiApp:
         command.append("--gui")
     if keepArgv0:
         command.append("--keep-argv0")
@@ -861,7 +861,7 @@ def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False, kee
 
 
 def replaceSymlinksWithCopies(path, _replaceDirs=False):
-    assert CraftCore.compiler.isWindows
+    assert CraftCore.compiler.platform.isWindows
 
     def resolveLink(path):
         while os.path.islink(path):
@@ -996,7 +996,7 @@ def configureFile(inFile: str, outFile: str, variables: dict) -> bool:
 
 
 def limitCommandLineLength(command: list[str], args: list[str]) -> list[list[str]]:
-    if CraftCore.compiler.isWindows:
+    if CraftCore.compiler.platform.isWindows:
         # https://docs.microsoft.com/en-US/troubleshoot/windows-client/shell-experience/command-line-string-limitation
         SIZE = 8191
     else:
@@ -1028,7 +1028,7 @@ def limitCommandLineLength(command: list[str], args: list[str]) -> list[list[str
 # includeShellScripts, on windows this will also check for shell scripts
 def isExecuatable(fileName: Path, includeShellScripts=False):
     fileName = Path(fileName)
-    if CraftCore.compiler.isWindows:
+    if CraftCore.compiler.platform.isWindows:
         if fileName.suffix.upper() in os.environ["PATHEXT"].split(";"):
             return True
         if includeShellScripts:
@@ -1049,11 +1049,11 @@ def isBinary(fileName: str) -> bool:
     suffix = fileName.suffix.lower()
     if fileName.is_symlink() or fileName.is_dir():
         return False
-    if CraftCore.compiler.isWindows:
+    if CraftCore.compiler.platform.isWindows:
         if suffix in {".dll", ".exe"}:
             return True
     else:
-        if CraftCore.compiler.isMacOS or CraftCore.compiler.isIOS:
+        if CraftCore.compiler.platform.isApple:
             if ".dSYM/" in str(fileName):
                 return False
         elif suffix == ".debug":
@@ -1061,9 +1061,9 @@ def isBinary(fileName: str) -> bool:
         if suffix in {".so", ".dylib"}:
             return True
         else:
-            if CraftCore.compiler.isMacOS or CraftCore.compiler.isIOS:
+            if CraftCore.compiler.platform.isMacOS or CraftCore.compiler.platform.isApple:
                 signature = MACH_O_64
-            elif CraftCore.compiler.isLinux or CraftCore.compiler.isFreeBSD or CraftCore.compiler.isAndroid:
+            elif CraftCore.compiler.platform.isLinux or CraftCore.compiler.platform.isFreeBSD or CraftCore.compiler.platform.isAndroid:
                 signature = ELF
             else:
                 raise Exception("Unsupported platform")
@@ -1077,7 +1077,7 @@ def isScript(fileName: str):
     if fileName.is_symlink() or fileName.is_dir():
         return False
     if isExecuatable(fileName):
-        if CraftCore.compiler.isWindows and not fileName.suffix.lower() == ".exe":
+        if CraftCore.compiler.platform.isWindows and not fileName.suffix.lower() == ".exe":
             return True
         signature = b"#!"
         with fileName.open("rb") as f:
@@ -1087,7 +1087,7 @@ def isScript(fileName: str):
 
 def getLibraryDeps(path):
     deps = []
-    if CraftCore.compiler.isMacOS:
+    if CraftCore.compiler.platform.isMacOS:
         # based on https://github.com/qt/qttools/blob/5.11/src/macdeployqt/shared/shared.cpp
         infoRe = re.compile("^\\t(.+) \\(compatibility version (\\d+\\.\\d+\\.\\d+), " + "current version (\\d+\\.\\d+\\.\\d+)\\)$")
         with io.StringIO() as log:
@@ -1162,7 +1162,7 @@ def filterDirectoryContent(
                         continue
                 if filePath.is_dir(follow_symlinks=False):
                     # handle .app folders and dsym as files
-                    if CraftCore.compiler.isMacOS:
+                    if CraftCore.compiler.platform.isMacOS:
                         suffixes = {".dsym"}
                         if handleAppBundleAsFile:
                             suffixes.update({".app", ".framework"})
@@ -1226,7 +1226,7 @@ def getPDBForBinary(path: str) -> Path:
 
 
 def installShortcut(name: str, path: str, workingDir: str, icon: str, desciption: str):
-    if not CraftCore.compiler.isWindows:
+    if not CraftCore.compiler.platform.isWindows:
         return True
     from shells import Powershell
 
@@ -1252,7 +1252,7 @@ def installShortcut(name: str, path: str, workingDir: str, icon: str, desciption
 
 
 def symFileName(fileName: Path) -> Path:
-    if CraftCore.compiler.isMacOS:
+    if CraftCore.compiler.platform.isMacOS:
         bundleDir = list(
             filter(
                 lambda x: x.name.endswith(".framework") or x.name.endswith(".app"),
@@ -1283,11 +1283,11 @@ def strip(fileName: Path, destFileName: Path = None) -> Path:
     if destFileName.exists():
         return destFileName
 
-    if CraftCore.compiler.isMacOS or CraftCore.compiler.isIOS:
+    if CraftCore.compiler.platform.isApple:
         if not (system(["/usr/bin/dsymutil", fileName, "-o", destFileName]) and system(["strip", "-x", "-S", fileName]) and localSignMac([fileName])):
             return None
     else:
-        if CraftCore.compiler.isAndroid:
+        if CraftCore.compiler.platform.isAndroid:
             toolchain_path = os.path.join(os.environ["ANDROID_NDK"], "toolchains/llvm/prebuilt", os.environ.get("ANDROID_NDK_HOST", "linux-x86_64"), "bin")
             objcopy = os.path.join(toolchain_path, "llvm-objcopy")
             strip = os.path.join(toolchain_path, "llvm-strip")

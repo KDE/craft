@@ -144,7 +144,7 @@ else:
                 # if needed we can still call python3 -m ensurepip
                 "--with-ensurepip=no",
             ]
-            if CraftCore.compiler.isMacOS:
+            if CraftCore.compiler.platform.isMacOS:
                 self.subinfo.options.configure.noLibDir = True
                 self.subinfo.options.configure.staticArgs = Arguments()
                 self.subinfo.options.configure.args += [f"--enable-framework={CraftCore.standardDirs.craftRoot()}/lib", "--with-universal-archs=x86_64;arm64"]
@@ -154,7 +154,6 @@ else:
             self.subinfo.options.make.supportsMultijob = False
             if not super().install():
                 return False
-
             minorVersion = self.buildTarget.split(".")[1]
             if CraftCore.compiler.isMacOS:
                 if not utils.system(

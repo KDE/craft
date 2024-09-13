@@ -233,7 +233,7 @@ class CollectionPackagerBase(PackagerBase):
         CraftCore.log.debug("Copying %s -> %s" % (srcDir, destDir))
 
         # Only sign all files on Windows. On MacOS we recursively sign the whole .app Folder
-        doSign = CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "Enabled", False)
+        doSign = CraftCore.compiler.platform.isWindows and CraftCore.settings.getboolean("CodeSigning", "Enabled", False)
         if doSign and CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
             # files from the cache are already signed, but files from this package need to be signed
             doSign = os.path.samefile(srcDir, self.imageDir())
@@ -248,7 +248,7 @@ class CollectionPackagerBase(PackagerBase):
                         filesToSign.append(entry_target)
             else:
                 # .app or .dSYM
-                assert CraftCore.compiler.isMacOS
+                assert CraftCore.compiler.platform.isMacOS
                 if not utils.copyDir(entry, entry_target, linkOnly=False):
                     return False
 
@@ -314,7 +314,7 @@ class CollectionPackagerBase(PackagerBase):
         # package symbols if the dir isn't empty
         if packageSymbols and os.listdir(self.archiveDebugDir()):
             dbgName = Path("{0}-dbg{1}".format(*os.path.splitext(defines["setupname"])))
-            if not CraftCore.compiler.isWindows:
+            if not CraftCore.compiler.platform.isWindows:
                 dbgName = dbgName.with_suffix(".tar.7z")
             else:
                 dbgName = dbgName.with_suffix(".7z")
