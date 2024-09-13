@@ -158,10 +158,10 @@ class PackageMSys(AutoToolsPackageBase):
         self.subinfo.options.configure.noLibDir = True
         self.subinfo.options.install.args += ["install_sw"]
 
-        if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative() and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
+        if CraftCore.compiler.isGCC() and not CraftCore.compiler.platform.isNative and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
             self.subinfo.options.configure.args += ["linux-x86"]
             self.subinfo.options.configure.projectFile = "Configure"
-        if CraftCore.compiler.platform.isMacOS and not CraftCore.compiler.isNative():
+        if CraftCore.compiler.platform.isMacOS and not CraftCore.compiler.platform.isNative:
             self.subinfo.options.configure.args += [f"darwin64-{CraftCore.compiler.architecture.name.lower()}"]
 
     def install(self):

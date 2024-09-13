@@ -131,7 +131,7 @@ class MesonBuildSystem(BuildSystemBase):
                 "endian = 'little'\n"
             )
             args = ["--cross-file", craftCrossFilePath]
-        elif CraftCore.compiler.platform.isMacOS and not CraftCore.compiler.isNative():
+        elif CraftCore.compiler.platform.isMacOS and not CraftCore.compiler.platform.isNative:
             # based on https://github.com/mesonbuild/meson-python/blob/main/mesonpy/__init__.py#L687
             arch = CraftCore.compiler.architecture.name.lower()
             config = textwrap.dedent(

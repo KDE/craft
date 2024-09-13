@@ -225,8 +225,7 @@ class SetupHelper(object):
                 CraftCore.compiler.Architecture.x86_32: "x86",
                 CraftCore.compiler.Architecture.x86_64: "x86_amd64",
             }
-
-        args = architectures[architecture]
+        args = architectures[architecture.key]
         path = ""
         # we prefer newer compiler that provide legacy toolchains
         if version:
@@ -282,7 +281,7 @@ class SetupHelper(object):
                 CraftCore.compiler.getInternalVersion(),
                 CraftCore.compiler.architecture,
                 CraftCore.compiler.msvcToolset,
-                CraftCore.compiler.isNative(),
+                CraftCore.compiler.platform.isNative,
             )
         return os.environ
 
@@ -342,7 +341,7 @@ class SetupHelper(object):
             [f"-Wl,-rpath,{CraftCore.standardDirs.craftRoot() / 'lib'}", f"-L{CraftCore.standardDirs.craftRoot() / 'lib'}"],
             sep=" ",
         )
-        if CraftCore.compiler.isNative():
+        if CraftCore.compiler.platform.isNative():
             if CraftCore.compiler.macOSDeploymentTarget < 12:
                 # https://developer.apple.com/documentation/xcode-release-notes/xcode-15-release-notes
                 # Binaries using symbols with a weak definition crash at runtime on iOS 14/macOS 12 or older. This impacts primarily C++ projects due to their extensive use of weak symbols. (114813650) (FB13097713)
@@ -518,7 +517,7 @@ class SetupHelper(object):
             )
 
         # make sure that craftroot bin is the first to look for dlls etc
-        if not CraftCore.compiler.isNative():
+        if not CraftCore.compiler.platform.isNative:
             self.prependEnvVar(
                 "PATH",
                 [
@@ -544,7 +543,7 @@ class SetupHelper(object):
                     self.addDefaultEnvVar("CC", "clang")
                     self.addDefaultEnvVar("CXX", "clang")
         elif CraftCore.compiler.isGCC():
-            if not CraftCore.compiler.isNative() and CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_32:
+            if not CraftCore.compiler.platform.isNative and CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_32:
                 self.addEnvVar("CC", "gcc -m32")
                 self.addEnvVar("CXX", "g++ -m32")
                 self.addEnvVar("AS", "gcc -c -m32")
