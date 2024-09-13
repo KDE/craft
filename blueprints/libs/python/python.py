@@ -138,7 +138,7 @@ else:
                 # if needed we can still call python3 -m ensurepip
                 "--with-ensurepip=no",
             ]
-            if CraftCore.compiler.isMacOS:
+            if CraftCore.compiler.platform.isMacOS:
                 self.subinfo.options.configure.noLibDir = True
                 self.subinfo.options.configure.args += [f"--enable-framework={CraftCore.standardDirs.craftRoot()}/lib", "--with-universal-archs=x86_64;arm64"]
                 self.subinfo.options.install.args += [f"PYTHONAPPSDIR={CraftCore.standardDirs.craftRoot()}"]
@@ -151,7 +151,7 @@ else:
             self.subinfo.options.make.supportsMultijob = False
             if not super().install():
                 return False
-            if CraftCore.compiler.isMacOS:
+            if CraftCore.compiler.platform.isMacOS:
                 minorVersion = self.buildTarget.split(".")[1]
                 if not utils.system(
                     ["install_name_tool", "-id", f"@rpath/Python.framework/Versions/3.{minorVersion}/Python", self.imageDir() / "lib/Python.framework/Python"]

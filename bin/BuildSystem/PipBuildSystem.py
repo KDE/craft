@@ -18,7 +18,7 @@ class PipBuildSystem(BuildSystemBase):
         if CraftPackageObject.get("dev-utils/python2").isInstalled:
             return "python2"
         python2 = CraftCore.cache.findApplication("python2.7")
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             if os.path.exists("C:/python27/python.exe"):
                 python2 = "C:/python27/python.exe"
             if not python2 and ("Paths", "PYTHON27") in CraftCore.settings:
@@ -32,9 +32,9 @@ class PipBuildSystem(BuildSystemBase):
 
     def _getPython3(self):
         craftPython = CraftPackageObject.get("libs/python")
-        suffix = "_d" if CraftCore.compiler.isWindows and craftPython.instance.subinfo.options.dynamic.buildType == "Debug" else ""
+        suffix = "_d" if CraftCore.compiler.platform.isWindows and craftPython.instance.subinfo.options.dynamic.buildType == "Debug" else ""
         if CraftPackageObject.get("python-modules/virtualenv").isInstalled:
-            if CraftCore.compiler.isWindows:
+            if CraftCore.compiler.platform.isWindows:
                 return Path(CraftCore.standardDirs.craftRoot()) / f"etc/virtualenv/3/Scripts/python{suffix}"
             else:
                 return Path(CraftCore.standardDirs.craftRoot()) / f"etc/virtualenv/3/bin/python3"

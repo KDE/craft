@@ -22,7 +22,7 @@ class Package(BinaryPackageBase):
         if not BinaryPackageBase.install(self):
             return False
         python2 = CraftCore.cache.findApplication("python2.7")
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             exitCode, _python2 = CraftCore.cache.getCommandOutput("py", '-2 -c "import sys; print(sys.executable)"')
             if exitCode == 0:
                 python2 = _python2.strip()

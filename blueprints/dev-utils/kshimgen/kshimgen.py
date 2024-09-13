@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         self.svnTargets["append"] = "https://invent.kde.org/sdk/kshim.git|work/append|"
 
         for ver in ["0.6.0"]:
-            if CraftCore.compiler.isAndroid:
+            if CraftCore.compiler.platform.isAndroid:
                 # we need kshimgen only as a host tool, on Android we need to use a pre-build binary, since it doesn't build on Android natively
                 self.targets[ver] = f"https://download.kde.org/stable/kshim/kshim-v{ver}-linux-binary-x86_64.tar.7z"
                 self.targetDigestUrls[ver] = f"https://download.kde.org/stable/kshim/kshim-v{ver}-linux-binary-x86_64.tar.7z.sha256"
@@ -24,19 +24,19 @@ class subinfo(info.infoclass):
                 self.targetDigestUrls[ver] = f"https://download.kde.org/stable/kshim/kshim-{ver}.tar.xz.sha256"
                 self.targetInstSrc[ver] = f"kshim-{ver}"
         self.patchLevel["0.6.0"] = 1
-        if CraftCore.compiler.isAndroid:
+        if CraftCore.compiler.platform.isAndroid:
             self.defaultTarget = "0.6.0"
         else:
             self.defaultTarget = "append"
 
-    if not CraftCore.compiler.isAndroid:
+    if not CraftCore.compiler.platform.isAndroid:
 
         def setDependencies(self):
             self.buildDependencies["dev-utils/cmake-base"] = None
             self.buildDependencies["dev-utils/mingw-w64"] = None
 
 
-if CraftCore.compiler.isAndroid:
+if CraftCore.compiler.platform.isAndroid:
 
     class Package(BinaryPackageBase):
         def __init__(self, **kwargs):
@@ -50,7 +50,7 @@ else:
     class Package(CMakePackageBase):
         def __init__(self, **kwargs):
             super().__init__(**kwargs)
-            if CraftCore.compiler.isMacOS:
+            if CraftCore.compiler.platform.isMacOS:
                 self.subinfo.options.configure.args += ["-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64"]
 
         def configure(self):

@@ -54,7 +54,7 @@ class GitPackage(BinaryPackageBase):
 
     def postInstall(self):
         env = None
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             env = {"TERM": ""}
         return utils.createShim(
             os.path.join(self.imageDir(), "dev-utils", "bin", "git.exe"),

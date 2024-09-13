@@ -133,6 +133,7 @@ class CraftCompiler(object):
 
         Native = ~(iOS | Android)
         Unix = Linux | MacOS | FreeBSD | Android
+        Apple = MacOS | iOS
         All = ~0
 
         # define inverted values to allow usage in info.ini
@@ -149,6 +150,38 @@ class CraftCompiler(object):
             if not hasattr(cls, "__sting_map"):
                 cls.__sting_map = dict([(k.lower(), v) for k, v in cls.__members__.items()])
             return cls.__sting_map[name.lower()]
+
+        @property
+        def isWindows(self) -> bool:
+            return self.value == CraftCompiler.Platforms.Windows
+
+        @property
+        def isMacOS(self) -> bool:
+            return self.value == CraftCompiler.Platforms.MacOS
+
+        @property
+        def isIOS(self) -> bool:
+            return self.value == CraftCompiler.Platforms.iOS
+
+        @property
+        def isLinux(self) -> bool:
+            return self.value == CraftCompiler.Platforms.Linux
+
+        @property
+        def isFreeBSD(self) -> bool:
+            return self.value == CraftCompiler.Platforms.FreeBSD
+
+        @property
+        def isAndroid(self) -> bool:
+            return self.value == CraftCompiler.Platforms.Android
+
+        @property
+        def isUnix(self) -> bool:
+            return bool(self.value & CraftCompiler.Platforms.Unix)
+
+        @property
+        def isApple(self) -> bool:
+            return bool(self.value & CraftCompiler.Platforms.Apple)
 
     @unique
     class Abi(Enum):
@@ -187,7 +220,7 @@ class CraftCompiler(object):
         self._apiLevel = None
         if self.isMSVC():
             self._MSVCToolset = CraftCore.settings.get("General", "MSVCToolset", "")
-        if self.isAndroid:
+        if self.platform.isAndroid:
             self._apiLevel = CraftCore.settings.get("General", "AndroidAPI", 21)
 
     def __str__(self):
@@ -209,7 +242,7 @@ class CraftCompiler(object):
     def hostArchitecture(self) -> Architecture:
         if not self._hostArchitecture:
             # if we are in a x64 binary on mac the platform class will not report the correct arch
-            if self.isMacOS and self.architecture == CraftCompiler.Architecture.x86_64:
+            if self.platform.isApple and self.architecture == CraftCompiler.Architecture.x86_64:
                 if "RELEASE_ARM64" in platform.uname().version:
                     self._hostArchitecture = CraftCompiler.Architecture.arm64
             if not self._hostArchitecture:
@@ -284,40 +317,12 @@ class CraftCompiler(object):
         raise Exception("Unsupported architecture")
 
     @property
-    def isWindows(self) -> bool:
-        return self.platform == CraftCompiler.Platforms.Windows
-
-    @property
-    def isMacOS(self) -> bool:
-        return self.platform == CraftCompiler.Platforms.MacOS
-
-    @property
-    def isIOS(self) -> bool:
-        return self.platform == CraftCompiler.Platforms.iOS
-
-    @property
-    def isLinux(self) -> bool:
-        return self.platform == CraftCompiler.Platforms.Linux
-
-    @property
-    def isFreeBSD(self) -> bool:
-        return self.platform == CraftCompiler.Platforms.FreeBSD
-
-    @property
-    def isAndroid(self) -> bool:
-        return self.platform == CraftCompiler.Platforms.Android
-
-    @property
-    def isUnix(self) -> bool:
-        return bool(self.platform & CraftCompiler.Platforms.Unix)
-
-    @property
     def executableSuffix(self):
-        return ".exe" if self.isWindows else ""
+        return ".exe" if self.platform.isWindows else ""
 
     @property
     def symbolsSuffix(self):
-        if self.isMacOS:
+        if self.platform.isApple:
             return ".dSYM"
         elif self.isMSVC():
             return ".pdb"
@@ -344,7 +349,7 @@ class CraftCompiler(object):
         return self.compiler == CraftCompiler.Compiler.CL
 
     def isMinGW(self):
-        return self.isWindows and self.isGCC()
+        return self.platform.isWindows and self.isGCC()
 
     def isMinGW_W32(self):
         return self.isMinGW() and self.architecture == CraftCompiler.Architecture.x86_32

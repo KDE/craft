@@ -71,7 +71,7 @@ from Package.AutoToolsPackageBase import *
 class PackageAutotools(AutoToolsPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        if CraftCore.compiler.isIOS:
+        if CraftCore.compiler.platform.isIOS:
             self.subinfo.options.configure.args += ["--enable-static", "--disable-shared"]
         else:
             self.subinfo.options.configure.args += ["--enable-shared", "--disable-static"]

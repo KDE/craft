@@ -18,7 +18,7 @@ class Package(PipPackageBase):
         super().__init__(**kwargs)
 
     def install(self):
-        if CraftCore.compiler.isLinux:
+        if CraftCore.compiler.platform.isLinux:
             return True
         return super().install()
 

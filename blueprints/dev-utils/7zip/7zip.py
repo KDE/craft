@@ -26,8 +26,8 @@ class Package(BinaryPackageBase):
 
     def postInstall(self):
         args = []
-        appPath = CraftCore.standardDirs.craftRoot() / "dev-utils/7z" / ("7za.exe" if CraftCore.compiler.isWindows else "7zz")
-        if CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
+        appPath = CraftCore.standardDirs.craftRoot() / "dev-utils/7z" / ("7za.exe" if CraftCore.compiler.platform.isWindows else "7zz")
+        if CraftCore.compiler.platform.isMacOS and not CraftCore.compiler.isNative():
             args = ["-arch", CraftCore.compiler.hostArchitecture.name.lower(), str(appPath)]
             appPath = "arch"
         return utils.createShim(self.imageDir() / f"dev-utils/bin/7za{CraftCore.compiler.executableSuffix}", appPath, useAbsolutePath=True, args=args)

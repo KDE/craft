@@ -64,17 +64,17 @@ class CMakeBuildSystem(BuildSystemBase):
             options.append("-DKDE_L10N_AUTO_TRANSLATIONS=ON")
             options.append("-DKDE_L10N_SYNC_TRANSLATIONS=ON")
 
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             # people use InstallRequiredSystemLibraries.cmake wrong and unconditionally install the
             # msvc crt...
             options.append("-DCMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP=ON")
-        elif CraftCore.compiler.isMacOS:
+        elif CraftCore.compiler.platform.isMacOS:
             options += [
                 f"-DKDE_INSTALL_BUNDLEDIR={OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}/Applications/KDE",
                 "-DAPPLE_SUPPRESS_X11_WARNING=ON",
                 f"-DCMAKE_OSX_ARCHITECTURES={CraftCore.compiler.architecture.name.lower()}",
             ]
-        elif CraftCore.compiler.isIOS:
+        elif CraftCore.compiler.platform.isIOS:
             toolChain = CraftCore.standardDirs.craftRoot() / "lib/cmake/Qt6/qt.toolchain.cmake"
             if toolChain.exists():
                 options += [f"-DCMAKE_TOOLCHAIN_FILE={toolChain}"]
@@ -82,10 +82,10 @@ class CMakeBuildSystem(BuildSystemBase):
                 "-DCMAKE_OSX_SYSROOT=iphonesimulator",
                 "-DCMAKE_OSX_DEPLOYMENT_TARGET=17.5",
             ]
-        elif CraftCore.compiler.isLinux:
+        elif CraftCore.compiler.platform.isLinux:
             # use the same lib dir on all distributions
             options += ["-DCMAKE_INSTALL_LIBDIR:PATH=lib"]
-        elif CraftCore.compiler.isAndroid:
+        elif CraftCore.compiler.platform.isAndroid:
             kfVersion = CraftCore.settings.get("General", "KFHostToolingVersion", "5")
             nativeToolingRoot = CraftCore.settings.get("General", f"KF{kfVersion}HostToolingRoot", "/opt/nativetooling")
 
@@ -149,7 +149,7 @@ class CMakeBuildSystem(BuildSystemBase):
                 if self.buildType() == "Release" or self.buildType() == "MinSizeRel":
                     options += ["-DANDROIDDEPLOYQT_EXTRA_ARGS=--release"]
 
-        if CraftCore.compiler.isWindows or CraftCore.compiler.isMacOS:
+        if CraftCore.compiler.platform.isWindows or CraftCore.compiler.platform.isMacOS:
             options.append("-DKDE_INSTALL_USE_QT_SYS_PATHS=ON")
 
         if self.subinfo.options.dynamic.buildTools:
@@ -168,7 +168,7 @@ class CMakeBuildSystem(BuildSystemBase):
         env = {}
         if self.supportsCCACHE:
             cxx = CraftCore.standardDirs.craftHostRoot() / "dev-utils/ccache/bin" / Path(os.environ["CXX"]).name
-            if CraftCore.compiler.isWindows and not cxx.suffix:
+            if CraftCore.compiler.platform.isWindows and not cxx.suffix:
                 cxx = Path(str(cxx) + CraftCore.compiler.executableSuffix)
             if cxx.exists():
                 env["CXX"] = cxx

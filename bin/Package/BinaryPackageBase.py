@@ -34,7 +34,7 @@ class BinaryPackageBase(PackageBase, MultiSource, BinaryBuildSystem, TypePackage
                 if not dest.exists():
                     if not utils.copyFile(f, dest, linkOnly=False):
                         return False
-        if CraftCore.compiler.isUnix:
+        if CraftCore.compiler.platform.isUnix:
             for f in glob.glob(f"{self.installDir()}/**/*.AppImage", recursive=True):
                 appImage = Path(f)
                 CraftCore.log.info(f"Make {appImage} executable")

@@ -32,7 +32,7 @@ class DesktopEntry(PackagerBase):
     def createPackage(self):
         defines = self.setDefaults(self.defines)
         craftName = CraftCore.standardDirs.craftRoot().name
-        if CraftCore.compiler.isMacOS:
+        if CraftCore.compiler.platform.isMacOS:
             root = CraftCore.standardDirs.craftRoot()
             targetBundle = Path(self.getMacAppPath(defines, root / "Applications"))
             targetPlist = targetBundle / "Contents/Info.plist"
@@ -82,7 +82,7 @@ class DesktopEntry(PackagerBase):
                 linkOnly=False,
             ):
                 return False
-        elif CraftCore.compiler.isWindows:
+        elif CraftCore.compiler.platform.isWindows:
             shortcuts = defines["shortcuts"] or []
             if "executable" in defines:
                 shortcuts.append({"name": defines["productname"], "target": defines["executable"]})

@@ -29,7 +29,7 @@ class Package(BinaryPackageBase):
             return False
         binDir = "bin"
         suffix = ""
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             binDir = "Scripts"
             if CraftPackageObject.get("libs/python").instance.subinfo.options.dynamic.buildType == "Debug":
                 suffix = "_d"

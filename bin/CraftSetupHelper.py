@@ -301,10 +301,10 @@ class SetupHelper(object):
     def _setupUnix(self):
         craftLibDir = CraftCore.standardDirs.craftRoot() / "lib"
 
-        if CraftCore.compiler.isFreeBSD:
+        if CraftCore.compiler.platform.isFreeBSD:
             self.prependEnvVar("LD_LIBRARY_PATH", [craftLibDir])
             self.prependEnvVar("LDFLAGS", ["-Wl,-rpath,'$ORIGIN/../lib'", f"-L{craftLibDir}"], sep=" ")
-        elif CraftCore.compiler.isLinux:
+        elif CraftCore.compiler.platform.isLinux:
             # we will later replace the hard coded path in BuildSystemBase.internalPostInstall
             self.prependEnvVar("LDFLAGS", [f"-Wl,-rpath,{craftLibDir}", f"-L{craftLibDir}"], sep=" ")
         self.prependEnvVar(
@@ -413,11 +413,11 @@ class SetupHelper(object):
                 ),
             )
 
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             self._setupWin()
         elif CraftCore.compiler.platform & (CraftCore.compiler.Platforms.MacOS | CraftCore.compiler.Platforms.iOS):
             self._setupMac()
-        elif CraftCore.compiler.isAndroid:
+        elif CraftCore.compiler.platform.isAndroid:
             self._setupAndroid()
         else:
             self._setupUnix()
@@ -477,13 +477,13 @@ class SetupHelper(object):
                     CraftCore.standardDirs.etcDir(),
                     f"virtualenv",
                     "3",
-                    "Scripts" if CraftCore.compiler.isWindows else "bin",
+                    "Scripts" if CraftCore.compiler.platform.isWindows else "bin",
                 ),
                 os.path.join(
                     CraftCore.standardDirs.etcDir(),
                     f"virtualenv",
                     "2",
-                    "Scripts" if CraftCore.compiler.isWindows else "bin",
+                    "Scripts" if CraftCore.compiler.platform.isWindows else "bin",
                 ),
             ],
         )
@@ -503,7 +503,7 @@ class SetupHelper(object):
             [CraftCore.standardDirs.craftRoot() / "dev-utils/bin", CraftCore.standardDirs.craftRoot() / "bin", CraftCore.standardDirs.craftRoot() / "libexec"],
         )
 
-        if CraftCore.compiler.isClang() and not CraftCore.compiler.isAndroid:
+        if CraftCore.compiler.isClang() and not CraftCore.compiler.platform.isAndroid:
             if OsUtils.isUnix() and CraftCore.settings.getboolean("General", "UseSystemClang", True):
                 self.addEnvVar("CC", "/usr/bin/clang")
                 self.addEnvVar("CXX", "/usr/bin/clang++")

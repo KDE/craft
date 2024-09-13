@@ -13,11 +13,11 @@ class subinfo(info.infoclass):
         for ver in ["24.05"]:
             verNoDot = ver.replace(".", "")
             self.targetInstallPath[ver] = "dev-utils/7z"
-            if CraftCore.compiler.isWindows:
+            if CraftCore.compiler.platform.isWindows:
                 self.targets[ver] = f"https://files.kde.org/craft/3rdparty/7zip/{verNoDot}/7z{verNoDot}-extra.zip"
                 self.targetInstSrc[ver] = f"7z{verNoDot}-extra"
                 self.targetDigestUrls[ver] = self.targets[ver] + ".sha256"
-            elif CraftCore.compiler.isLinux:
+            elif CraftCore.compiler.platform.isLinux:
                 arch = "x64"
                 if CraftCore.compiler.architecture & CraftCore.compiler.Architecture.arm:
                     arch = "arm64"
@@ -35,7 +35,7 @@ class Package(BinaryPackageBase):
 
     def binaryArchiveName(self, **kwargs):
         # never use 7z to compress this package
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             kwargs["fileType"] = ".zip"
         else:
             kwargs["fileType"] = ".tar.xz"
@@ -45,6 +45,6 @@ class Package(BinaryPackageBase):
     def unpack(self):
         if not super().unpack():
             return False
-        if CraftCore.compiler.isLinux:
+        if CraftCore.compiler.platform.isLinux:
             return utils.deleteFile(self.localFilePath()[0])
         return True

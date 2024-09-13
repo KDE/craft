@@ -29,7 +29,7 @@ class Package(AutoToolsPackageBase):
         self.subinfo.options.configure.autoreconf = False
         root = self.shell.toNativePath(CraftCore.standardDirs.craftRoot())
         self.subinfo.options.configure.args += ["--disable-static", "--enable-shared", "--with-internal-glib", "PKG_CONFIG=:"]
-        if not CraftCore.compiler.isMacOS:
+        if not CraftCore.compiler.platform.isMacOS:
             self.subinfo.options.configure.args += ["-with-libiconv=gnu"]
         else:
             # work around https://gitlab.freedesktop.org/pkg-config/pkg-config/-/issues/81

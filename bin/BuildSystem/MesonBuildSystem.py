@@ -94,7 +94,7 @@ class MesonBuildSystem(BuildSystemBase):
         args = []
         config = ""
 
-        if CraftCore.compiler.isAndroid:
+        if CraftCore.compiler.platform.isAndroid:
             if CraftCore.compiler.architecture == CraftCompiler.Architecture.arm64:
                 toolchain = "aarch64-linux-android"
                 compiler = "aarch64-linux-android"
@@ -131,7 +131,7 @@ class MesonBuildSystem(BuildSystemBase):
                 "endian = 'little'\n"
             )
             args = ["--cross-file", craftCrossFilePath]
-        elif CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
+        elif CraftCore.compiler.platform.isMacOS and not CraftCore.compiler.isNative():
             # based on https://github.com/mesonbuild/meson-python/blob/main/mesonpy/__init__.py#L687
             arch = CraftCore.compiler.architecture.name.lower()
             config = textwrap.dedent(

@@ -17,12 +17,12 @@ class subinfo(info.infoclass):
             self.targets[ver] = f"https://www.cpan.org/src/5.0/perl-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"perl-{ver}"
 
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             self.patchToApply["5.36.0"] = [(".perl-5.36.0_win", 1)]
         else:
             self.patchToApply["5.36.0"] = [(".perl-5.36.0", 1)]
 
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             self.patchToApply["5.38.2"] = [(".perl-5.39.8_win", 1)]
             self.patchToApply["5.39.8"] = [(".perl-5.39.8_win", 1)]
         else:
@@ -139,7 +139,7 @@ class PackageAutoTools(AutoToolsPackageBase):
             cflags += " -m32"
             ldflags += " -m32"
             self.subinfo.options.configure.args += ["-Alddlflags=-m32 -shared", "-Uuse64bitint -Uuse64bitall"]
-        if CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
+        if CraftCore.compiler.platform.isMacOS and not CraftCore.compiler.isNative():
             cflags = f"-arch {CraftCore.compiler.architecture.name.lower()} {cflags}"
             ldflags = f"-arch {CraftCore.compiler.architecture.name.lower()} {ldflags}"
             self.subinfo.options.configure.args += [
@@ -147,7 +147,7 @@ class PackageAutoTools(AutoToolsPackageBase):
                 f"-Dcxx={os.environ['CXX']} -arch {CraftCore.compiler.architecture.name.lower()}",
                 f"-Dld={os.environ['CC']} -arch {CraftCore.compiler.architecture.name.lower()}",
             ]
-        if CraftCore.compiler.isMacOS:
+        if CraftCore.compiler.platform.isMacOS:
             lddflags = f"-dylib"
         else:
             lddflags = f"-shared"
@@ -180,13 +180,13 @@ class PackageAutoTools(AutoToolsPackageBase):
 
     @property
     def makeProgram(self):
-        if CraftCore.compiler.isFreeBSD:
+        if CraftCore.compiler.platform.isFreeBSD:
             return "make"
         else:
             return super().makeProgram
 
 
-if CraftCore.compiler.isUnix:
+if CraftCore.compiler.platform.isUnix:
 
     class Package(PackageAutoTools):
         pass
