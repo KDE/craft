@@ -57,7 +57,7 @@ class CMakeBuildSystem(BuildSystemBase):
         if self.buildType() is not None:
             options.append(f"-DCMAKE_BUILD_TYPE={self.buildType()}")
 
-        # if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative():
+        # if CraftCore.compiler.isGCC() and not CraftCore.compiler.platform.isNative:
         #    options += " -DCMAKE_TOOLCHAIN_FILE=%s" % os.path.join(CraftStandardDirs.craftRoot(), "craft", "bin", "toolchains", "Toolchain-cross-mingw32-linux-%s.cmake" % CraftCore.compiler.architecture)
 
         if CraftCore.settings.getboolean("CMake", "KDE_L10N_AUTO_TRANSLATIONS", False):
