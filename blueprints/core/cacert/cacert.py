@@ -4,6 +4,7 @@ from Package.BinaryPackageBase import BinaryPackageBase
 from Utils import CraftHash
 
 
+
 class subinfo(info.infoclass):
     def setTargets(self):
         for ver in ["2023-01-10", "2023-12-12"]:
