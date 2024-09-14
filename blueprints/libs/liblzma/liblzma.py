@@ -72,6 +72,7 @@ class PackageMSBuild(MSBuildPackageBase):
 class PackageAutotools(AutoToolsPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.subinfo.options.configure.autoreconf = CraftCore.compiler.platform.isIOS
         if CraftCore.compiler.platform.isIOS:
             self.subinfo.options.configure.args += ["--enable-static", "--disable-shared"]
         else:
