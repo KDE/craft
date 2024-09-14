@@ -1,5 +1,6 @@
 import info
-from Package.VirtualPackageBase import *
+from CraftCore import CraftCore
+from Package.VirtualPackageBase import VirtualPackageBase
 
 
 class subinfo(info.infoclass):

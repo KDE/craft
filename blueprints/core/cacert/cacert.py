@@ -1,7 +1,8 @@
 import info
-from Utils import CraftHash
-from Package.BinaryPackageBase import BinaryPackageBase
 import utils
+from Package.BinaryPackageBase import BinaryPackageBase
+from Utils import CraftHash
+
 
 class subinfo(info.infoclass):
     def setTargets(self):

@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 import io
+import os
+from pathlib import Path
 
 import info
-from Package.AutoToolsPackageBase import *
+import utils
+from CraftCore import CraftCore
+from Package.AutoToolsPackageBase import AutoToolsPackageBase
+from Utils import CraftHash
 
 
 class subinfo(info.infoclass):

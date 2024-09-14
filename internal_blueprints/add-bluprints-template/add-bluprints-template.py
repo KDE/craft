@@ -1,8 +1,12 @@
 # This is a internal recipe
 import info
 import utils
-from Blueprints.CraftPackageObject import *
-
+from Blueprints.CraftPackageObject import BlueprintException
+from CraftStandardDirs import CraftStandardDirs
+from Package.BlueprintRepositoryPackageBase import BlueprintRepositoryPackageBase
+import os
+from CraftCore import CraftCore
+import re
 
 class subinfo(info.infoclass):
     def setTargets(self):
@@ -11,9 +15,6 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         # make sure core is up to date first
         self.buildDependencies["craft/craft-core"] = None
-
-
-from Package.BlueprintRepositoryPackageBase import *
 
 
 class Package(BlueprintRepositoryPackageBase):

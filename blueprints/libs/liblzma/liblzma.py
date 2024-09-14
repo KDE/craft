@@ -23,8 +23,15 @@
 # SUCH DAMAGE.
 
 import glob
+import os
+from pathlib import Path
 
 import info
+import utils
+from CraftCore import CraftCore
+from Package.AutoToolsPackageBase import AutoToolsPackageBase
+from Package.MSBuildPackageBase import MSBuildPackageBase
+from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
@@ -46,13 +53,10 @@ class subinfo(info.infoclass):
         self.options.dynamic.registerOption("buildPrograms", not CraftCore.compiler.isAndroid)
 
 
-from Package.MSBuildPackageBase import *
-
-
 class PackageMSBuild(MSBuildPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.subinfo.options.configure.projectFile = os.path.join(self.sourceDir(), "windows", "xz_win.sln")
+        self.subinfo.options.configure.projectFile = self.sourceDir() / "windows/xz_win.sln"
         self.msbuildTargets = ["liblzma_dll"]
 
     def install(self):
@@ -61,14 +65,11 @@ class PackageMSBuild(MSBuildPackageBase):
 
         headerDir = self.sourceDir() / "src/liblzma/api"
         includeDir = self.installDir() / "include"
-        header = glob.glob(os.path.join(headerDir, f"**/*.h"), recursive=True)
+        header = glob.glob(os.path.join(headerDir, "**/*.h"), recursive=True)
         for h in header:
             h = Path(h)
             utils.copyFile(h, includeDir / h.relative_to(headerDir), linkOnly=False)
         return True
-
-
-from Package.AutoToolsPackageBase import *
 
 
 class PackageAutotools(AutoToolsPackageBase):

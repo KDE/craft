@@ -1,5 +1,6 @@
 import info
-from CraftCore import CraftCore
+from Package.AutoToolsPackageBase import AutoToolsPackageBase
+from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
@@ -11,9 +12,6 @@ class subinfo(info.infoclass):
         self.targetDigests["0.18.0"] = (["64de10e4c6b8b8379db7e87f58030f336ea747c0515f381132e810dbf84a86e7"], CraftHash.HashAlgorithm.SHA256)
         self.description = "PatchELF is a simple utility for modifying existing ELF executables and libraries."
         self.defaultTarget = "0.18.0"
-
-
-from Package.AutoToolsPackageBase import *
 
 
 class Package(AutoToolsPackageBase):
