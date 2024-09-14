@@ -157,9 +157,9 @@ class PackageAutoTools(AutoToolsPackageBase):
                 f"-Dld={os.environ['CC']} -arch {CraftCore.compiler.architecture.name.lower()}",
             ]
         if CraftCore.compiler.platform.isMacOS:
-            lddflags = f"-dylib"
+            lddflags = "-dylib"
         else:
-            lddflags = f"-shared"
+            lddflags = "-shared"
         self.subinfo.options.configure.args += [
             f"-Accflags={cflags}",
             f"-Aldflags={ldflags}",
