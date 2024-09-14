@@ -14,8 +14,10 @@ class PipBuildSystem(BuildSystemBase):
     def __init__(self, package: CraftPackageObject):
         BuildSystemBase.__init__(self, package, "pip")
         self.python3 = True
+        self.usesCraftPython = CraftPackageObject.get("libs/python").categoryInfo.isActive
 
         self.pipPackageName = self.package.name
+        self.usePipBinaryPackages = True
 
     def _getPython3(self):
         craftPython = CraftPackageObject.get("libs/python")
@@ -33,7 +35,7 @@ class PipBuildSystem(BuildSystemBase):
             python = CraftCore.standardDirs.craftRoot() / f"bin/python3{suffix}{CraftCore.compiler.platform.executableSuffix}"
             if python.exists():
                 return python
-        if not craftPython.categoryInfo.isActive:
+        if not self.usesCraftPython:
             return sys.executable
         raise Exception("Please install libs/python first")
 
@@ -42,9 +44,10 @@ class PipBuildSystem(BuildSystemBase):
         pythons = []
         if self.python3:
             pythons.append(("3", self._getPython3()))
+        print(pythons)
         return pythons
 
-    def venvDir(self, ver):
+    def venvDir(self, ver) -> Path:
         return Path(CraftCore.standardDirs.etcDir()) / "virtualenv" / ver
 
     def make(self):
@@ -75,8 +78,10 @@ class PipBuildSystem(BuildSystemBase):
                     "--upgrade-strategy",
                     "only-if-needed",
                 ]
-                if not self.venvDir(ver).exists():
-                    command += ["--user"]
+                if not self.usePipBinaryPackages:
+                    command += ["--no-binary", ":all:", "--no-cache-dir"]
+                if self.usesCraftPython:
+                    command += ["--prefix", self.installDir()]
                 if self.subinfo.svnTarget():
                     command += ["-e", self.sourceDir()]
                 elif self.subinfo.hasTarget():
@@ -91,3 +96,4 @@ class PipBuildSystem(BuildSystemBase):
 
     def runTest(self):
         return False
+
