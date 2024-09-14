@@ -10,7 +10,7 @@ from CraftStandardDirs import CraftStandardDirs
 from Package.BinaryPackageBase import BinaryPackageBase
 from Package.MaybeVirtualPackageBase import MaybeVirtualPackageBase
 from Utils.Arguments import Arguments
-from VirtualPackageBase import VirtualPackageBase
+from Package.VirtualPackageBase import VirtualPackageBase
 
 
 class subinfo(info.infoclass):
