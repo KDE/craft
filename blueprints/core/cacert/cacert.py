@@ -1,5 +1,7 @@
 import info
-
+from Utils import CraftHash
+from Package.BinaryPackageBase import BinaryPackageBase
+import utils
 
 class subinfo(info.infoclass):
     def setTargets(self):
@@ -16,9 +18,6 @@ class subinfo(info.infoclass):
         )
         self.webpage = "https://curl.haxx.se/docs/caextract.html"
         self.defaultTarget = "2023-12-12"
-
-
-from Package.BinaryPackageBase import *
 
 
 class Package(BinaryPackageBase):

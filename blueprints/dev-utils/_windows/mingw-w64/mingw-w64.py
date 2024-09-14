@@ -1,4 +1,7 @@
 import info
+from CraftCore import CraftCore
+from Package.BinaryPackageBase import BinaryPackageBase
+from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
@@ -21,9 +24,6 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         self.buildDependencies["core/cacert"] = None
         self.buildDependencies["dev-utils/7zip-base"] = None
-
-
-from Package.BinaryPackageBase import *
 
 
 class Package(BinaryPackageBase):

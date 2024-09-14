@@ -1,13 +1,18 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
+import glob
+import os
+import re
 import stat
 from pathlib import Path
 
-from BuildSystem.BinaryBuildSystem import *
-from Package.PackageBase import *
+import utils
+from BuildSystem.BinaryBuildSystem import BinaryBuildSystem
+from CraftCore import CraftCore
+from Package.PackageBase import PackageBase
 from Packager.TypePackager import TypePackager
-from Source.MultiSource import *
+from Source.MultiSource import MultiSource
 
 
 class BinaryPackageBase(PackageBase, MultiSource, BinaryBuildSystem, TypePackager):

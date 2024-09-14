@@ -22,8 +22,12 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
+import os
+
 import info
-from Package.MaybeVirtualPackageBase import *
+import utils
+from CraftCore import CraftCore
+from Package.BinaryPackageBase import BinaryPackageBase
 
 
 class subinfo(info.infoclass):
@@ -34,9 +38,6 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/kshimgen"] = None
-
-
-from Package.BinaryPackageBase import *
 
 
 class Package(BinaryPackageBase):

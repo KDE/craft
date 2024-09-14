@@ -22,8 +22,15 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
+import os
+
 import info
-from Package.MaybeVirtualPackageBase import *
+import utils
+from CraftCore import CraftCore
+from CraftStandardDirs import CraftStandardDirs
+from MaybeVirtualPackageBase import VirtualIfSufficientVersion
+from Package.BinaryPackageBase import BinaryPackageBase
+from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
@@ -45,9 +52,6 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-utils/kshimgen"] = None
 
 
-from Package.BinaryPackageBase import *
-
-
 class GitPackage(BinaryPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -57,19 +61,16 @@ class GitPackage(BinaryPackageBase):
         if CraftCore.compiler.platform.isWindows:
             env = {"TERM": ""}
         return utils.createShim(
-            os.path.join(self.imageDir(), "dev-utils", "bin", "git.exe"),
-            os.path.join(self.imageDir(), "dev-utils", "git", "bin", "git.exe"),
+            self.imageDir() / "dev-utils/bin/git.exe",
+            self.imageDir() / "dev-utils/git/bin/git.exe",
             env=env,
         )
 
     def postQmerge(self):
-        gitDir = os.path.join(
-            CraftStandardDirs.craftRoot(),
-            self.subinfo.targetInstallPath[self.buildTarget],
-        )
+        gitDir = CraftStandardDirs.craftRoot() / self.subinfo.targetInstallPath[self.buildTarget]
         utils.system(
             [
-                os.path.join(gitDir, "git-cmd.exe"),
+                gitDir / "git-cmd.exe",
                 "--no-cd",
                 "--command=post-install.bat",
             ],

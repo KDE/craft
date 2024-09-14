@@ -1,4 +1,8 @@
 import info
+import utils
+from CraftCore import CraftCore
+from Package.BinaryPackageBase import BinaryPackageBase
+from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
@@ -20,9 +24,6 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["virtual/base"] = None
 
 
-from Package.BinaryPackageBase import *
-
-
 class Package(BinaryPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -31,8 +32,8 @@ class Package(BinaryPackageBase):
         if not BinaryPackageBase.install(self):
             return False
         if self.buildTarget == "2.5.9":
-            manifest = os.path.join(self.blueprintDir(), "patch.exe.manifest")
-            patch = os.path.join(self.installDir(), "bin", "patch.exe")
+            manifest = self.blueprintDir() / "patch.exe.manifest"
+            patch = self.installDir() / "bin/patch.exe"
             return utils.embedManifest(patch, manifest)
         else:
             return utils.createShim(self.imageDir() / "bin/patch.exe", self.installDir() / "patch.exe")

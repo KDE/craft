@@ -1,4 +1,7 @@
 import info
+import utils
+from CraftCore import CraftCore
+from Package.BinaryPackageBase import BinaryPackageBase
 
 
 class subinfo(info.infoclass):
@@ -16,9 +19,6 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-utils/kshimgen"] = None
 
 
-from Package.BinaryPackageBase import *
-
-
 class Package(BinaryPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -27,8 +27,8 @@ class Package(BinaryPackageBase):
     def install(self):
         if not super().install():
             return False
-        cmakePath = Path(CraftCore.standardDirs.craftRoot()) / "dev-utils/cmake-base"
-        if OsUtils.isMac():
+        cmakePath = CraftCore.standardDirs.craftRoot() / "dev-utils/cmake-base"
+        if CraftCore.compiler.platform.isMacOS:
             cmakePath /= "CMake.app/Contents/bin"
         else:
             cmakePath /= "bin"
