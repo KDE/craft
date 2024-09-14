@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import CraftCore
 import info
 import utils
+from CraftCore import CraftCore
 from Package.CMakePackageBase import CMakePackageBase
 from Utils import CraftHash
 
