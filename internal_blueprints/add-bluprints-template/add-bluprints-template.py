@@ -9,7 +9,6 @@ from CraftCore import CraftCore
 from CraftStandardDirs import CraftStandardDirs
 from Package.BlueprintRepositoryPackageBase import BlueprintRepositoryPackageBase
 
-
 class subinfo(info.infoclass):
     def setTargets(self):
         self.versionInfo.setDefaultValuesFromFile(os.path.join(CraftCore.settings.get("InternalTemp", "add-bluprints-template.ini")))
