@@ -4,7 +4,6 @@ import subprocess
 import info
 import utils
 from Package.PipPackageBase import PipPackageBase
-from Utils import CraftHash
 
 
 class subinfo(info.infoclass):

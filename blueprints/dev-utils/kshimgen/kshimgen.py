@@ -1,6 +1,10 @@
+import os
+
 import info
-from Package.BinaryPackageBase import *
-from Package.CMakePackageBase import *
+import utils
+from CraftCore import CraftCore
+from Package.BinaryPackageBase import BinaryPackageBase
+from Package.CMakePackageBase import CMakePackageBase
 
 
 class subinfo(info.infoclass):
@@ -53,8 +57,8 @@ else:
                 self.subinfo.options.configure.args += ["-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64"]
 
         def configure(self):
-            cmakePath = Path(CraftCore.standardDirs.craftRoot()) / "dev-utils/cmake-base"
-            if OsUtils.isMac():
+            cmakePath = CraftCore.standardDirs.craftRoot() / "dev-utils/cmake-base"
+            if CraftCore.compiler.platform.isMacOS:
                 cmakePath /= "CMake.app/Contents/bin"
             else:
                 cmakePath /= "bin"

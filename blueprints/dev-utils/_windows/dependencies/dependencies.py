@@ -1,4 +1,7 @@
 import info
+import utils
+from Package.BinaryPackageBase import BinaryPackageBase
+from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
@@ -21,22 +24,19 @@ class subinfo(info.infoclass):
         self.defaultTarget = "1.11"
 
 
-from Package.BinaryPackageBase import *
-
-
 class Package(BinaryPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
     def install(self):
-        if not BinaryPackageBase.install(self):
+        if not super().install():
             return False
         utils.createShim(
-            os.path.join(self.imageDir(), "dev-utils", "bin", "dependenciesgui.exe"),
-            os.path.join(self.imageDir(), "dev-utils", "dependencies", "DependenciesGui.exe"),
+            self.imageDir() / "dev-utils/bin/dependenciesgui.exe",
+            self.imageDir() / "dev-utils/dependencies/DependenciesGui.exe",
         )
         utils.createShim(
-            os.path.join(self.imageDir(), "dev-utils", "bin", "dependencies.exe"),
-            os.path.join(self.imageDir(), "dev-utils", "dependencies", "Dependencies.exe"),
+            self.imageDir() / "dev-utils/bin/dependencies.exe",
+            self.imageDir() / "dev-utils/dependencies/Dependencies.exe",
         )
         return True

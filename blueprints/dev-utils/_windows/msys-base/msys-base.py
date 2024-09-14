@@ -1,9 +1,16 @@
 import io
+import subprocess
 
 import info
 import shells
+import utils
+from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
-from Package.MaybeVirtualPackageBase import *
+from CraftStandardDirs import CraftStandardDirs
+from Package.BinaryPackageBase import BinaryPackageBase
+from Package.MaybeVirtualPackageBase import MaybeVirtualPackageBase
+from Utils.Arguments import Arguments
+from VirtualPackageBase import VirtualPackageBase
 
 
 class subinfo(info.infoclass):
@@ -20,9 +27,9 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["virtual/base"] = None
 
     def updateMsys(self):
-        msysDir = CraftCore.settings.get("Paths", "Msys", os.path.join(CraftStandardDirs.craftRoot(), "msys"))
+        msysDir = CraftCore.settings.get("Paths", "Msys", CraftStandardDirs.craftRoot() / "msys")
         shell = shells.BashShell()
-        useOverwrite = CraftCore.cache.checkCommandOutputFor(os.path.join(msysDir, "usr/bin", "pacman.exe"), "--overwrite", "-Sh")
+        useOverwrite = CraftCore.cache.checkCommandOutputFor(msysDir / "usr/bin/pacman.exe", "--overwrite", "-Sh")
 
         # force was replace by overwrite
         overwrite = Arguments(["--overwrite='*'" if useOverwrite else "--force"])
@@ -79,9 +86,6 @@ class subinfo(info.infoclass):
         # rebase: Too many DLLs for available address space: Cannot allocate memory => ignore return code ATM
         utils.system("autorebase.bat", cwd=msysDir)
         return True
-
-
-from Package.BinaryPackageBase import *
 
 
 class MsysPackage(BinaryPackageBase):

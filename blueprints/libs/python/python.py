@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # SPDX-FileCopyrightText: 2023 Hannah von Reth <vonreth@kde.org>
 
-import glob
 import sys
 from pathlib import Path
 

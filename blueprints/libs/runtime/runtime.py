@@ -1,6 +1,11 @@
 import glob
+import os
 
 import info
+import utils
+from CraftCompiler import CraftCompiler
+from CraftCore import CraftCore
+from Package.BinaryPackageBase import BinaryPackageBase
 
 
 class subinfo(info.infoclass):
@@ -21,9 +26,6 @@ class subinfo(info.infoclass):
             self.buildDependencies["dev-utils/mingw-w64"] = None
 
 
-from Package.BinaryPackageBase import *
-
-
 class Package(BinaryPackageBase):
     def __init__(self, **args):
         super().__init__(**args)
@@ -36,7 +38,7 @@ class Package(BinaryPackageBase):
         return True
 
     def install(self):
-        destdir = os.path.join(self.installDir(), "bin")
+        destdir = self.installDir() / "bin"
         utils.createDir(destdir)
 
         files = []

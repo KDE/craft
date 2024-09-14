@@ -3,7 +3,9 @@
 #
 # installing binary packages
 
-from BuildSystem.BuildSystemBase import *
+import utils
+from Blueprints.CraftPackageObject import CraftPackageObject
+from BuildSystem.BuildSystemBase import BuildSystemBase
 
 
 class BinaryBuildSystem(BuildSystemBase):

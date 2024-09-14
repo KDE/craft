@@ -1,5 +1,8 @@
 import info
-from Package.MakeFilePackageBase import *
+import utils
+from CraftCore import CraftCore
+from Package.BinaryPackageBase import BinaryPackageBase
+from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
@@ -21,15 +24,12 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["virtual/base"] = None
 
 
-from Package.BinaryPackageBase import *
-
-
 class Package(BinaryPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
     def postInstall(self):
         return utils.createShim(
-            os.path.join(self.imageDir(), "dev-utils", "bin", "create-dmg"),
-            os.path.join(self.imageDir(), "dev-utils", "create-dmg", "create-dmg"),
+            self.imageDir() / "dev-utils/bin/create-dmg",
+            self.imageDir() / "dev-utils/create-dmg/create-dmg")
         )

@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import info
-from Package.PipPackageBase import *
+from Package.PipPackageBase import PipPackageBase
+import utils
+from CraftCore import CraftCore
+from Blueprints.CraftPackageObject import CraftPackageObject
 
 
 class subinfo(info.infoclass):

@@ -474,7 +474,7 @@ class SetupHelper(object):
             [
                 os.path.join(
                     CraftCore.standardDirs.etcDir(),
-                    f"virtualenv",
+                    "virtualenv",
                     "3",
                     "Scripts" if CraftCore.compiler.isWindows else "bin",
                 ),

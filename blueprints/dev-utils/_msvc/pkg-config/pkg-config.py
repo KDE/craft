@@ -1,6 +1,7 @@
 import info
+import utils
 from CraftCompiler import CraftCompiler
-from Package.BinaryPackageBase import *
+from Package.BinaryPackageBase import BinaryPackageBase
 
 
 class subinfo(info.infoclass):
@@ -21,4 +22,4 @@ class Package(BinaryPackageBase):
         super().__init__(**kwargs)
 
     def postInstall(self):
-        return utils.createShim(os.path.join(self.imageDir(), "dev-utils", "bin", "pkg-config.exe"), os.path.join(self.installDir(), "bin", "pkg-config.exe"))
+        return utils.createShim(self.imageDir() / "dev-utils/bin/pkg-config.exe", self.installDir() / "bin/pkg-config.exe")
