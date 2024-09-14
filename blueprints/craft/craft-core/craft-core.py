@@ -1,4 +1,9 @@
+import sys
+
 import info
+import utils
+from CraftStandardDirs import CraftStandardDirs
+from Package.BlueprintRepositoryPackageBase import BlueprintRepositoryPackageBase
 
 
 class subinfo(info.infoclass):
@@ -15,16 +20,13 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["virtual"] = None
 
 
-from Package.BlueprintRepositoryPackageBase import *
-
-
 class Package(BlueprintRepositoryPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
     def checkoutDir(self, index=0):
-        return os.path.join(CraftStandardDirs.craftRoot(), "craft")
+        return CraftStandardDirs.craftRoot() / "craft"
 
     def unittest(self):
-        test = os.path.join(self.sourceDir(), "bin", "test", "runtests.py")
+        test = self.sourceDir() / "bin/test/runtests.py"
         return utils.system([sys.executable, test])

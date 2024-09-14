@@ -1,11 +1,16 @@
-import tempfile
+import os
+from pathlib import Path
 
-import CraftOS
 import info
-from Blueprints.CraftVersion import *
+import utils
+from BuildSystem.BuildSystemBase import BuildSystemBase
 from CraftCompiler import CraftCompiler
-from Package.AutoToolsPackageBase import *
-from Package.MakeFilePackageBase import *
+from CraftCore import CraftCore
+from CraftOS.osutils import OsUtils
+from Package.AutoToolsPackageBase import AutoToolsPackageBase
+from Package.MakeFilePackageBase import MakeFilePackageBase
+from Utils import CraftHash
+from Utils.Arguments import Arguments
 
 
 class subinfo(info.infoclass):
@@ -148,9 +153,9 @@ class PackageAutoTools(AutoToolsPackageBase):
                 f"-Dld={os.environ['CC']} -arch {CraftCore.compiler.architecture.name.lower()}",
             ]
         if CraftCore.compiler.platform.isMacOS:
-            lddflags = f"-dylib"
+            lddflags = "-dylib"
         else:
-            lddflags = f"-shared"
+            lddflags = "-shared"
         self.subinfo.options.configure.args += [
             f"-Accflags={cflags}",
             f"-Aldflags={ldflags}",

@@ -1,5 +1,7 @@
 import info
 from CraftCore import CraftCore
+from Package.AutoToolsPackageBase import AutoToolsPackageBase
+from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
@@ -35,9 +37,6 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-utils/perl"] = None
 
 
-from Package.AutoToolsPackageBase import *
-
-
 class Package(AutoToolsPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -47,11 +46,11 @@ class Package(AutoToolsPackageBase):
     def postInstall(self):
         return self.patchInstallPrefix(
             [
-                os.path.join(self.installDir(), "bin", "aclocal"),
-                os.path.join(self.installDir(), "bin", "aclocal-1.16"),
-                os.path.join(self.installDir(), "bin", "automake"),
-                os.path.join(self.installDir(), "bin", "automake-1.16"),
-                os.path.join(self.installDir(), "share", "automake-1.16", "Automake/Config.pm"),
+                self.installDir() / "bin/aclocal",
+                self.installDir() / "bin/aclocal-1.16",
+                self.installDir() / "bin/automake",
+                self.installDir() / "bin/automake-1.16",
+                self.installDir() / "share/automake-1.16/Automake/Config.pm",
             ],
             self.subinfo.buildPrefix,
             CraftCore.standardDirs.craftRoot(),

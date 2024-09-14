@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import info
-from Package.AutoToolsPackageBase import *
-from Package.MSBuildPackageBase import *
+from CraftCore import CraftCore
+from Package.AutoToolsPackageBase import AutoToolsPackageBase
+from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
@@ -25,5 +26,5 @@ class Package(AutoToolsPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.subinfo.options.configure.autoreconf = False
-        self.subinfo.options.configure.args += " --disable-static --enable-shared "
+        self.subinfo.options.configure.args += ["--disable-static", "--enable-shared"]
         self.subinfo.shelveAble = False

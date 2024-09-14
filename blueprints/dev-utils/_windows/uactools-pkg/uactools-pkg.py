@@ -1,4 +1,5 @@
 import info
+from Package.CMakePackageBase import CMakePackageBase
 
 
 class subinfo(info.infoclass):
@@ -12,10 +13,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = "svnHEAD"
 
 
-from Package.CMakePackageBase import *
-
-
 class Package(CMakePackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.subinfo.options.configure.args = "-DCMAKE_EXE_LINKER_FLAGS=-static"
+        self.subinfo.options.configure.args += ["-DCMAKE_EXE_LINKER_FLAGS=-static"]

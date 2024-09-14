@@ -1,4 +1,8 @@
+import os
+
 import info
+from CraftStandardDirs import CraftStandardDirs
+from Package.BlueprintRepositoryPackageBase import BlueprintRepositoryPackageBase
 
 
 class subinfo(info.infoclass):
@@ -16,9 +20,6 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["craft/craft-core"] = None
-
-
-from Package.BlueprintRepositoryPackageBase import *
 
 
 class Package(BlueprintRepositoryPackageBase):

@@ -1,5 +1,10 @@
+import glob
+import os
+
 import info
-from Package.CMakePackageBase import *
+import utils
+from CraftCore import CraftCore
+from Package.CMakePackageBase import CMakePackageBase
 
 
 class subinfo(info.infoclass):
@@ -32,6 +37,6 @@ class Package(CMakePackageBase):
         linkTarget = self.imageDir() / "bin" / f"bunzip2{CraftCore.compiler.executableSuffix}"
         utils.createShim(linkTarget, linkSource, keepArgv0=True)
 
-        for file in glob.glob(os.path.join(self.imageDir(), "lib", "libbzip2.*")):
-            utils.copyFile(file, os.path.join(self.imageDir(), "lib", "libbz2" + os.path.splitext(file)[1]), linkOnly=True)
+        for file in glob.glob(str(self.imageDir() / "lib/libbzip2.*")):
+            utils.copyFile(file, self.imageDir() / f"lib/libbz2 {os.path.splitext(file)[1]}", linkOnly=True)
         return ret

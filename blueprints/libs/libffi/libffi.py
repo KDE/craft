@@ -1,6 +1,8 @@
 import info
 from CraftCompiler import CraftCompiler
-from Package.AutoToolsPackageBase import *
+from CraftCore import CraftCore
+from Package.AutoToolsPackageBase import AutoToolsPackageBase
+from Utils import CraftHash
 
 
 class subinfo(info.infoclass):

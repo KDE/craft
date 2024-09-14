@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import sys
-
 import CraftCore
 import info
-from Package.CMakePackageBase import *
+import utils
+from Package.CMakePackageBase import CMakePackageBase
+from Utils import CraftHash
 
 
 class subinfo(info.infoclass):

@@ -1,5 +1,7 @@
 import info
-from Package.MaybeVirtualPackageBase import *
+import utils
+from Package.CMakePackageBase import CMakePackageBase
+from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
@@ -27,9 +29,6 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-utils/cmake"] = None
 
 
-from Package.CMakePackageBase import *
-
-
 class Package(CMakePackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -37,7 +36,7 @@ class Package(CMakePackageBase):
 
     def install(self):
         return utils.copyFile(
-            os.path.join(self.buildDir(), "bin", "7za"),
-            os.path.join(self.installDir(), "bin", "7za"),
+            self.buildDir() / "bin/7za",
+            self.installDir() / "bin/7za",
             linkOnly=False,
         )

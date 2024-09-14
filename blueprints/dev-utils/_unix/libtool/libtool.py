@@ -1,5 +1,7 @@
 import info
 from CraftCore import CraftCore
+from Package.AutoToolsPackageBase import AutoToolsPackageBase
+from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
@@ -29,9 +31,6 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-utils/automake"] = None
 
 
-from Package.AutoToolsPackageBase import *
-
-
 class Package(AutoToolsPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -40,7 +39,7 @@ class Package(AutoToolsPackageBase):
 
     def postInstall(self):
         return self.patchInstallPrefix(
-            [os.path.join(self.installDir(), x) for x in [f"bin/libtool", f"bin/libtoolize"]],
+            [(self.installDir() / x) for x in ["bin/libtool", "bin/libtoolize"]],
             self.subinfo.buildPrefix,
             CraftCore.standardDirs.craftRoot(),
         )

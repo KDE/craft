@@ -9,8 +9,8 @@ from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 from Package.BinaryPackageBase import BinaryPackageBase
 from Package.MaybeVirtualPackageBase import MaybeVirtualPackageBase
-from Utils.Arguments import Arguments
 from Package.VirtualPackageBase import VirtualPackageBase
+from Utils.Arguments import Arguments
 
 
 class subinfo(info.infoclass):

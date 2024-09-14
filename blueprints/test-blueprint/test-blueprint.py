@@ -3,6 +3,8 @@
 # SPDX-FileCopyrightText: 2023 Julius Künzel <jk.kdedev@smartlab.uber.space>
 
 import info
+from CraftCore import CraftCore
+from Package.VirtualPackageBase import VirtualPackageBase
 
 
 class subinfo(info.infoclass):
@@ -12,9 +14,6 @@ class subinfo(info.infoclass):
     def registerOptions(self):
         self.options.dynamic.registerOption("name", "Something")
         self.options.dynamic.registerOption("thetruth", False)
-
-
-from Package.VirtualPackageBase import *
 
 
 class Package(VirtualPackageBase):

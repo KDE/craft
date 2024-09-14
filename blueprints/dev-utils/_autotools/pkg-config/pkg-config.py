@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import info
-from Package.AutoToolsPackageBase import *
+from CraftCore import CraftCore
+from Package.AutoToolsPackageBase import AutoToolsPackageBase
+from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
@@ -27,7 +29,6 @@ class Package(AutoToolsPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.subinfo.options.configure.autoreconf = False
-        root = self.shell.toNativePath(CraftCore.standardDirs.craftRoot())
         self.subinfo.options.configure.args += ["--disable-static", "--enable-shared", "--with-internal-glib", "PKG_CONFIG=:"]
         if not CraftCore.compiler.platform.isMacOS:
             self.subinfo.options.configure.args += ["-with-libiconv=gnu"]
@@ -38,5 +39,5 @@ class Package(AutoToolsPackageBase):
 
     def createPackage(self):
         # TODO: reduce package size
-        self.blacklist_file.append(os.path.join(self.blueprintDir(), "blacklist.txt"))
-        return TypePackager.createPackage(self)
+        self.blacklist_file.append(self.blueprintDir() / "blacklist.txt")
+        return super().createPackage(self)

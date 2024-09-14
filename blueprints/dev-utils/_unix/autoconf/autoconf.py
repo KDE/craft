@@ -1,5 +1,10 @@
+import os
+
 import info
+import utils
 from CraftCore import CraftCore
+from Package.AutoToolsPackageBase import AutoToolsPackageBase
+from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
@@ -30,9 +35,6 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-utils/m4"] = None
 
 
-from Package.AutoToolsPackageBase import *
-
-
 class Package(AutoToolsPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -47,12 +49,12 @@ class Package(AutoToolsPackageBase):
             "share/autoconf/m4sugar/m4sugar.m4f",
         ]
         for f in frozen:
-            fileName = os.path.join(self.installDir(), f)
+            fileName = self.installDir() / f
             if os.path.exists(fileName):
                 if not utils.deleteFile(fileName):
                     return False
         hardCoded = [
-            os.path.join(self.installDir(), x)
+            self.installDir() / x
             for x in [
                 "bin/autoconf",
                 "bin/autoheader",
