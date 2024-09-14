@@ -31,5 +31,5 @@ class Package(BinaryPackageBase):
     def postInstall(self):
         return utils.createShim(
             self.imageDir() / "dev-utils/bin/create-dmg",
-            self.imageDir() / "dev-utils/create-dmg/create-dmg")
+            self.imageDir() / "dev-utils/create-dmg/create-dmg"
         )
