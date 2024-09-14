@@ -451,6 +451,9 @@ class OptionsConfigure(OptionsBase):
         # add the cmake defines that are needed to build tests here
         self.testDefine = None
 
+        # add the cmake defines that are needed to build tools (if buildTools is True)
+        self.toolsDefine = None
+
         ## run autogen in autotools
         self.bootstrap = False
 
