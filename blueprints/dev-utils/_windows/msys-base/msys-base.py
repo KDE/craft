@@ -1,5 +1,6 @@
 import io
 import subprocess
+from pathlib import Path
 
 import info
 import shells
@@ -29,7 +30,7 @@ class subinfo(info.infoclass):
     def updateMsys(self):
         msysDir = CraftCore.settings.get("Paths", "Msys", CraftStandardDirs.craftRoot() / "msys")
         shell = shells.BashShell()
-        useOverwrite = CraftCore.cache.checkCommandOutputFor(msysDir / "usr/bin/pacman.exe", "--overwrite", "-Sh")
+        useOverwrite = CraftCore.cache.checkCommandOutputFor(Path(msysDir) / "usr/bin/pacman.exe", "--overwrite", "-Sh")
 
         # force was replace by overwrite
         overwrite = Arguments(["--overwrite='*'" if useOverwrite else "--force"])
