@@ -17,7 +17,6 @@ class PipBuildSystem(BuildSystemBase):
         self.usesCraftPython = CraftPackageObject.get("libs/python").categoryInfo.isActive
 
         self.pipPackageName = self.package.name
-        self.usePipBinaryPackages = True
 
     def _getPython3(self):
         craftPython = CraftPackageObject.get("libs/python")
@@ -78,8 +77,8 @@ class PipBuildSystem(BuildSystemBase):
                     "--upgrade-strategy",
                     "only-if-needed",
                 ]
-                if not self.usePipBinaryPackages:
-                    command += ["--no-binary", ":all:", "--no-cache-dir"]
+                # build binaries ourself
+                command += ["--no-binary", ":all:", "--no-cache-dir"]
                 if self.usesCraftPython:
                     command += ["--prefix", self.installDir()]
                 if self.subinfo.svnTarget():
