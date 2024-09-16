@@ -24,7 +24,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         if (
             CraftCore.compiler.platform.isLinux
             and CraftCore.compiler.isGCC()
-            and not CraftCore.compiler.platform.isNative
+            and not CraftCore.compiler.architecture.isNative
             and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32
         ):
             self.platform = Arguments(["--host=i686-pc-linux-gnu"])
@@ -50,14 +50,15 @@ class AutoToolsBuildSystem(BuildSystemBase):
                 self.platform = Arguments(["--host=aarch64-linux-android"])
             else:
                 self.platform = Arguments([f"--host={CraftCore.compiler.androidArchitecture}-linux-android"])
-        elif CraftCore.compiler.hostPlatform.isApple and not CraftCore.compiler.platform.isNative:
-            targetPlatform = "darwin" if CraftCore.compiler.platform.isMacOS else "ios"
-            self.platform = Arguments(
-                [
-                    f"--host={CraftCore.compiler.architecture.name.lower()}-apple-darwin{os.uname().release}",
-                    f"--target={CraftCore.compiler.architecture.name.lower()}-apple-{targetPlatform}",
-                ]
-            )
+        elif CraftCore.compiler.hostPlatform.isApple:
+            if not CraftCore.compiler.platform.isNative or not CraftCore.compiler.architecture.isNative:
+                targetPlatform = "darwin" if CraftCore.compiler.platform.isMacOS else "ios"
+                self.platform = Arguments(
+                    [
+                        f"--host={CraftCore.compiler.architecture.name.lower()}-apple-darwin{os.uname().release}",
+                        f"--target={CraftCore.compiler.architecture.name.lower()}-apple-{targetPlatform}",
+                    ]
+                )
 
     @property
     def makeProgram(self):
