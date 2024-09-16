@@ -139,9 +139,12 @@ class CraftCompiler(object):
         arm64 = 0x1 << 5 | arm
         arm64e = 0x1 << 6 | arm64  # Apple
 
-        Native = 1 << 17
-
         All = ~0
+
+        # Modifiers, flags that indicate additional conditions
+
+        # Native: Whether the Architecture is cross compiled
+        Native = 1 << 17
 
         @property
         def isNative(self) -> bool:
@@ -170,9 +173,12 @@ class CraftCompiler(object):
         NotAndroid = ~Android
         NotIOS = ~iOS
 
-        Native = 1 << 17
-
         All = ~0
+
+        # Modifiers, flags that indicate additional conditions
+
+        # Native: Whether the Platform is cross compiled
+        Native = 1 << 17
 
         @property
         def isWindows(self) -> bool:
