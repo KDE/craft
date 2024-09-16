@@ -68,7 +68,7 @@ class PackagerBase(CraftBase):
         lookPath = Path(lookupPath if lookupPath else self.archiveDir())
         appPath = defines["apppath"]
         if not appPath:
-            apps = glob.glob(lookPath / f"**/{defines['appname']}.app", recursive=True)
+            apps = glob.glob(str(lookPath / f"**/{defines['appname']}.app"), recursive=True)
             if len(apps) != 1:
                 CraftCore.log.error(
                     f"Failed to detect {defines['appname']}.app for {self}, please provide a correct self.defines['apppath'] or a relative path to the app as self.defines['apppath']"
