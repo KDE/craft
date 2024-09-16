@@ -143,6 +143,10 @@ class CraftCompiler(object):
 
         All = ~0
 
+        @property
+        def isNative(self) -> bool:
+            return bool(self.value & CraftCompiler.Architecture.Native)
+
     @unique
     class Platforms(CompilerFlags):
         NoPlatform = 0

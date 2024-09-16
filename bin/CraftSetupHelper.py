@@ -263,7 +263,6 @@ class SetupHelper(object):
                 CraftCore.compiler.getInternalVersion(),
                 CraftCore.compiler.architecture,
                 CraftCore.compiler.msvcToolset,
-                CraftCore.compiler.platform.isNative,
             )
             return json.loads(result)
         return os.environ
@@ -514,7 +513,7 @@ class SetupHelper(object):
                     self.addDefaultEnvVar("CC", "clang")
                     self.addDefaultEnvVar("CXX", "clang")
         elif CraftCore.compiler.isGCC():
-            if not CraftCore.compiler.platform.isNative and CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_32:
+            if not CraftCore.compiler.architecture.isNative and CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_32:
                 self.addEnvVar("CC", "gcc -m32")
                 self.addEnvVar("CXX", "g++ -m32")
                 self.addEnvVar("AS", "gcc -c -m32")
