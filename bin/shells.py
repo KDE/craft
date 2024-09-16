@@ -59,7 +59,7 @@ class BashShell(object):
                 cflags = f" -isysroot {sdkPath} {deploymentFlag} {cflags} -isystem /usr/include"
                 ldflags = f" -isysroot {sdkPath} {deploymentFlag} {ldflags}"
 
-                if not CraftCore.compiler.platform.isNative:
+                if not CraftCore.compiler.architecture.isNative:
                     arch = CraftCore.compiler.architecture.name.lower()
                     self._environment["CC"] = f"{os.environ['CC']} -arch {arch}"
                     self._environment["CXX"] = f"{os.environ['CXX']} -arch {arch}"
