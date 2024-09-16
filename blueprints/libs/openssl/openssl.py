@@ -161,7 +161,7 @@ class PackageMSys(AutoToolsPackageBase):
         if CraftCore.compiler.isGCC() and not CraftCore.compiler.architecture.isNative and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
             self.subinfo.options.configure.args += ["linux-x86"]
             self.subinfo.options.configure.projectFile = "Configure"
-        if CraftCore.compiler.platform.isMacOS and not CraftCore.compiler.platform.isNative:
+        if CraftCore.compiler.platform.isMacOS and not CraftCore.compiler.architecture.isNative:
             self.subinfo.options.configure.args += [f"darwin64-{CraftCore.compiler.architecture.name.lower()}"]
 
     def install(self):
