@@ -105,8 +105,8 @@ class MesonBuildSystem(BuildSystemBase):
                 toolchain = "i686-linux-android"
                 compiler = "i686-linux-android"
             else:
-                toolchain = f"{CraftCore.compiler.androidArchitecture}-linux-android"
-                compiler = f"{CraftCore.compiler.androidArchitecture}-linux-android"
+                toolchain = f"{CraftCore.compiler.architecture.androidArchitecture}-linux-android"
+                compiler = f"{CraftCore.compiler.architecture.androidArchitecture}-linux-android"
 
             toolchain_path = os.path.join(os.environ["ANDROID_NDK"], "toolchains/llvm/prebuilt", os.environ.get("ANDROID_NDK_HOST", "linux-x86_64"), "bin")
 
@@ -126,8 +126,8 @@ class MesonBuildSystem(BuildSystemBase):
                 "pkgconfig = '/usr/bin/pkg-config'\n"
                 "[host_machine]\n"
                 "system = 'linux'\n"
-                f"cpu_family = '{CraftCore.compiler.androidArchitecture}'\n"
-                f"cpu = '{CraftCore.compiler.androidArchitecture}'\n"  # according to meson, this value is meaningless (https://github.com/mesonbuild/meson/issues/7037#issuecomment-620137436)
+                f"cpu_family = '{CraftCore.compiler.architecture.androidArchitecture}'\n"
+                f"cpu = '{CraftCore.compiler.architecture.androidArchitecture}'\n"  # according to meson, this value is meaningless (https://github.com/mesonbuild/meson/issues/7037#issuecomment-620137436)
                 "endian = 'little'\n"
             )
             args = ["--cross-file", craftCrossFilePath]
