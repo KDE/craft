@@ -18,6 +18,7 @@ from CraftConfig import *
 from CraftCore import CraftCore
 from CraftDebug import deprecated
 from Utils.Arguments import Arguments
+from Utils.CraftBool import CraftBool
 
 
 class RegisteredOption(object):
@@ -103,11 +104,6 @@ class UserOptions(object):
             settings = self.settings[path]
             return settings
 
-        def toBool(self, x: str) -> bool:
-            if not x:
-                return False
-            return self.settings._convert_to_boolean(x)
-
         @staticmethod
         @atexit.register
         def _save():
@@ -140,7 +136,7 @@ class UserOptions(object):
         _register("srcDir", str, persist=False, compatible=True)
         _register("branch", str, persist=False)
         _register("revision", str, persist=False)
-        _register("ignored", bool, persist=False, compatible=True)
+        _register("ignored", CraftBool, persist=False, compatible=True)
         _register("buildTests", CraftCore.compiler.platform.isNative, persist=False, compatible=True)
         _register("buildTools", CraftCore.compiler.platform.isNative, persist=False, compatible=True)
         _register("buildStatic", CraftCore.compiler.platform.isIOS, persist=False)
@@ -239,7 +235,7 @@ class UserOptions(object):
             if _type == type(valB):
                 return valB
             if _type is bool:
-                return UserOptions.instance().toBool(valB)
+                return CraftBool(valB)
             return _type(valB)
         except Exception as e:
             CraftCore.log.error(f"Can't convert {valB} to {_type.__name__}")
@@ -329,6 +325,8 @@ class UserOptions(object):
                 package,
             )
             return False
+        if isinstance(default, bool):
+            default = CraftBool(default)
         _instance.registeredOptions[package.path][key] = RegisteredOption(default, compatible)
         if persist:
             settings = _instance.initPackage(self)
@@ -344,10 +342,9 @@ class UserOptions(object):
                     old = getattr(self, key)
                     try:
                         new = self._convert(default, old)
-                    except:
+                    except Exception as e:
                         raise BlueprintException(
-                            f"Found an invalid option in BlueprintSettings.ini,\n[{self._package}]\n{key}={old}",
-                            self._package,
+                            f"Found an invalid option in BlueprintSettings.ini,\n[{self._package}]\n{key}={old}", self._package, exception=e
                         )
                     # print(key, type(old), old, type(new), new)
                     setattr(self, key, new)
