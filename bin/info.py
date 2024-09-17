@@ -112,7 +112,7 @@ class infoclass(object):
                 return target
             elif not self.parent.package.isIgnored():
                 raise BlueprintException(
-                    f"You defined an invalid target {target} for {self.parent.package.path}, avaialble versions are {list(self.targets.keys()) + list(self.svnTargets.keys())} ",
+                    f"You defined an invalid target {target} for {self.parent.package.path}, available versions are {list(self.targets.keys()) + list(self.svnTargets.keys())} ",
                     self.parent.package,
                 )
         return self._defaultTarget
