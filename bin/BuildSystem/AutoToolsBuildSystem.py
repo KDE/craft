@@ -49,7 +49,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
             if CraftCore.compiler.architecture == CraftCompiler.Architecture.arm64:
                 self.platform = Arguments(["--host=aarch64-linux-android"])
             else:
-                self.platform = Arguments([f"--host={CraftCore.compiler.androidArchitecture}-linux-android"])
+                self.platform = Arguments([f"--host={CraftCore.compiler.architecture.androidArchitecture}-linux-android"])
         elif CraftCore.compiler.hostPlatform.isApple:
             if not CraftCore.compiler.platform.isNative or not CraftCore.compiler.architecture.isNative:
                 targetPlatform = "darwin" if CraftCore.compiler.platform.isMacOS else "ios"

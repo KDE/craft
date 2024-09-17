@@ -97,7 +97,7 @@ class PackageCMake(CMakePackageBase):
             self.env["PATH"] = os.pathsep.join([ndkToolchainPath, os.environ["PATH"]])
             self.env["CFLAGS"] = "-Os"
             self.subinfo.options.configure.args += [
-                f"android-{CraftCore.compiler.androidArchitecture}",
+                f"android-{CraftCore.compiler.architecture.androidArchitecture}",
                 f"-D__ANDROID_API__={CraftCore.compiler.androidApiLevel()}",
                 "no-apps",
             ]

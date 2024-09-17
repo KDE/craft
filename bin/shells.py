@@ -108,9 +108,9 @@ class BashShell(object):
                     del self._environment["make"]
                 # MSYSTEM is used by uname
                 if CraftCore.compiler.isMinGW():
-                    self._environment["MSYSTEM"] = f"MINGW{CraftCore.compiler.bits}_CRAFT"
+                    self._environment["MSYSTEM"] = f"MINGW{CraftCore.compiler.architecture.bits}_CRAFT"
                 elif CraftCore.compiler.isMSVC():
-                    self._environment["MSYSTEM"] = f"MSYS{CraftCore.compiler.bits}_CRAFT"
+                    self._environment["MSYSTEM"] = f"MSYS{CraftCore.compiler.architecture.bits}_CRAFT"
 
                 if self.useMSVCCompatEnv and CraftCore.compiler.isMSVC():
                     automake = []
@@ -175,7 +175,7 @@ class BashShell(object):
                         "--install-dir",
                         toolchainPath,
                         "--arch",
-                        CraftCore.compiler.androidArchitecture,
+                        CraftCore.compiler.architecture.androidArchitecture,
                         "--api",
                         CraftCore.compiler.androidApiLevel(),
                     ]
