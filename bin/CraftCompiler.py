@@ -159,11 +159,11 @@ class CraftCompiler(object):
 
         @property
         def isX86_32(self) -> bool:
-            return bool(self.value & CraftCompiler.Architecture.x86_32)
+            return bool(self.value & CraftCompiler.Architecture.x86_32 & ~CraftCompiler.Architecture.x86)
 
         @property
         def isX86_64(self) -> bool:
-            return bool(self.value & CraftCompiler.Architecture.x86_64)
+            return bool(self.value & CraftCompiler.Architecture.x86_64 & ~CraftCompiler.Architecture.x86)
 
         @property
         def isArm(self) -> bool:
@@ -171,15 +171,15 @@ class CraftCompiler(object):
 
         @property
         def isArm32(self) -> bool:
-            return bool(self.value & CraftCompiler.Architecture.arm32)
+            return bool(self.value & CraftCompiler.Architecture.arm32 & ~CraftCompiler.Architecture.arm)
 
         @property
         def isArm64(self) -> bool:
-            return bool(self.value & CraftCompiler.Architecture.arm64)
+            return bool(self.value & CraftCompiler.Architecture.arm64 & ~CraftCompiler.Architecture.arm)
 
         @property
         def isArm64e(self) -> bool:
-            return bool(self.value & CraftCompiler.Architecture.arm64e)
+            return bool(self.value & CraftCompiler.Architecture.arm64e & ~CraftCompiler.Architecture.arm64)
 
         @property
         def is32bit(self) -> bool:
