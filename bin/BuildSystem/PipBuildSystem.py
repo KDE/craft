@@ -27,10 +27,10 @@ class PipBuildSystem(BuildSystemBase):
                 return Path(CraftCore.standardDirs.craftRoot()) / "etc/virtualenv/3/bin/python3"
 
         if craftPython.isInstalled:
-            python = CraftCore.standardDirs.craftRoot() / f"bin/python{suffix}{CraftCore.compiler.executableSuffix}"
+            python = CraftCore.standardDirs.craftRoot() / f"bin/python{suffix}{CraftCore.compiler.platform.executableSuffix}"
             if python.exists():
                 return python
-            python = CraftCore.standardDirs.craftRoot() / f"bin/python3{suffix}{CraftCore.compiler.executableSuffix}"
+            python = CraftCore.standardDirs.craftRoot() / f"bin/python3{suffix}{CraftCore.compiler.platform.executableSuffix}"
             if python.exists():
                 return python
         if not craftPython.categoryInfo.isActive:

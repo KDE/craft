@@ -147,7 +147,7 @@ class AppxPackager(CollectionPackagerBase):
 
         defines.setdefault("name", f"{defines['company']}{defines['display_name']}".replace(" ", ""))
         defines.setdefault("appx_identity_name", defines["name"])
-        
+
         utils.createDir(self.artifactsDir())
         defines["setupname"] = self.artifactsDir() / os.path.basename(f"{defines['setupname']}.appx")
         defines.setdefault("craft_id", self.package.path.replace("/", "."))
@@ -169,8 +169,8 @@ class AppxPackager(CollectionPackagerBase):
             defines["extensions"] += AppxPackager.StartUp
 
         if "alias" in defines:
-            if not defines["alias"].endswith(CraftCore.compiler.executableSuffix):
-                defines["alias"] += CraftCore.compiler.executableSuffix
+            if not defines["alias"].endswith(CraftCore.compiler.platform.executableSuffix):
+                defines["alias"] += CraftCore.compiler.platform.executableSuffix
             defines["extensions"] += AppxPackager.Aliases
             defines["additional_xmlns"] += """xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"\n"""
             defines.setdefault(

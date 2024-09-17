@@ -91,7 +91,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         if self.supportsCCACHE:
             cxx = CraftCore.standardDirs.craftRoot() / "dev-utils/ccache/bin" / Path(os.environ["CXX"]).name
             if CraftCore.compiler.platform.isWindows and not cxx.suffix:
-                cxx = Path(str(cxx) + CraftCore.compiler.executableSuffix)
+                cxx = Path(str(cxx) + CraftCore.compiler.platform.executableSuffix)
             if cxx.exists():
                 env["CXX"] = OsUtils.toMSysPath(cxx)
                 env["CC"] = OsUtils.toMSysPath(cxx.parent / Path(os.environ["CC"]).name)

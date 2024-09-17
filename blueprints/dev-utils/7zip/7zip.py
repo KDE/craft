@@ -30,7 +30,7 @@ class Package(BinaryPackageBase):
         if CraftCore.compiler.platform.isMacOS and not CraftCore.compiler.architecture.isNative:
             args = ["-arch", CraftCore.compiler.hostArchitecture.name.lower(), str(appPath)]
             appPath = "arch"
-        return utils.createShim(self.imageDir() / f"dev-utils/bin/7za{CraftCore.compiler.executableSuffix}", appPath, useAbsolutePath=True, args=args)
+        return utils.createShim(self.imageDir() / f"dev-utils/bin/7za{CraftCore.compiler.platform.executableSuffix}", appPath, useAbsolutePath=True, args=args)
 
     def postQmerge(self):
         CraftCore.cache.clear()

@@ -287,6 +287,10 @@ class CraftCompiler(object):
         def isNative(self) -> bool:
             return bool(self.value & CraftCompiler.Platforms.Native)
 
+        @property
+        def executableSuffix(self):
+            return ".exe" if self.platform.isWindows else ""
+
     @unique
     class Abi(CompilerFlags):
         Error = auto()
@@ -366,10 +370,6 @@ class CraftCompiler(object):
     @property
     def msvcToolset(self):
         return self._MSVCToolset
-
-    @property
-    def executableSuffix(self):
-        return ".exe" if self.platform.isWindows else ""
 
     @property
     def symbolsSuffix(self):
