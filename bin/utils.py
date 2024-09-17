@@ -251,7 +251,7 @@ def systemWithoutShell(
     cwd = kw.get("cwd", os.getcwd())
 
     # make sure our venv python is used
-    python_venv = Path(CraftCore.standardDirs.etcDir()) / f"virtualenv/3/Scripts/python{CraftCore.compiler.executableSuffix}"
+    python_venv = Path(CraftCore.standardDirs.etcDir()) / f"virtualenv/3/Scripts/python{CraftCore.compiler.platform.executableSuffix}"
     if python_venv.exists():
         environment["VIRTUAL_ENV"] = str(python_venv.parent)
 

@@ -35,8 +35,8 @@ class Package(BinaryPackageBase):
 
         for name in ["cmake", "cmake-gui", "cmcldeps", "cpack", "ctest"]:
             args = []
-            sourceBinary = cmakePath / f"{name}{CraftCore.compiler.executableSuffix}"
-            targetBinary = self.imageDir() / f"dev-utils/bin/{name}{CraftCore.compiler.executableSuffix}"
+            sourceBinary = cmakePath / f"{name}{CraftCore.compiler.platform.executableSuffix}"
+            targetBinary = self.imageDir() / f"dev-utils/bin/{name}{CraftCore.compiler.platform.executableSuffix}"
             if sourceBinary.exists():
                 if not utils.createShim(targetBinary, sourceBinary, useAbsolutePath=True, args=args):
                     return False

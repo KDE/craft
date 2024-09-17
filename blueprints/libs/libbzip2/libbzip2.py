@@ -33,8 +33,8 @@ class Package(CMakePackageBase):
         # See https://gitlab.com/bzip2/bzip2/-/blob/master/CMakeLists.txt?ref_type=heads#L378
         # We do it here be cause it is easier than to hack our CMake patch further.
         # CMake support has been added upstream and hopefully we can drop it all together ones version 1.1 is out
-        linkSource = self.imageDir() / "bin" / f"bzip2{CraftCore.compiler.executableSuffix}"
-        linkTarget = self.imageDir() / "bin" / f"bunzip2{CraftCore.compiler.executableSuffix}"
+        linkSource = self.imageDir() / "bin" / f"bzip2{CraftCore.compiler.platform.executableSuffix}"
+        linkTarget = self.imageDir() / "bin" / f"bunzip2{CraftCore.compiler.platform.executableSuffix}"
         utils.createShim(linkTarget, linkSource, keepArgv0=True)
 
         for file in glob.glob(str(self.imageDir() / "lib/libbzip2.*")):
