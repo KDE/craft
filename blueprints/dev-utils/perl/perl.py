@@ -71,7 +71,7 @@ class PackageMSVC(MakeFilePackageBase):
             config["SHELL"] = os.environ["COMSPEC"]
             config["CRAFT_CFLAGS"] = f"{os.environ.get('CFLAGS', '')} -I'{root}/include' -L'{root}/lib'"
         elif CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
-            config["PROCESSOR_ARCHITECTURE"] = f"x{CraftCore.compiler.bits}"
+            config["PROCESSOR_ARCHITECTURE"] = f"x{CraftCore.compiler.architecture.bits}"
 
         self.subinfo.options.make.args += ["{0}={1}".format(x, y) for x, y in config.items()]
         self.subinfo.options.install.args += self.subinfo.options.make.args + ["installbare"]

@@ -125,7 +125,7 @@ class VersionInfo(object):
         replaces = {
             "VERSION": ver,
             "PACKAGE_NAME": name,
-            "COMPILER_BITS": CraftCore.compiler.bits,
+            "COMPILER_BITS": CraftCore.compiler.architecture.bits,
             "COMPILER_ARCHITECTURE": CraftCore.compiler.architecture.name,
         }
 

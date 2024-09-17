@@ -147,8 +147,75 @@ class CraftCompiler(object):
         Native = 1 << 17
 
         @property
+        def bits(self) -> str:
+            # we look for exact matches
+            if self.key in {
+                CraftCompiler.Architecture.x86_64,
+                CraftCompiler.Architecture.arm64,
+            }:
+                return "64"
+            if self.key in {
+                CraftCompiler.Architecture.x86_32,
+                CraftCompiler.Architecture.arm32,
+            }:
+                return "32"
+            raise Exception("Unsupported architecture")
+
+        @property
         def isNative(self) -> bool:
             return bool(self.value & CraftCompiler.Architecture.Native)
+
+        @property
+        def rpmArchitecture(self):
+            architectures = {
+                # values from Fedora, your mileage may vary on other distributions
+                CraftCompiler.Architecture.x86_32: "i686",
+                CraftCompiler.Architecture.x86_64: "x86_64",
+                CraftCompiler.Architecture.arm32: "armhfp",
+                CraftCompiler.Architecture.arm64: "arm64",
+            }
+            return architectures[self.key]
+
+        @property
+        def debArchitecture(self):
+            # https://wiki.debian.org/SupportedArchitectures
+            architectures = {
+                CraftCompiler.Architecture.x86_32: "i386",
+                CraftCompiler.Architecture.x86_64: "amd64",
+                CraftCompiler.Architecture.arm32: "armhf",
+                CraftCompiler.Architecture.arm64: "arm64",
+            }
+            return architectures[self.key]
+
+        @property
+        def appImageArchitecture(self):
+            architectures = {
+                CraftCompiler.Architecture.x86_32: "i686",
+                CraftCompiler.Architecture.x86_64: "x86_64",
+                CraftCompiler.Architecture.arm32: "armhf",
+                CraftCompiler.Architecture.arm64: "aarch64",
+            }
+            return architectures[self.key]
+
+        @property
+        def androidArchitecture(self):
+            architectures = {
+                CraftCompiler.Architecture.x86_32: "x86",
+                CraftCompiler.Architecture.x86_64: "x86_64",
+                CraftCompiler.Architecture.arm32: "arm",
+                CraftCompiler.Architecture.arm64: "arm64",
+            }
+            return architectures[self.key]
+
+        @property
+        def androidAbi(self):
+            architectures = {
+                CraftCompiler.Architecture.x86_32: "x86",
+                CraftCompiler.Architecture.x86_64: "x86_64",
+                CraftCompiler.Architecture.arm32: "armeabi-v7a",
+                CraftCompiler.Architecture.arm64: "arm64-v8a",
+            }
+            return architectures[self.key]
 
     @unique
     class Platforms(CompilerFlags):
@@ -297,55 +364,8 @@ class CraftCompiler(object):
         return self.hostSignature.architecture
 
     @property
-    def rpmArchitecture(self):
-        architectures = {
-            # values from Fedora, your mileage may vary on other distributions
-            CraftCompiler.Architecture.x86_32: "i686",
-            CraftCompiler.Architecture.x86_64: "x86_64",
-            CraftCompiler.Architecture.arm32: "armhfp",
-            CraftCompiler.Architecture.arm64: "arm64",
-        }
-        return architectures[self.architecture.key]
-
-    @property
-    def debArchitecture(self):
-        # https://wiki.debian.org/SupportedArchitectures
-        architectures = {
-            CraftCompiler.Architecture.x86_32: "i386",
-            CraftCompiler.Architecture.x86_64: "amd64",
-            CraftCompiler.Architecture.arm32: "armhf",
-            CraftCompiler.Architecture.arm64: "arm64",
-        }
-        return architectures[self.architecture.key]
-
-    @property
-    def appImageArchitecture(self):
-        architectures = {
-            CraftCompiler.Architecture.x86_32: "i686",
-            CraftCompiler.Architecture.x86_64: "x86_64",
-            CraftCompiler.Architecture.arm32: "armhf",
-            CraftCompiler.Architecture.arm64: "aarch64",
-        }
-        return architectures[self.architecture.key]
-
-    @property
     def msvcToolset(self):
         return self._MSVCToolset
-
-    @property
-    def bits(self) -> str:
-        # we look for exact matches
-        if self.architecture.key in {
-            CraftCompiler.Architecture.x86_64,
-            CraftCompiler.Architecture.arm64,
-        }:
-            return "64"
-        if self.architecture.key in {
-            CraftCompiler.Architecture.x86_32,
-            CraftCompiler.Architecture.arm32,
-        }:
-            return "32"
-        raise Exception("Unsupported architecture")
 
     @property
     def executableSuffix(self):
@@ -432,26 +452,6 @@ class CraftCompiler(object):
 
     def androidApiLevel(self):
         return self._apiLevel
-
-    @property
-    def androidArchitecture(self):
-        architectures = {
-            CraftCompiler.Architecture.x86_32: "x86",
-            CraftCompiler.Architecture.x86_64: "x86_64",
-            CraftCompiler.Architecture.arm32: "arm",
-            CraftCompiler.Architecture.arm64: "arm64",
-        }
-        return architectures[self.architecture.key]
-
-    @property
-    def androidAbi(self):
-        architectures = {
-            CraftCompiler.Architecture.x86_32: "x86",
-            CraftCompiler.Architecture.x86_64: "x86_64",
-            CraftCompiler.Architecture.arm32: "armeabi-v7a",
-            CraftCompiler.Architecture.arm64: "arm64-v8a",
-        }
-        return architectures[self.architecture.key]
 
 
 if __name__ == "__main__":
