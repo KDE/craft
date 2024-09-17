@@ -25,11 +25,11 @@ class AutoToolsBuildSystem(BuildSystemBase):
             CraftCore.compiler.platform.isLinux
             and CraftCore.compiler.compiler.isGCC
             and not CraftCore.compiler.architecture.isNative
-            and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32
+            and CraftCore.compiler.architecture.isX86_32
         ):
             self.platform = Arguments(["--host=i686-pc-linux-gnu"])
         elif CraftCore.compiler.platform.isWindows:
-            if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
+            if CraftCore.compiler.architecture.isX86_32:
                 self.platform = Arguments(
                     [
                         "--host=i686-w64-mingw32",
@@ -46,7 +46,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
                     ]
                 )
         elif CraftCore.compiler.platform.isAndroid:
-            if CraftCore.compiler.architecture == CraftCompiler.Architecture.arm64:
+            if CraftCore.compiler.architecture.isArm64:
                 self.platform = Arguments(["--host=aarch64-linux-android"])
             else:
                 self.platform = Arguments([f"--host={CraftCore.compiler.architecture.androidArchitecture}-linux-android"])

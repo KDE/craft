@@ -134,33 +134,66 @@ class CraftCompiler(object):
     @unique
     class Architecture(CompilerFlags):
         NoArchitecture = 0
-        x86 = 0x1 << 0
-        x86_32 = 0x1 << 1 | x86
-        x86_64 = 0x1 << 2 | x86
+
+        bits64 = 1 << 0
+        bits32 = 1 << 1
+
+        # Values
+        x86 = 0x1 << 2
+        x86_32 = bits32 | x86
+        x86_64 = bits64 | x86
         arm = 0x1 << 3
-        arm32 = 0x1 << 4 | arm
-        arm64 = 0x1 << 5 | arm
-        arm64e = 0x1 << 6 | arm64  # Apple
+        arm32 = bits32 | arm
+        arm64 = bits64 | arm
+        arm64e = 0x1 << 4 | arm64  # Apple
 
         All = ~0
-
         # Modifiers, flags that indicate additional conditions
 
         # Native: Whether the Architecture is cross compiled
         Native = 1 << 17
 
         @property
+        def isX86(self) -> bool:
+            return bool(self.value & CraftCompiler.Architecture.x86)
+
+        @property
+        def isX86_32(self) -> bool:
+            return bool(self.value & CraftCompiler.Architecture.x86_32)
+
+        @property
+        def isX86_64(self) -> bool:
+            return bool(self.value & CraftCompiler.Architecture.x86_64)
+
+        @property
+        def isArm(self) -> bool:
+            return bool(self.value & CraftCompiler.Architecture.arm)
+
+        @property
+        def isArm32(self) -> bool:
+            return bool(self.value & CraftCompiler.Architecture.arm32)
+
+        @property
+        def isArm64(self) -> bool:
+            return bool(self.value & CraftCompiler.Architecture.arm64)
+
+        @property
+        def isArm64e(self) -> bool:
+            return bool(self.value & CraftCompiler.Architecture.arm64e)
+
+        @property
+        def is32bit(self) -> bool:
+            return bool(self.value & CraftCompiler.Architecture.bits32)
+
+        @property
+        def is64bit(self) -> bool:
+            return bool(self.value & CraftCompiler.Architecture.bits64)
+
+        @property
         def bits(self) -> str:
-            # we look for exact matches
-            if self.key in {
-                CraftCompiler.Architecture.x86_64,
-                CraftCompiler.Architecture.arm64,
-            }:
+            if self.value & CraftCompiler.Architecture.bits64:
                 return "64"
-            if self.key in {
-                CraftCompiler.Architecture.x86_32,
-                CraftCompiler.Architecture.arm32,
-            }:
+            if self.value & CraftCompiler.Architecture.bits32:
                 return "32"
             raise Exception("Unsupported architecture")
 

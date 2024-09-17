@@ -116,7 +116,7 @@ class PackageCMake(CMakePackageBase):
             args += [
                 "-FS",
                 f"-I{OsUtils.toUnixPath(os.path.join(CraftStandardDirs.craftRoot(), 'include'))}",
-                "VC-WIN64A" if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64 else "VC-WIN32",
+                "VC-WIN64A" if CraftCore.compiler.architecture.isX86_64 else "VC-WIN32",
             ]
         with utils.ScopedEnv(self.env):
             return utils.system(args)
@@ -147,7 +147,7 @@ class PackageMSys(AutoToolsPackageBase):
         # https://github.com/openssl/openssl/issues/18720
         self.subinfo.options.configure.cflags += "-Wno-error=implicit-function-declaration"
         if CraftCore.compiler.compiler.isMinGW:
-            if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64:
+            if CraftCore.compiler.architecture.isX86_64:
                 self.platform = "mingw64"
             else:
                 self.platform = "mingw"
@@ -160,11 +160,7 @@ class PackageMSys(AutoToolsPackageBase):
         self.subinfo.options.configure.noLibDir = True
         self.subinfo.options.install.args += ["install_sw"]
 
-        if (
-            CraftCore.compiler.compiler.isGCC
-            and not CraftCore.compiler.architecture.isNative
-            and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32
-        ):
+        if CraftCore.compiler.compiler.isGCC and not CraftCore.compiler.architecture.isNative and CraftCore.compiler.architecture.isX86_32:
             self.subinfo.options.configure.args += ["linux-x86"]
             self.subinfo.options.configure.projectFile = "Configure"
         if CraftCore.compiler.platform.isMacOS and not CraftCore.compiler.architecture.isNative:

@@ -28,7 +28,7 @@ class subinfo(info.infoclass):
                 self.targetInstallPath[ver] = "dev-utils"
 
         if CraftCore.compiler.compiler.isMSVC:
-            if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64:
+            if CraftCore.compiler.architecture.isX86_64:
                 self.targetDigests["2.14.02"] = (["18918ac906e29417b936466e7a2517068206c8db8c04b9762a5befa18bfea5f0"], CraftHash.HashAlgorithm.SHA256)
                 self.targetDigests["2.15.05"] = (["f5c93c146f52b4f1664fa3ce6579f961a910e869ab0dae431bd871bdd2584ef2"], CraftHash.HashAlgorithm.SHA256)
             else:

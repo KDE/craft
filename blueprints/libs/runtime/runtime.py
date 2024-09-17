@@ -70,7 +70,7 @@ class Package(BinaryPackageBase):
                             f"VCTOOLSREDISTDIR does not exist, and likely should point to '*\\Microsoft Visual Studio\\{flavor}\\Community\\VC\\Redist\\MSVC\\xx.xx.xxxxx'."
                         )
                 if redistDir:
-                    redistDir = os.path.join(redistDir, "x86" if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32 else "x64")
+                    redistDir = os.path.join(redistDir, "x86" if CraftCore.compiler.architecture.isX86_32 else "x64")
                     files = glob.glob(
                         os.path.join(redistDir, "**/*.dll"),
                         recursive=True,
