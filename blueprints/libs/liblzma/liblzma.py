@@ -77,7 +77,7 @@ class PackageAutotools(AutoToolsPackageBase):
             self.subinfo.options.configure.args += ["--disable-xz", "--disable-lzmadec", "--disable-lzmainfo", "--disable-scripts", "--disable-xzdec"]
 
 
-if CraftCore.compiler.isMSVC():
+if CraftCore.compiler.compiler.isMSVC:
 
     class Package(PackageMSBuild):
         pass

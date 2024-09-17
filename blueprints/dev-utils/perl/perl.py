@@ -60,13 +60,13 @@ class PackageMSVC(MakeFilePackageBase):
 
         root = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
         config = {
-            "CCTYPE": "MSVC141" if CraftCore.compiler.isMSVC() else "GCC",
+            "CCTYPE": "MSVC141" if CraftCore.compiler.compiler.isMSVC else "GCC",
             "CRAFT_DESTDIR": self.installDir(),
             "CRAFT_WIN64": "" if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64 else "undef",
-            "PLMAKE": "nmake" if CraftCore.compiler.isMSVC() else "mingw32-make",
+            "PLMAKE": "nmake" if CraftCore.compiler.compiler.isMSVC else "mingw32-make",
         }
 
-        if CraftCore.compiler.isMinGW():
+        if CraftCore.compiler.compiler.isMinGW:
             config["CCHOME"] = os.path.join(CraftCore.standardDirs.craftRoot(), "mingw64")
             config["SHELL"] = os.environ["COMSPEC"]
             config["CRAFT_CFLAGS"] = f"{os.environ.get('CFLAGS', '')} -I'{root}/include' -L'{root}/lib' -Wno-error=implicit-function-declaration"
@@ -82,7 +82,7 @@ class PackageMSVC(MakeFilePackageBase):
 
     def _globEnv(self):
         env = {}
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             env = {"PATH": f"{self.blueprintDir()};{os.environ['PATH']}"}
         return env
 
@@ -144,7 +144,11 @@ class PackageAutoTools(AutoToolsPackageBase):
 
         cflags = self.shell.environment["CFLAGS"]
         ldflags = self.shell.environment["LDFLAGS"]
-        if CraftCore.compiler.isGCC() and not CraftCore.compiler.architecture.isNative and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
+        if (
+            CraftCore.compiler.compiler.isGCC
+            and not CraftCore.compiler.architecture.isNative
+            and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32
+        ):
             cflags += " -m32"
             ldflags += " -m32"
             self.subinfo.options.configure.args += ["-Alddlflags=-m32 -shared", "-Uuse64bitint -Uuse64bitall"]

@@ -28,7 +28,7 @@ class BinaryPackageBase(PackageBase, MultiSource, BinaryBuildSystem, TypePackage
     def install(self):
         if not BinaryBuildSystem.install(self):
             return False
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             reDlla = re.compile(r"\.dll\.a$")
             reLib = re.compile(r"^lib")
             for f in glob.glob(f"{self.installDir()}/lib/*.dll.a"):
