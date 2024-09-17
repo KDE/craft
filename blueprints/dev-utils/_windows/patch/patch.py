@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         self.defaultTarget = "2.7.6"
 
     def setDependencies(self):
-        if CraftCore.compiler.isMinGW():
+        if CraftCore.compiler.compiler.isMinGW:
             self.runtimeDependencies["dev-utils/uactools"] = None
         self.runtimeDependencies["virtual/base"] = None
 

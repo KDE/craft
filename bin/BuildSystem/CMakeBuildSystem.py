@@ -31,9 +31,9 @@ class CMakeBuildSystem(BuildSystemBase):
         if self.makeProgram == "ninja":
             return "Ninja"
         if OsUtils.isWin():
-            if CraftCore.compiler.isMSVC():
+            if CraftCore.compiler.compiler.isMSVC:
                 return "NMake Makefiles"
-            if CraftCore.compiler.isMinGW():
+            if CraftCore.compiler.compiler.isMinGW:
                 return "MinGW Makefiles"
         elif OsUtils.isUnix():
             return "Unix Makefiles"

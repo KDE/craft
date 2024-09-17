@@ -49,7 +49,7 @@ class MesonBuildSystem(BuildSystemBase):
         }
         if CraftCore.settings.getboolean("General", "AllowAnsiColor", True):
             env["FORCE_COLOR"] = 1
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             env.update(
                 {
                     "LIB": f"{os.environ['LIB']};{CraftStandardDirs.craftRoot() / 'lib'}",

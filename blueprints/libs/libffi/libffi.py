@@ -27,7 +27,7 @@ class Package(AutoToolsPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.shell.useMSVCCompatEnv = True
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             wrapper = self.shell.toNativePath(self.sourceDir() / "msvcc.sh")
             arch = ""
             if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64:

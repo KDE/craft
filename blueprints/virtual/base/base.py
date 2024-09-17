@@ -37,7 +37,7 @@ class subinfo(info.infoclass):
         if CraftCore.compiler.platform.isMacOS:
             self.buildDependencies["dev-utils/create-dmg"] = None
 
-        if CraftCore.compiler.isMSVC() or CraftCore.settings.get("Compile", "MakeProgram", "") == "jom":
+        if CraftCore.compiler.compiler.isMSVC or CraftCore.settings.get("Compile", "MakeProgram", "") == "jom":
             self.buildDependencies["dev-utils/jom"] = None
         if CraftCore.settings.getboolean("Compile", "UseNinja", False):
             self.buildDependencies["dev-utils/ninja"] = None

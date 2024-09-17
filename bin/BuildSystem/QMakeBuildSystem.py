@@ -21,13 +21,13 @@ class QMakeBuildSystem(BuildSystemBase):
     def platform(self):
         if not self._platform:
             if OsUtils.isWin():
-                if CraftCore.compiler.isMSVC():
+                if CraftCore.compiler.compiler.isMSVC:
                     _compiler = "msvc"
-                    if CraftCore.compiler.isClang():
+                    if CraftCore.compiler.compiler.isClang:
                         self._platform = f"win32-clang-{_compiler}"
                     else:
                         self._platform = f"win32-{_compiler}"
-                elif CraftCore.compiler.isMinGW():
+                elif CraftCore.compiler.compiler.isMinGW:
                     self._platform = "win32-g++"
                 else:
                     CraftCore.log.critical(f"QMakeBuildSystem: unsupported compiler platform {CraftCore.compiler}")
@@ -39,7 +39,7 @@ class QMakeBuildSystem(BuildSystemBase):
                 else:
                     osPart = "linux"
 
-                if CraftCore.compiler.isClang():
+                if CraftCore.compiler.compiler.isClang:
                     compilerPart = "clang"
                 else:
                     compilerPart = "g++"

@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
 
     def setTargets(self):
         for ver in ["2.13.03", "2.14.02", "2.15.05"]:
-            if CraftCore.compiler.isMSVC():
+            if CraftCore.compiler.compiler.isMSVC:
                 self.targets[
                     ver
                 ] = f"https://www.nasm.us/pub/nasm/releasebuilds/{ver}/win{CraftCore.compiler.architecture.bits}/nasm-{ver}-win{CraftCore.compiler.architecture.bits}.zip"
@@ -22,12 +22,12 @@ class subinfo(info.infoclass):
                 self.targets[ver] = f"https://www.nasm.us/pub/nasm/releasebuilds/{ver}/nasm-{ver}.tar.bz2"
 
             self.targetInstSrc[ver] = f"nasm-{ver}"
-            if CraftCore.compiler.isMSVC():
+            if CraftCore.compiler.compiler.isMSVC:
                 self.targetInstallPath[ver] = os.path.join("dev-utils", "bin")
             else:
                 self.targetInstallPath[ver] = "dev-utils"
 
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64:
                 self.targetDigests["2.14.02"] = (["18918ac906e29417b936466e7a2517068206c8db8c04b9762a5befa18bfea5f0"], CraftHash.HashAlgorithm.SHA256)
                 self.targetDigests["2.15.05"] = (["f5c93c146f52b4f1664fa3ce6579f961a910e869ab0dae431bd871bdd2584ef2"], CraftHash.HashAlgorithm.SHA256)
@@ -44,7 +44,7 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["virtual/base"] = None
 
 
-if CraftCore.compiler.isMSVC():
+if CraftCore.compiler.compiler.isMSVC:
 
     class Package(BinaryPackageBase):
         def __init__(self, **kwargs):

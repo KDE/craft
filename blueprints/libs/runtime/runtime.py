@@ -22,14 +22,14 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = None
-        if CraftCore.compiler.isMinGW():
+        if CraftCore.compiler.compiler.isMinGW:
             self.buildDependencies["dev-utils/mingw-w64"] = None
 
 
 class Package(BinaryPackageBase):
     def __init__(self, **args):
         super().__init__(**args)
-        self.subinfo.options.package.disableBinaryCache = CraftCore.compiler.isMSVC()
+        self.subinfo.options.package.disableBinaryCache = CraftCore.compiler.compiler.isMSVC
 
     def fetch(self):
         return True
@@ -42,7 +42,7 @@ class Package(BinaryPackageBase):
         utils.createDir(destdir)
 
         files = []
-        if CraftCore.compiler.isMinGW():
+        if CraftCore.compiler.compiler.isMinGW:
             files = [
                 "libgomp-1.dll",
                 "libstdc++-6.dll",
@@ -50,7 +50,7 @@ class Package(BinaryPackageBase):
                 "libgcc_s_seh-1.dll",
             ]
             srcdir = os.path.join(self.rootdir, "mingw64", "bin")
-        elif CraftCore.compiler.isMSVC():
+        elif CraftCore.compiler.compiler.isMSVC:
             redistDir = None
             if self.buildType() != "Debug":
                 if CraftCore.compiler.getInternalVersion() >= 15:
