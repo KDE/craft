@@ -62,7 +62,7 @@ class PackageMSVC(MakeFilePackageBase):
         config = {
             "CCTYPE": "MSVC141" if CraftCore.compiler.compiler.isMSVC else "GCC",
             "CRAFT_DESTDIR": self.installDir(),
-            "CRAFT_WIN64": "" if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64 else "undef",
+            "CRAFT_WIN64": "" if CraftCore.compiler.architecture.isX86_64 else "undef",
             "PLMAKE": "nmake" if CraftCore.compiler.compiler.isMSVC else "mingw32-make",
         }
 
@@ -70,7 +70,7 @@ class PackageMSVC(MakeFilePackageBase):
             config["CCHOME"] = os.path.join(CraftCore.standardDirs.craftRoot(), "mingw64")
             config["SHELL"] = os.environ["COMSPEC"]
             config["CRAFT_CFLAGS"] = f"{os.environ.get('CFLAGS', '')} -I'{root}/include' -L'{root}/lib'"
-        elif CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
+        elif CraftCore.compiler.architecture.isX86_32:
             config["PROCESSOR_ARCHITECTURE"] = f"x{CraftCore.compiler.architecture.bits}"
 
         self.subinfo.options.make.args += ["{0}={1}".format(x, y) for x, y in config.items()]
@@ -140,11 +140,7 @@ class PackageAutoTools(AutoToolsPackageBase):
 
         cflags = self.shell.environment["CFLAGS"]
         ldflags = self.shell.environment["LDFLAGS"]
-        if (
-            CraftCore.compiler.compiler.isGCC
-            and not CraftCore.compiler.architecture.isNative
-            and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32
-        ):
+        if CraftCore.compiler.compiler.isGCC and not CraftCore.compiler.architecture.isNative and CraftCore.compiler.architecture.isX86_32:
             cflags += " -m32"
             ldflags += " -m32"
             self.subinfo.options.configure.args += ["-Alddlflags=-m32 -shared", "-Uuse64bitint -Uuse64bitall"]

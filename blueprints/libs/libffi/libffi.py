@@ -30,7 +30,7 @@ class Package(AutoToolsPackageBase):
         if CraftCore.compiler.compiler.isMSVC:
             wrapper = self.shell.toNativePath(self.sourceDir() / "msvcc.sh")
             arch = ""
-            if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64:
+            if CraftCore.compiler.architecture.isX86_64:
                 arch = " -m64"
             self.subinfo.options.configure.args += [f"CCAS={wrapper}{arch}"]
             self.subinfo.options.configure.cflags += " -DFFI_BUILDING_DLL"

@@ -95,13 +95,13 @@ class MesonBuildSystem(BuildSystemBase):
         config = ""
 
         if CraftCore.compiler.platform.isAndroid:
-            if CraftCore.compiler.architecture == CraftCompiler.Architecture.arm64:
+            if CraftCore.compiler.architecture.isArm64:
                 toolchain = "aarch64-linux-android"
                 compiler = "aarch64-linux-android"
-            elif CraftCore.compiler.architecture == CraftCompiler.Architecture.arm32:
+            elif CraftCore.compiler.architecture.isArm32:
                 toolchain = "arm-linux-androideabi"
                 compiler = "armv7a-linux-androideabi"
-            elif CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
+            elif CraftCore.compiler.architecture.isX86_32:
                 toolchain = "i686-linux-android"
                 compiler = "i686-linux-android"
             else:
