@@ -85,11 +85,11 @@ class NullsoftInstallerPackager(PortablePackager):
         defines.setdefault("architecture", CraftCore.compiler.architecture.name.lower())
         defines.setdefault(
             "defaultinstdir",
-            "$PROGRAMFILES64" if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64 else "$PROGRAMFILES",
+            "$PROGRAMFILES64" if CraftCore.compiler.architecture.isX86_64 else "$PROGRAMFILES",
         )
         defines.setdefault(
             "multiuser_use_programfiles64",
-            "!define MULTIUSER_USE_PROGRAMFILES64" if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64 else "",
+            "!define MULTIUSER_USE_PROGRAMFILES64" if CraftCore.compiler.architecture.isX86_64 else "",
         )
         defines.setdefault("srcdir", self.archiveDir())  # deprecated
         defines.setdefault("registry_hook", "")
@@ -148,7 +148,7 @@ class NullsoftInstallerPackager(PortablePackager):
 
     def _prepare7Z(self, tmpDir: str):
         sevenZPath = CraftPackageObject.get("7zip-base").instance.imageDir() / "dev-utils/7z"
-        sevenZPath /= "x64/7za.exe" if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64 else "7za.exe"
+        sevenZPath /= "x64/7za.exe" if CraftCore.compiler.architecture.isX86_64 else "7za.exe"
         sevenZDest = Path(tmpDir) / "7za.exe"
         if not sevenZPath.exists():
             CraftCore.log.warning("Failed to find 7z")
