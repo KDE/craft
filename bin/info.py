@@ -244,7 +244,7 @@ class infoclass(object):
         return None
 
     def addCachedAutotoolsBuild(self, packageName=None, targetInstallPath=None, versionInfo=None):
-        if not CraftCore.compiler.isMSVC():
+        if not CraftCore.compiler.compiler.isMSVC:
             return
         # disable binary cache, always serve the latest from the mingw cache
         self.options.package.disableBinaryCache = True

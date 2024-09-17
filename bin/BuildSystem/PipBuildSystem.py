@@ -56,7 +56,7 @@ class PipBuildSystem(BuildSystemBase):
 
     def install(self):
         env = {}
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             env.update(
                 {
                     "LIB": f"{os.environ['LIB']};{CraftStandardDirs.craftRoot() / 'lib'}",

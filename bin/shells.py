@@ -70,7 +70,7 @@ class BashShell(object):
                 # See https://github.com/Homebrew/homebrew-core/issues/2674 for the -no_weak_imports flag
                 # ldflags = f" -Wl,-no_weak_imports {ldflags}"
 
-            if CraftCore.compiler.isMSVC():
+            if CraftCore.compiler.compiler.isMSVC:
                 self._environment["INCLUDE"] = f"{mergeroot}/include:{convertPath(os.environ['INCLUDE'])}"
                 self._environment["LIB"] = f"{mergeroot}/lib:{convertPath(os.environ['LIB'])}"
 
@@ -95,11 +95,11 @@ class BashShell(object):
                 if OsUtils.supportsSymlinks():
                     self._environment["MSYS"] = "winsymlinks:nativestrict"
                 path = "/usr/local/bin:/usr/bin:/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl"
-                if CraftCore.compiler.isMinGW():
+                if CraftCore.compiler.compiler.isMinGW:
                     gcc = shutil.which("gcc")
                     if gcc:
                         path = f"{self.toNativePath(os.path.dirname(gcc))}:{path}"
-                elif CraftCore.compiler.isMSVC():
+                elif CraftCore.compiler.compiler.isMSVC:
                     path = f"{self.toNativePath(os.path.dirname(shutil.which('cl')))}:{path}"
                 self._environment["PATH"] = f"{path}:{convertPath(os.environ['PATH'])}"
                 self._environment["PKG_CONFIG_PATH"] = convertPath(os.environ["PKG_CONFIG_PATH"])
@@ -107,12 +107,12 @@ class BashShell(object):
                 if "make" in self._environment:
                     del self._environment["make"]
                 # MSYSTEM is used by uname
-                if CraftCore.compiler.isMinGW():
+                if CraftCore.compiler.compiler.isMinGW:
                     self._environment["MSYSTEM"] = f"MINGW{CraftCore.compiler.architecture.bits}_CRAFT"
-                elif CraftCore.compiler.isMSVC():
+                elif CraftCore.compiler.compiler.isMSVC:
                     self._environment["MSYSTEM"] = f"MSYS{CraftCore.compiler.architecture.bits}_CRAFT"
 
-                if self.useMSVCCompatEnv and CraftCore.compiler.isMSVC():
+                if self.useMSVCCompatEnv and CraftCore.compiler.compiler.isMSVC:
 
                     automake = []
                     for d in os.scandir(os.path.join(os.path.dirname(self._findBash()), "..", "share")):
@@ -234,7 +234,7 @@ class BashShell(object):
         return utils.system(command, cwd=path, env=env, **kwargs)
 
     def login(self):
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             self.useMSVCCompatEnv = True
         return self.execute(os.curdir, self._findBash(), "-i", displayProgress=True)
 

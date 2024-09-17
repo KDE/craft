@@ -258,7 +258,7 @@ class SetupHelper(object):
         return CaseInsensitiveDict(json.loads(result))
 
     def getEnv(self):
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             return SetupHelper.getMSVCEnv(
                 CraftCore.compiler.getInternalVersion(),
                 CraftCore.compiler.architecture,
@@ -375,7 +375,7 @@ class SetupHelper(object):
             os.path.join(CraftCore.standardDirs.craftRoot(), "bin"),
         )
 
-        if CraftCore.compiler.isMinGW():
+        if CraftCore.compiler.compiler.isMinGW:
             self.prependEnvVar(
                 "PATH",
                 os.path.join(CraftCore.standardDirs.craftRoot(), "mingw64", "bin"),
@@ -501,18 +501,18 @@ class SetupHelper(object):
             [CraftCore.standardDirs.craftRoot() / "dev-utils/bin", CraftCore.standardDirs.craftRoot() / "bin", CraftCore.standardDirs.craftRoot() / "libexec"],
         )
 
-        if CraftCore.compiler.isClang() and not CraftCore.compiler.platform.isAndroid:
+        if CraftCore.compiler.compiler.isClang and not CraftCore.compiler.platform.isAndroid:
             if OsUtils.isUnix() and CraftCore.settings.getboolean("General", "UseSystemClang", True):
                 self.addEnvVar("CC", "/usr/bin/clang")
                 self.addEnvVar("CXX", "/usr/bin/clang++")
             else:
-                if CraftCore.compiler.isMSVC():
+                if CraftCore.compiler.compiler.isMSVC:
                     self.addDefaultEnvVar("CC", "clang-cl")
                     self.addDefaultEnvVar("CXX", "clang-cl")
                 else:
                     self.addDefaultEnvVar("CC", "clang")
                     self.addDefaultEnvVar("CXX", "clang")
-        elif CraftCore.compiler.isGCC():
+        elif CraftCore.compiler.compiler.isGCC:
             if not CraftCore.compiler.architecture.isNative and CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_32:
                 self.addEnvVar("CC", "gcc -m32")
                 self.addEnvVar("CXX", "g++ -m32")
@@ -520,7 +520,7 @@ class SetupHelper(object):
             else:
                 self.addDefaultEnvVar("CC", "gcc")
                 self.addDefaultEnvVar("CXX", "g++")
-        elif CraftCore.compiler.isMSVC():
+        elif CraftCore.compiler.compiler.isMSVC:
             self.addDefaultEnvVar("CC", "cl")
             self.addDefaultEnvVar("CXX", "cl")
 
@@ -533,10 +533,10 @@ class SetupHelper(object):
             self.addEnvVar("CLICOLOR_FORCE", "1")
             self.addEnvVar("CLICOLOR", "1")
             self.addEnvVar("ANSICON", "1")
-            if CraftCore.compiler.isClang() and CraftCore.compiler.isMSVC():
+            if CraftCore.compiler.compiler.isClang and CraftCore.compiler.compiler.isMSVC:
                 self.prependEnvVar("CFLAGS", "-fcolor-diagnostics -fansi-escape-codes", sep=" ")
                 self.prependEnvVar("CXXFLAGS", "-fcolor-diagnostics -fansi-escape-codes", sep=" ")
-            elif CraftCore.compiler.isGCCLike():
+            elif CraftCore.compiler.compiler.isGCCLike:
                 self.prependEnvVar("CFLAGS", "-fdiagnostics-color=always", sep=" ")
                 self.prependEnvVar("CXXFLAGS", "-fdiagnostics-color=always", sep=" ")
 

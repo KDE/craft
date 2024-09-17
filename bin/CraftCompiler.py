@@ -46,6 +46,9 @@ class CraftCompilerSignature(object):
         self.architecture = architecture
         self._sourceString = sourceString
 
+        if self.compiler and self.compiler.isGCC and self.platform.isWindows:
+            self.compiler |= CraftCompiler.Compiler.MinGW
+
         if not host or self.architecture & host.architecture:
             self.architecture |= CraftCompiler.Architecture.Native
 
@@ -289,7 +292,7 @@ class CraftCompiler(object):
 
         @property
         def executableSuffix(self):
-            return ".exe" if self.platform.isWindows else ""
+            return ".exe" if self.isWindows else ""
 
     @unique
     class Abi(CompilerFlags):
@@ -306,9 +309,39 @@ class CraftCompiler(object):
         CLANG = 0x1 << 2
 
         GCCLike = CLANG | GCC
-        Native = 1 << 17
 
         All = ~0
+        # Modifiers, flags that indicate additional conditions
+
+        # Native: Whether the Compiler is cross compiling
+        Native = 1 << 17
+
+        # MinGW: Marks the compiler as minGW
+        MinGW = 0x1 << 18
+
+        @property
+        def isGCC(self) -> bool:
+            return bool(self.value & CraftCompiler.Compiler.GCC)
+
+        @property
+        def isClang(self) -> bool:
+            return bool(self.value & CraftCompiler.Compiler.CLANG)
+
+        @property
+        def isGCCLike(self) -> bool:
+            return bool(self.value & CraftCompiler.Compiler.GCCLike)
+
+        @property
+        def isCl(self) -> bool:
+            return bool(self.value & CraftCompiler.Compiler.CL)
+
+        @property
+        def isMinGW(self):
+            return bool(self.value & CraftCompiler.Compiler.MinGW)
+
+        @property
+        def isMSVC(self):
+            return bool(self.value & CraftCompiler.Compiler.CL)
 
     def __init__(self):
         self.hostSignature = self._detectHost()
@@ -316,7 +349,7 @@ class CraftCompiler(object):
 
         self._MSVCToolset = None
         self._apiLevel = None
-        if self.isMSVC():
+        if self.compiler.isMSVC:
             self._MSVCToolset = CraftCore.settings.get("General", "MSVCToolset", "")
         if self.platform.isAndroid:
             self._apiLevel = CraftCore.settings.get("General", "AndroidAPI", 21)
@@ -375,34 +408,10 @@ class CraftCompiler(object):
     def symbolsSuffix(self):
         if self.platform.isApple:
             return ".dSYM"
-        elif self.isMSVC():
+        elif self.compiler.isMSVC:
             return ".pdb"
         else:
             return ".debug"
-
-    def isGCC(self) -> bool:
-        return self.compiler == CraftCompiler.Compiler.GCC
-
-    def isClang(self) -> bool:
-        return self.compiler == CraftCompiler.Compiler.CLANG
-
-    def isGCCLike(self) -> bool:
-        return bool(self.compiler & CraftCompiler.Compiler.GCCLike)
-
-    def isCl(self) -> bool:
-        return self.compiler == CraftCompiler.Compiler.CL
-
-    def isMinGW(self):
-        return self.platform.isWindows and self.isGCC()
-
-    def isMinGW_W32(self):
-        return self.isMinGW() and self.architecture == CraftCompiler.Architecture.x86_32
-
-    def isMinGW_W64(self):
-        return self.isMinGW() and self.architecture == CraftCompiler.Architecture.x86_64
-
-    def isMSVC(self):
-        return self.compiler == CraftCompiler.Compiler.CL
 
     def isMSVC2017(self):
         return self.signature.abi == CraftCompiler.Abi.msvc2017
@@ -421,15 +430,15 @@ class CraftCompiler(object):
         return result or "0"
 
     def getVersion(self):
-        if self.isGCCLike():
+        if self.compiler.isGCCLike:
             return self.getGCCLikeVersion(os.environ.get("CXX"))
-        elif self.isMSVC():
+        elif self.compiler.isMSVC:
             return self.getInternalVersion()
         else:
             return None
 
     def getInternalVersion(self):
-        if not self.isMSVC():
+        if not self.compiler.isMSVC:
             return self.getVersion()
         versions = {
             CraftCompiler.Abi.msvc2017: 15,
@@ -460,5 +469,5 @@ if __name__ == "__main__":
     print("Architecture: %s" % CraftCore.compiler.signature)
     print("HostArchitecture: %s" % CraftCore.compiler.hostSignature)
     print("Native compiler: %s" % ("No", "Yes")[CraftCore.compiler.platform.isNative])
-    if CraftCore.compiler.isGCCLike():
+    if CraftCore.compiler.compiler.isGCCLike:
         print("Compiler Version: %s" % CraftCore.compiler.getGCCLikeVersion(CraftCore.compiler.compiler.name))

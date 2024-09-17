@@ -48,7 +48,7 @@ class Package(AutoToolsPackageBase):
         ]
         if CraftCore.compiler.platform.isWindows:
             self.subinfo.options.configure.args += ["--with-data-packaging=dll"]
-            if CraftCore.compiler.isMSVC():
+            if CraftCore.compiler.compiler.isMSVC:
                 self.subinfo.options.configure.args += ["--enable-extras=no"]
 
     def make(self):
@@ -65,7 +65,7 @@ class Package(AutoToolsPackageBase):
         with utils.ScopedEnv({"TARGET": None}):
             if not super().install():
                 return False
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             files = os.listdir(os.path.join(self.installDir(), "lib"))
             for dll in files:
                 if dll.endswith(".dll"):

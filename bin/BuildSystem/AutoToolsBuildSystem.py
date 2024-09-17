@@ -23,7 +23,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         self.platform = Arguments()  # hope for auto detection
         if (
             CraftCore.compiler.platform.isLinux
-            and CraftCore.compiler.isGCC()
+            and CraftCore.compiler.compiler.isGCC
             and not CraftCore.compiler.architecture.isNative
             and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32
         ):
@@ -159,7 +159,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
         if not self._fixInstallPrefix(self.shell.toNativePath(self.installPrefix())):
             return False
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             # libtool produces intl.dll.lib while we expect intl.lib
             lib = glob.glob(os.path.join(self.imageDir(), "lib/**/*.dll.lib"), recursive=True)
             for src in lib:

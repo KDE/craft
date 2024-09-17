@@ -15,7 +15,7 @@ from Utils import CraftHash
 class subinfo(info.infoclass):
     def registerOptions(self):
         self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.Native
-        if CraftCore.compiler.isMinGW():
+        if CraftCore.compiler.compiler.isMinGW:
             self.parent.package.categoryInfo.compiler &= CraftCore.compiler.Compiler.NoCompiler
 
     def setTargets(self):
@@ -24,7 +24,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = f"Python-{ver}"
         self.targetDigests["3.11.5"] = (["85cd12e9cf1d6d5a45f17f7afe1cebe7ee628d3282281c492e86adf636defa3f"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["3.11.7"] = (["18e1aa7e66ff3a58423d59ed22815a6954e53342122c45df20c96877c062b9b7"], CraftHash.HashAlgorithm.SHA256)
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             self.patchToApply["3.11.5"] = [(".msvc/patches", 1)]
             self.patchToApply["3.11.7"] = [(".msvc/patches", 1)]
 
@@ -45,7 +45,7 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["libs/liblzma"] = None
 
 
-if CraftCore.compiler.isMSVC():
+if CraftCore.compiler.compiler.isMSVC:
 
     class Package(MSBuildPackageBase):
         def __init__(self, **kwargs):

@@ -1281,7 +1281,7 @@ def symFileName(fileName: Path) -> Path:
 def strip(fileName: Path, destFileName: Path = None) -> Path:
     """strip debugging informations from shared libraries and executables"""
     """ Returns the path to the sym file on success, None on error"""
-    if CraftCore.compiler.isMSVC() or not CraftCore.compiler.isGCCLike():
+    if CraftCore.compiler.compiler.isMSVC or not CraftCore.compiler.compiler.isGCCLike:
         raise Exception(f"Skipping stripping of {fileName} -- either disabled or unsupported with this compiler")
 
     fileName = Path(fileName)

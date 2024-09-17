@@ -66,7 +66,7 @@ class BuildSystemBase(CraftBase):
         """constructor"""
         CraftBase.__init__(self, package)
         self.supportsNinja = False
-        self.supportsCCACHE = CraftCore.settings.getboolean("Compile", "UseCCache", False) and CraftCore.compiler.isGCCLike()
+        self.supportsCCACHE = CraftCore.settings.getboolean("Compile", "UseCCache", False) and CraftCore.compiler.compiler.isGCCLike
         self.supportsClang = True
         self.buildSystemType = typeName
 
@@ -87,12 +87,12 @@ class BuildSystemBase(CraftBase):
                 del os.environ["MAKE"]
 
         if OsUtils.isWin():
-            if CraftCore.compiler.isMSVC():
+            if CraftCore.compiler.compiler.isMSVC:
                 if self.subinfo.options.make.supportsMultijob and CraftCore.cache.findApplication("jom"):
                     return "jom"
                 else:
                     return "nmake"
-            elif CraftCore.compiler.isMinGW():
+            elif CraftCore.compiler.compiler.isMinGW:
                 return "mingw32-make"
             else:
                 CraftCore.log.critical(f"unknown {CraftCore.compiler} compiler")
@@ -119,7 +119,7 @@ class BuildSystemBase(CraftBase):
 
         if self.supportsCCACHE and CraftCore.cache.findApplication("ccache"):
             defines += self.ccacheOptions()
-        if CraftCore.compiler.isClang() and self.supportsClang:
+        if CraftCore.compiler.compiler.isClang and self.supportsClang:
             defines += self.clangOptions()
         return defines
 
@@ -253,7 +253,7 @@ class BuildSystemBase(CraftBase):
                         return False
                 if not utils.moveFile(f, dest):
                     return False
-            if CraftCore.compiler.isMSVC():
+            if CraftCore.compiler.compiler.isMSVC:
                 # static libs might also have pdbs
                 def staticLibsFilter(p: Path):
                     if p.suffix == ".lib":

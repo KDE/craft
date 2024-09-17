@@ -52,7 +52,7 @@ class PerlBuildSystem(MakeFileBuildSystem):
             "PERL_MM_USE_DEFAULT": "1",
             "PERL_AUTOINSTALL": "--skipdeps",
         }
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             root = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
             env.update(
                 {
