@@ -28,6 +28,7 @@ import sys
 from enum import Enum, IntFlag, auto, unique
 
 from CraftCore import CraftCore
+from Utils.CraftBool import CraftBool
 
 
 class CraftCompilerSignature(object):
@@ -154,40 +155,40 @@ class CraftCompiler(object):
         Native = 1 << 17
 
         @property
-        def isX86(self) -> bool:
-            return bool(self.value & CraftCompiler.Architecture.x86)
+        def isX86(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Architecture.x86)
 
         @property
-        def isX86_32(self) -> bool:
-            return bool(self.value & CraftCompiler.Architecture.x86_32 & ~CraftCompiler.Architecture.x86)
+        def isX86_32(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Architecture.x86_32 & ~CraftCompiler.Architecture.x86)
 
         @property
-        def isX86_64(self) -> bool:
-            return bool(self.value & CraftCompiler.Architecture.x86_64 & ~CraftCompiler.Architecture.x86)
+        def isX86_64(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Architecture.x86_64 & ~CraftCompiler.Architecture.x86)
 
         @property
-        def isArm(self) -> bool:
-            return bool(self.value & CraftCompiler.Architecture.arm)
+        def isArm(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Architecture.arm)
 
         @property
-        def isArm32(self) -> bool:
-            return bool(self.value & CraftCompiler.Architecture.arm32 & ~CraftCompiler.Architecture.arm)
+        def isArm32(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Architecture.arm32 & ~CraftCompiler.Architecture.arm)
 
         @property
-        def isArm64(self) -> bool:
-            return bool(self.value & CraftCompiler.Architecture.arm64 & ~CraftCompiler.Architecture.arm)
+        def isArm64(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Architecture.arm64 & ~CraftCompiler.Architecture.arm)
 
         @property
-        def isArm64e(self) -> bool:
-            return bool(self.value & CraftCompiler.Architecture.arm64e & ~CraftCompiler.Architecture.arm64)
+        def isArm64e(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Architecture.arm64e & ~CraftCompiler.Architecture.arm64)
 
         @property
-        def is32bit(self) -> bool:
-            return bool(self.value & CraftCompiler.Architecture.bits32)
+        def is32bit(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Architecture.bits32)
 
         @property
-        def is64bit(self) -> bool:
-            return bool(self.value & CraftCompiler.Architecture.bits64)
+        def is64bit(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Architecture.bits64)
 
         @property
         def bits(self) -> str:
@@ -198,8 +199,8 @@ class CraftCompiler(object):
             raise Exception("Unsupported architecture")
 
         @property
-        def isNative(self) -> bool:
-            return bool(self.value & CraftCompiler.Architecture.Native)
+        def isNative(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Architecture.Native)
 
         @property
         def rpmArchitecture(self):
@@ -284,44 +285,44 @@ class CraftCompiler(object):
         Native = 1 << 17
 
         @property
-        def isWindows(self) -> bool:
-            return bool(self.value & CraftCompiler.Platforms.Windows)
+        def isWindows(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Platforms.Windows)
 
         @property
-        def isMacOS(self) -> bool:
-            return bool(self.value & CraftCompiler.Platforms.MacOS)
+        def isMacOS(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Platforms.MacOS)
 
         @property
-        def isIOS(self) -> bool:
-            return bool(self.value & CraftCompiler.Platforms.iOS)
+        def isIOS(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Platforms.iOS)
 
         @property
-        def isLinux(self) -> bool:
-            return bool(self.value & CraftCompiler.Platforms.Linux)
+        def isLinux(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Platforms.Linux)
 
         @property
-        def isFreeBSD(self) -> bool:
-            return bool(self.value & CraftCompiler.Platforms.FreeBSD)
+        def isFreeBSD(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Platforms.FreeBSD)
 
         @property
-        def isAndroid(self) -> bool:
-            return bool(self.value & CraftCompiler.Platforms.Android)
+        def isAndroid(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Platforms.Android)
 
         @property
-        def isUnix(self) -> bool:
-            return bool(self.value & CraftCompiler.Platforms.Unix)
+        def isUnix(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Platforms.Unix)
 
         @property
-        def isApple(self) -> bool:
-            return bool(self.value & CraftCompiler.Platforms.Apple)
+        def isApple(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Platforms.Apple)
 
         @property
-        def isMobile(self) -> bool:
-            return bool(self.value & CraftCompiler.Platforms.Mobile)
+        def isMobile(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Platforms.Mobile)
 
         @property
-        def isNative(self) -> bool:
-            return bool(self.value & CraftCompiler.Platforms.Native)
+        def isNative(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Platforms.Native)
 
         @property
         def executableSuffix(self):
@@ -334,12 +335,12 @@ class CraftCompiler(object):
         msvc2022 = auto()
 
         @property
-        def isMSVC2019(self) -> bool:
-            return bool(self.value & CraftCompiler.Abi.msvc2019)
+        def isMSVC2019(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Abi.msvc2019)
 
         @property
-        def isMSVC2022(self) -> bool:
-            return bool(self.value & CraftCompiler.Abi.msvc2022)
+        def isMSVC2022(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Abi.msvc2022)
 
     @unique
     class Compiler(CompilerFlags):
@@ -360,28 +361,28 @@ class CraftCompiler(object):
         MinGW = 0x1 << 18
 
         @property
-        def isGCC(self) -> bool:
-            return bool(self.value & CraftCompiler.Compiler.GCC)
+        def isGCC(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Compiler.GCC)
 
         @property
-        def isClang(self) -> bool:
-            return bool(self.value & CraftCompiler.Compiler.CLANG)
+        def isClang(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Compiler.CLANG)
 
         @property
-        def isGCCLike(self) -> bool:
-            return bool(self.value & CraftCompiler.Compiler.GCCLike)
+        def isGCCLike(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Compiler.GCCLike)
 
         @property
-        def isCl(self) -> bool:
-            return bool(self.value & CraftCompiler.Compiler.CL)
+        def isCl(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Compiler.CL)
 
         @property
         def isMinGW(self):
-            return bool(self.value & CraftCompiler.Compiler.MinGW)
+            return CraftBool(self.value & CraftCompiler.Compiler.MinGW)
 
         @property
         def isMSVC(self):
-            return bool(self.value & CraftCompiler.Compiler.CL)
+            return CraftBool(self.value & CraftCompiler.Compiler.CL)
 
     def __init__(self):
         self.hostSignature = self._detectHost()
