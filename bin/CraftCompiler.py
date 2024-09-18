@@ -337,9 +337,6 @@ class CraftCompiler(object):
     def isMSVC(self) -> CraftBool:
         return CraftBool(self.compiler == CraftCompiler.Compiler.CL)
 
-    def isMSVC2017(self) -> CraftBool:
-        return CraftBool(self.signature.abi == CraftCompiler.Abi.msvc2017)
-
     def isMSVC2019(self) -> CraftBool:
         return CraftBool(self.signature.abi == CraftCompiler.Abi.msvc2019)
 

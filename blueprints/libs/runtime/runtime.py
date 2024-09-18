@@ -58,8 +58,6 @@ class Package(BinaryPackageBase):
                         flavor = "2022"
                     elif CraftCore.compiler.isMSVC2019():
                         flavor = "2019"
-                    elif CraftCore.compiler.isMSVC2017():
-                        flavor = "2017"
                     else:
                         raise Exception("Unknown compiler")
                     if "VCTOOLSREDISTDIR" in os.environ:
