@@ -15,9 +15,6 @@ extend-ignore =
     F401,
     # TODO fix "do not use bare 'except'"
     E722,
-    # TODO fix "may be undefined, or defined from star imports"
-    F405,
-    F403
     # TODO fix "module level import not at top of file"
     E402,
     # TODO fix "do not assign a lambda expression, use a def"
