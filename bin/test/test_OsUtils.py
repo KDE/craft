@@ -2,7 +2,6 @@ import os
 import subprocess
 import tempfile
 import threading
-import time
 import unittest
 
 import CraftTestBase
@@ -60,7 +59,7 @@ class OsUtilsTest(CraftTestBase.CraftTestBase):
                 lock.unlock()
 
             threading.Timer(5, _delayedUnlock).start()
-            with LockFile("foo") as lock2:
+            with LockFile("foo"):
                 print("locked lock2")
             print("end")
 

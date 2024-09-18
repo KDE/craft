@@ -1,13 +1,6 @@
-import contextlib
-import glob
-import io
 import os
-import stat
-import subprocess
-from pathlib import Path
 
 import utils
-from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftBase import InitGuard
 from CraftCore import CraftCore
 from Packager.MacBasePackager import MacBasePackager
@@ -35,7 +28,6 @@ class MacDMGPackager(MacBasePackager):
         appPath = self.getMacAppPath(defines)
         if not appPath:
             return False
-        archive = os.path.normpath(self.archiveDir())
 
         CraftCore.log.info(f"Packaging {appPath}")
 

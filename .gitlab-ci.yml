@@ -1,3 +1,36 @@
+# SPDX-FileCopyrightText: none
+# SPDX-License-Identifier: CC0-1.0
+
+include:
+  - project: sysadmin/ci-utilities
+    file:
+      - /gitlab-templates/blocks/workflow.yml
+
+.tox_base:
+  image: python:3.11
+  tags:
+    - Linux
+  interruptible: true
+  before_script:
+    - python --version
+    - python -m venv .venv
+    - source .venv/bin/activate
+    - pip install tox
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+      junit: junit-*.xml
+
+lint:
+  extends: .tox_base
+  script: tox -e lint
+
+imports:
+  extends: .tox_base
+  script: tox -e check-imports
+
 run-tests:
   stage: test
   image: python:latest

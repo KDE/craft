@@ -4,7 +4,6 @@ from pathlib import Path
 import info
 import utils
 from BuildSystem.BuildSystemBase import BuildSystemBase
-from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from Package.AutoToolsPackageBase import AutoToolsPackageBase

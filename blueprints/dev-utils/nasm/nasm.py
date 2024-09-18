@@ -1,7 +1,6 @@
 import os
 
 import info
-from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from Package.AutoToolsPackageBase import AutoToolsPackageBase
 from Package.BinaryPackageBase import BinaryPackageBase

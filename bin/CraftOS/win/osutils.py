@@ -109,7 +109,7 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
             testFileDest = Path(tmp) / "CRAFT_LINK_TEST_DEST"
             return (
                 CraftCore.cache.getCommandOutput(
-                    f"cmd",
+                    "cmd",
                     f"/C mklink {testFileDest} {testFileSource}",
                     testName="CRAFT_LINK_TEST",
                 )[0]

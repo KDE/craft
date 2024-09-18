@@ -62,7 +62,7 @@ class CraftDebug(object):
         except Exception as e:
             print(f"Failed to setup log file: {e}", file=sys.stderr)
             print(
-                f"Right now we don't support running multiple Craft instances with the same configuration.",
+                "Right now we don't support running multiple Craft instances with the same configuration.",
                 file=sys.stderr,
             )
         if _SUPPORTS_COLORED_LOGS and CraftCore.settings.getboolean("General", "AllowAnsiColor", True):

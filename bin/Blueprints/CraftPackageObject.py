@@ -25,7 +25,6 @@
 import configparser
 import importlib.util
 import os
-import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -141,7 +140,7 @@ class CraftPackageObject(object):
         if not self.source:
             raise BlueprintException(f"{self.source} dos not provide a Pattern", self)
         if not self.isCategory():
-            raise BlueprintException(f"Only a catergory can provide a Pattern", self)
+            raise BlueprintException("Only a catergory can provide a Pattern", self)
         # load the module
         self.instance
         if self._pattern:
@@ -181,7 +180,7 @@ class CraftPackageObject(object):
                 CraftCore.log.info(f"Found multiple recipes for {path}")
                 for p in packages:
                     CraftCore.log.info(f"{p}: {p.source}")
-                CraftCore.log.info(f"Please use the full path to the recipe.")
+                CraftCore.log.info("Please use the full path to the recipe.")
                 exit(1)
             package = packages[0]
         else:
@@ -331,7 +330,7 @@ class CraftPackageObject(object):
                 spec.loader.exec_module(self._Module)
             except Exception as e:
                 raise BlueprintException(f"Failed to load file {self.source}", self, e)
-            if not self._Module is None:
+            if self._Module is not None:
                 if hasattr(self._Module, "Package"):
                     try:
                         pack = self._Module.Package(package=self)

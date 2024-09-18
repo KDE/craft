@@ -77,7 +77,7 @@ class CraftCompilerSignature(object):
                 abi = None
                 compiler = CraftCompiler.Compiler.fromString(split[1])
                 arch = CraftCompiler.Architecture.fromString(split[2])
-        except Exception as e:
+        except Exception:
             # legacy
             try:
                 compiler = CraftCompiler.Compiler.fromString(split[2])

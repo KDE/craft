@@ -102,7 +102,7 @@ class CraftConfig(object):
         # read defaults
         self._config.read(os.path.join(craftDir, "etc", "CraftCoreSettings.ini"), encoding="utf-8")
         #####
-        if not "Variables" in self._config.sections():
+        if "Variables" not in self._config.sections():
             self._config.add_section("Variables")
         for key, value in {
             "CraftRoot": CraftConfig._craftRoot(),
@@ -149,7 +149,7 @@ class CraftConfig(object):
         if self.__contains_no_alias((group, key)):
             return self._config[group][key]
 
-        if default != None:
+        if default is not None:
             return default
         print("Failed to find")
         print("\t[%s]" % group)

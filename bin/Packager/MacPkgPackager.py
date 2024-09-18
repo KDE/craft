@@ -1,13 +1,7 @@
-import contextlib
-import glob
-import io
 import os
-import stat
-import subprocess
 from pathlib import Path
 
 import utils
-from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftBase import InitGuard
 from CraftCore import CraftCore
 from Packager.MacBasePackager import MacBasePackager
@@ -34,7 +28,7 @@ class MacPkgPackager(MacBasePackager):
             return False
 
         defines = self.setDefaults(self.defines)
-        if not "pkgproj" in defines:
+        if "pkgproj" not in defines:
             CraftCore.log.error("Cannot not create .pkg because no .pkgproj was defined.")
             return False
         if not self.internalCreatePackage(defines):

@@ -36,7 +36,7 @@ class SourceBase(CraftBase):
 
         sourcedir = self.workDir()
 
-        if self.subinfo.targetSourceSuffix() != None:
+        if self.subinfo.targetSourceSuffix() is not None:
             sourcedir = Path("%s-%s" % (sourcedir, self.subinfo.targetSourceSuffix()))
 
         if self.subinfo.hasTargetSourcePath():

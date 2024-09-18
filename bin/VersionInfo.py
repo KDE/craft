@@ -171,7 +171,7 @@ class VersionInfo(object):
         packageName=None,
         patchLevel=None,
     ):
-        """
+        r"""
         Set svn and tarball targets based on the settings in the next version.ini
         Parameters may contain ${} Variables which then will be replaces.
         Available variables:
@@ -210,9 +210,9 @@ class VersionInfo(object):
                 self.subinfo.targets[target] = self._replaceVar(tarballUrl, target, packageName)
                 if patchLevel:
                     self.subinfo.patchLevel[target] = patchLevel
-                if not tarballDigestUrl is None:
+                if tarballDigestUrl is not None:
                     self.subinfo.targetDigestUrls[target] = self._replaceVar(tarballDigestUrl, target, packageName)
-                if not tarballInstallSrc is None:
+                if tarballInstallSrc is not None:
                     self.subinfo.targetInstSrc[target] = self._replaceVar(tarballInstallSrc, target, packageName)
 
         if gitUrl:

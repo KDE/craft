@@ -190,7 +190,7 @@ class CraftManifest(object):
 
     def update(self, other):
         for compiler in other.packages.keys():
-            if not compiler in self.packages:
+            if compiler not in self.packages:
                 self.packages[compiler] = {}
             self.packages[compiler].update(other.packages[compiler])
 
@@ -208,9 +208,9 @@ class CraftManifest(object):
     def get(self, package: str, compiler: str = None) -> CraftManifestEntry:
         if not compiler:
             compiler = str(CraftCore.compiler)
-        if not compiler in self.packages:
+        if compiler not in self.packages:
             self.packages[compiler] = {}
-        if not package in self.packages[compiler]:
+        if package not in self.packages[compiler]:
             self.packages[compiler][package] = CraftManifestEntry(package)
         return self.packages[compiler][package]
 

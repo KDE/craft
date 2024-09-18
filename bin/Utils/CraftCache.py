@@ -5,7 +5,6 @@ import pickle
 import re
 import shutil
 import subprocess
-import sys
 import tempfile
 import time
 import urllib.error
@@ -183,7 +182,7 @@ class CraftCache(object):
 
     def cacheJsonFromUrl(self, url, timeout=10) -> object:
         CraftCore.log.debug(f"Fetch Json: {url}")
-        if not url in self._jsonCache:
+        if url not in self._jsonCache:
             if os.path.isfile(url):
                 with open(url, "rt", encoding="UTF-8") as jsonFile:
                     # don't cache local manifest

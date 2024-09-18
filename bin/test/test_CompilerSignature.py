@@ -1,5 +1,3 @@
-import configparser
-
 import CraftTestBase
 from CraftCompiler import CraftCompiler, CraftCompilerSignature
 

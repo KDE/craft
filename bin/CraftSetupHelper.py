@@ -153,7 +153,7 @@ class SetupHelper(object):
             del os.environ[key]
 
     def addDefaultEnvVar(self, key, val):
-        if not key in os.environ:
+        if key not in os.environ:
             self.addEnvVar(key, val)
 
     def prependEnvVar(self, key: str, var: str, sep: str = os.path.pathsep) -> None:
@@ -367,7 +367,7 @@ class SetupHelper(object):
 
     def _setupWin(self):
         self.addEnvVar("PYTHONUTF8", "1")
-        if not "HOME" in os.environ:
+        if "HOME" not in os.environ:
             self.addEnvVar("HOME", os.getenv("USERPROFILE"))
 
         self.addEnvVar(

@@ -2,7 +2,6 @@ import os
 import sqlite3
 
 from CraftCore import CraftCore
-from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 
 
@@ -133,7 +132,7 @@ class InstallDB(object):
     SCHEMA_VERSION = 1
 
     def __init__(self, filename=None):
-        if filename == None:
+        if filename is None:
             filename = os.path.join(CraftStandardDirs.etcBlueprintDir(), "install.db")
 
         self.dbfilename = filename

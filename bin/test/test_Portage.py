@@ -1,5 +1,3 @@
-import importlib
-
 import CraftConfig
 import CraftTestBase
 from Blueprints import CraftDependencyPackage, CraftPackageObject

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import info
 import utils
-from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftCore import CraftCore
 from Package.PipPackageBase import PipPackageBase
 

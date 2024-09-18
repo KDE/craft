@@ -221,7 +221,6 @@ class CraftBase(object):
         includePackagePath=False,
         includeTimeStamp=False,
     ) -> str:
-
         archiveBaseName = self.binaryArchiveBaseName(pkgSuffix, includeRevision, includeTimeStamp)
 
         if fileType:

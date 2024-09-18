@@ -3,7 +3,6 @@ import os
 
 import info
 import utils
-from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from Package.BinaryPackageBase import BinaryPackageBase
 

@@ -74,7 +74,7 @@ sys.path.append(os.path.join(thisdir, os.pardir))
 # allow fallback to settings template
 os.environ["CRAFT_TEST"] = "True"
 # also set fallback ABI for that case
-if not "CRAFT_TEST_ABI" in os.environ:
+if "CRAFT_TEST_ABI" not in os.environ:
     os.environ["CRAFT_TEST_ABI"] = fallbackTestAbi()
 from CraftCore import CraftCore
 

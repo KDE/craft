@@ -60,7 +60,7 @@ class ActionHandler:
 
         @staticmethod
         def _addOrdered(namespace, key, value):
-            if not "ordered_args" in namespace:
+            if "ordered_args" not in namespace:
                 setattr(namespace, "ordered_args", collections.OrderedDict())
             namespace.ordered_args[key] = value
 
@@ -294,7 +294,7 @@ def main(timer):
     parser.add_argument(
         "--version",
         action="version",
-        version=f"%(prog)s",
+        version="%(prog)s",
     )
     parser.add_argument("packageNames", nargs=argparse.REMAINDER)
 
@@ -338,7 +338,7 @@ def main(timer):
         run = list(filter(lambda entry: not entry.startswith("-psn"), args.run))
         useShell = len(run) == 1
         if CraftCore.compiler.isMacOS:
-            useShell = not ".app" in run[1] if run[0].endswith("open") else not ".app" in run[0]
+            useShell = ".app" not in run[1] if run[0].endswith("open") else ".app" not in run[0]
         return utils.system(run, shell=useShell)
     elif args.run_detached:
         run_detached = list(filter(lambda entry: not entry.startswith("-psn"), args.run_detached))

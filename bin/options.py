@@ -1,4 +1,4 @@
-## @package property handling
+# @package property handling
 #
 # (c) copyright 2009-2011 Ralf Habacker <ralf.habacker@freenet.de>
 #
@@ -13,7 +13,11 @@ import re
 import zlib
 
 import utils
-from Blueprints.CraftPackageObject import BlueprintException, BlueprintNotFoundException, CraftPackageObject
+from Blueprints.CraftPackageObject import (
+    BlueprintException,
+    BlueprintNotFoundException,
+    CraftPackageObject,
+)
 from CraftCore import CraftCore
 from CraftDebug import deprecated
 from Utils.Arguments import Arguments
@@ -197,7 +201,7 @@ class UserOptions(object):
             if not UserOptions.instance().registeredOptions[self._package.path][key].compatible:
                 if key not in other:
                     # a new key but is empty, False is a new value and needs to be handled
-                    if not value and value != False:
+                    if not value and value is not False:
                         continue
                     CraftCore.log.info(f"Config is not compatible: {key} is a new option")
                     return False
@@ -413,17 +417,17 @@ class OptionsBase(object):
         pass
 
 
-## options for the fetch action
+# options for the fetch action
 class OptionsFetch(OptionsBase):
     def __init__(self):
-        ## option comment
+        # option comment
         self.option = None
         self.ignoreExternals = False
-        ## enable submodule support in git single branch mode
+        # enable submodule support in git single branch mode
         self.checkoutSubmodules = False
 
 
-## options for the unpack action
+# options for the unpack action
 class OptionsUnpack(OptionsBase):
     def __init__(self):
         #  Use this option to run 3rd party installers
@@ -433,14 +437,14 @@ class OptionsUnpack(OptionsBase):
         self.keepSymlinksOnWindows = False
 
 
-## options for the configure action
+# options for the configure action
 class OptionsConfigure(OptionsBase):
     def __init__(self, dynamic):
-        ## with this option additional arguments could be added to the configure commmand line
+        # with this option additional arguments could be added to the configure commmand line
         self.args = Arguments(dynamic.args)
-        ## with this option additional arguments could be added to the configure commmand line (for static builds)
+        # with this option additional arguments could be added to the configure commmand line (for static builds)
         self.staticArgs = Arguments()
-        ## set source subdirectory as source root for the configuration tool.
+        # set source subdirectory as source root for the configuration tool.
         # Sometimes it is required to take a subdirectory from the source tree as source root
         # directory for the configure tool, which could be enabled by this option. The value of
         # this option is added to sourceDir() and the result is used as source root directory.
@@ -452,26 +456,26 @@ class OptionsConfigure(OptionsBase):
         # add the cmake defines that are needed to build tools (if buildTools is True)
         self.toolsDefine = None
 
-        ## run autogen in autotools
+        # run autogen in autotools
         self.bootstrap = False
 
-        ## run "autoreconf -vfi" in autotools
+        # run "autoreconf -vfi" in autotools
         self.autoreconf = True
 
-        ## optional arguments for autoreconf
+        # optional arguments for autoreconf
         self.autoreconfArgs = Arguments(["-vfi"])
 
-        ## Whether to add the default -I flags when running autoreconf
-        ## This is needed since some packages fail if we pass -I to autoreconf
+        # Whether to add the default -I flags when running autoreconf
+        # This is needed since some packages fail if we pass -I to autoreconf
         self.useDefaultAutoreconfIncludes = True
 
         # do not use default include path
         self.noDefaultInclude = False
 
-        ## do not use default lib path
+        # do not use default lib path
         self.noDefaultLib = False
 
-        ## set this attribute in case a non standard configuration
+        # set this attribute in case a non standard configuration
         # tool is required (supported currently by QMakeBuildSystem only)
         self.tool = False
 
@@ -497,12 +501,12 @@ class OptionsConfigure(OptionsBase):
         self.noCacheFile = False
 
 
-## options for the make action
+# options for the make action
 class OptionsMake(OptionsBase):
     def __init__(self):
-        ## ignore make error
+        # ignore make error
         self.ignoreErrors = None
-        ## options for the make tool
+        # options for the make tool
         self.args = Arguments()
         self.supportsMultijob = True
 
@@ -519,61 +523,61 @@ class OptionsMake(OptionsBase):
 
 class OptionsInstall(OptionsBase):
     def __init__(self):
-        ## options passed to make on install
+        # options passed to make on install
         self.args = Arguments(["install"])
 
 
-## options for the package action
+# options for the package action
 class OptionsPackage(OptionsBase):
     def __init__(self):
-        ## defines the package name
+        # defines the package name
         self.packageName = None
-        ## defines the package version
+        # defines the package version
         self.version = None
-        ## use compiler in package name
+        # use compiler in package name
         self.withCompiler = True
-        ## use special packaging mode  (only for qt)
+        # use special packaging mode  (only for qt)
         self.specialMode = False
-        ## pack also sources
+        # pack also sources
         self.packSources = True
-        ## pack from subdir of imageDir()
+        # pack from subdir of imageDir()
         # currently supported by SevenZipPackager
         self.packageFromSubDir = None
-        ## use architecture in package name
+        # use architecture in package name
         # currently supported by SevenZipPackager
         self.withArchitecture = False
-        ## add file digests to the package located in the manifest sub dir
-        ##disable stripping of binary files
+        # add file digests to the package located in the manifest sub dir
+        # disable stripping of binary files
         # needed for mysql, striping make the library unusable
         self.disableStriping = False
 
-        ##disable the binary cache for this package
+        # disable the binary cache for this package
         self.disableBinaryCache = False
 
-        ## whether to move the plugins to bin
+        # whether to move the plugins to bin
         self.movePluginsToBin = utils.OsUtils.isWin()
-        ## whether to move the translations to bin
+        # whether to move the translations to bin
         self.moveTranslationsToBin = utils.OsUtils.isWin()
 
 
-## main option class
+# main option class
 class Options(object):
     def __init__(self, package=None):
         self.dynamic = UserOptions.get(package)
-        ## options of the fetch action
+        # options of the fetch action
         self.fetch = OptionsFetch()
-        ## options of the unpack action
+        # options of the unpack action
         self.unpack = OptionsUnpack()
-        ## options of the configure action
+        # options of the configure action
         self.configure = OptionsConfigure(self.dynamic)
         self.make = OptionsMake()
         self.install = OptionsInstall()
-        ## options of the package action
+        # options of the package action
         self.package = OptionsPackage()
-        ## add the date to the target
+        # add the date to the target
         self.dailyUpdate = False
 
-        ## there is a special option available already
+        # there is a special option available already
         self.buildTools = False
         self.useShadowBuild = True
 
