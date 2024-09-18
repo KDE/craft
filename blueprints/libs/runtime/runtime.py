@@ -54,9 +54,9 @@ class Package(BinaryPackageBase):
             redistDir = None
             if self.buildType() != "Debug":
                 if CraftCore.compiler.getInternalVersion() >= 15:
-                    if CraftCore.compiler.signature.abi.isMSVC2022:
+                    if CraftCore.compiler.abi.isMSVC2022:
                         flavor = "2022"
-                    elif CraftCore.compiler.signature.abi.isMSVC2019:
+                    elif CraftCore.compiler.abi.isMSVC2019:
                         flavor = "2019"
                     else:
                         raise Exception("Unknown compiler")
