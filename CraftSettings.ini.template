@@ -74,7 +74,7 @@ AllowAnsiColor = 1
 [Paths]
 ## This is the location of your python installation.
 ## This value must be set.
-Python = C:\PROGRA~1\Python36
+Python = C:\PROGRA~1\Python38
 
 ## Craft ist able to fetch and install Msys itself, but if you prefer to use
 ## your own installation specify it here
