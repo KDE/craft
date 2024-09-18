@@ -330,9 +330,16 @@ class CraftCompiler(object):
     @unique
     class Abi(CompilerFlags):
         Error = auto()
-        msvc2017 = auto()
         msvc2019 = auto()
         msvc2022 = auto()
+
+        @property
+        def isMSVC2019(self) -> bool:
+            return bool(self.signature.abi & CraftCompiler.Abi.msvc2019)
+
+        @property
+        def isMSVC2022(self) -> bool:
+            return bool(self.signature.abi & CraftCompiler.Abi.msvc2022)
 
     @unique
     class Compiler(CompilerFlags):
@@ -445,12 +452,6 @@ class CraftCompiler(object):
             return ".pdb"
         else:
             return ".debug"
-
-    def isMSVC2019(self):
-        return self.signature.abi == CraftCompiler.Abi.msvc2019
-
-    def isMSVC2022(self):
-        return self.signature.abi == CraftCompiler.Abi.msvc2022
 
     def getGCCLikeVersion(self, compilerExecutable):
         _, result = CraftCore.cache.getCommandOutput(compilerExecutable, "--version")
