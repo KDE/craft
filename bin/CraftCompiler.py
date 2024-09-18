@@ -411,6 +411,10 @@ class CraftCompiler(object):
     def architecture(self) -> Architecture:
         return self.signature.architecture
 
+    @property
+    def abi(self) -> Abi:
+        return self.signature.abi
+
     @staticmethod
     def _detectHost() -> CraftCompilerSignature:
         hostPlatform = {
