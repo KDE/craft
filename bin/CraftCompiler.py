@@ -335,11 +335,11 @@ class CraftCompiler(object):
 
         @property
         def isMSVC2019(self) -> bool:
-            return bool(self.signature.abi & CraftCompiler.Abi.msvc2019)
+            return bool(self.value & CraftCompiler.Abi.msvc2019)
 
         @property
         def isMSVC2022(self) -> bool:
-            return bool(self.signature.abi & CraftCompiler.Abi.msvc2022)
+            return bool(self.value & CraftCompiler.Abi.msvc2022)
 
     @unique
     class Compiler(CompilerFlags):
