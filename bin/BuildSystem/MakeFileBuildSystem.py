@@ -4,7 +4,10 @@
 
 """@package provides simple makefile based build system without any configure step"""
 
-from BuildSystem.BuildSystemBase import *
+import utils
+from Blueprints.CraftPackageObject import CraftPackageObject
+from BuildSystem.BuildSystemBase import BuildSystemBase
+from Utils.Arguments import Arguments
 
 
 class MakeFileBuildSystem(BuildSystemBase):

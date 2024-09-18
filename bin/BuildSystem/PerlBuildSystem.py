@@ -21,7 +21,13 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
-from BuildSystem.MakeFileBuildSystem import *
+import os
+
+import utils
+from BuildSystem.MakeFileBuildSystem import MakeFileBuildSystem
+from CraftCore import CraftCore
+from CraftOS.osutils import OsUtils
+from Utils.Arguments import Arguments
 
 
 # based on https://wiki.archlinux.org/index.php/Perl_package_guidelines
@@ -68,7 +74,7 @@ class PerlBuildSystem(MakeFileBuildSystem):
         with utils.ScopedEnv(env):
             if 1 and CraftCore.compiler.isWindows:
                 # ugly hack to make destdir work, it probably breaks some scripts
-                makeFile = os.path.join(self.buildDir(), "Makefile")
+                makeFile = self.buildDir() / "Makefile"
                 with open(makeFile, "rt") as make:
                     txt = make.read()
                 with open(makeFile, "wt") as make:

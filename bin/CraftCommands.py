@@ -21,25 +21,26 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
+import configparser
 import glob
+import os
+import re
 import subprocess
+import sys
 import tempfile
 from collections import OrderedDict, namedtuple
 from pathlib import Path
-import sys
+
 import CraftBase
 import utils
 from Blueprints.CraftDependencyPackage import CraftDependencyPackage, DependencyType
-from Blueprints.CraftPackageObject import CraftPackageObject, BlueprintNotFoundException
+from Blueprints.CraftPackageObject import BlueprintNotFoundException, CraftPackageObject
+from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from options import UserOptions
-from CraftCore import CraftCore
 from Utils import CraftTimer
 from Utils.CraftTitleUpdater import CraftTitleUpdater
 from Utils.StageLogger import StageLogger
-import configparser
-import re
-import os
 
 
 def __recurseCraft(command: [str], args: [str]):

@@ -72,7 +72,6 @@ class AutoToolsBuildSystem(BuildSystemBase):
         return self._shell
 
     def configureDefaultDefines(self):
-
         """defining the default cmake cmd line"""
         return ""
 

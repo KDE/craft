@@ -29,10 +29,11 @@ import os
 import tempfile
 from pathlib import Path
 
+import utils
+from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftCore import CraftCore
-from Source.SourceBase import *
+from Source.SourceBase import SourceBase
 from Utils import CraftChoicePrompt, CraftHash, GetFiles
-from Utils.CraftManifest import CraftManifest
 
 
 class ArchiveSource(SourceBase):

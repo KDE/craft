@@ -1,10 +1,11 @@
 #
 # copyright (c) 2010 Ralf Habacker <ralf.habacker@freenet.de>
 #
-from BuildSystem.MakeFileBuildSystem import *
-from Package.PackageBase import *
+from BuildSystem.MakeFileBuildSystem import MakeFileBuildSystem
+from CraftCore import CraftCore
+from Package.PackageBase import PackageBase
 from Packager.TypePackager import TypePackager
-from Source.MultiSource import *
+from Source.MultiSource import MultiSource
 
 
 class MakeFilePackageBase(PackageBase, MultiSource, MakeFileBuildSystem, TypePackager):

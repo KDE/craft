@@ -2,10 +2,15 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 
+from pathlib import Path
+
+import utils
+from Blueprints.CraftPackageObject import CraftPackageObject
+from CraftCore import CraftCore
 from Source.ArchiveSource import ArchiveSource
 from Source.DirSource import DirSource
 from Source.GitSource import GitSource
-from Source.SourceBase import *
+from Source.SourceBase import SourceBase
 from Source.SvnSource import SvnSource
 
 

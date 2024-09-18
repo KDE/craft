@@ -1,8 +1,10 @@
 import configparser
 
 import CraftTestBase
-from Blueprints.CraftVersion import *
-from options import *
+from Blueprints.CraftPackageObject import CraftPackageObject
+from CraftCore import CraftCore
+from options import UserOptions
+from Utils.Arguments import Arguments
 
 
 class TestUserOptions(CraftTestBase.CraftTestBase):

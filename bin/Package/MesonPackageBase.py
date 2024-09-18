@@ -20,10 +20,11 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
-from BuildSystem.MesonBuildSystem import *
-from Package.PackageBase import *
+from BuildSystem.MesonBuildSystem import MesonBuildSystem
+from CraftCore import CraftCore
+from Package.PackageBase import PackageBase
 from Packager.TypePackager import TypePackager
-from Source.MultiSource import *
+from Source.MultiSource import MultiSource
 
 
 class MesonPackageBase(PackageBase, MultiSource, MesonBuildSystem, TypePackager):

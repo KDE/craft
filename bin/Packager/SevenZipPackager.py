@@ -30,13 +30,9 @@
 # This packager is in an experimental state - the implementation
 # and features may change in further versions
 
-import json
-import subprocess
-
 from Blueprints.CraftPackageObject import CraftPackageObject
+from CraftBase import InitGuard
 from CraftCore import CraftCore
-from CraftOS.osutils import OsUtils
-from Package.PackageBase import InitGuard
 from Packager.PackagerBase import PackagerBase
 from Utils import CraftHash
 from Utils.CraftManifest import CraftManifest, FileType

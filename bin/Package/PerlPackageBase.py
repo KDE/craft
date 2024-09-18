@@ -22,10 +22,11 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-from BuildSystem.PerlBuildSystem import *
-from Package.PackageBase import *
+from BuildSystem.PerlBuildSystem import PerlBuildSystem
+from CraftCore import CraftCore
+from Package.PackageBase import PackageBase
 from Packager.TypePackager import TypePackager
-from Source.MultiSource import *
+from Source.MultiSource import MultiSource
 
 
 class PerlPackageBase(PackageBase, MultiSource, PerlBuildSystem, TypePackager):

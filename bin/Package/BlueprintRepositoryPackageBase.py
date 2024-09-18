@@ -22,7 +22,8 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-from Package.SourceOnlyPackageBase import *
+from CraftCore import CraftCore
+from Package.SourceOnlyPackageBase import SourceOnlyPackageBase
 
 
 class BlueprintRepositoryPackageBase(SourceOnlyPackageBase):
@@ -47,4 +48,4 @@ class BlueprintRepositoryPackageBase(SourceOnlyPackageBase):
         return True
 
     def checkoutDir(self, index=0):
-        return os.path.join(CraftStandardDirs.blueprintRoot(), self.package.name)
+        return CraftStandardDirs.blueprintRoot() / self.package.name

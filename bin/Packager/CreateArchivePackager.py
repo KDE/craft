@@ -1,4 +1,6 @@
-from Packager.CollectionPackagerBase import *
+from CraftBase import InitGuard
+from CraftCore import CraftCore
+from Packager.CollectionPackagerBase import CollectionPackagerBase
 
 
 class CreateArchivePackager(CollectionPackagerBase):

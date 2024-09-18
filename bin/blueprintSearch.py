@@ -1,10 +1,10 @@
 import re
 
 import utils
-from Blueprints.CraftDependencyPackage import *
-from Blueprints.CraftPackageObject import *
+from Blueprints.CraftPackageObject import CraftPackageObject
 from Blueprints.CraftVersion import CraftVersion
 from Blueprints.MetaInfo import MetaInfo
+from CraftCore import CraftCore
 from options import UserOptions
 from Utils import CraftTimer
 

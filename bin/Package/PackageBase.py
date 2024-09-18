@@ -2,12 +2,13 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 import json
-from pathlib import Path
+import os
 
-from Blueprints.CraftPackageObject import *
-from CraftBase import *
-from CraftCompiler import *
-from InstallDB import *
+import utils
+from Blueprints.CraftPackageObject import BlueprintException
+from CraftBase import CraftBase
+from CraftCore import CraftCore
+from CraftOS.osutils import OsUtils
 from Utils import CraftChoicePrompt, CraftHash, GetFiles
 from Utils.CraftManifest import CraftManifest, FileType
 
@@ -36,7 +37,7 @@ class PackageBase(CraftBase):
     def qmerge(self, dbOnly=False):
         """mergeing the imagedirectory into the filesystem"""
         CraftCore.log.debug("PackageBase.qmerge called")
-        ## \todo is this the optimal place for creating the post install scripts ?
+        # \todo is this the optimal place for creating the post install scripts ?
 
         if self.package.isInstalled:
             self.unmerge(dbOnly=dbOnly)

@@ -139,9 +139,9 @@ class BashShell(object):
                             "-DWINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP",
                         ]
                     )
-                    self._environment[
-                        "WINDRES"
-                    ] = f"windres --target={'pe-i386' if CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_32 else 'pe-x86-64'} --preprocessor=cl {windresArg}"
+                    self._environment["WINDRES"] = (
+                        f"windres --target={'pe-i386' if CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_32 else 'pe-x86-64'} --preprocessor=cl {windresArg}"
+                    )
                     self._environment["RC"] = f"{self._environment['WINDRES']} -O COFF"
 
                     self._environment["STRIP"] = ":"

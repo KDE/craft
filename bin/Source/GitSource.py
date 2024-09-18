@@ -29,8 +29,12 @@ import io
 import os
 import tempfile
 from datetime import datetime
+from pathlib import Path
 
-from Source.VersionSystemSourceBase import *
+import utils
+from Blueprints.CraftPackageObject import CraftPackageObject
+from CraftCore import CraftCore
+from Source.VersionSystemSourceBase import VersionSystemSourceBase
 from Utils.CraftShortPath import CraftShortPath
 
 ## \todo requires installed git package -> add suport for installing packages
