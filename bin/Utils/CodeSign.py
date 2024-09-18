@@ -33,7 +33,7 @@ from typing import Union
 
 import utils
 from CraftCore import CraftCore
-from CraftOS.osutils import LockFile, OsUtils
+from CraftOS.osutils import LockFile
 from CraftSetupHelper import SetupHelper
 from Utils import CraftChoicePrompt
 from Utils.StageLogger import StageLogger
@@ -102,7 +102,7 @@ def __signWindowsWithSignTool(fileNames: Union[Path, str]) -> bool:
 
 
 def __signWindowsWithCustomCommand(customCommand: str, fileNames: Union[Path, str]) -> bool:
-    CraftCore.log.info(f"Signing with custom command")
+    CraftCore.log.info("Signing with custom command")
     cmd = shlex.split(customCommand)
     if "%F" in cmd:
         filelistFile = None

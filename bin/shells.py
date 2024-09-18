@@ -6,7 +6,6 @@
 import os
 import platform
 import shutil
-import subprocess
 import sys
 from pathlib import Path
 
@@ -113,7 +112,6 @@ class BashShell(object):
                     self._environment["MSYSTEM"] = f"MSYS{CraftCore.compiler.architecture.bits}_CRAFT"
 
                 if self.useMSVCCompatEnv and CraftCore.compiler.compiler.isMSVC:
-
                     automake = []
                     for d in os.scandir(os.path.join(os.path.dirname(self._findBash()), "..", "share")):
                         if d.name.startswith("automake"):
@@ -142,9 +140,9 @@ class BashShell(object):
                             "-DWINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP",
                         ]
                     )
-                    self._environment["WINDRES"] = (
-                        f"windres --target={'pe-i386' if CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_32 else 'pe-x86-64'} --preprocessor=cl {windresArg}"
-                    )
+                    self._environment[
+                        "WINDRES"
+                    ] = f"windres --target={'pe-i386' if CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_32 else 'pe-x86-64'} --preprocessor=cl {windresArg}"
                     self._environment["RC"] = f"{self._environment['WINDRES']} -O COFF"
 
                     self._environment["STRIP"] = ":"

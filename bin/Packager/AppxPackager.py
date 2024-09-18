@@ -36,7 +36,6 @@ from CraftBase import InitGuard
 from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from Packager.CollectionPackagerBase import CollectionPackagerBase
-from Packager.PortablePackager import PortablePackager
 from Utils import CodeSign
 
 
@@ -270,7 +269,7 @@ class AppxPackager(CollectionPackagerBase):
     def createPackage(self):
         defines = self.setDefaults(self.defines)
 
-        if not "executable" in defines:
+        if "executable" not in defines:
             CraftCore.log.error(
                 "Please add self.defines['shortcuts'] to the installer defines. e.g.\n"
                 """self.defines["shortcuts"] = [{"name" : "Kate", "target":"bin/kate.exe", "description" : self.subinfo.description}]"""

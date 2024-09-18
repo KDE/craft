@@ -117,7 +117,7 @@ class SevenZipPackager(PackagerBase):
             if CraftCore.settings.getboolean("ContinuousIntegration", "UpdateRepository", False):
                 manifestUrls = [self.cacheRepositoryUrls()[0]]
             else:
-                CraftCore.log.warning(f'Creating new cache, if you want to extend an existing cache, set "[ContinuousIntegration]UpdateRepository = True"')
+                CraftCore.log.warning('Creating new cache, if you want to extend an existing cache, set "[ContinuousIntegration]UpdateRepository = True"')
                 manifestUrls = None
 
             manifestLocation = dstpath / "manifest.json"

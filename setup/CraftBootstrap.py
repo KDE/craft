@@ -43,7 +43,7 @@ class CraftBootstrap(object):
 
         if not dryRun:
             with open(
-                os.path.join(craftRoot, f"craft-tmp", "CraftSettings.ini.template"),
+                os.path.join(craftRoot, "craft-tmp", "CraftSettings.ini.template"),
                 "rt",
                 encoding="UTF-8",
             ) as ini:
@@ -133,7 +133,7 @@ class CraftBootstrap(object):
 
     def setSettingsValue(self, section, key, value):
         reKey = re.compile(r"^[\#;]?\s*{key}\s*=.*$".format(key=key), re.IGNORECASE)
-        reSection = re.compile(r"^\[(.*)\]$".format(section=section))
+        reSection = re.compile(r"^\[(.*)\]$")
         inSection = False
         for i, line in enumerate(self.settings):
             sectionMatch = reSection.match(line)
@@ -188,7 +188,7 @@ class CraftBootstrap(object):
 def run(args, command):
     root = os.path.join(args.prefix, "craft")
     if not os.path.isdir(root):
-        root = os.path.join(args.prefix, f"craft-tmp")
+        root = os.path.join(args.prefix, "craft-tmp")
     script = os.path.join(root, "bin", "craft.py")
     command = [sys.executable, script] + [str(x) for x in command]
     commandStr = " ".join(command)
@@ -324,7 +324,7 @@ def setUp(args):
         if args.localDev:
             shutil.copytree(
                 args.localDev,
-                os.path.join(args.prefix, f"craft-tmp"),
+                os.path.join(args.prefix, "craft-tmp"),
                 ignore=shutil.ignore_patterns(".git"),
             )
             print("Getting code from local {}".format(args.localDev))
@@ -390,7 +390,7 @@ def setUp(args):
     # bootstrap
     run(args, cmd + ["craft"])
     if not args.dry_run:
-        shutil.rmtree(os.path.join(args.prefix, f"craft-tmp"))
+        shutil.rmtree(os.path.join(args.prefix, "craft-tmp"))
 
     # install optional packages from shelve
     run(args, cmd + ["--unshelve", tmpShelf])

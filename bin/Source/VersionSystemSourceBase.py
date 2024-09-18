@@ -81,7 +81,7 @@ class VersionSystemSourceBase(SourceBase):
             else:
                 url = u
             if url.startswith("["):
-                url = url[url.find("]", 1) + 1 :]
+                url = url[(url.find("]", 1) + 1) :]
             return url
         else:
             return False
@@ -104,7 +104,7 @@ class VersionSystemSourceBase(SourceBase):
         else:
             CraftCore.log.critical("svnTarget property not set for this target")
 
-        if self.subinfo.targetSourceSuffix() != None:
+        if self.subinfo.targetSourceSuffix() is not None:
             sourcedir = Path("%s-%s" % (sourcedir, self.subinfo.targetSourceSuffix()))
 
         return sourcedir.absolute()

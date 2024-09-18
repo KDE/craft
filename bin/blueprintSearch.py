@@ -79,7 +79,7 @@ def packages():
 def printSearch(search_package, maxDist=2):
     searchPackageLower = search_package.lower()
     isPath = "/" in searchPackageLower
-    with CraftTimer.Timer("Search", 0) as timer:
+    with CraftTimer.Timer("Search", 0):
         similar = []
         match = None
         package_re = re.compile(f".*{search_package}.*", re.IGNORECASE)

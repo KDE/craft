@@ -1,7 +1,5 @@
 import subprocess
 
-from CraftCore import CraftCore
-
 
 class Arguments(object):
     def __init__(self, args: [str] = None):

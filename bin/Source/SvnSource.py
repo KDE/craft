@@ -2,7 +2,7 @@
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
 # subversion support
-## \todo needs dev-utils/subversion package, add some kind of tool requirement tracking for SourceBase derived classes
+# \todo needs dev-utils/subversion package, add some kind of tool requirement tracking for SourceBase derived classes
 import datetime
 import os
 import tempfile
@@ -39,7 +39,7 @@ class SvnSource(VersionSystemSourceBase):
         else:
             CraftCore.log.critical("svnTarget property not set for this target")
 
-        if self.subinfo.targetSourceSuffix() != None:
+        if self.subinfo.targetSourceSuffix() is not None:
             sourcedir = "%s-%s" % (sourcedir, self.subinfo.targetSourceSuffix())
 
         return sourcedir
@@ -79,7 +79,7 @@ class SvnSource(VersionSystemSourceBase):
                     sourcedir = self.checkoutDir(i)
                     break
             # if not found use the second last one
-            if sourcedir == None:
+            if sourcedir is None:
                 sourcedir = self.checkoutDir(n - 2)
         else:
             sourcedir = self.checkoutDir()
@@ -88,7 +88,6 @@ class SvnSource(VersionSystemSourceBase):
         cmd = "svn info %s" % (sourcedir)
 
         with tempfile.TemporaryFile() as tmp:
-
             # run the command
             env = os.environ.copy()
             env["LANG"] = "C"
@@ -125,11 +124,11 @@ class SvnSource(VersionSystemSourceBase):
         and 'tags' which will probably fit for most servers
         """
         (urlBase, urlPath) = self.__splitPath(url)
-        if urlPath == None:
+        if urlPath is None:
             return self.__checkout(url, sourcedir, recursive)
 
         (srcBase, srcPath) = self.__splitPath(sourcedir)
-        if srcPath == None:
+        if srcPath is None:
             return self.__checkout(url, sourcedir, recursive)
 
         urlRepo = urlBase

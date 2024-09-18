@@ -23,7 +23,7 @@
 # SUCH DAMAGE.
 
 
-### fetch functions
+# fetch functions
 
 import io
 import os
@@ -35,8 +35,6 @@ from pathlib import Path
 
 import utils
 from CraftCore import CraftCore
-from CraftDebug import deprecated
-from genericpath import exists
 from shells import Powershell
 
 

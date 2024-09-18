@@ -35,7 +35,7 @@ class CMakeApkPackager(CollectionPackagerBase):
                 for md in tree.findall("application/activity/meta-data"):
                     if md.attrib[prefix + "name"] == "android.app.lib_name":
                         targetName = md.attrib[prefix + "value"]
-                        if not targetName in self.__androidApkTargets:
+                        if targetName not in self.__androidApkTargets:
                             self.__androidApkTargets.add(targetName)
                             self.__androidApkDirs.add(os.path.dirname(file))
         return self.__androidApkTargets

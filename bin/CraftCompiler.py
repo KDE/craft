@@ -25,7 +25,7 @@ import os
 import platform
 import re
 import sys
-from enum import Enum, IntFlag, auto, unique
+from enum import IntFlag, auto, unique
 
 from CraftCore import CraftCore
 from Utils.CraftBool import CraftBool
@@ -91,7 +91,7 @@ class CraftCompilerSignature(object):
                 abi = None
                 compiler = CraftCompiler.Compiler.fromString(split[1])
                 arch = CraftCompiler.Architecture.fromString(split[2])
-        except Exception as e:
+        except Exception:
             # legacy
             try:
                 compiler = CraftCompiler.Compiler.fromString(split[2])

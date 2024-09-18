@@ -30,7 +30,7 @@ class infoclass(object):
     """this module contains the information class"""
 
     def __init__(self, parent):
-        ### package options
+        # package options
         self.parent = parent
         self.options = Options(parent.package)
         self.versionInfo = VersionInfo.VersionInfo(subinfo=self)
@@ -50,7 +50,7 @@ class infoclass(object):
 
         self.targetDigests = {}
         self.targetDigestUrls = {}
-        ## \todo prelimary
+        # \todo prelimary
         self.svnTargets = {}
         self.targetUpdatedRepoUrl = {}
 

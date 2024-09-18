@@ -39,7 +39,6 @@ import shutil
 import stat
 import subprocess
 import sys
-import tempfile
 from pathlib import Path
 
 import Notifier.NotificationLoader
@@ -65,7 +64,7 @@ def abstract():
     raise NotImplementedError(caller + " must be implemented in subclass")
 
 
-### unpack functions
+# unpack functions
 
 
 def unpackFiles(downloaddir, filenames, workdir):
@@ -272,10 +271,10 @@ def systemWithoutShell(
         if pipeProcess:
             pipeProcess.args = [str(x) for x in pipeProcess.args]
         arg0 = cmd[0]
-        if not "shell" in kw:
+        if "shell" not in kw:
             kw["shell"] = False
     else:
-        if not "shell" in kw:
+        if "shell" not in kw:
             # use shell, arg0 might end up with "/usr/bin/svn" => needs shell so it can be executed
             kw["shell"] = True
         arg0 = shlex.split(cmd, posix=not OsUtils.isWin())[0]
@@ -403,7 +402,7 @@ def getVCSType(url):
         return "svn"
     elif url.startswith("[hg]"):
         return "hg"
-    ## \todo complete more cvs access schemes
+    # \todo complete more cvs access schemes
     elif url.find("pserver:") >= 0:
         return "cvs"
     else:
@@ -580,7 +579,7 @@ def copyFile(
             os.link(src, dest)
             return True
         except:
-            CraftCore.log.warning("Failed to create hardlink %s for %s" % (dest, src))
+            CraftCore.log.warning(f"Failed to create hardlink {dest} for {src}")
     try:
         shutil.copy2(src, dest, follow_symlinks=False)
     except PermissionError as e:
@@ -1228,7 +1227,7 @@ def getPDBForBinary(path: str) -> Path:
         data = f.read()
     pdb = data.rfind(b".pdb")
     if pdb != -1:
-        return Path(data[data.rfind(0x00, 0, pdb) + 1 : pdb + 4].decode("utf-8"))
+        return Path(data[(data.rfind(0x00, 0, pdb) + 1) : pdb + 4].decode("utf-8"))
     return None
 
 
@@ -1334,7 +1333,7 @@ def localSignMac(binaries):
     CraftCore.log.debug(f"Local signing {[str(x) for x in binaries]}")
     signCommand = ["codesign", "-s", "-", "-f", "--deep", "--preserve-metadata=identifier,entitlements", "--verbose=99"]
     for command in limitCommandLineLength(signCommand, binaries):
-        with StageLogger("localSignMac", buffered=True, outputOnFailure=True) as log:
+        with StageLogger("localSignMac", buffered=True, outputOnFailure=True):
             if not system(command, logCommand=False):
                 return False
     return True

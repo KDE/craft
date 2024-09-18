@@ -69,7 +69,7 @@ def checkFilesDigests(downloaddir, filenames, digests=None, digestAlgorithm=Hash
     for digests, filename in zip(digestList, filenames):
         pathName = os.path.join(downloaddir, filename)
         CraftCore.log.debug(f"checking digest of: {pathName}")
-        if digests == None:
+        if digests is None:
             for (
                 digestAlgorithm,
                 digestFileEnding,
@@ -102,7 +102,7 @@ def checkFilesDigests(downloaddir, filenames, digests=None, digestAlgorithm=Hash
 
 def createDigestFiles(path, algorithms=None):
     """creates a sha1 diget file"""
-    if algorithms == None:
+    if algorithms is None:
         algorithms = [HashAlgorithm.SHA256]
     for algorithm in algorithms:
         digets = digestFile(path, algorithm)

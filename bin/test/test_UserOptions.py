@@ -33,7 +33,7 @@ class TestUserOptions(CraftTestBase.CraftTestBase):
         package = CraftPackageObject.get("dev-utils/7zip")
         # init the package
         package.subinfo.registerOptions()
-        instance = self._prepare(
+        self._prepare(
             {
                 package.path: {
                     "version": "5",

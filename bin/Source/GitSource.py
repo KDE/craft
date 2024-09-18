@@ -37,7 +37,7 @@ from CraftCore import CraftCore
 from Source.VersionSystemSourceBase import VersionSystemSourceBase
 from Utils.CraftShortPath import CraftShortPath
 
-## \todo requires installed git package -> add suport for installing packages
+# \todo requires installed git package -> add suport for installing packages
 
 
 class GitSource(VersionSystemSourceBase):

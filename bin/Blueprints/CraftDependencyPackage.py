@@ -98,7 +98,7 @@ class CraftDependencyPackage(CraftPackageObject):
                                     self,
                                 )
 
-                    if requiredVersion and requiredVersion != None and CraftVersion(package.version) < CraftVersion(requiredVersion):
+                    if requiredVersion and requiredVersion is not None and CraftVersion(package.version) < CraftVersion(requiredVersion):
                         raise BlueprintException(
                             f"{self} requries {package} version {requiredVersion!r} but {package.version!r} is installed",
                             self,

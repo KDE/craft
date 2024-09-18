@@ -222,7 +222,6 @@ def destroyCraftRoot() -> bool:
 
 
 def unShelve(shelve, args):
-    packageNames = []
     parser = configparser.ConfigParser(allow_no_value=True)
     parser.read(shelve, encoding="UTF-8")
     listVersion = 1

@@ -23,6 +23,7 @@
 # SUCH DAMAGE.
 
 from CraftCore import CraftCore
+from CraftStandardDirs import CraftStandardDirs
 from Package.SourceOnlyPackageBase import SourceOnlyPackageBase
 
 

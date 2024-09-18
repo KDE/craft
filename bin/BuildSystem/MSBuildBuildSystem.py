@@ -73,7 +73,7 @@ class MSBuildBuildSystem(BuildSystemBase):
                 sdkVer = ""
             toolsVersion = f"{CraftCore.compiler.getInternalVersion()}.0"
             if toolsVersion == "15.0" and msbuildVersion >= "16":
-                toolsVersion = f" /toolsversion:Current"
+                toolsVersion = " /toolsversion:Current"
             elif os.path.exists(r"C:\Program Files (x86)\MSBuild\{0}".format(toolsVersion)):
                 toolsVersion = f" /toolsversion:{toolsVersion}"
             else:
