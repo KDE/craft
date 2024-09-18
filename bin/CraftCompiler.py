@@ -472,7 +472,6 @@ class CraftCompiler(object):
         if not self.compiler.isMSVC:
             return self.getVersion()
         versions = {
-            CraftCompiler.Abi.msvc2017: 15,
             CraftCompiler.Abi.msvc2019: 16,
             CraftCompiler.Abi.msvc2022: 17,
         }
@@ -482,7 +481,6 @@ class CraftCompiler(object):
 
     def getMsvcPlatformToolset(self):
         versions = {
-            CraftCompiler.Abi.msvc2017: 141,
             CraftCompiler.Abi.msvc2019: 142,
             CraftCompiler.Abi.msvc2022: 143,
         }
