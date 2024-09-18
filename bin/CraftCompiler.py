@@ -446,9 +446,6 @@ class CraftCompiler(object):
         else:
             return ".debug"
 
-    def isMSVC2017(self):
-        return self.signature.abi == CraftCompiler.Abi.msvc2017
-
     def isMSVC2019(self):
         return self.signature.abi == CraftCompiler.Abi.msvc2019
 
