@@ -1,4 +1,6 @@
+from CraftCore import CraftCore
 from Package.SourceOnlyPackageBase import *
+from Source.MultiSource import MultiSource
 
 
 # a special package providing source components for another module.

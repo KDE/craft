@@ -15,9 +15,9 @@ class subinfo(info.infoclass):
     def setTargets(self):
         for ver in ["2.13.03", "2.14.02", "2.15.05"]:
             if CraftCore.compiler.compiler.isMSVC:
-                self.targets[
-                    ver
-                ] = f"https://www.nasm.us/pub/nasm/releasebuilds/{ver}/win{CraftCore.compiler.architecture.bits}/nasm-{ver}-win{CraftCore.compiler.architecture.bits}.zip"
+                self.targets[ver] = (
+                    f"https://www.nasm.us/pub/nasm/releasebuilds/{ver}/win{CraftCore.compiler.architecture.bits}/nasm-{ver}-win{CraftCore.compiler.architecture.bits}.zip"
+                )
             else:
                 self.targets[ver] = f"https://www.nasm.us/pub/nasm/releasebuilds/{ver}/nasm-{ver}.tar.bz2"
 

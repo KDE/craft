@@ -2,10 +2,9 @@ import ctypes
 import os
 import subprocess
 
-import utils
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
-from Notifier.NotificationInterface import *
+from Notifier.NotificationInterface import NotificationInterface
 
 
 class Snore(NotificationInterface):

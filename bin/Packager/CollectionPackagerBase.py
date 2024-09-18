@@ -24,17 +24,21 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-import glob
 import inspect
-import types
+import os
+import re
 from pathlib import Path
 from typing import List
 
+import utils
 from Blueprints.CraftDependencyPackage import CraftDependencyPackage, DependencyType
-from Blueprints.CraftPackageObject import *
-from Package.SourceOnlyPackageBase import *
-from Packager.PackagerBase import *
+from Blueprints.CraftPackageObject import BlueprintException, CraftPackageObject
+from CraftBase import InitGuard
+from CraftCore import CraftCore
+from Package.SourceOnlyPackageBase import SourceOnlyPackageBase
+from Packager.PackagerBase import PackagerBase
 from Utils import CodeSign
+from Utils.CraftManifest import FileType
 
 
 def toRegExp(fname, targetName) -> re:

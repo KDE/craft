@@ -1,10 +1,11 @@
 #
 # copyright (c) 2010 Ralf Habacker <ralf.habacker@freenet.de>
 #
-from BuildSystem.AutoToolsBuildSystem import *
-from Package.PackageBase import *
+from BuildSystem.AutoToolsBuildSystem import AutoToolsBuildSystem
+from CraftCore import CraftCore
+from Package.PackageBase import PackageBase
 from Packager.TypePackager import TypePackager
-from Source.MultiSource import *
+from Source.MultiSource import MultiSource
 
 
 class AutoToolsPackageBase(PackageBase, MultiSource, AutoToolsBuildSystem, TypePackager):

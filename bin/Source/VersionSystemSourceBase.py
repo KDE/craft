@@ -1,7 +1,12 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
-from Source.SourceBase import *
+from pathlib import Path
+
+import utils
+from Blueprints.CraftPackageObject import CraftPackageObject
+from CraftCore import CraftCore
+from Source.SourceBase import SourceBase
 
 
 class VersionSystemSourceBase(SourceBase):

@@ -28,6 +28,7 @@
 import argparse
 import collections
 import copy
+import os
 import subprocess
 import sys
 
@@ -35,7 +36,8 @@ import blueprintSearch
 import CraftCommands
 import CraftSetupHelper
 import InstallDB
-from Blueprints.CraftPackageObject import *
+import utils
+from Blueprints.CraftPackageObject import BlueprintException, BlueprintNotFoundException
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from options import UserOptions

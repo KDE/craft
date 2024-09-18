@@ -28,8 +28,8 @@ import info
 import utils
 from CraftCore import CraftCore
 from CraftStandardDirs import CraftStandardDirs
-from Package.MaybeVirtualPackageBase import VirtualIfSufficientVersion
 from Package.BinaryPackageBase import BinaryPackageBase
+from Package.MaybeVirtualPackageBase import VirtualIfSufficientVersion
 from Utils import CraftHash
 
 

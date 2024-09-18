@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import info
-from Package.AutoToolsPackageBase import *
-from Package.MSBuildPackageBase import *
+from CraftCore import CraftCore
+from Package.AutoToolsPackageBase import AutoToolsPackageBase
+from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
@@ -12,7 +13,7 @@ class subinfo(info.infoclass):
 
     def setTargets(self):
         for ver in ["0.21", "0.22.3"]:
-            self.targets[ver] = "https://ftp.gnu.org/pub/gnu/gettext/gettext-%s.tar.gz" % ver
+            self.targets[ver] = f"https://ftp.gnu.org/pub/gnu/gettext/gettext-{ver}.tar.gz"
             self.targetInstSrc[ver] = "gettext-%s" % ver
         self.targetDigests["0.21"] = (["c77d0da3102aec9c07f43671e60611ebff89a996ef159497ce8e59d075786b12"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["0.22.3"] = (["839a260b2314ba66274dae7d245ec19fce190a3aa67869bf31354cb558df42c7"], CraftHash.HashAlgorithm.SHA256)
@@ -139,9 +140,9 @@ class Package(AutoToolsPackageBase):
     def postInstall(self):
         return self.patchInstallPrefix(
             [
-                os.path.join(self.installDir(), "bin", "autopoint"),
-                os.path.join(self.installDir(), "bin", "gettextize"),
-                os.path.join(self.installDir(), "lib", "gettext", "user-email"),
+                self.installDir() / "bin/autopoint",
+                self.installDir() / "bin/gettextize",
+                self.installDir() / "lib/gettext/user-email",
             ],
             self.subinfo.buildPrefix,
             CraftCore.standardDirs.craftRoot(),

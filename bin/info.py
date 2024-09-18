@@ -9,7 +9,7 @@ import os
 # the definition
 from enum import Enum, unique
 from pathlib import Path
-from typing import *
+from typing import List, Tuple
 
 import VersionInfo
 from Blueprints.CraftPackageObject import BlueprintException, CraftPackageObject

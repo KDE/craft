@@ -5,7 +5,6 @@ import os
 import shutil
 from enum import Enum, auto, unique
 from pathlib import Path
-from typing import List
 
 import utils
 from CraftCompiler import CraftCompilerSignature

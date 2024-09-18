@@ -4,7 +4,7 @@ from xml.etree import ElementTree
 
 import utils
 from CraftBase import InitGuard
-from CraftCore import *
+from CraftCore import CraftCore
 from Packager.CollectionPackagerBase import CollectionPackagerBase
 from Utils.Arguments import Arguments
 

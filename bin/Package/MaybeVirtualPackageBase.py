@@ -1,6 +1,9 @@
-import Utils.CraftCache
+from pathlib import Path
+
+from Blueprints.CraftPackageObject import CraftPackageObject
 from Blueprints.CraftVersion import CraftVersion
-from Package.VirtualPackageBase import *
+from CraftCore import CraftCore
+from Package.VirtualPackageBase import VirtualPackageBase
 
 
 class MaybeVirtualPackageBase(object):

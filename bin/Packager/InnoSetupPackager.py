@@ -26,10 +26,13 @@
 # SUCH DAMAGE.
 
 import os
+from pathlib import Path
 
-from Blueprints.CraftVersion import CraftVersion
-from Packager.CollectionPackagerBase import *
-from Packager.PortablePackager import *
+import utils
+from CraftBase import InitGuard
+from CraftCore import CraftCore
+from CraftOS.osutils import OsUtils
+from Packager.PortablePackager import PortablePackager
 from Utils import CodeSign, CraftHash
 
 

@@ -2,9 +2,8 @@ import importlib
 
 import CraftConfig
 import CraftTestBase
-from options import UserOptions
-
 from Blueprints import CraftDependencyPackage, CraftPackageObject
+from options import UserOptions
 
 
 class CraftBlueprintTest(CraftTestBase.CraftTestBase):

@@ -3,9 +3,15 @@
 #
 # subversion support
 ## \todo needs dev-utils/subversion package, add some kind of tool requirement tracking for SourceBase derived classes
+import datetime
+import os
 import tempfile
 
-from Source.VersionSystemSourceBase import *
+import utils
+from Blueprints.CraftPackageObject import CraftPackageObject
+from CraftCore import CraftCore
+from CraftStandardDirs import CraftStandardDirs
+from Source.VersionSystemSourceBase import VersionSystemSourceBase
 
 
 class SvnSource(VersionSystemSourceBase):
@@ -23,13 +29,13 @@ class SvnSource(VersionSystemSourceBase):
             url = url.replace("[svn]", "")
 
             if url.find("://") == -1:
-                sourcedir = os.path.join(CraftStandardDirs.svnDir(), url)
+                sourcedir = CraftStandardDirs.svnDir() / url
             else:
-                sourcedir = os.path.join(CraftStandardDirs.downloadDir(), "svn-src")
-                sourcedir = os.path.join(sourcedir, self.package.path)
+                sourcedir = CraftStandardDirs.downloadDir() / "svn-src"
+                sourcedir = sourcedir / self.package.path
                 _, path = self.__splitPath(url)
                 if path and CraftCore.settings.getboolean("General", "EMERGE_SVN_STDLAYOUT", False):
-                    sourcedir = os.path.join(sourcedir, path)
+                    sourcedir = sourcedir / path
         else:
             CraftCore.log.critical("svnTarget property not set for this target")
 
@@ -42,7 +48,7 @@ class SvnSource(VersionSystemSourceBase):
         """apply a patch to a svn repository checkout"""
         CraftCore.debug.trace("SvnSource.applyPatch")
         if fileName:
-            return utils.applyPatch(self.sourceDir(), os.path.join(self.blueprintDir(), fileName), patchdepth)
+            return utils.applyPatch(self.sourceDir(), self.blueprintDir() / fileName, patchdepth)
         return True
 
     def fetch(self):
@@ -176,10 +182,7 @@ class SvnSource(VersionSystemSourceBase):
         """create patch file from svn source into the related package dir. The patch file is named autocreated.patch"""
         cmd = "svn diff %s > %s" % (
             self.checkoutDir(),
-            os.path.join(
-                self.blueprintDir(),
-                "%s-%s.patch" % (self.package, str(datetime.date.today()).replace("-", "")),
-            ),
+            self.blueprintDir() / "%s-%s.patch" % (self.package, str(datetime.date.today()).replace("-", "")),
         )
         return utils.system(cmd)
 

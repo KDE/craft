@@ -1,11 +1,13 @@
 # This is a internal recipe
+import os
+import re
+
 import info
 from Blueprints.CraftPackageObject import BlueprintException
+from CraftCore import CraftCore
 from CraftStandardDirs import CraftStandardDirs
 from Package.BlueprintRepositoryPackageBase import BlueprintRepositoryPackageBase
-import os
-from CraftCore import CraftCore
-import re
+
 
 class subinfo(info.infoclass):
     def setTargets(self):

@@ -8,13 +8,12 @@
 import atexit
 import collections
 import configparser
+import os
 import re
 import zlib
-from typing import Dict
 
 import utils
-from Blueprints.CraftPackageObject import *
-from CraftConfig import *
+from Blueprints.CraftPackageObject import BlueprintException, BlueprintNotFoundException, CraftPackageObject
 from CraftCore import CraftCore
 from CraftDebug import deprecated
 from Utils.Arguments import Arguments
@@ -89,7 +88,7 @@ class UserOptions(object):
             self.path = CraftCore.settings.get(
                 "Blueprints",
                 "Settings",
-                os.path.join(CraftCore.standardDirs.etcDir(), "BlueprintSettings.ini"),
+                CraftCore.standardDirs.etcDir() / "BlueprintSettings.ini",
             )
             self.settings = configparser.ConfigParser(allow_no_value=True)
             self.settings.optionxform = str
@@ -161,7 +160,6 @@ class UserOptions(object):
     def dump(self) -> collections.OrderedDict:
         out = []
         for key, option in UserOptions.instance().registeredOptions[self._package.path].items():
-            value = option.value
             atr = getattr(self, key)
             if atr is None:
                 atr = option
@@ -290,7 +288,7 @@ class UserOptions(object):
             return False
         if key not in _instance.registeredOptions[package.path]:
             CraftCore.log.error(f"{package} unknown option {key}")
-            CraftCore.log.error(f"Valid options are")
+            CraftCore.log.error("Valid options are")
             for optionKey, defaultOption in _instance.registeredOptions[package.path].items():
                 default = defaultOption.value
                 default = default if callable(default) else type(default)

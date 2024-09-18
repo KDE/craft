@@ -1,8 +1,8 @@
 from BuildSystem.PipBuildSystem import PipBuildSystem
+from CraftCore import CraftCore
 from Package.PackageBase import PackageBase
 from Packager.PackagerBase import PackagerBase
 from Source.MultiSource import MultiSource
-from CraftCore import CraftCore
 
 
 class PipPackageBase(PackageBase, MultiSource, PipBuildSystem, PackagerBase):

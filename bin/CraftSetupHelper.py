@@ -264,7 +264,6 @@ class SetupHelper(object):
                 CraftCore.compiler.architecture,
                 CraftCore.compiler.msvcToolset,
             )
-            return json.loads(result)
         return os.environ
 
     def setXDG(self):

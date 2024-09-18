@@ -23,9 +23,14 @@
 # SUCH DAMAGE.
 
 import glob
+import os
+import re
 
-from BuildSystem.BuildSystemBase import *
-from CraftCompiler import CraftCompiler
+import utils
+from Blueprints.CraftPackageObject import CraftPackageObject
+from BuildSystem.BuildSystemBase import BuildSystemBase
+from CraftCore import CraftCore
+from CraftStandardDirs import CraftStandardDirs
 
 
 class MSBuildBuildSystem(BuildSystemBase):

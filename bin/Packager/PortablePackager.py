@@ -1,8 +1,11 @@
 #
 # copyright (c) 2011 Hannah von Reth <vonreth@kde.org>
 #
-from .CollectionPackagerBase import *
-from .SevenZipPackager import *
+from Blueprints.CraftPackageObject import CraftPackageObject
+from CraftBase import InitGuard
+
+from .CollectionPackagerBase import CollectionPackagerBase
+from .SevenZipPackager import SevenZipPackager
 
 
 class PortablePackager(CollectionPackagerBase, SevenZipPackager):

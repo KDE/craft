@@ -22,11 +22,12 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
+import configparser
+import os
 import re
 from pathlib import Path
 
-from Blueprints.CraftPackageObject import *
-from CraftConfig import *
+from Blueprints.CraftPackageObject import BlueprintException, CraftPackageObject
 from CraftCore import CraftCore
 
 

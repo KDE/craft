@@ -22,10 +22,12 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 import io
+import sys
 from pathlib import Path
 
-from Packager.PackagerBase import *
-from shells import Powershell
+import utils
+from CraftCore import CraftCore
+from Packager.PackagerBase import PackagerBase
 
 
 class DesktopEntry(PackagerBase):
@@ -105,7 +107,7 @@ class DesktopEntry(PackagerBase):
                     f"{craftName}/{shortcut['name']} {craftName}",
                     shim,
                     target.parent,
-                    os.path.join(CraftCore.standardDirs.craftRoot(), shortcut["target"]),
+                    CraftCore.standardDirs.craftRoot() / shortcut["target"],
                     shortcut.get(
                         "desciption",
                         f"{shortcut['name']} from {CraftCore.standardDirs.craftRoot()}",
