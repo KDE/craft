@@ -1,5 +1,5 @@
 from CraftCore import CraftCore
-from Package.SourceOnlyPackageBase import *
+from Package.SourceOnlyPackageBase import SourceOnlyPackageBase
 from Source.MultiSource import MultiSource
 
 
