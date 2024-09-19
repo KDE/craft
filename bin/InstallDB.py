@@ -3,6 +3,7 @@ import sqlite3
 
 from CraftCore import CraftCore
 from CraftStandardDirs import CraftStandardDirs
+from Utils.CraftBool import CraftBool
 
 
 class InstallPackage(object):
@@ -168,7 +169,7 @@ class InstallDB(object):
 
         return stmt, params
 
-    def isInstalled(self, package, version=None):
+    def isInstalled(self, package, version=None) -> CraftBool:
         """returns whether a package is installed. If version is empty, all versions will be checked."""
         cmd = """SELECT * FROM packageList"""
         stmt, params = self.__constructWhereStmt({"prefix": None, "packagePath": package, "version": version})
