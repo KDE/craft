@@ -11,18 +11,11 @@ class CraftBool(object):
 
     def __init__(self, b: bool):
         super().__init__()
-        if b is None:
-            self.value = False
-        elif isinstance(b, bool):
-            self.value = b
-        elif isinstance(b, str):
-            self.value = configparser.ConfigParser.BOOLEAN_STATES.get(b.lower())
-        elif isinstance(b, int):
-            self.value = bool(b)
-        elif isinstance(b, CraftBool):
-            self.value = b.value
-        else:
-            raise Exception(f"Failed to cast: {type(b)} to CraftBool")
+        self.value = bool(b)
+
+    @staticmethod
+    def fromSetting(s: str) -> "CraftBool":
+        return CraftBool(configparser.ConfigParser.BOOLEAN_STATES.get(s.lower()))
 
     @property
     def asOnOff(self):
