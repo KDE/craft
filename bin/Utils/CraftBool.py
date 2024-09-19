@@ -29,6 +29,10 @@ class CraftBool(object):
     def asEnableDisable(self):
         return "enable" if self.value else "disable"
 
+    @property
+    def inverted(self) -> "CraftBool":
+        return CraftBool(not self)
+
     def __bool__(self) -> bool:
         return self.value
 
