@@ -10,6 +10,9 @@
 python/*
 test.outlog
 
+# tox
+.tox/
+
 # from kdiff3
 *.BACKUP.*
 *.BASE.*
