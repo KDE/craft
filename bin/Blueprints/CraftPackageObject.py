@@ -364,7 +364,7 @@ class CraftPackageObject(object):
         return self.instance.subinfo
 
     def isCategory(self) -> CraftBool:
-        return CraftBool(self.children)
+        return CraftBool(bool(self.children))
 
     def isIgnored(self) -> CraftBool:
         if self.categoryInfo and not self.categoryInfo.isActive:
