@@ -78,6 +78,7 @@ class CMakeBuildSystem(BuildSystemBase):
             if toolChain.exists():
                 options += [f"-DCMAKE_TOOLCHAIN_FILE={toolChain}"]
             options += [
+                "-DAPPLE_SUPPRESS_X11_WARNING=ON",
                 "-DCMAKE_OSX_SYSROOT=iphonesimulator",
                 "-DCMAKE_OSX_DEPLOYMENT_TARGET=17.5",
             ]
