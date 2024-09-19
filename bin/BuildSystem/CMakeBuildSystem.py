@@ -53,6 +53,8 @@ class CMakeBuildSystem(BuildSystemBase):
             f"-DCMAKE_C_STANDARD_INCLUDE_DIRECTORIES={craftRoot}/include",
             "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
         ]
+        if not CraftCore.compiler.platform.isNative:
+            options += [f"-DCMAKE_FIND_ROOT_PATH={CraftCore.standardDirs.craftRoot()}"]
 
         if self.buildType() is not None:
             options.append(f"-DCMAKE_BUILD_TYPE={self.buildType()}")
