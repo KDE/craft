@@ -31,6 +31,7 @@ from typing import TYPE_CHECKING
 import utils
 from CraftCore import CraftCore
 from CraftStandardDirs import CraftStandardDirs
+from Utils.CraftBool import CraftBool
 
 if TYPE_CHECKING:
     from BuildSystem.BuildSystemBase import BuildSystemBase
@@ -92,17 +93,17 @@ class CategoryPackageObject(object):
             self.forceOverride = general.get("forceOverride", False)
 
     @property
-    def isActive(self) -> bool:
+    def isActive(self) -> CraftBool:
         if not CraftCore.compiler.platform & self.platforms:
             CraftCore.log.debug(f"{self.localPath}, is not supported on {CraftCore.compiler.platform!r}, supported platforms {self.platforms!r}")
-            return False
+            return CraftBool(False)
         if not CraftCore.compiler.compiler & self.compiler:
             CraftCore.log.debug(f"{self.localPath}, is not supported on {CraftCore.compiler.compiler!r}, supported compiler {self.compiler!r}")
-            return False
+            return CraftBool(False)
         if not CraftCore.compiler.architecture & self.architecture:
             CraftCore.log.debug(f"{self.localPath}, is not supported on {CraftCore.compiler.architecture!r}, supported architecture {self.architecture!r}")
-            return False
-        return True
+            return CraftBool(False)
+        return CraftBool(True)
 
 
 class CraftPackageObject(object):
@@ -350,29 +351,29 @@ class CraftPackageObject(object):
         return self._instance
 
     @property
-    def isInstalled(self) -> bool:
+    def isInstalled(self) -> CraftBool:
         # using the version here might cause a recursion...
-        return CraftCore.installdb.isInstalled(self)
+        return CraftBool(CraftCore.installdb.isInstalled(self))
 
     @property
-    def isLatestVersionInstalled(self) -> bool:
-        return CraftCore.installdb.isInstalled(self, self.version)
+    def isLatestVersionInstalled(self) -> CraftBool:
+        return CraftBool(CraftCore.installdb.isInstalled(self, self.version))
 
     @property
     def subinfo(self):
         return self.instance.subinfo
 
-    def isCategory(self):
-        return bool(self.children)
+    def isCategory(self) -> CraftBool:
+        return CraftBool(self.children)
 
-    def isIgnored(self):
+    def isIgnored(self) -> CraftBool:
         if self.categoryInfo and not self.categoryInfo.isActive:
-            return True
+            return CraftBool(True)
         import options
 
         if not self.path:
-            return False
-        return bool(options.UserOptions.get(self).ignored)
+            return CraftBool(False)
+        return CraftBool(options.UserOptions.get(self).ignored)
 
     @property
     def version(self):
