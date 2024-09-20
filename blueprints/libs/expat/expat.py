@@ -25,15 +25,13 @@ class Package(CMakePackageBase):
         super().__init__(**kwargs)
         # both examples and tests can be run here
         self.subinfo.options.configure.args = [
-            "-DBUILD_tests=OFF",
-            "-DBUILD_examples=OFF",
-            "-DBUILD_tools=OFF",
+            "-DEXPAT_BUILD_EXAMPLES=OFF",
             "-DEXPAT_BUILD_PKGCONFIG=ON",
             "-DEXPAT_BUILD_DOCS=OFF",
             "-DCMAKE_DEBUG_POSTFIX=",
         ]
-        self.subinfo.options.configure.testDefine = ["-DBUILD_tests=ON", "-DBUILD_examples=ON"]
         self.subinfo.options.configure.args += [
-            f"-DBUILD_tools={self.subinfo.options.dynamic.buildTools.asOnOff}",
-            f"-DBUILD_shared={self.subinfo.options.dynamic.buildStatic.asOnOff}",
+            f"-DEXPAT_BUILD_TOOLS={self.subinfo.options.dynamic.buildTools.asOnOff}",
+            f"-DEXPAT_SHARED_LIBS={self.subinfo.options.dynamic.buildStatic.asOnOff}",
+            f"-DEXPAT_BUILD_TESTS={self.subinfo.options.dynamic.buildTests.asOnOff}",
         ]  # available only from 2.1.0-beta3
