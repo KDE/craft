@@ -9,7 +9,6 @@ from Package.CMakePackageBase import CMakePackageBase
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.Native | CraftCore.compiler.Platforms.Android
         self.options.dynamic.setDefault("buildType", "Release")
 
     def setTargets(self):
@@ -17,21 +16,12 @@ class subinfo(info.infoclass):
         self.svnTargets["append"] = "https://invent.kde.org/sdk/kshim.git|work/append|"
 
         for ver in ["0.6.0"]:
-            if CraftCore.compiler.platform.isAndroid:
-                # we need kshimgen only as a host tool, on Android we need to use a pre-build binary, since it doesn't build on Android natively
-                self.targets[ver] = f"https://download.kde.org/stable/kshim/kshim-v{ver}-linux-binary-x86_64.tar.7z"
-                self.targetDigestUrls[ver] = f"https://download.kde.org/stable/kshim/kshim-v{ver}-linux-binary-x86_64.tar.7z.sha256"
-                self.targetInstallPath[ver] = "dev-utils"
-            else:
-                # on all other platforms we build kshimgen from source
-                self.targets[ver] = f"https://download.kde.org/stable/kshim/kshim-{ver}.tar.xz"
-                self.targetDigestUrls[ver] = f"https://download.kde.org/stable/kshim/kshim-{ver}.tar.xz.sha256"
-                self.targetInstSrc[ver] = f"kshim-{ver}"
+            # on all other platforms we build kshimgen from source
+            self.targets[ver] = f"https://download.kde.org/stable/kshim/kshim-{ver}.tar.xz"
+            self.targetDigestUrls[ver] = f"https://download.kde.org/stable/kshim/kshim-{ver}.tar.xz.sha256"
+            self.targetInstSrc[ver] = f"kshim-{ver}"
         self.patchLevel["0.6.0"] = 1
-        if CraftCore.compiler.platform.isAndroid:
-            self.defaultTarget = "0.6.0"
-        else:
-            self.defaultTarget = "append"
+        self.defaultTarget = "append"
 
     if not CraftCore.compiler.platform.isAndroid:
 

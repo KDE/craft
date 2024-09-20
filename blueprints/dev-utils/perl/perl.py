@@ -13,9 +13,6 @@ from Utils.Arguments import Arguments
 
 
 class subinfo(info.infoclass):
-    def registerOptions(self):
-        self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.Native
-
     def setTargets(self):
         for ver in ["5.36.0", "5.38.2", "5.39.8"]:
             self.targets[ver] = f"https://www.cpan.org/src/5.0/perl-{ver}.tar.gz"
