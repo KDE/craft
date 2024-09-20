@@ -285,8 +285,10 @@ def __signMacApp(appPath: Path, scope: _MacSignScope):
     # TODO: allow for dmg?
     # https://github.com/packagesdev/packages/issues/65
     if "Contents/Resources" not in str(appPath):
+
         def filter(x, root):
             bundeFilter(x, root) and utils.isBinary(x.path)
+
     else:
         filter = bundeFilter
 

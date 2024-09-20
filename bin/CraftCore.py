@@ -2,12 +2,12 @@ import importlib
 
 # Add imports that cause a cyclic dependency in a not taken branch to make code completion work
 if False:
-    from .CraftCompiler import CraftCompiler
-    from .CraftConfig import CraftConfig
-    from .CraftDebug import CraftDebug
-    from .CraftStandardDirs import CraftStandardDirs
-    from .InstallDB import InstallDB
-    from .Utils.CraftCache import CraftCache
+    from .CraftCompiler import CraftCompiler  # noqa: F401
+    from .CraftConfig import CraftConfig  # noqa: F401
+    from .CraftDebug import CraftDebug  # noqa: F401
+    from .CraftStandardDirs import CraftStandardDirs  # noqa: F401
+    from .InstallDB import InstallDB  # noqa: F401
+    from .Utils.CraftCache import CraftCache  # noqa: F401
 
 
 # TODO: a more optimal solution would be to initialize all singletons in a
@@ -82,4 +82,4 @@ class CraftCore(object):
 
 
 # make sure our environment is setup
-import CraftSetupHelper
+import CraftSetupHelper  # noqa: F401,E402
