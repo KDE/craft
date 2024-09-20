@@ -277,15 +277,19 @@ def __signMacApp(appPath: Path, scope: _MacSignScope):
             return False
 
     # all files in the bundle
-    bundeFilter = lambda x, root: not Path(x.path).is_symlink() and not bundlePattern.match(x.path)
-    filter = bundeFilter
+    def bundeFilter(x, root):
+        return not Path(x.path).is_symlink() and not bundlePattern.match(x.path)
 
     # we can only sign non binary files in Resources, else they get stored in the
     # extended attributes and might get lost during deployment
     # TODO: allow for dmg?
     # https://github.com/packagesdev/packages/issues/65
     if "Contents/Resources" not in str(appPath):
-        filter = lambda x, root: bundeFilter(x, root) and utils.isBinary(x.path)
+        def filter(x, root):
+            bundeFilter(x, root) and utils.isBinary(x.path)
+    else:
+        filter = bundeFilter
+
     binaries = list(
         utils.filterDirectoryContent(
             appPath,
