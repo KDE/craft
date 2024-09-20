@@ -157,6 +157,8 @@ class PackageMSys(AutoToolsPackageBase):
         self.subinfo.options.configure.noCacheFile = True
         self.subinfo.options.configure.noLibDir = True
         self.subinfo.options.install.args += ["install_sw"]
+        if self.subinfo.options.dynamic.buildStatic:
+            self.subinfo.options.configure.staticArgs = Arguments(["no-shared"])
 
         if CraftCore.compiler.compiler.isGCC and not CraftCore.compiler.architecture.isNative and CraftCore.compiler.architecture.isX86_32:
             self.subinfo.options.configure.args += ["linux-x86"]
