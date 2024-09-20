@@ -14,9 +14,7 @@ extend-ignore =
     # TODO fix "do not use bare 'except'"
     E722,
     # TODO fix "module level import not at top of file"
-    E402,
-    # TODO fix "do not assign a lambda expression, use a def"
-    E731
+    E402
 extend-exclude =
     __pycache__,
     *.egg-info,
