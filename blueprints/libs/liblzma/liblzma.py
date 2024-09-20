@@ -73,10 +73,6 @@ class PackageAutotools(AutoToolsPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.subinfo.options.configure.autoreconf = CraftCore.compiler.platform.isIOS
-        if CraftCore.compiler.platform.isIOS:
-            self.subinfo.options.configure.args += ["--enable-static", "--disable-shared"]
-        else:
-            self.subinfo.options.configure.args += ["--enable-shared", "--disable-static"]
         if not self.subinfo.options.dynamic.buildTools:
             self.subinfo.options.configure.args += ["--disable-xz", "--disable-lzmadec", "--disable-lzmainfo", "--disable-scripts", "--disable-xzdec"]
 

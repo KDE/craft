@@ -33,5 +33,7 @@ class Package(CMakePackageBase):
             "-DCMAKE_DEBUG_POSTFIX=",
         ]
         self.subinfo.options.configure.testDefine = ["-DBUILD_tests=ON", "-DBUILD_examples=ON"]
-        self.subinfo.options.configure.toolsDefine = ["-DBUILD_tools=ON"]  # available only from 2.1.0-beta3
-        self.subinfo.options.configure.staticArgs = ["-DBUILD_shared=OFF"]  # available only from 2.1.0-beta3
+        self.subinfo.options.configure.args += [
+            f"-DBUILD_tools={self.subinfo.options.dynamic.buildTools.asOnOff}",
+            f"-DBUILD_shared={self.subinfo.options.dynamic.buildStatic.asOnOff}",
+        ]  # available only from 2.1.0-beta3

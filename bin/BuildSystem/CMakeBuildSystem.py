@@ -154,7 +154,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
         if self.subinfo.options.dynamic.buildTools:
             options += self.subinfo.options.configure.toolsDefine
-        if self.subinfo.options.buildStatic and self.subinfo.options.configure.staticArgs:
+        if self.subinfo.options.buildStatic and self.subinfo.options.configure.staticArgs is not None:
             options += self.subinfo.options.configure.staticArgs
 
         options += [BuildSystemBase.configureOptions(self)]

@@ -97,8 +97,6 @@ class Package(AutoToolsPackageBase):
         # we call it specially in configure
         self.subinfo.options.configure.autoreconf = False
         self.subinfo.options.configure.args += [
-            "--disable-static",
-            "--enable-shared",
             "--disable-java",
             "--disable-native-java",
             "--enable-nls",
