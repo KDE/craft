@@ -35,8 +35,6 @@ class Package(AutoToolsPackageBase):
             self.subinfo.options.configure.args += [f"CCAS={wrapper}{arch}"]
             self.subinfo.options.configure.cflags += " -DFFI_BUILDING_DLL"
         self.subinfo.options.configure.args += [
-            "--enable-shared",
-            "--disable-static",
             "--enable-portable-binary",
             "--disable-docs",
             "--disable-multi-os-directory",

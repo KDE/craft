@@ -29,7 +29,7 @@ class Package(AutoToolsPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.subinfo.options.configure.autoreconf = False
-        self.subinfo.options.configure.args += ["--disable-static", "--enable-shared", "--with-internal-glib", "PKG_CONFIG=:"]
+        self.subinfo.options.configure.args += ["--with-internal-glib", "PKG_CONFIG=:"]
         if not CraftCore.compiler.isMacOS:
             self.subinfo.options.configure.args += ["-with-libiconv=gnu"]
         else:

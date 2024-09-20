@@ -42,8 +42,6 @@ class Package(AutoToolsPackageBase):
             "--disable-tests",
             "--enable-debug=no",
             "--enable-release=yes",
-            "--enable-static=no",
-            "--enable-shared=yes",
         ]
         if CraftCore.compiler.isWindows:
             self.subinfo.options.configure.args += ["--with-data-packaging=dll"]

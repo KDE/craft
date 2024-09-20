@@ -76,7 +76,6 @@ class PackageAutotools(AutoToolsPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.subinfo.options.configure.autoreconf = False
-        self.subinfo.options.configure.args += ["--enable-shared", "--disable-static"]
         if not self.subinfo.options.dynamic.buildPrograms:
             self.subinfo.options.configure.args += ["--disable-xz", "--disable-lzmadec", "--disable-lzmainfo", "--disable-scripts", "--disable-xzdec"]
 

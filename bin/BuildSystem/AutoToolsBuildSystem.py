@@ -183,5 +183,12 @@ class AutoToolsBuildSystem(BuildSystemBase):
             options += [f"--libdir={prefix}/lib"]
         if OsUtils.isWin() and not self.subinfo.options.configure.noDataRootDir:
             options += [f"--datarootdir={self.shell.toNativePath(CraftCore.standardDirs.locations.data)}"]
+        if self.subinfo.options.configure.staticArgs is not None:
+            options += self.subinfo.options.configure.staticArgs
+        else:
+            options += [
+                f"--{self.subinfo.options.dynamic.buildStatic.asEnableDisable}-static",
+                f"--{self.subinfo.options.dynamic.buildStatic.inverted.asEnableDisable}-shared",
+            ]
         options += self.platform
         return options

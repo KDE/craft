@@ -26,4 +26,3 @@ class Package(AutoToolsPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.shell.useMSVCCompatEnv = True
-        self.subinfo.options.configure.args += ["--enable-shared", "--disable-static"]
