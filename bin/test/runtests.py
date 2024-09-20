@@ -76,7 +76,7 @@ os.environ["CRAFT_TEST"] = "True"
 # also set fallback ABI for that case
 if "CRAFT_TEST_ABI" not in os.environ:
     os.environ["CRAFT_TEST_ABI"] = fallbackTestAbi()
-from CraftCore import CraftCore
+from CraftCore import CraftCore  # noqa: E402
 
 
 def main():
