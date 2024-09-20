@@ -4,6 +4,7 @@ from CraftCore import CraftCore
 from Package.AutoToolsPackageBase import AutoToolsPackageBase
 from Package.CMakePackageBase import CMakePackageBase
 from Utils import CraftHash
+from Utils.Arguments import Arguments
 
 
 class subinfo(info.infoclass):
@@ -69,5 +70,7 @@ else:
             super().__init__(**kwargs)
             self.subinfo.options.configure.autoreconf = False
             self.subinfo.options.configure.noCacheFile = True
+            if self.subinfo.options.dynamic.buildStatic:
+                self.subinfo.options.configure.staticArgs = Arguments(["--static"])
             self.supportsCCACHE = False
             self.platform = ""
