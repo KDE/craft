@@ -7,11 +7,6 @@ from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
-    def registerOptions(self):
-        self.parent.package.categoryInfo.platforms &= (
-            CraftCore.compiler.Platforms.Windows | CraftCore.compiler.Platforms.MacOS | CraftCore.compiler.Platforms.Linux
-        )
-
     def setTargets(self):
         for ver in ["3.23.3", "3.26.3", "3.30.0"]:
             majorMinorStr = ".".join(ver.split(".")[0:2])

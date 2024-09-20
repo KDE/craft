@@ -9,7 +9,6 @@ from Utils import CraftHash
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.Native
         # don't build and install gmock
         self.options.dynamic.setDefault("buildTests", False)
 
