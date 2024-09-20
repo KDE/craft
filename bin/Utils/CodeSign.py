@@ -287,7 +287,7 @@ def __signMacApp(appPath: Path, scope: _MacSignScope):
     if "Contents/Resources" not in str(appPath):
 
         def filter(x, root):
-            bundeFilter(x, root) and utils.isBinary(x.path)
+            return bundeFilter(x, root) and utils.isBinary(x.path)
 
     else:
         filter = bundeFilter
