@@ -5,11 +5,6 @@ from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
-    def registerOptions(self):
-        # We need this as a host tool. Craft at this point isn't set up to produce both
-        # host and target binaries, so on Android we have host tools in the docker image.
-        self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.Native
-
     def setTargets(self):
         for ver in ["2.4.6", "2.4.7"]:
             self.targets[ver] = f"https://ftp.gnu.org/gnu/libtool/libtool-{ver}.tar.xz"

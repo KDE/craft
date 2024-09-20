@@ -6,9 +6,6 @@ from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
-    def registerOptions(self):
-        self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.Native
-
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
         self.runtimeDependencies["libs/iconv"] = None
