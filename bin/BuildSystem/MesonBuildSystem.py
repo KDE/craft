@@ -84,7 +84,7 @@ class MesonBuildSystem(BuildSystemBase):
                 CraftCore.standardDirs.craftRoot(),
                 self.buildDir(),
                 self.sourceDir(),
-                "-Ddefault_library=shared",
+                f"-Ddefault_library={'static' if self.subinfo.options.buildStatic else 'shared'}",
                 BuildSystemBase.configureOptions(self),
             ]
         )
