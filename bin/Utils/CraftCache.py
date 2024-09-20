@@ -148,7 +148,7 @@ class CraftCache(object):
             _, output = self.getCommandOutput(app, helpCommand)
             if not output:
                 return False
-            if type(command) == str:
+            if isinstance(command, str):
                 supports = command in output
             else:
                 supports = command.match(output) is not None

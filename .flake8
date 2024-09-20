@@ -9,8 +9,6 @@ extend-ignore =
     E701
     # too long lines are something to fix in the future
     E501,
-    # TODO fix "do not compare types"
-    E721,
     # TODO fix "imported but unused" yet disabled because of CraftCore
     F401,
     # TODO fix "do not use bare 'except'"

@@ -157,7 +157,7 @@ class SetupHelper(object):
             self.addEnvVar(key, val)
 
     def prependEnvVar(self, key: str, var: str, sep: str = os.path.pathsep) -> None:
-        if not type(var) == list:
+        if not isinstance(var, list):
             var = [var]
         if key in os.environ:
             env = var + os.environ[key].split(sep)
