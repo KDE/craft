@@ -26,6 +26,7 @@ import configparser
 import os
 import re
 from pathlib import Path
+from typing import Optional
 
 from Blueprints.CraftPackageObject import BlueprintException, CraftPackageObject
 from CraftCore import CraftCore
@@ -33,7 +34,7 @@ from CraftCore import CraftCore
 
 class VersionInfo(object):
     variablePatern = re.compile(r"\$\{[A-Za-z0-9_]*\}", re.IGNORECASE)
-    _VERSION_INFOS = {}
+    _VERSION_INFOS: dict[Optional[Path], "VersionInfoData"] = {}
 
     class VersionInfoData(object):
         def __init__(self):
@@ -144,11 +145,12 @@ class VersionInfo(object):
     def format(self, s: str, ver: str):
         return VersionInfo._replaceVar(s, ver, self.package.name)
 
-    def get(self, key: str, fallback=configparser._UNSET):
+    # def get(self, key: str, fallback=configparser._UNSET):
+    def get(self, key, **args):
         platformKey = f"{key}_{CraftCore.compiler.platform.name}"
         if platformKey in self.data.info:
             return self.data.info.get(platformKey)
-        return self.data.info.get(key, fallback)
+        return self.data.info.get(key, **args)
 
     def setDefaultValuesFromFile(
         self,

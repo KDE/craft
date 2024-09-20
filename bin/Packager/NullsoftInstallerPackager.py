@@ -27,6 +27,7 @@
 import os
 import tempfile
 from pathlib import Path
+from typing import Optional
 
 import utils
 from Blueprints.CraftPackageObject import CraftPackageObject
@@ -34,6 +35,7 @@ from Blueprints.CraftVersion import CraftVersion
 from CraftBase import InitGuard
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
+from Packager.PackagerBase import DefinesDict
 from Packager.PortablePackager import PortablePackager
 from Utils import CodeSign, CraftHash
 
@@ -78,8 +80,9 @@ class NullsoftInstallerPackager(PortablePackager):
         super().__init__(**kwargs)
         self.nsisExe = None
         self._isInstalled = False
+        self.scriptname: str
 
-    def setDefaults(self, defines) -> dict:
+    def setDefaults(self, defines) -> DefinesDict:
         defines = super().setDefaults(defines)
         defines.setdefault("architecture", CraftCore.compiler.architecture.name.lower())
         defines.setdefault(
@@ -145,7 +148,7 @@ class NullsoftInstallerPackager(PortablePackager):
                 total += self.folderSize(entry.path)
         return total
 
-    def _prepare7Z(self, tmpDir: str):
+    def _prepare7Z(self, tmpDir: str) -> Optional[Path]:
         sevenZPath = CraftPackageObject.get("7zip-base").instance.imageDir() / "dev-utils/7z"
         sevenZPath /= "7za.exe" if CraftCore.compiler.architecture.isX86_64 else "7za_32.exe"
         sevenZDest = Path(tmpDir) / "7za.exe"
@@ -225,7 +228,7 @@ class NullsoftInstallerPackager(PortablePackager):
                 return False
             return CodeSign.signWindows([defines["setupname"]])
 
-    def createPackage(self):
+    def createPackage(self) -> bool:
         """create a package"""
         if not self.isNsisInstalled():
             return False
@@ -239,7 +242,8 @@ class NullsoftInstallerPackager(PortablePackager):
         if not self.generateNSISInstaller(defines):
             return False
 
+        assert isinstance(defines["setupname"], str)
         destDir, archiveName = os.path.split(defines["setupname"])
-        self._generateManifest(destDir, archiveName)
+        self._generateManifest(destDir, Path(archiveName))
         CraftHash.createDigestFiles(defines["setupname"])
         return True

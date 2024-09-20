@@ -1,27 +1,32 @@
 import abc
 import os
 from pathlib import Path
+from typing import Optional
 
 from CraftOS.OsDetection import OsDetection
 
 
 class OsUtilsBase(OsDetection, metaclass=abc.ABCMeta):
-    @abc.abstractstaticmethod
+    @staticmethod
+    @abc.abstractmethod
     def rm(path, force=False):
         """Removes a file"""
         pass
 
-    @abc.abstractstaticmethod
+    @staticmethod
+    @abc.abstractmethod
     def rmDir(path, force=False):
         """Removes a file"""
         pass
 
-    @abc.abstractstaticmethod
+    @staticmethod
+    @abc.abstractmethod
     def getFileAttributes(path):
         """Returns the attributes"""
         pass
 
-    @abc.abstractstaticmethod
+    @staticmethod
+    @abc.abstractmethod
     def removeReadOnlyAttribute(path):
         """Removes the readonly flag"""
         pass
@@ -35,37 +40,42 @@ class OsUtilsBase(OsDetection, metaclass=abc.ABCMeta):
         return True
 
     @staticmethod
-    def toWindowsPath(path: str) -> Path:
+    def toWindowsPath(path: str) -> Optional[Path]:
         if not path:
             return None
         return Path(path)
 
     @staticmethod
-    def toUnixPath(path: str) -> str:
+    def toUnixPath(path: str) -> Optional[str]:
         if not path:
             return None
         return Path(path).as_posix()
 
     @staticmethod
-    def toMSysPath(path) -> str:
+    def toMSysPath(path) -> Optional[str]:
         if not path:
             return None
         out = OsUtilsBase.toUnixPath(path)
+        if not out:
+            return None
         drive, path = os.path.splitdrive(out)
         if drive:
             return f"/{drive[0].lower()}{path}"
         return out
 
     @staticmethod
+    @abc.abstractmethod
     def toNativePath(path: str) -> str:
         """Return a native path"""
         pass
 
     @staticmethod
-    def killProcess(name: str = "*", prefix: str = None) -> bool:
+    @abc.abstractmethod
+    def killProcess(name: str = "*", prefix: Optional[str] = None) -> bool:
         pass
 
     @staticmethod
+    @abc.abstractmethod
     def detectDocker() -> bool:
         pass
 

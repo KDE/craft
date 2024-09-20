@@ -3,6 +3,7 @@
 #
 import json
 import os
+from pathlib import Path
 
 import utils
 from Blueprints.CraftPackageObject import BlueprintException
@@ -94,9 +95,9 @@ class PackageBase(CraftBase):
                 manifest = CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json"))
             fileEntry = manifest.get(str(self)).build
             files = []
-            for f in fileEntry:
-                if f.version == self.version:
-                    files.append(f)
+            for entry in fileEntry:
+                if entry.version == self.version:
+                    files.append(entry)
             if not files:
                 CraftCore.log.info(f"Could not find {self}={self.version} in {url}")
                 continue
@@ -119,14 +120,14 @@ class PackageBase(CraftBase):
             else:
                 downloadFolder = self.cacheLocation()
 
-            files = {}  # Dict[FileType, Tuple[str, str]]
+            fileTypeDict: dict[FileType, Path] = {}
             fileTypes = [FileType.Binary]
             if CraftCore.settings.getboolean("Packager", "DownloadDebugSymbolsCache", False):
                 fileTypes += [FileType.Debug]
-            for type in fileTypes:
-                if type not in latest.files:
+            for fileType in fileTypes:
+                if fileType not in latest.files:
                     continue
-                fileObject = latest.files[type]
+                fileObject = latest.files[fileType]
                 localArchiveAbsPath = downloadFolder / fileObject.fileName
 
                 if url != self.cacheLocation():
@@ -157,7 +158,7 @@ class PackageBase(CraftBase):
                 elif not localArchiveAbsPath.is_file():
                     continue
                 # file exist locally was downloaded or already existed
-                files[type] = localArchiveAbsPath
+                fileTypeDict[fileType] = localArchiveAbsPath
                 if not CraftHash.checkFilesDigests(
                     localArchiveAbsPath.parent,
                     [localArchiveAbsPath.name],
@@ -175,7 +176,7 @@ class PackageBase(CraftBase):
                     if createingCache:
                         raise BlueprintException(msg, self.package)
                     return False
-            if not files:
+            if not fileTypeDict:
                 # try the next url
                 continue
             self.subinfo.buildPrefix = latest.buildPrefix
@@ -188,8 +189,8 @@ class PackageBase(CraftBase):
                 FileType.Binary: self.imageDir(),
                 FileType.Debug: self.symbolsImageDir(),
             }
-            for type, localArchivePath in files.items():
-                if not utils.cleanDirectory(dest[type]) or not utils.unpackFile(localArchivePath.parent, localArchivePath.name, dest[type]):
+            for fileType, localArchivePath in fileTypeDict.items():
+                if not utils.cleanDirectory(dest[fileType]) or not utils.unpackFile(localArchivePath.parent, localArchivePath.name, dest[fileType]):
                     return False
             if not (self.internalPostInstall() and self.postInstall() and self.qmerge() and self.internalPostQmerge() and self.postQmerge()):
                 return False

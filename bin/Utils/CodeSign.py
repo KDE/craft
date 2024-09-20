@@ -29,7 +29,6 @@ import shlex
 import subprocess
 import tempfile
 from pathlib import Path
-from typing import Union
 
 import utils
 from CraftCore import CraftCore
@@ -39,7 +38,7 @@ from Utils import CraftChoicePrompt
 from Utils.StageLogger import StageLogger
 
 
-def signWindows(fileNames: Union[Path, str]) -> bool:
+def signWindows(fileNames: list[Path] | list[str]) -> bool:
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
         return True
     if not CraftCore.compiler.platform.isWindows:
@@ -56,7 +55,7 @@ def signWindows(fileNames: Union[Path, str]) -> bool:
             return __signWindowsWithSignTool(fileNames)
 
 
-def __signWindowsWithSignTool(fileNames: Union[Path, str]) -> bool:
+def __signWindowsWithSignTool(fileNames: list[Path] | list[str]) -> bool:
     signTool = CraftCore.cache.findApplication("signtool", forceCache=True)
     if not signTool:
         env = SetupHelper.getMSVCEnv()
@@ -101,13 +100,14 @@ def __signWindowsWithSignTool(fileNames: Union[Path, str]) -> bool:
     return True
 
 
-def __signWindowsWithCustomCommand(customCommand: str, fileNames: Union[Path, str]) -> bool:
+def __signWindowsWithCustomCommand(customCommand: str, fileNames: list[Path] | list[str]) -> bool:
+    _fileNames = [str(path) for path in fileNames]
     CraftCore.log.info("Signing with custom command")
     cmd = shlex.split(customCommand)
     if "%F" in cmd:
         filelistFile = None
         try:
-            filelistContent = b"\n".join(str(name).encode() for name in fileNames)
+            filelistContent = b"\n".join(str(name).encode() for name in _fileNames)
             filelistFile = tempfile.NamedTemporaryFile(prefix="sign-filelist-", delete=False)
             filelistFile.write(filelistContent)
             filelistFile.write(b"\n")
@@ -122,7 +122,7 @@ def __signWindowsWithCustomCommand(customCommand: str, fileNames: Union[Path, st
                 except FileNotFoundError:
                     pass
     else:
-        cmd += fileNames
+        cmd += _fileNames
         if not utils.system(cmd):
             return False
 
@@ -234,6 +234,12 @@ class _MacSignScope(LockFile, utils.ScopedEnv):
 
         return True
 
+    def lock(self):
+        return
+
+    def unlock(self):
+        return
+
     def __enter__(self):
         LockFile.__enter__(self)
         utils.ScopedEnv.__enter__(self)
@@ -335,7 +341,7 @@ def signMacApp(appPath: Path):
         if customComand:
             CraftCore.log.info(f"Sign {appPath} with custom command")
             cmd = shlex.split(customComand)
-            cmd += [appPath]
+            cmd += [str(appPath)]
             if not utils.system(cmd):
                 return False
 

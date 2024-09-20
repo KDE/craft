@@ -27,8 +27,9 @@
 import inspect
 import os
 import re
+from collections.abc import Callable
 from pathlib import Path
-from typing import List
+from typing import Optional
 
 import utils
 from Blueprints.CraftDependencyPackage import CraftDependencyPackage, DependencyType
@@ -41,7 +42,7 @@ from Utils import CodeSign
 from Utils.CraftManifest import FileType
 
 
-def toRegExp(fname, targetName) -> re:
+def toRegExp(fname, targetName) -> re.Pattern:
     """Read regular expressions from fname"""
     assert os.path.isabs(fname)
 
@@ -99,10 +100,10 @@ class CollectionPackagerBase(PackagerBase):
             self.whitelist_file = whitelists
         if not self.blacklist_file:
             self.blacklist_file = blacklists
-        self._whitelist = []
-        self._whitelist_filters = set()
-        self._blacklist = []
-        self._blacklist_filters = set()
+        self._whitelist: list[re.Pattern] = []
+        self._whitelist_filters: set[Callable[[os.DirEntry, str], bool]] = set()
+        self._blacklist: list[re.Pattern] = []
+        self._blacklist_filters: set[Callable[[os.DirEntry, str], bool]] = set()
         self.scriptname = None
 
     def runtimeBlacklist(self):
@@ -117,7 +118,7 @@ class CollectionPackagerBase(PackagerBase):
     def defaultBlacklist(self):
         return [toRegExp(x, x.name) for x in self.runtimeBlacklist()]
 
-    def addBlacklistFilter(self, x):
+    def addBlacklistFilter(self, x: Callable[[os.DirEntry, str], bool]):
         assert callable(x) and len(inspect.signature(x).parameters) == 2
         self._blacklist_filters.add(x)
 
@@ -125,10 +126,10 @@ class CollectionPackagerBase(PackagerBase):
         # TODO: move to parent?
         self.addBlacklistFilter(
             lambda fileName, root: utils.regexFileFilter(fileName, root, [re.compile(pattern, re.IGNORECASE)])
-            and utils.isExecuatable(fileName, includeShellScripts=True)
+            and utils.isExecuatable(Path(fileName.path), includeShellScripts=True)
         )
 
-    def addWhitelistFilter(self, x):
+    def addWhitelistFilter(self, x: Callable[[os.DirEntry, str], bool]):
         assert callable(x) and len(inspect.signature(x).parameters) == 2
         self._whitelist_filters.add(x)
 
@@ -181,7 +182,7 @@ class CollectionPackagerBase(PackagerBase):
             CraftCore.log.debug(f"__getImageDirectories: package: {x}, version: {x.version}")
         return imageDirs
 
-    def read_whitelist(self, fname: str) -> re:
+    def read_whitelist(self, fname: str) -> re.Pattern:
         if not os.path.isabs(fname):
             fname = os.path.join(self.blueprintDir(), fname)
         """ Read regular expressions from fname """
@@ -190,7 +191,7 @@ class CollectionPackagerBase(PackagerBase):
         except Exception as e:
             raise BlueprintException(str(e), self.package)
 
-    def read_blacklist(self, fname: str) -> re:
+    def read_blacklist(self, fname: str) -> re.Pattern:
         if not os.path.isabs(fname):
             fname = os.path.join(self.blueprintDir(), fname)
         """ Read regular expressions from fname """
@@ -199,7 +200,7 @@ class CollectionPackagerBase(PackagerBase):
         except Exception as e:
             raise BlueprintException(str(e), self.package)
 
-    def whitelisted(self, filename: os.DirEntry, root: str, whiteList: [re] = None) -> bool:
+    def whitelisted(self, filename: os.DirEntry, root: str, whiteList: Optional[list[re.Pattern]] = None) -> bool:
         """return True if pathname is included in the pattern, and False if not"""
         if whiteList is None:
             whiteList = self.whitelist
@@ -209,7 +210,7 @@ class CollectionPackagerBase(PackagerBase):
         self,
         filename: os.DirEntry,
         root: str,
-        blackList: [re] = None,
+        blackList: Optional[list[re.Pattern]] = None,
         message: str = "blacklisted",
     ) -> bool:
         """return False if file is not blacklisted, and True if it is blacklisted"""
@@ -226,7 +227,7 @@ class CollectionPackagerBase(PackagerBase):
                 return True
         return False
 
-    def copyFiles(self, srcDir: Path, destDir: Path, filesToSign: List[Path]) -> bool:
+    def copyFiles(self, srcDir: Path, destDir: Path, filesToSign: list[Path]) -> bool:
         """
         Copy the binaries for the Package from srcDir to the imageDir
         directory
@@ -240,7 +241,7 @@ class CollectionPackagerBase(PackagerBase):
             doSign = os.path.samefile(srcDir, self.imageDir())
 
         for entry in utils.filterDirectoryContent(srcDir, self.whitelisted, self.blacklisted, handleAppBundleAsFile=True):
-            entry_target = os.path.join(destDir, os.path.relpath(entry, srcDir))
+            entry_target = destDir / os.path.relpath(entry, srcDir)
             if os.path.isfile(entry) or os.path.islink(entry):
                 if not utils.copyFile(entry, entry_target, linkOnly=False):
                     return False
@@ -266,7 +267,7 @@ class CollectionPackagerBase(PackagerBase):
         if packageSymbols:
             utils.cleanDirectory(self.archiveDebugDir())
 
-        filesToSign = []
+        filesToSign: list[Path] = []
 
         for package in self.__getImageDirectories():
             if package.imageDir().exists():

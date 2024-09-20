@@ -1,11 +1,14 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
+import abc
 import datetime
 import functools
 import os
 from pathlib import Path
+from typing import Optional
 
+import info
 import utils
 from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftCore import CraftCore
@@ -15,7 +18,7 @@ from Utils.CraftShortPath import CraftShortPath
 
 
 class InitGuard(object):
-    _initialized = {}
+    _initialized: dict[tuple[object, object], object] = {}
     _verbose = False
 
     @staticmethod
@@ -54,7 +57,7 @@ class CraftBase(object):
 
         # ugly workaround we need to replace the constructor
         self.package = package
-        self.subinfo = self.package._Module.subinfo(self)  # type: info.infoclass
+        self.subinfo: info.infoclass = self.package._Module.subinfo(self)
 
         self.buildSystemType = None
 
@@ -77,8 +80,13 @@ class CraftBase(object):
         """return base directory name for package related image directory"""
         return f"image-{self.buildType()}-{self.buildTarget.replace('/', '_') if self.buildTarget else None}"
 
+    @abc.abstractmethod
     def sourceDir(self, dummyIndex=0) -> Path:
-        utils.abstract()
+        pass
+
+    @abc.abstractmethod
+    def sourceRevision(self) -> str:
+        pass
 
     def logDir(self) -> Path:
         return CraftCore.standardDirs.logDir() / self.package.path
@@ -207,8 +215,8 @@ class CraftBase(object):
             version += [buildVersion]
         if includeTimeStamp:
             version += [datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S")]
-        version = "-".join(filter(None, version))
-        return version.replace("/", "_")
+        versionString = "-".join(filter(None, version))
+        return versionString.replace("/", "_")
 
     def binaryArchiveBaseName(self, pkgSuffix, includeRevision, includeTimeStamp) -> str:
         return f"{self.package.name}-{self.formatVersion(includeRevision=includeRevision, includeTimeStamp=includeTimeStamp)}-{CraftCore.compiler}{pkgSuffix}"
@@ -241,7 +249,7 @@ class CraftBase(object):
     def cacheVersion():
         return CraftCore.settings.get("Packager", "CacheVersion")
 
-    def cacheLocation(self, baseDir=None) -> Path:
+    def cacheLocation(self, baseDir=None) -> Optional[Path]:
         if not baseDir:
             cacheDir = CraftCore.settings.get(
                 "Packager",
@@ -256,7 +264,7 @@ class CraftBase(object):
             return None
         return Path(os.path.join(cacheDir, version, *CraftCore.compiler.signature, self.buildType()))
 
-    def cacheRepositoryUrls(self) -> [str]:
+    def cacheRepositoryUrls(self) -> list[str]:
         buildType = [self.buildType()]
         if self.buildType() == "RelWithDebInfo":
             buildType += ["Release"]

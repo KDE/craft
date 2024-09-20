@@ -1,19 +1,20 @@
 import collections
 import datetime
+from typing import Any, Optional
 
 from CraftCore import CraftCore
 
 
 class CraftManifestEntryFile(object):
     def __init__(self, fileName: str, checksum: str, version: str = "") -> None:
-        self.fileName = fileName
-        self.checksum = checksum
-        self.date = datetime.datetime.now(datetime.timezone.utc)
-        self.version = version
+        self.fileName: str = fileName
+        self.checksum: str = checksum
+        self.date: datetime.datetime = datetime.datetime.now(datetime.timezone.utc)
+        self.version: str = version
         self.buildPrefix = str(CraftCore.standardDirs.craftRoot())
         # deprecated use config
-        self.configHash = None
-        self.config = None
+        self.configHash: Optional[str] = None
+        self.config: Optional[collections.OrderedDict] = None
 
         if CraftCore.compiler.platform.isWindows:
             self.fileName = self.fileName.replace("\\", "/")
@@ -29,7 +30,7 @@ class CraftManifestEntryFile(object):
         return out
 
     def toJson(self) -> dict:
-        data = {
+        data: dict[str, Any] = {
             "fileName": self.fileName,
             "checksum": self.checksum,
             "date": self.date.strftime(CraftManifest._TIME_FORMAT),
@@ -46,7 +47,7 @@ class CraftManifestEntryFile(object):
 class CraftManifestEntry(object):
     def __init__(self, name: str) -> None:
         self.name = name
-        self.files = []  # type: List[CraftManifestEntryFile]
+        self.files: list[CraftManifestEntryFile] = []
 
     @staticmethod
     def fromJson(data: dict):
@@ -72,7 +73,7 @@ class CraftManifestEntry(object):
         return f
 
     @property
-    def latest(self) -> CraftManifestEntryFile:
+    def latest(self) -> Optional[CraftManifestEntryFile]:
         return self.files[0] if self.files else None
 
 
@@ -121,7 +122,7 @@ class CraftManifest(object):
             out["packages"][compiler] = [x.toJson() for x in self.packages[compiler].values()]
         return out
 
-    def get(self, package: str, compiler: str = None) -> CraftManifestEntry:
+    def get(self, package: str, compiler: Optional[str] = None) -> CraftManifestEntry:
         if not compiler:
             compiler = str(CraftCore.compiler)
         if compiler not in self.packages:

@@ -5,6 +5,7 @@ from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftBase import InitGuard
 
 from .CollectionPackagerBase import CollectionPackagerBase
+from .PackagerBase import DefinesDict
 from .SevenZipPackager import SevenZipPackager
 
 
@@ -16,7 +17,7 @@ class PortablePackager(CollectionPackagerBase, SevenZipPackager):
         SevenZipPackager.__init__(self, package)
         CollectionPackagerBase.__init__(self, whitelists, blacklists)
 
-    def setDefaults(self, defines: {str: str}) -> {str: str}:
+    def setDefaults(self, defines: DefinesDict) -> DefinesDict:
         defines = super().setDefaults(defines)
         defines["setupname"] = f"{defines['setupname']}{self.archiveExtension}"
         return defines

@@ -32,21 +32,25 @@ if __name__ == "__main__":
 
 
 import getpass
+from typing import Any, Iterable, Optional
 
 import utils
 from CraftCore import CraftCore
 
 
-def promptForChoice(title: str, choices: [], default: str = None):
+def promptForChoice(title: str, choices: Iterable[str | tuple[str, Any]], default: Optional[Any] = None) -> Any:
+    assert isinstance(choices, list)
     simpleMode = not isinstance(choices[0], tuple)
     if simpleMode:
-        choices = OrderedDict.fromkeys(choices)
+        assert all(isinstance(item, str) for item in choices)
+        _choices = OrderedDict.fromkeys(choices)
     else:
-        choices = OrderedDict(choices)
+        assert all(isinstance(item, tuple) for item in choices)
+        _choices = OrderedDict(choices)
     if not default:
-        default = list(choices.keys())[0]
+        default = list(_choices.keys())[0]
 
-    selections = [f"[{index}] {value}" for index, value in enumerate(choices.keys())]
+    selections = [f"[{index}] {value}" for index, value in enumerate(_choices.keys())]
     promp = f"{', '.join(selections)} (Default is {default}): "
 
     utils.notify("Craft needs your attention", promp, log=False)
@@ -55,7 +59,7 @@ def promptForChoice(title: str, choices: [], default: str = None):
     if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
         CraftCore.log.info(title)
         CraftCore.log.info(f"[ContinuousIntegration]Enabled = True: returning default: {default}")
-        return default if simpleMode else choices[default]
+        return default if simpleMode else _choices[default]
 
     while True:
         CraftCore.log.info(title)
@@ -66,19 +70,19 @@ def promptForChoice(title: str, choices: [], default: str = None):
         except:
             choiceInt = -1
         if choice == "":
-            out = default if simpleMode else choices[default]
+            out = default if simpleMode else _choices[default]
             break
-        elif choiceInt >= 0 and choiceInt < len(choices):
-            out = list(choices.items())[choiceInt][0 if simpleMode else 1]
+        elif choiceInt >= 0 and choiceInt < len(_choices):
+            out = list(_choices.items())[choiceInt][0 if simpleMode else 1]
             break
-        elif choice in choices:
-            out = choice if simpleMode else choices[choice]
+        elif choice in _choices:
+            out = choice if simpleMode else _choices[choice]
             break
     CraftCore.log.debug(f"Returning: {out}")
     return out
 
 
-def promptForPassword(message: str, key: str = None):
+def promptForPassword(message: str, key: Optional[str] = None):
     if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", True):
         if key:
             key = f"CRAFT_SECRET_{key}"

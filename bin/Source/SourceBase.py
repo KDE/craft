@@ -1,6 +1,7 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
+import abc
 from pathlib import Path
 
 import utils
@@ -16,17 +17,17 @@ class SourceBase(CraftBase):
         CraftCore.debug.trace("SourceBase.__init__ called")
         CraftBase.__init__(self, package)
 
+    @abc.abstractmethod
     def fetch(self):
         """fetch the source from a remote host and save it into a local destination"""
-        utils.abstract()
 
     def checkDigest(self, downloadRetries=3):
         """check source digest of the package."""
         return True
 
+    @abc.abstractmethod
     def unpack(self):
         """unpack the source into a local destination."""
-        utils.abstract()
 
     def sourceDir(self, dummyIndex=0) -> Path:
         """return absolute path of the directory where sources are fetched into.
@@ -70,21 +71,21 @@ class SourceBase(CraftBase):
         # and change packages in blueprints accordingly
         return utils.applyPatch(srcdir, patchfile, patchdepth)
 
+    @abc.abstractmethod
     def createPatch(self):
         """create patch file from source into the related package dir. The patch file is named autocreated.patch"""
-        utils.abstract()
 
     def getUrls(self):
         """return the urls that will be downloaded/checked out"""
         return True
 
+    @abc.abstractmethod
     def repositoryUrl(self, dummyIndex=0):
         """use this to get one of multiple repository paths; these can be download urls as well"""
-        utils.abstract()
 
+    @abc.abstractmethod
     def repositoryUrlCount(self):
         """use this to get number of repository paths"""
-        utils.abstract()
 
     def sourceVersion(self):
         """return the current revision or version of the source directory,

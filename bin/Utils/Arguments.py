@@ -1,9 +1,10 @@
 import subprocess
+from typing import Optional, Union
 
 
 class Arguments(object):
-    def __init__(self, args: [str] = None):
-        self.__args = []
+    def __init__(self, args: Optional[list[str] | str] = None):
+        self.__args: list[str] = []
         self.__legacyString = None
         if args:
             if isinstance(args, str):
@@ -21,7 +22,7 @@ class Arguments(object):
     def fromSetting(data: str):
         return Arguments(data)
 
-    def append(self, other):
+    def append(self, other: Union[str, list, "Arguments"]):
         if not other:
             return self
         if self.__legacyString is not None:
@@ -77,6 +78,6 @@ class Arguments(object):
             return self.__args
 
     @staticmethod
-    def formatCommand(command: [str], args):
+    def formatCommand(command: list[str], args):
         tmp = Arguments(command) + args
         return tmp.get()

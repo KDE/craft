@@ -4,7 +4,6 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import List, Set
 
 import utils
 from CraftBase import InitGuard
@@ -118,7 +117,7 @@ class MacBasePackager(CollectionPackagerBase):
 
     def _addQtConf(self, appFolder: Path):
         parser = configparser.ConfigParser()
-        parser.optionxform = str
+        parser.optionxform = str  # type: ignore # see https://github.com/python/mypy/issues/708
         parser.add_section("Paths")
         parser.set("Paths", "Imports", "Resources/qml")
         parser.set("Paths", "Qml2Imports", "Resources/qml")
@@ -132,9 +131,9 @@ class MacBasePackager(CollectionPackagerBase):
 class MacDylibBundler(object):
     """Bundle all .dylib files that are not provided by the system with the .app"""
 
-    def __init__(self, appPath: str, externalLibs: Set[str]):
+    def __init__(self, appPath: str, externalLibs: set[str]):
         # Avoid processing the same file more than once
-        self.checkedLibs = set()
+        self.checkedLibs: set[Path] = set()
         self.appPath = appPath
         self.externalLibs = externalLibs
 
@@ -204,7 +203,7 @@ class MacDylibBundler(object):
         return True
 
     @staticmethod
-    def _updateLibraryReferences(fileToFix: Path, changedRefs: List) -> bool:
+    def _updateLibraryReferences(fileToFix: Path, changedRefs: list) -> bool:
         args = []
         for oldRef, newRef in changedRefs:
             if newRef is None:
@@ -360,20 +359,20 @@ class MacDylibBundler(object):
 
 if __name__ == "__main__":
     print("Testing MacDMGPackager.py")
-    defaultFile = CraftStandardDirs.craftRoot() + "/lib/libKF5TextEditor.5.dylib"
-    sourceFile = defaultFile if len(sys.argv) else sys.argv[1]
+    defaultFile = CraftStandardDirs.craftRoot() / "/lib/libKF5TextEditor.5.dylib"
+    sourceFile: Path = defaultFile if len(sys.argv) else Path(sys.argv[1])
     utils.system(["otool", "-L", sourceFile])
     import tempfile
 
     with tempfile.TemporaryDirectory() as td:
         source = os.path.realpath(sourceFile)
-        target = os.path.join(td, os.path.basename(source))
-        utils.copyFile(source, target, linkOnly=False)
-        bundler = MacDylibBundler(td, {})
-        bundler.bundleLibraryDependencies(Path(target))
+        target = Path(td) / os.path.basename(source)
+        utils.copyFile(Path(source), target, linkOnly=False)
+        bundler = MacDylibBundler(td, set())
+        bundler.bundleLibraryDependencies(target)
         print("Checked libs:", bundler.checkedLibs)
         utils.system(["find", td])
         utils.system(["ls", "-laR", td])
-        if not bundler.areLibraryDepsOkay(Path(target)):
+        if not bundler.areLibraryDepsOkay(target):
             print("Error")
         # utils.system(["find", td, "-type", "f", "-execdir", "otool", "-L", "{}", ";"])

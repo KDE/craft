@@ -1,4 +1,5 @@
 import importlib
+from typing import Optional
 
 # Add imports that cause a cyclic dependency in a not taken branch to make code completion work
 if False:
@@ -20,9 +21,9 @@ class AutoImport(object):
         self,
         name: str,
         module: str,
-        className: str = None,
+        className: Optional[str] = None,
         function=None,
-        member: str = None,
+        member: Optional[str] = None,
     ) -> None:
         self.name = name
         self.module = module
@@ -68,14 +69,14 @@ class State(object):
 
 
 class CraftCore(object):
-    debug = AutoImport("debug", "CraftDebug")  # type: CraftDebug
+    debug: "CraftDebug" = AutoImport("debug", "CraftDebug")
     # log will be replaced once debug is loaded
-    log = AutoImport("debug", "CraftDebug", member="log")  # type: logging.Logger
-    standardDirs = AutoImport("standardDirs", "CraftStandardDirs")  # type: CraftStandardDirs
-    settings = AutoImport("settings", "CraftConfig")  # type: CraftConfig
-    cache = AutoImport("cache", "Utils.CraftCache", "CraftCache", "_loadInstance")  # type: CraftCache
-    compiler = AutoImport("compiler", "CraftCompiler")  # type: CraftCompiler
-    installdb = AutoImport("installdb", "InstallDB")  # type: InstallDB
+    log = AutoImport("debug", "CraftDebug", member="log")
+    standardDirs: "CraftStandardDirs" = AutoImport("standardDirs", "CraftStandardDirs")
+    settings: "CraftConfig" = AutoImport("settings", "CraftConfig")
+    cache: "CraftCache" = AutoImport("cache", "Utils.CraftCache", "CraftCache", "_loadInstance")
+    compiler: "CraftCompiler" = AutoImport("compiler", "CraftCompiler")
+    installdb: "InstallDB" = AutoImport("installdb", "InstallDB")
 
     # information about the current internal state of Craft
     state = State()

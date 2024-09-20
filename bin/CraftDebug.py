@@ -113,7 +113,7 @@ class CraftDebug(object):
         self.log.info("=" * self.lineWidth)
 
     @property
-    def log(self):
+    def log(self) -> logging.Logger:
         return self._log
 
     def print(self, msg, file=sys.stdout, stack_info=False):

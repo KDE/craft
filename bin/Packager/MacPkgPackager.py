@@ -5,6 +5,7 @@ import utils
 from CraftBase import InitGuard
 from CraftCore import CraftCore
 from Packager.MacBasePackager import MacBasePackager
+from Packager.PackagerBase import DefinesDict
 from Utils import CodeSign, CraftHash
 
 
@@ -13,7 +14,7 @@ class MacPkgPackager(MacBasePackager):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def setDefaults(self, defines: {str: str}) -> {str: str}:
+    def setDefaults(self, defines: DefinesDict) -> DefinesDict:
         defines = super().setDefaults(defines)
         defines["setupname"] = f"{defines['setupname']}.pkg"
         return defines

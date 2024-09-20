@@ -7,6 +7,7 @@ import utils
 from CraftBase import InitGuard
 from CraftOS.osutils import OsUtils
 from Packager.CollectionPackagerBase import CollectionPackagerBase
+from Packager.PackagerBase import DefinesDict
 
 
 class AppImagePackager(CollectionPackagerBase):
@@ -16,7 +17,7 @@ class AppImagePackager(CollectionPackagerBase):
         self.linuxdeployExe = None
         self._isInstalled = False
 
-    def setDefaults(self, defines: {str: str}) -> {str: str}:
+    def setDefaults(self, defines: DefinesDict) -> DefinesDict:
         defines = super().setDefaults(defines)
         defines["setupname"] = f"{defines['setupname']}.AppImage"
         defines.setdefault(

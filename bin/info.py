@@ -9,7 +9,7 @@ import os
 # the definition
 from enum import Enum, unique
 from pathlib import Path
-from typing import List, Tuple
+from typing import Optional, Tuple
 
 import VersionInfo
 from Blueprints.CraftPackageObject import BlueprintException, CraftPackageObject
@@ -147,7 +147,7 @@ class infoclass(object):
             return self.targets[self.buildTarget]
         return ""
 
-    def archiveName(self) -> List[str]:
+    def archiveName(self) -> list[str]:
         """returns the archive file name"""
         if self.buildTarget in self.archiveNames:
             name = self.archiveNames[self.buildTarget]
@@ -171,6 +171,7 @@ class infoclass(object):
         """return local source path suffix for the recent target"""
         if self.buildTarget in self.targetSrcSuffix:
             return self.targetSrcSuffix[self.buildTarget]
+        return ""
 
     def hasTargetSourcePath(self) -> bool:
         """return true if relative path appendable to local source path is given for the recent target"""
@@ -180,6 +181,7 @@ class infoclass(object):
         """return relative path appendable to local source path for the recent target"""
         if self.buildTarget in self.targetInstSrc:
             return self.targetInstSrc[self.buildTarget]
+        return ""
 
     def hasConfigurePath(self) -> bool:
         """return true if relative path appendable to local source path is given for the recent target"""
@@ -189,6 +191,7 @@ class infoclass(object):
         """return relative path appendable to local source path for the recent target"""
         if (self.hasTarget() or self.hasSvnTarget()) and self.buildTarget in self.targetConfigurePath:
             return self.targetConfigurePath[self.buildTarget]
+        return ""
 
     def hasInstallPath(self) -> bool:
         """return true if relative path appendable to local install path is given for the recent target"""
@@ -199,12 +202,13 @@ class infoclass(object):
         if self.buildTarget in self.targetInstallPath:
             return self.targetInstallPath[self.buildTarget]
         CraftCore.log.critical("no install path for this build target defined")
+        return ""
 
     def hasPatches(self) -> bool:
         """return state for having patches for the recent target"""
         return (self.hasTarget() or self.hasSvnTarget()) and self.buildTarget in self.patchToApply
 
-    def patchesToApply(self) -> List[tuple]:
+    def patchesToApply(self) -> list[tuple]:
         """return patch informations for the recent build target"""
         if self.hasPatches():
             out = self.patchToApply[self.buildTarget]
@@ -215,7 +219,7 @@ class infoclass(object):
         """return state if target has digest(s) for the recent build target"""
         return self.buildTarget in self.targetDigests
 
-    def targetDigest(self) -> Tuple[List[str], CraftHash.HashAlgorithm]:
+    def targetDigest(self) -> Optional[Tuple[list[str], CraftHash.HashAlgorithm]]:
         """return digest(s) for the recent build target. The return value could be a string or a list"""
         if self.hasTargetDigests():
             out = self.targetDigests[self.buildTarget]
@@ -230,7 +234,7 @@ class infoclass(object):
         """return state if target has digest url(s) for the recent build target"""
         return self.buildTarget in self.targetDigestUrls
 
-    def targetDigestUrl(self) -> Tuple[List[str], CraftHash.HashAlgorithm]:
+    def targetDigestUrl(self) -> Optional[Tuple[list[str], CraftHash.HashAlgorithm]]:
         """return digest url(s) for the recent build target.  The return value could be a string or a list"""
         if self.hasTargetDigestUrls():
             out = self.targetDigestUrls[self.buildTarget]

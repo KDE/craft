@@ -30,7 +30,6 @@ import configparser
 import contextlib
 import ctypes
 import glob
-import inspect
 import io
 import os
 import re
@@ -40,6 +39,7 @@ import stat
 import subprocess
 import sys
 from pathlib import Path
+from typing import Any, Optional
 
 import Notifier.NotificationLoader
 from CraftCore import CraftCore
@@ -57,11 +57,6 @@ def __locate7z():
     if appPath.exists():
         return appPath
     return None
-
-
-def abstract():
-    caller = inspect.getouterframes(inspect.currentframe())[1][3]
-    raise NotImplementedError(caller + " must be implemented in subclass")
 
 
 # unpack functions
@@ -158,9 +153,9 @@ def compress(archive: Path, source: str) -> bool:
     archive = Path(archive)
     ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
 
-    def __7z(archive, source):
+    def __7z(archive, source) -> bool:
         app = __locate7z()
-        kw = {}
+        kw: dict[str, Any] = {}
         flags = []
         if archive.suffix in {".appxsym", ".appxupload"}:
             flags.append("-tzip")
@@ -192,7 +187,7 @@ def compress(archive: Path, source: str) -> bool:
             command += [os.path.join(source, "*")]
         return system(command, displayProgress=True, **kw)
 
-    def __xz(archive, source):
+    def __xz(archive, source) -> bool:
         command = ["tar", "-cJf", archive, "-C"]
         if os.path.isfile(source):
             command += [source]
@@ -205,7 +200,8 @@ def compress(archive: Path, source: str) -> bool:
         deleteFile(archive)
 
     if not __locate7z() and archive.suffix == ".zip":
-        return shutil.make_archive(archive.with_suffix(""), "zip", source)
+        shutil.make_archive(str(archive.with_suffix("")), "zip", source)
+        return True
 
     if CraftCore.compiler.platform.isUnix and archive.suffixes[-2:] == [".tar", ".xz"]:
         return __xz(archive, source)
@@ -639,14 +635,14 @@ def copyDir(
 def globCopyDir(
     srcDir: str,
     destDir: str,
-    pattern: [str],
+    pattern: list[str],
     linkOnly=CraftCore.settings.getboolean("General", "UseHardlinks", False),
 ) -> bool:
     files = []
     for p in pattern:
         files.extend(glob.glob(os.path.join(srcDir, p), recursive=True))
     for f in files:
-        if not copyFile(f, os.path.join(destDir, os.path.relpath(f, srcDir)), linkOnly=linkOnly):
+        if not copyFile(Path(f), Path(os.path.join(destDir, os.path.relpath(f, srcDir))), linkOnly=linkOnly):
             return False
     return True
 
@@ -1001,14 +997,14 @@ def configureFile(inFile: str, outFile: str, variables: dict) -> bool:
     return True
 
 
-def limitCommandLineLength(command: [str], args: [str]) -> [[str]]:
+def limitCommandLineLength(command: list[str], args: list[str] | list[Path]) -> list[list[str]]:
     if CraftCore.compiler.platform.isWindows:
         # https://docs.microsoft.com/en-US/troubleshoot/windows-client/shell-experience/command-line-string-limitation
         SIZE = 8191
     else:
         code, result = CraftCore.cache.getCommandOutput("getconf", "ARG_MAX")
         if code != 0:
-            return False
+            return []
         SIZE = int(result.strip())
     out = []
     commandSize = sum(map(len, command))
@@ -1016,7 +1012,7 @@ def limitCommandLineLength(command: [str], args: [str]) -> [[str]]:
         CraftCore.log.error("Failed to compute command, command too long")
         return []
     currentSize = commandSize
-    tmp = []
+    tmp: list[str] = []
     for a in args:
         a = str(a)
         le = len(a)
@@ -1046,21 +1042,21 @@ def isExecuatable(fileName: Path, includeShellScripts=False):
     return False
 
 
-def isBinary(fileName: str) -> bool:
+def isBinary(fileName: str | Path) -> bool:
     # https://en.wikipedia.org/wiki/List_of_file_signatures
     MACH_O_64 = b"\xCF\xFA\xED\xFE"
     ELF = b"\x7F\x45\x4C\x46"
 
-    fileName = Path(fileName)
-    suffix = fileName.suffix.lower()
-    if fileName.is_symlink() or fileName.is_dir():
+    filePath = Path(fileName)
+    suffix = filePath.suffix.lower()
+    if filePath.is_symlink() or filePath.is_dir():
         return False
     if CraftCore.compiler.platform.isWindows:
         if suffix in {".dll", ".exe"}:
             return True
     else:
         if CraftCore.compiler.platform.isApple:
-            if ".dSYM/" in str(fileName):
+            if ".dSYM/" in str(filePath):
                 return False
         elif suffix == ".debug":
             return False
@@ -1073,20 +1069,20 @@ def isBinary(fileName: str) -> bool:
                 signature = ELF
             else:
                 raise Exception("Unsupported platform")
-            with fileName.open("rb") as f:
+            with filePath.open("rb") as f:
                 return f.read(len(signature)) == signature
     return False
 
 
 def isScript(fileName: str):
-    fileName = Path(fileName)
-    if fileName.is_symlink() or fileName.is_dir():
+    filePath = Path(fileName)
+    if filePath.is_symlink() or filePath.is_dir():
         return False
-    if isExecuatable(fileName):
-        if CraftCore.compiler.platform.isWindows and not fileName.suffix.lower() == ".exe":
+    if isExecuatable(filePath):
+        if CraftCore.compiler.platform.isWindows and not filePath.suffix.lower() == ".exe":
             return True
         signature = b"#!"
-        with fileName.open("rb") as f:
+        with filePath.open("rb") as f:
             return f.read(len(signature)) == signature
     return False
 
@@ -1132,7 +1128,7 @@ def updateRpath(path: Path, oldRpath: set, newRpath: set):
     return True
 
 
-def regexFileFilter(filename: os.DirEntry, root: str, patterns: [re] = None) -> bool:
+def regexFileFilter(filename: os.DirEntry, root: str, patterns: list[re.Pattern] = []) -> bool:
     """return False if file does not match pattern"""
     # use linux style seperators
     relFilePath = Path(filename.path).relative_to(root).as_posix()
@@ -1195,7 +1191,7 @@ def filterDirectoryContent(
                     raise Exception(f"Unhandled case: {filePath}")
 
 
-def makeWritable(targetPath: Path, log: bool = True) -> (bool, int):
+def makeWritable(targetPath: Path, log: bool = True) -> tuple[bool, int]:
     """Make a file writable if needed. Returns if the mode was changed and the curent mode of the file"""
     targetPath = Path(targetPath)
     originalMode = targetPath.stat().st_mode
@@ -1222,7 +1218,7 @@ def makeTemporaryWritable(targetPath: Path):
             targetPath.chmod(mode & ~stat.S_IWUSR)
 
 
-def getPDBForBinary(path: str) -> Path:
+def getPDBForBinary(path: str) -> Optional[Path]:
     with open(path, "rb") as f:
         data = f.read()
     pdb = data.rfind(b".pdb")
@@ -1248,7 +1244,7 @@ def installShortcut(name: str, path: str, workingDir: str, icon: str, desciption
             "-WorkingDirectory",
             pwsh.quote(OsUtils.toNativePath(workingDir)),
             "-Name",
-            pwsh.quote(shortcutPath),
+            pwsh.quote(str(shortcutPath)),
             "-Icon",
             pwsh.quote(icon),
             "-Description",
@@ -1277,7 +1273,7 @@ def symFileName(fileName: Path) -> Path:
         return Path(f"{fileName}{CraftCore.compiler.symbolsSuffix}")
 
 
-def strip(fileName: Path, destFileName: Path = None) -> Path:
+def strip(fileName: Path, destFileName: Optional[Path] = None) -> Optional[Path]:
     """strip debugging informations from shared libraries and executables"""
     """ Returns the path to the sym file on success, None on error"""
     if CraftCore.compiler.compiler.isMSVC or not CraftCore.compiler.compiler.isGCCLike:
@@ -1313,7 +1309,7 @@ def urljoin(root, path):
     return "/".join([root.rstrip("/"), path])
 
 
-def redact(input: str, secrests: {str}):
+def redact(input: str, secrests: set[str]):
     if secrests is None:
         return input
     if isinstance(input, str):

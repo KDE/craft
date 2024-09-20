@@ -64,11 +64,11 @@ class MultiSource(SourceBase):
         CraftCore.debug.trace("MultiSource checkoutDir")
         return self._sourceClass.checkoutDir(self, index=index)
 
-    def sourceDir(self) -> Path:
+    def sourceDir(self, dummyIndex=0) -> Path:
         CraftCore.debug.trace("MultiSource sourceDir")
         if hasattr(self._sourceClass, "sourceDir"):
             return self._sourceClass.sourceDir(self)
-        return None
+        return Path()
 
     def repositoryUrl(self, index=0):
         CraftCore.debug.trace("MultiSource repositoryUrl")

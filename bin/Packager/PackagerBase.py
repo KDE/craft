@@ -3,9 +3,12 @@
 #
 # Packager base
 
+import abc
 import glob
 import os
+import re
 from pathlib import Path
+from typing import Optional
 
 import utils
 from Blueprints.CraftPackageObject import CraftPackageObject
@@ -14,6 +17,8 @@ from CraftCore import CraftCore
 from Utils import CraftHash
 from Utils.CraftManifest import CraftManifest, FileType
 
+DefinesDict = dict[str, str | list[str | dict[str, str]]]
+
 
 class PackagerBase(CraftBase):
     """provides a generic interface for packagers and implements basic package creating stuff"""
@@ -21,18 +26,18 @@ class PackagerBase(CraftBase):
     @InitGuard.init_once
     def __init__(self, package: CraftPackageObject):
         CraftBase.__init__(self, package)
-        self.whitelist_file = []
-        self.blacklist_file = []
-        self.defines = {}
-        self.ignoredPackages = []
+        self.whitelist_file: list[re.Pattern] = []
+        self.blacklist_file: list[re.Pattern] = []
+        self.defines: DefinesDict = {}
+        self.ignoredPackages: list[str] = []
         self._manifest = None
         self._currentManifestEnty = None
 
-    def setDefaults(self, defines: {str: str}) -> {str: str}:
+    def setDefaults(self, defines: DefinesDict) -> DefinesDict:
         defines = dict(defines)
         defines.setdefault(
             "setupname",
-            self.packageDestinationDir() / self.binaryArchiveName(includeRevision=True, fileType=""),
+            str(self.packageDestinationDir() / self.binaryArchiveName(includeRevision=True, fileType="")),
         )
         defines.setdefault("shortcuts", "")
         defines.setdefault("company", "KDE e.V.")
@@ -64,7 +69,7 @@ class PackagerBase(CraftBase):
         defines.setdefault("appname", self.package.name.lower())
         return defines
 
-    def getMacAppPath(self, defines, lookupPath=None) -> Path:
+    def getMacAppPath(self, defines, lookupPath=None) -> Optional[Path]:
         lookPath = Path(lookupPath if lookupPath else self.archiveDir())
         appPath = defines["apppath"]
         if not appPath:
@@ -77,8 +82,9 @@ class PackagerBase(CraftBase):
             appPath = apps[0]
         return lookPath / appPath
 
+    @abc.abstractmethod
     def preArchive(self):
-        utils.abstract()
+        pass
 
     def archiveDir(self):
         return self.buildRoot() / "archive"
@@ -90,8 +96,9 @@ class PackagerBase(CraftBase):
         return Path(self.buildRoot()) / "artifacts"
 
     # """ create a package """
-    def createPackage(self):
-        utils.abstract()
+    @abc.abstractmethod
+    def createPackage(self) -> bool:
+        pass
 
     def _generateManifest(
         self,
@@ -111,6 +118,9 @@ class PackagerBase(CraftBase):
             self._manifest = manifest = CraftManifest.load(manifestLocation, urls=manifestUrls)
         if not self._currentManifestEnty:
             self._currentManifestEnty = manifest.get(str(self)).addBuild(self.version, self.subinfo.options.dynamic, revision=self.sourceRevision())
+
+        assert self._currentManifestEnty is not None
+
         self._currentManifestEnty.addFile(
             fileType,
             name,

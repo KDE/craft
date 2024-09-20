@@ -148,7 +148,7 @@ class AppxPackager(CollectionPackagerBase):
         defines.setdefault("appx_identity_name", defines["name"])
 
         utils.createDir(self.artifactsDir())
-        defines["setupname"] = self.artifactsDir() / os.path.basename(f"{defines['setupname']}.appx")
+        defines["setupname"] = str(self.artifactsDir() / os.path.basename(f"{defines['setupname']}.appx"))
         defines.setdefault("craft_id", self.package.path.replace("/", "."))
 
         self._setupFileTypes(defines)
@@ -168,13 +168,23 @@ class AppxPackager(CollectionPackagerBase):
             defines["extensions"] += AppxPackager.StartUp
 
         if "alias" in defines:
+            assert isinstance(defines["alias"], str)
             if not defines["alias"].endswith(CraftCore.compiler.platform.executableSuffix):
                 defines["alias"] += CraftCore.compiler.platform.executableSuffix
             defines["extensions"] += AppxPackager.Aliases
+            assert isinstance(defines["additional_xmlns"], str)
             defines["additional_xmlns"] += """xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"\n"""
+            target: str
+            if "executable" in self.defines:
+                assert isinstance(self.defines["executable"], dict)
+                target = self.defines["executable"]
+            else:
+                shortcuts = self.defines["shortcuts"][0]
+                assert isinstance(shortcuts, dict)
+                target = shortcuts["target"]
             defines.setdefault(
                 "alias_executable",
-                self.defines["executable"] if "executable" in self.defines else self.defines["shortcuts"][0]["target"],
+                target,
             )
 
         extensions = defines["extensions"]
@@ -203,6 +213,7 @@ class AppxPackager(CollectionPackagerBase):
 
         # compat with nsis
         if "shortcuts" in self.defines:
+            assert isinstance(self.defines["shortcuts"][0], dict)
             defines.setdefault("executable", self.defines["shortcuts"][0]["target"])
         return defines
 
@@ -245,12 +256,12 @@ class AppxPackager(CollectionPackagerBase):
         ) and utils.system(["makeappx", "pack", "/d", self.archiveDir(), "/p", archive])
 
     def __createSideloadAppX(self, defines) -> bool:
-        def appendToPublisherString(publisher: [str], field: str, key: str) -> None:
+        def appendToPublisherString(publisher: list[str], field: str, key: str) -> None:
             data = CraftCore.settings.get("CodeSigning", key, "")
             if data:
                 publisher += [f"{field}={data}"]
 
-        publisher = []
+        publisher: list[str] = []
         appendToPublisherString(publisher, "CN", "CommonName")
         appendToPublisherString(publisher, "O", "Organization")
         appendToPublisherString(publisher, "STREET", "Street")

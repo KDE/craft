@@ -28,8 +28,9 @@ import re
 import subprocess
 import sys
 import tempfile
-from collections import OrderedDict, namedtuple
+from collections import namedtuple
 from pathlib import Path
+from typing import Optional
 
 import CraftBase
 import utils
@@ -43,7 +44,7 @@ from Utils.CraftTitleUpdater import CraftTitleUpdater
 from Utils.StageLogger import StageLogger
 
 
-def __recurseCraft(command: [str], args: [str]):
+def __recurseCraft(command: list[str], args: list[str]):
     # command is the essential action, args might get split into multiple calls
     # close the log file and the db
     UserOptions.instance()._save()
@@ -120,7 +121,7 @@ def handlePackage(package, buildAction, directTargets):
         return True
 
 
-def resolvePackage(packageNames: [str], version: str = None) -> [CraftPackageObject]:
+def resolvePackage(packageNames: list[str], version: Optional[str] = None) -> CraftPackageObject:
     package = CraftPackageObject(None)
 
     def resolveChildren(child):
@@ -140,7 +141,7 @@ def resolvePackage(packageNames: [str], version: str = None) -> [CraftPackageObj
     return package
 
 
-def setOption(packageNames: [str], option: str) -> bool:
+def setOption(packageNames: list[str], option: str) -> bool:
     if "=" not in option:
         CraftCore.log.error(f"Invalid option {option}")
         return False
@@ -221,19 +222,19 @@ def destroyCraftRoot() -> bool:
     return True
 
 
-def unShelve(shelve, args):
+def unShelve(shelve, args) -> bool:
     parser = configparser.ConfigParser(allow_no_value=True)
     parser.read(shelve, encoding="UTF-8")
     listVersion = 1
     blueprintRepositories = []
     if "General" in parser:
-        listVersion = int(parser["General"].get("version", listVersion))
+        listVersion = parser["General"].getint("version", listVersion)
         blueprintRepositories = CraftCore.settings._parseList(parser["General"].get("blueprintRepositories", ""))
     for repo in blueprintRepositories:
         if not addBlueprintsRepository(repo):
             return False
     Info = namedtuple("Info", "version revision")
-    packages = {}  # type: Info
+    packages: dict[str, Info] = {}
     if listVersion == 1:
         for sections in parser.keys():
             for packageName in parser[sections]:
@@ -279,12 +280,12 @@ def unShelve(shelve, args):
 
 
 def shelve(target: str):
-    target = Path(target)
+    targetPath = Path(target)
     CraftCore.log.info(f"Creating shelve: {target}")
     listFile = configparser.ConfigParser(allow_no_value=True)
-    updating = target.exists()
+    updating = targetPath.exists()
     if updating:
-        listFile.read(target, encoding="UTF-8")
+        listFile.read(targetPath, encoding="UTF-8")
         oldSections = set(listFile.sections())
         if "General" in oldSections:
             oldSections.remove("General")
@@ -341,12 +342,21 @@ def shelve(target: str):
     if updating:
         removed = oldSections - newPackages
         added = newPackages - oldSections
-        CraftCore.log.info(f"The following packages where removed from {target}: {removed}")
-        CraftCore.log.info(f"The following packages where added to {target}: {added}")
-    utils.createDir(target.parent)
-    listFile._sections = OrderedDict(sorted(listFile._sections.items(), key=lambda k: k[0]))
-    with open(target, "wt", encoding="UTF-8") as out:
-        listFile.write(out)
+        CraftCore.log.info(f"The following packages where removed from {targetPath}: {removed}")
+        CraftCore.log.info(f"The following packages where added to {targetPath}: {added}")
+    utils.createDir(targetPath.parent)
+    sorted_sections = sorted(listFile.sections())
+
+    sorted_listFile = configparser.ConfigParser(allow_no_value=True)
+
+    for section in sorted_sections:
+        sorted_listFile.add_section(section)
+
+        for option in listFile.options(section):
+            sorted_listFile.set(section, option, listFile.get(section, option))
+
+    with open(targetPath, "wt", encoding="UTF-8") as out:
+        sorted_listFile.write(out)
     return True
 
 
@@ -365,7 +375,7 @@ def packageIsOutdated(package):
         return package.version != version
 
 
-def invoke(command: str, directTargets: [CraftPackageObject]) -> bool:
+def invoke(command: str, directTargets: list[CraftPackageObject]) -> bool:
     args = {}
     key = command
     argsPattern = re.compile(r"(.+)\((.*)\)")
@@ -393,7 +403,7 @@ def invoke(command: str, directTargets: [CraftPackageObject]) -> bool:
     return True
 
 
-def run(package: [CraftPackageObject], action: str, args) -> bool:
+def run(package: CraftPackageObject, action: str, args) -> bool:
     if package.isIgnored():
         CraftCore.log.info(f"Skipping package because it has been ignored: {package}")
         return True

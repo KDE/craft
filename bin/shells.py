@@ -7,7 +7,7 @@ import os
 import platform
 import shutil
 import sys
-from pathlib import Path
+from typing import Optional
 
 import utils
 from Blueprints.CraftVersion import CraftVersion
@@ -198,11 +198,11 @@ class BashShell(object):
         return CraftCore.settings.get("Compile", "BuildType", "RelWithDebInfo")
 
     @staticmethod
-    def toNativePath(path) -> Path:
+    def toNativePath(path) -> Optional[str]:
         if OsUtils.isWin():
             return OsUtils.toMSysPath(str(path))
         else:
-            return Path(str(path))
+            return str(path)
 
     def _findBash(self):
         if OsUtils.isWin():
@@ -254,7 +254,7 @@ class Powershell(object):
     def quote(self, s: str) -> str:
         return f"'{s}'"
 
-    def execute(self, args: [str], **kw) -> bool:
+    def execute(self, args: list[str], **kw) -> bool:
         return utils.system(
             [self.pwsh, "-NoProfile", "-ExecutionPolicy", "ByPass", "-Command"] + args,
             **kw,

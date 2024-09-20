@@ -28,8 +28,7 @@ class DirSource(SourceBase):
             srcPath = Path(self.subinfo.options.dynamic.srcDir)
 
         if not srcPath.is_absolute():
-            CraftCore.log.error("Error: Please provide an absolute path as source dir")
-            return None
+            raise Exception("Please provide an absolute path as source dir")
         return srcPath
 
     def sourceRevision(self):

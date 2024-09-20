@@ -2,16 +2,18 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # SPDX-FileCopyrightText: 2023 Hannah von Reth <vonreth@kde.org>
 
+import io
 import tempfile
+from typing import Optional
 
 from CraftCore import CraftCore
 
 
 class StageLogger(object):
-    ActiveLogs = []  # type: List[StageLogger]
+    ActiveLogs: list["StageLogger"] = []
 
     def __init__(self, name: str, buffered: bool = False, outputOnFailure: bool = False):
-        self.__logFile = None  # type: io.TextIOBase
+        self.__logFile: Optional[io.TextIOBase] = None
         self._logPath = (CraftCore.standardDirs.logDir() / name).with_suffix(".log")
         self.buffered = buffered
         self.outputOnFailure = outputOnFailure
@@ -33,6 +35,7 @@ class StageLogger(object):
         # only create the log file if anything is written
         if not self.__logFile:
             self.__open("wt+")
+        assert self.__logFile
         self.__logFile.write(s)
 
     def dump(self):

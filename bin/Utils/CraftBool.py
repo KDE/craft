@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # SPDX-FileCopyrightText: 2024 Hannah von Reth <vonreth@kde.org>
 import configparser
+from typing import Any
 
 
 class CraftBool(object):
@@ -9,7 +10,7 @@ class CraftBool(object):
     Provides properties for integration with buildsystem flags
     """
 
-    def __init__(self, b: bool):
+    def __init__(self, b: bool | Any):
         super().__init__()
         self.value = bool(b)
 

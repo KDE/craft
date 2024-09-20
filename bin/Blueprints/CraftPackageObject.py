@@ -63,7 +63,7 @@ class CategoryPackageObject(object):
             self.valid = True
             info = configparser.ConfigParser()
             info.read(self._ini)
-            general = info["General"]
+            general: configparser.SectionProxy = info["General"]
             self.displayName = general.get("displayName", "")
             self.description = general.get("description", "")
             self.tags = general.get("tags", "")
@@ -90,7 +90,7 @@ class CategoryPackageObject(object):
                 for c in architecture:
                     self.architecture |= CraftCore.compiler.Architecture.fromString(c)
             self.pathOverride = general.get("pathOverride", None)
-            self.forceOverride = general.get("forceOverride", False)
+            self.forceOverride = general.getboolean("forceOverride", False)
 
     @property
     def isActive(self) -> CraftBool:
@@ -108,10 +108,10 @@ class CategoryPackageObject(object):
 
 class CraftPackageObject(object):
     __rootPackage = None
-    __rootDirectories = []
+    __rootDirectories: list[Path] = []
     # list of all leaves, unaffected by overrides etc
-    _allLeaves = {}
-    _recipes = {}  # all recipes, for lookup by package name
+    _allLeaves: dict[Path, "CraftPackageObject"] = {}
+    _recipes: dict[str, "CraftPackageObject"] = {}  # all recipes, for lookup by package name
     IgnoredDirectories = {"__pycache__", "LICENSES"}
 
     @staticmethod
@@ -131,7 +131,7 @@ class CraftPackageObject(object):
         self.children = {}
         self.source = None
         self._pattern = None
-        self.categoryInfo = None  # type:CategoryPackageObject
+        self.categoryInfo: "CategoryPackageObject" = None
         self._version = None
         self._instance = None
         self.__path = None
@@ -139,13 +139,14 @@ class CraftPackageObject(object):
     @property
     def pattern(self) -> "BuildSystemBase":
         if not self.source:
-            raise BlueprintException(f"{self.source} dos not provide a Pattern", self)
+            raise BlueprintException(f"{self.source} does not provide a Pattern", self)
         if not self.isCategory():
             raise BlueprintException("Only a catergory can provide a Pattern", self)
         # load the module
         self.instance
-        if self._pattern:
-            return self._pattern
+        if not self._pattern:
+            raise BlueprintException("Failed to resolve pattern, pattern is None", self)
+        return self._pattern
 
     @property
     def parent(self):

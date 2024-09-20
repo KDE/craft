@@ -245,7 +245,7 @@ class GitSource(VersionSystemSourceBase):
         repopath = repopath.replace("[git]", "")
         chkDir = Path(self.checkoutDir(index))
         # shorten the path to the dir containing the src on Windows
-        sourcedir = CraftShortPath(chkDir.parent).shortPath / chkDir.name
+        sourcedir = Path(CraftShortPath(chkDir.parent).shortPath) / chkDir.name
 
         if self.subinfo.hasTargetSourcePath():
             sourcedir = sourcedir / self.subinfo.targetSourcePath()

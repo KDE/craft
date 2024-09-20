@@ -4,6 +4,7 @@ import shutil
 import sys
 import time
 from pathlib import Path
+from typing import Optional
 
 import CraftOS.OsUtilsBase
 from CraftCore import CraftCore
@@ -50,10 +51,10 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
 
     @staticmethod
     def toNativePath(path: str) -> str:
-        return OsUtils.toUnixPath(path)
+        return str(OsUtils.toUnixPath(path))
 
     @staticmethod
-    def killProcess(name: str = "*", prefix: str = None) -> bool:
+    def killProcess(name: str = "*", prefix: Optional[str] = None) -> bool:
         CraftCore.log.warning("killProcess is not implemented")
         return True
 

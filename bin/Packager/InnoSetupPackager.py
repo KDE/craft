@@ -32,6 +32,7 @@ import utils
 from CraftBase import InitGuard
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
+from Packager.PackagerBase import DefinesDict
 from Packager.PortablePackager import PortablePackager
 from Utils import CodeSign, CraftHash
 
@@ -71,8 +72,9 @@ class InnoSetupPackager(PortablePackager):
         super().__init__(**kwargs)
         self.nsisExe = None
         self._isInstalled = False
+        self.scriptname: str
 
-    def setDefaults(self, defines) -> {}:
+    def setDefaults(self, defines) -> DefinesDict:
         defines = super().setDefaults(defines)
         defines.setdefault("srcdir", self.archiveDir())  # deprecated
         defines.setdefault("registry_keys", [])
@@ -82,7 +84,7 @@ class InnoSetupPackager(PortablePackager):
             self.scriptname = os.path.join(os.path.dirname(__file__), "InnoSetupTemplate.iss")
         return defines
 
-    def isInnoInstalled(self):
+    def isInnoInstalled(self) -> bool:
         if not self._isInstalled:
             self._isInstalled = self.__isInstalled()
             if not self._isInstalled:
@@ -90,7 +92,7 @@ class InnoSetupPackager(PortablePackager):
                 return False
         return True
 
-    def __isInstalled(self):
+    def __isInstalled(self) -> bool:
         """check if nsis (Nullsoft scriptable install system) is installed somewhere"""
         self.innoExe = CraftCore.cache.findApplication("ISCC")
         if not self.innoExe:
@@ -176,7 +178,7 @@ class InnoSetupPackager(PortablePackager):
             return False
         return CodeSign.signWindows([defines["setupname"]])
 
-    def createPackage(self):
+    def createPackage(self) -> bool:
         """create a package"""
         if not self.isInnoInstalled():
             return False
@@ -190,7 +192,8 @@ class InnoSetupPackager(PortablePackager):
         if not self.generateInnoInstaller(defines):
             return False
 
+        assert isinstance(defines["setupname"], str)
         destDir, archiveName = os.path.split(defines["setupname"])
-        self._generateManifest(destDir, archiveName)
+        self._generateManifest(destDir, Path(archiveName))
         CraftHash.createDigestFiles(defines["setupname"])
         return True

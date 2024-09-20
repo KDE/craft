@@ -10,6 +10,7 @@ import time
 import urllib.error
 import urllib.request
 from pathlib import Path
+from typing import Optional
 
 from Blueprints.CraftVersion import CraftVersion
 from CraftCore import AutoImport, CraftCore
@@ -91,7 +92,7 @@ class CraftCache(object):
         CraftCore.log.debug("Clear utils cache")
         CraftCore.cache = CraftCache()
 
-    def findApplication(self, app, path=None, forceCache: bool = False) -> str:
+    def findApplication(self, app, path=None, forceCache: bool = False) -> Optional[str]:
         if app in self._nonPersistentCache.applicationLocations:
             appLocation = self._nonPersistentCache.applicationLocations[app]
             if os.path.exists(appLocation):
@@ -118,17 +119,17 @@ class CraftCache(object):
             return None
         return appLocation
 
-    def getCommandOutput(self, app: str, command: str, testName: str = None) -> (int, str):
+    def getCommandOutput(self, app: str, command: str, testName: Optional[str] = None) -> tuple[int, Optional[str]]:
         if not testName:
             testName = f'"{app}" {command}'
-        app = self.findApplication(app)
-        if not app:
+        _app = self.findApplication(app)
+        if not _app:
             return (-1, None)
         if testName not in self._outputCache:
-            CraftCore.log.debug(f'"{app}" {command}')
+            CraftCore.log.debug(f'"{_app}" {command}')
             # TODO: port away from shell=True
             completeProcess = subprocess.run(
-                f'"{app}" {command}',
+                f'"{_app}" {command}',
                 shell=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
@@ -143,11 +144,11 @@ class CraftCache(object):
         return self._outputCache[testName]
 
     # TODO: rename, cleanup
-    def checkCommandOutputFor(self, app, command, helpCommand="-h") -> str:
+    def checkCommandOutputFor(self, app, command, helpCommand="-h") -> Optional[str]:
         if not (app, command) in self._helpCache:
             _, output = self.getCommandOutput(app, helpCommand)
             if not output:
-                return False
+                return None
             if isinstance(command, str):
                 supports = command in output
             else:
@@ -156,7 +157,7 @@ class CraftCache(object):
             CraftCore.log.debug("%s %s %s" % (app, "supports" if supports else "does not support", command))
         return self._helpCache[(app, command)]
 
-    def getVersion(self, app, pattern=None, versionCommand=None) -> CraftVersion:
+    def getVersion(self, app, pattern=None, versionCommand=None) -> Optional[CraftVersion]:
         app = self.findApplication(app)
         if not app:
             return None
@@ -199,7 +200,7 @@ class CraftCache(object):
                         CraftCore.log.debug(f"cacheJsonFromUrl: {url}\n{data}")
         return self._jsonCache.get(url, {})
 
-    def getNightlyVersionsFromUrl(self, url, pattern, timeout=10) -> [str]:
+    def getNightlyVersionsFromUrl(self, url, pattern, timeout=10) -> list[str]:
         """
         Returns a list of possible version number matching the regular expression in pattern.
         :param url: The url to look for the nightly builds.

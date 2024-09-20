@@ -156,7 +156,7 @@ class SetupHelper(object):
         if key not in os.environ:
             self.addEnvVar(key, val)
 
-    def prependEnvVar(self, key: str, var: str, sep: str = os.path.pathsep) -> None:
+    def prependEnvVar(self, key: str, var: list[str] | str, sep: str = os.path.pathsep) -> None:
         if not isinstance(var, list):
             var = [var]
         if key in os.environ:
@@ -167,9 +167,7 @@ class SetupHelper(object):
         os.environ[key] = val
 
     @staticmethod
-    def _callVCVER(version: int, args: [] = None, native: bool = True, prerelease: bool = False) -> str:
-        if not args:
-            args = []
+    def _callVCVER(version: int, args: list = [], native: bool = True, prerelease: bool = False) -> str:
         vswhere = os.path.join(CraftCore.standardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")
         command = [vswhere, "-property", "installationPath", "-nologo", "-latest", "-products", "*"]
         if prerelease:
@@ -194,7 +192,7 @@ class SetupHelper(object):
         architecture=None,
         toolset=None,
         native=True,
-    ) -> str:
+    ) -> CaseInsensitiveDict:
         if not architecture:
             architecture = CraftCore.compiler.Architecture.x86_64
         if native:

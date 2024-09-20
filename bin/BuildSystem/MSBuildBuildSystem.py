@@ -25,6 +25,7 @@
 import glob
 import os
 import re
+from pathlib import Path
 
 import utils
 from Blueprints.CraftPackageObject import CraftPackageObject
@@ -44,10 +45,10 @@ class MSBuildBuildSystem(BuildSystemBase):
             "Debug": "Debug",
         }
 
-    def _globCopy(self, sourceDir: str, destDir: str, patterns: [str]):
+    def _globCopy(self, sourceDir: str, destDir: str, patterns: list[str]) -> bool:
         for pattern in patterns:
             for f in glob.glob(os.path.join(sourceDir, pattern), recursive=True):
-                if not utils.copyFile(f, os.path.join(destDir, os.path.basename(f)), linkOnly=False):
+                if not utils.copyFile(Path(f), Path(destDir) / os.path.basename(f), linkOnly=False):
                     return False
         return True
 

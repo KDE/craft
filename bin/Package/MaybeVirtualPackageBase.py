@@ -12,8 +12,9 @@ class MaybeVirtualPackageBase(object):
             self.baseClass = classA
         else:
             self.baseClass = classB
+
         self.__class__.__bases__ = (self.baseClass,)
-        self.__class__.__bases__[0].__init__(self, package=package)
+        self.__class__.__bases__[0].__init__(self, package=package)  # type: ignore # TODO: find a cleaner solution
 
 
 class VirtualIfSufficientVersion(MaybeVirtualPackageBase):

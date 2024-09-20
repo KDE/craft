@@ -1,6 +1,8 @@
 import os
 import subprocess
 import zlib
+from pathlib import Path
+from typing import Optional
 
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
@@ -8,11 +10,11 @@ from CraftOS.osutils import OsUtils
 
 class CraftShortPath(object):
     _useShortpaths = OsUtils.isWin()
-    _shortPaths = {}
+    _shortPaths: dict[str, Optional[str]] = {}
 
-    def __init__(self, path, createShortPath=None) -> None:
-        self._longPath = path
-        self._shortPath = None  # type: Path
+    def __init__(self, path: Path, createShortPath=None) -> None:
+        self._longPath: Path = path
+        self._shortPath: Optional[str] = None
         if not createShortPath:
             self._createShortPathLambda = CraftShortPath._createShortPath
         else:
@@ -23,19 +25,19 @@ class CraftShortPath(object):
 
     @property
     def longPath(self) -> str:
-        return self._longPath() if callable(self._longPath) else self._longPath
+        return str(self._longPath() if callable(self._longPath) else self._longPath)
 
     @property
     def shortPath(self) -> str:
         if self._shortPath:
-            return self._shortPath
+            return str(self._shortPath)
         self._shortPath = CraftShortPath._shortPaths.get(self.longPath, None)
         if not self._shortPath:
             self._shortPath = self._createShortPathLambda(self.longPath)
             CraftShortPath._shortPaths[self.longPath] = self._shortPath
         if self._shortPath != self.longPath:
             os.makedirs(self.longPath, exist_ok=True)
-        return self._shortPath
+        return str(self._shortPath)
 
     @staticmethod
     def _createShortPath(longPath) -> str:

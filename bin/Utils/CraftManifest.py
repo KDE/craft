@@ -5,6 +5,7 @@ import os
 import shutil
 from enum import Enum, auto, unique
 from pathlib import Path
+from typing import Any, Optional
 
 import utils
 from CraftCompiler import CraftCompilerSignature
@@ -52,13 +53,13 @@ class CraftManifestBuild(object):
         self.version = version
         self.buildPrefix = str(CraftCore.standardDirs.craftRoot())
         # deprecated use config
-        self.configHash = None
-        self.config = None
+        self.configHash: Optional[str] = None
+        self.config: Optional[collections.OrderedDict] = None
 
         # the revision is used for version pinning (shelves)
-        self.revision = None
+        self.revision: Optional[str] = None
 
-        self.files = {}  # Dict[FileType, CraftManifestEntryFiles]
+        self.files: dict[FileType, CraftManifestEntryFile] = {}
 
     def addFile(self, fileType: FileType, fileName: str, checksum: str) -> CraftManifestEntryFile:
         f = CraftManifestEntryFile(fileType=fileType, fileName=fileName, checksum=checksum)
@@ -84,7 +85,7 @@ class CraftManifestBuild(object):
         # map enum to name
         for k, v in self.files.items():
             files[k.name] = v
-        data = {
+        data: dict[str, Any] = {
             "files": files,
             "date": self.date.strftime(CraftManifest._TIME_FORMAT),
             "version": self.version,
@@ -102,7 +103,7 @@ class CraftManifestBuild(object):
 class CraftManifestEntry(object):
     def __init__(self, name: str) -> None:
         self.name = name
-        self.build = []  # type: List[CraftManifestBuild]
+        self.build: list[CraftManifestBuild] = []
 
     @staticmethod
     def fromJson(data: dict):
@@ -120,7 +121,7 @@ class CraftManifestEntry(object):
             "build": [x.toJson() for x in collections.OrderedDict.fromkeys(self.build)],
         }
 
-    def addBuild(self: str, version: str, config, revision=None) -> CraftManifestBuild:
+    def addBuild(self, version: str, config, revision=None) -> CraftManifestBuild:
         f = CraftManifestBuild(version)
         if config:
             f.config = config.dump()
@@ -129,7 +130,7 @@ class CraftManifestEntry(object):
         return f
 
     @property
-    def latest(self) -> CraftManifestBuild:
+    def latest(self) -> Optional[CraftManifestBuild]:
         return self.build[0] if self.build else None
 
 
@@ -205,7 +206,7 @@ class CraftManifest(object):
             out["packages"][compiler] = [x.toJson() for x in self.packages[compiler].values()]
         return out
 
-    def get(self, package: str, compiler: str = None) -> CraftManifestEntry:
+    def get(self, package: str, compiler: Optional[str] = None) -> CraftManifestEntry:
         if not compiler:
             compiler = str(CraftCore.compiler)
         if compiler not in self.packages:
@@ -228,7 +229,7 @@ class CraftManifest(object):
         shutil.copy2(cacheFilePath, cacheFilePathTimed)
 
     @staticmethod
-    def load(manifestFileName: str, urls: [str] = None):
+    def load(manifestFileName: str, urls: Optional[list[str]] = None):
         """
         Load a manifest.
         If a url is provided a manifest is fetch from that the url and merged with a local manifest.

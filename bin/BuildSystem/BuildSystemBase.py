@@ -30,6 +30,7 @@ import os
 import re
 import subprocess
 from pathlib import Path
+from typing import Optional
 
 import utils
 from Blueprints.CraftPackageObject import CraftPackageObject
@@ -100,6 +101,7 @@ class BuildSystemBase(CraftBase):
             return "gmake"
         elif OsUtils.isUnix():
             return "make"
+        return ""
 
     def configureSourceDir(self):
         """returns source dir used for configure step"""
@@ -191,45 +193,47 @@ class BuildSystemBase(CraftBase):
 
     def patchInstallPrefix(
         self,
-        files: [str],
-        oldPaths: [Path] = None,
-        newPath: Path = Path(CraftCore.standardDirs.craftRoot()),
+        files: list[str],
+        oldPaths: Optional[list[Path] | Path] = None,
+        newPath: Path = CraftCore.standardDirs.craftRoot(),
     ) -> bool:
-        if not isinstance(oldPaths, list):
+        if oldPaths and not isinstance(oldPaths, list):
             oldPaths = [oldPaths]
         elif not oldPaths:
             oldPaths = [self.subinfo.buildPrefix]
 
-        oldPaths = [Path(x).as_posix() for x in oldPaths]
+        assert isinstance(oldPaths, list)
+
+        oldPathsPosix = [Path(x).as_posix() for x in oldPaths]
         newValue = Path(newPath).as_posix().encode()
         for fileName in files:
-            fileName = Path(fileName)
-            if not fileName.exists():
-                CraftCore.log.warning(f"File {fileName} not found.")
+            filePath = Path(fileName)
+            if not filePath.exists():
+                CraftCore.log.warning(f"File {filePath} not found.")
                 return False
-            with fileName.open("rb") as f:
+            with filePath.open("rb") as f:
                 content = f.read()
             dirty = False
-            for oldPath in oldPaths:
+            for oldPath in oldPathsPosix:
                 assert os.path.isabs(oldPath)
                 # allow front and back slashes
                 oldPathPat = oldPath.replace("/", r"[/\\]+")
                 # capture firs seperator
                 oldPathPat = oldPathPat.replace(r"[/\\]+", r"(/+|\\+)", 1)
                 oldPathPat = f"({oldPathPat})"
-                oldPathPat = re.compile(oldPathPat.encode())
-                for match in set(oldPathPat.findall(content)):
+                oldPathRegEx = re.compile(oldPathPat.encode())
+                for match in set(oldPathRegEx.findall(content)):
                     dirty = True
                     oldPath = match[0]
-                    newPath = newValue.replace(b"/", match[1])
-                    if oldPath != newPath:
-                        CraftCore.log.info(f"Patching {fileName}: replacing {oldPath} with {newPath}")
-                        content = content.replace(oldPath, newPath)
+                    newPathBytes = newValue.replace(b"/", match[1])
+                    if oldPath != newPathBytes:
+                        CraftCore.log.info(f"Patching {filePath}: replacing {oldPath} with {newPathBytes!r}")
+                        content = content.replace(oldPath.encode(), newPathBytes)
                     else:
-                        CraftCore.log.debug(f"Skip Patching {fileName}:  prefix is unchanged {newPath}")
+                        CraftCore.log.debug(f"Skip Patching {filePath}:  prefix is unchanged {newPathBytes!r}")
             if dirty:
-                with utils.makeTemporaryWritable(fileName):
-                    with fileName.open("wb") as f:
+                with utils.makeTemporaryWritable(filePath):
+                    with filePath.open("wb") as f:
                         f.write(content)
         return True
 

@@ -6,6 +6,8 @@ from CraftCore import CraftCore
 
 
 class CraftTitleUpdater(object):
+    instance: "CraftTitleUpdater"
+
     def __init__(self):
         self.doUpdateTitle = True
         self.title = None

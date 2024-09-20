@@ -6,6 +6,7 @@ import tempfile
 import uuid
 from enum import IntFlag
 from pathlib import Path
+from typing import Optional
 
 import CraftOS.OsUtilsBase
 from CraftCore import CraftCore
@@ -118,19 +119,19 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
 
     @staticmethod
     def toNativePath(path: str) -> str:
-        return OsUtils.toWindowsPath(path)
+        return str(OsUtils.toWindowsPath(path))
 
     @staticmethod
-    def killProcess(name: str = "*", prefix: str = None) -> bool:
+    def killProcess(name: str = "*", prefix: Optional[str] = None) -> bool:
         import shells
 
         if not prefix:
-            prefix = CraftCore.standardDirs.craftRoot()
-        prefix = Path(prefix)
-        CraftCore.log.info(f"Killing processes {name} in {prefix}")
+            _prefix = CraftCore.standardDirs.craftRoot()
+        prefixPath = Path(_prefix)
+        CraftCore.log.info(f"Killing processes {name} in {prefixPath}")
         return shells.Powershell().execute(
             [
-                f"Get-Process '{name}' | Where-Object {{$_.Path -and [IO.Path]::GetFullPath($_.Path) -like '{prefix.absolute()}*' -and -not ([IO.Path]::GetFullPath($_.Path) -like '{Path(sys.executable).absolute()}')}} |"
+                f"Get-Process '{name}' | Where-Object {{$_.Path -and [IO.Path]::GetFullPath($_.Path) -like '{prefixPath.absolute()}*' -and -not ([IO.Path]::GetFullPath($_.Path) -like '{Path(sys.executable).absolute()}')}} |"
                 f" %{{ Write-Output ('\tKilling: {{0}}' -f $_.Path); Stop-Process -Force $_;}}"
             ],
             logCommand=False,

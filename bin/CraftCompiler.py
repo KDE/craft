@@ -26,94 +26,10 @@ import platform
 import re
 import sys
 from enum import IntFlag, auto, unique
+from typing import Optional
 
 from CraftCore import CraftCore
 from Utils.CraftBool import CraftBool
-
-
-class CraftCompilerSignature(object):
-    def __init__(
-        self,
-        platform,
-        compiler: "CraftCompiler.Compiler" = None,
-        abiString: str = None,
-        architecture: "CraftCompiler.Architecture" = None,
-        host: "CraftCompilerSignature" = None,
-        sourceString: str = None,
-    ) -> None:
-        self.platform = platform
-        self.compiler = compiler
-        self.abi = CraftCompiler.Abi.fromString(abiString) if abiString else None
-        self.architecture = architecture
-        self._sourceString = sourceString
-
-        if self.compiler and self.compiler.isGCC and self.platform.isWindows:
-            self.compiler |= CraftCompiler.Compiler.MinGW
-
-        if not host or self.architecture & host.architecture:
-            self.architecture |= CraftCompiler.Architecture.Native
-
-        if not host or self.platform & host.platform:
-            self.platform |= CraftCompiler.Platforms.Native
-
-    def __str__(self):
-        return "-".join(self.signature)
-
-    def __iter__(self):
-        return self.signature.__iter__()
-
-    @property
-    def signature(self):
-        sig = [self.platform.key.name.lower()]
-        if self.compiler:
-            sig += [self.compiler.key.name.lower()]
-        if self.abi:
-            sig += [self.abi.key.name.lower()]
-
-        sig += [self.architecture.key.name.lower()]
-        return tuple(sig)
-
-    @staticmethod
-    def parseAbi(s: str, host: "CraftCompilerSignature"):
-        split = s.split("-")
-        if 3 < len(split) < 4:
-            raise Exception(f"Invalid compiler: {s}")
-
-        abi = None
-        platform = CraftCompiler.Platforms.fromString(split[0])
-
-        try:
-            if len(split) == 4:
-                compiler = CraftCompiler.Compiler.fromString(split[1])
-                abi = split[2]
-                arch = CraftCompiler.Architecture.fromString(split[3])
-            else:
-                abi = None
-                compiler = CraftCompiler.Compiler.fromString(split[1])
-                arch = CraftCompiler.Architecture.fromString(split[2])
-        except Exception:
-            # legacy
-            try:
-                compiler = CraftCompiler.Compiler.fromString(split[2])
-                if "_" in split[1]:
-                    abi, arch = split[1].split("_", 1)
-                else:
-                    abi = None
-                    arch = split[1]
-                if arch == "32":
-                    # legacy
-                    arch = CraftCompiler.Architecture.x86_32
-                elif arch == "64":
-                    # legacy
-                    arch = CraftCompiler.Architecture.x86_64
-                else:
-                    arch = CraftCompiler.Architecture.fromString(arch)
-                if abi == "mingw":
-                    # no need to keep that as it doesn't cary any information
-                    abi = None
-            except:
-                raise Exception(f"Invalid compiler: {s}")
-        return CraftCompilerSignature(platform, compiler, abi, arch, host=host, sourceString=s)
 
 
 class CraftCompiler(object):
@@ -415,7 +331,7 @@ class CraftCompiler(object):
         return self.signature.abi
 
     @staticmethod
-    def _detectHost() -> CraftCompilerSignature:
+    def _detectHost() -> "CraftCompilerSignature":
         hostPlatform = {
             "windows": CraftCompiler.Platforms.Windows,
             "linux": CraftCompiler.Platforms.Linux,
@@ -423,6 +339,7 @@ class CraftCompiler(object):
         }.get(platform.system().lower())
 
         # if we are in a x64 binary on mac the platform class will not report the correct arch
+        hostArchitecture: Optional[CraftCompiler.Architecture]
         if hostPlatform == CraftCompiler.Platforms.MacOS and "RELEASE_ARM64" in platform.uname().version:
             hostArchitecture = CraftCompiler.Architecture.arm64
         else:
@@ -495,6 +412,91 @@ class CraftCompiler(object):
 
     def androidApiLevel(self):
         return self._apiLevel
+
+
+class CraftCompilerSignature(object):
+    def __init__(
+        self,
+        platform: "CraftCompiler.Platforms",
+        compiler: "CraftCompiler.Compiler" = CraftCompiler.Compiler.NoCompiler,
+        abiString: Optional[str] = None,
+        architecture: "CraftCompiler.Architecture" = CraftCompiler.Architecture.NoArchitecture,
+        host: Optional["CraftCompilerSignature"] = None,
+        sourceString: Optional[str] = None,
+    ) -> None:
+        self.platform = platform
+        self.compiler = compiler
+        self.abi = CraftCompiler.Abi.fromString(abiString) if abiString else None
+        self.architecture = architecture
+        self._sourceString = sourceString
+
+        if self.compiler and self.compiler.isGCC and self.platform.isWindows:
+            self.compiler |= CraftCompiler.Compiler.MinGW
+
+        if not host or self.architecture & host.architecture:
+            self.architecture |= CraftCompiler.Architecture.Native
+
+        if not host or self.platform & host.platform:
+            self.platform |= CraftCompiler.Platforms.Native
+
+    def __str__(self):
+        return "-".join(self.signature)
+
+    def __iter__(self):
+        return self.signature.__iter__()
+
+    @property
+    def signature(self):
+        sig = [self.platform.key.name.lower()]
+        if self.compiler:
+            sig += [self.compiler.key.name.lower()]
+        if self.abi:
+            sig += [self.abi.key.name.lower()]
+
+        sig += [self.architecture.key.name.lower()]
+        return tuple(sig)
+
+    @staticmethod
+    def parseAbi(s: str, host: Optional["CraftCompilerSignature"] = None):
+        split = s.split("-")
+        if 3 < len(split) < 4:
+            raise Exception(f"Invalid compiler: {s}")
+
+        abi = None
+        platform = CraftCompiler.Platforms.fromString(split[0])
+
+        try:
+            if len(split) == 4:
+                compiler = CraftCompiler.Compiler.fromString(split[1])
+                abi = split[2]
+                arch = CraftCompiler.Architecture.fromString(split[3])
+            else:
+                abi = None
+                compiler = CraftCompiler.Compiler.fromString(split[1])
+                arch = CraftCompiler.Architecture.fromString(split[2])
+        except Exception:
+            # legacy
+            try:
+                compiler = CraftCompiler.Compiler.fromString(split[2])
+                if "_" in split[1]:
+                    abi, arch = split[1].split("_", 1)
+                else:
+                    abi = None
+                    arch = split[1]
+                if arch == "32":
+                    # legacy
+                    arch = CraftCompiler.Architecture.x86_32
+                elif arch == "64":
+                    # legacy
+                    arch = CraftCompiler.Architecture.x86_64
+                else:
+                    arch = CraftCompiler.Architecture.fromString(arch)
+                if abi == "mingw":
+                    # no need to keep that as it doesn't cary any information
+                    abi = None
+            except:
+                raise Exception(f"Invalid compiler: {s}")
+        return CraftCompilerSignature(platform, compiler, abi, arch, host=host, sourceString=s)
 
 
 if __name__ == "__main__":

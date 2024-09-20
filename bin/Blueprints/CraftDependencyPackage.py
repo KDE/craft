@@ -20,7 +20,7 @@ class DependencyType(IntFlag):
 
 
 class CraftDependencyPackage(CraftPackageObject):
-    _packageCache = dict()
+    _packageCache: dict[tuple[str, DependencyType], "CraftDependencyPackage"] = dict()
 
     @unique
     class State(Enum):
@@ -60,7 +60,7 @@ class CraftDependencyPackage(CraftPackageObject):
         else:
             self.dependencies.extend(self.__readDependenciesForChildren([(x, None) for x in self.children.values()]))
 
-    def __readDependenciesForChildren(self, deps: [(str, str)]) -> []:
+    def __readDependenciesForChildren(self, deps: list[tuple[str, str]]) -> list:
         children = []
         if deps:
             for packaheName, requiredVersion in deps:
