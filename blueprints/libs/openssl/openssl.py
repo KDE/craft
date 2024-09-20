@@ -158,6 +158,8 @@ class PackageMSys(AutoToolsPackageBase):
         self.subinfo.options.configure.noCacheFile = True
         self.subinfo.options.configure.noLibDir = True
         self.subinfo.options.install.args += ["install_sw"]
+        if self.subinfo.options.dynamic.buildStatic:
+            self.subinfo.options.configure.staticArgs = Arguments(["no-shared"])
 
         if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative() and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
             self.subinfo.options.configure.args += ["linux-x86"]
@@ -172,7 +174,12 @@ class PackageMSys(AutoToolsPackageBase):
             return False
         # we don't want people to link to the static build but openssl doesn't provide an option to
         # disable the static build
-        return utils.deleteFile(os.path.join(self.installDir(), "lib", "libcrypto.a")) and utils.deleteFile(os.path.join(self.installDir(), "lib", "libssl.a"))
+        if self.subinfo.options.dynamic.buildStatic:
+            return True
+        else:
+            return utils.deleteFile(os.path.join(self.installDir(), "lib", "libcrypto.a")) and utils.deleteFile(
+                os.path.join(self.installDir(), "lib", "libssl.a")
+            )
 
 
 if CraftCore.compiler.isGCCLike() and not CraftCore.compiler.isMSVC() and not CraftCore.compiler.isAndroid:
