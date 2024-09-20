@@ -152,7 +152,7 @@ class infoclass(object):
         if self.buildTarget in self.archiveNames:
             name = self.archiveNames[self.buildTarget]
             return name if isinstance(name, list) else [name]
-        if type(self.targets[self.buildTarget]) == list:
+        if isinstance(self.targets[self.buildTarget], list):
             return [os.path.split(x)[-1] for x in self.targets[self.buildTarget]]
         else:
             return [os.path.split(self.targets[self.buildTarget])[-1]]
@@ -208,7 +208,7 @@ class infoclass(object):
         """return patch informations for the recent build target"""
         if self.hasPatches():
             out = self.patchToApply[self.buildTarget]
-            return out if type(out) == list else [out]
+            return out if isinstance(out, list) else [out]
         return []
 
     def hasTargetDigests(self) -> bool:
@@ -219,9 +219,9 @@ class infoclass(object):
         """return digest(s) for the recent build target. The return value could be a string or a list"""
         if self.hasTargetDigests():
             out = self.targetDigests[self.buildTarget]
-            if type(out) == str:
+            if isinstance(out, str):
                 out = [out]
-            if not type(out) == tuple:
+            if not isinstance(out, tuple):
                 out = (out, CraftHash.HashAlgorithm.SHA1)
             return out
         return None

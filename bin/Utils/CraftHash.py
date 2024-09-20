@@ -61,7 +61,7 @@ def digestFile(filepath, algorithm=HashAlgorithm.SHA256):
 
 def checkFilesDigests(downloaddir, filenames, digests=None, digestAlgorithm=HashAlgorithm.SHA1):
     """check digest of (multiple) files specified by 'filenames' from 'downloaddir'"""
-    if type(digests) == list:
+    if isinstance(digests, list):
         digestList = digests
     else:
         digestList = [digests]
