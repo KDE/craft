@@ -13,18 +13,18 @@ fi
 if [ -n "$CRAFT_PYTHON_BIN" ]; then
     echo "Using user-provided CRAFT_PYTHON_BIN: $CRAFT_PYTHON_BIN";
 else
-    # could not find python 3.8, try python3
+    # could not find python 3.9, try python3
     if ! command -v python3 >/dev/null; then
-        echo "Failed to python Python 3.8+"
+        echo "Failed to python Python 3.9+"
         exit 1
     fi
-    # check if python3 is at least version 3.8:
+    # check if python3 is at least version 3.9:
     python_version=$(python3 --version)
     # sort -V knows how to compare version numbers
     # Note: this is just a sanity check. craft.py should check sys.version
-    comparison=$(printf '%s\nPython 3.8.0\n' "$python_version" | sort -V)
-    if [ "$(echo "${comparison}" | head -n1)" != "Python 3.8.0" ]; then
-        echo "Found Python3 version ${python_version} is too old. Need at least 3.8"
+    comparison=$(printf '%s\nPython 3.9.0\n' "$python_version" | sort -V)
+    if [ "$(echo "${comparison}" | head -n1)" != "Python 3.9.0" ]; then
+        echo "Found Python3 version ${python_version} is too old. Need at least 3.9"
         exit 1
     fi
     CRAFT_PYTHON_BIN=$(command -v python3)
