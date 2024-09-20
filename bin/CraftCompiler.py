@@ -176,7 +176,7 @@ class CraftCompiler(object):
 
         @property
         def isArm64(self) -> CraftBool:
-            return CraftBool(self.value & CraftCompiler.Architecture.arm64 & ~CraftCompiler.Architecture.arm)
+            return CraftBool(self.value & CraftCompiler.Architecture.arm64 & ~CraftCompiler.Architecture.arm64)
 
         @property
         def isArm64e(self) -> CraftBool:
