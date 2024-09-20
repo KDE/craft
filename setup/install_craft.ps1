@@ -6,8 +6,8 @@ param(
     )
 
 [Net.ServicePointManager]::SecurityProtocol = "SystemDefault, tls12, tls11"
-[version]$minPythonVersion = 3.8
-$Script:PythonInstallDir = "C:\python38"
+[version]$minPythonVersion = 3.9
+$Script:PythonInstallDir = "C:\python39"
 
 if($env:PROCESSOR_ARCHITECTURE.contains("64"))
 {
