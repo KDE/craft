@@ -1,6 +1,5 @@
 import info
 import utils
-from CraftCore import CraftCore
 from Package.BinaryPackageBase import BinaryPackageBase
 from Utils import CraftHash
 

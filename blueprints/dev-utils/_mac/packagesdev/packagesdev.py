@@ -3,7 +3,6 @@ from pathlib import Path
 
 import info
 import utils
-from CraftCore import CraftCore
 from Package.MakeFilePackageBase import MakeFilePackageBase
 from Source.GitSource import GitSource
 
