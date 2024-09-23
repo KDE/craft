@@ -35,7 +35,6 @@ class subinfo(info.infoclass):
 class Package(AutoToolsPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        print(repr(self.package.categoryInfo.platforms), type(self.package.categoryInfo.platforms))
         self.subinfo.options.configure.autoreconf = False
 
     def postInstall(self):
