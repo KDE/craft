@@ -583,9 +583,9 @@ class Options(object):
     def buildStatic(self):
         return self.dynamic.buildStatic
 
-    def isActive(self, package):
+    def isActive(self, package) -> CraftBool:
         if isinstance(package, str):
             package = CraftPackageObject.get(package)
         # init the subinfo
         package.instance
-        return not package.isIgnored()
+        return package.isIgnored().inverted
