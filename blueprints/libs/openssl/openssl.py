@@ -63,8 +63,11 @@ class subinfo(info.infoclass):
         self.webpage = "https://openssl.org"
 
         # set the default config for openssl 1.1
+        if self.options.buildStatic:
+            self.options.configure.staticArgs = Arguments(["no-shared"])
+        else:
+            self.options.configure.staticArgs = Arguments(["shared"])
         self.options.configure.args += [
-            "shared",
             "threads",
             "no-rc5",
             "no-idea",
@@ -158,8 +161,6 @@ class PackageMSys(AutoToolsPackageBase):
         self.subinfo.options.configure.noCacheFile = True
         self.subinfo.options.configure.noLibDir = True
         self.subinfo.options.install.args += ["install_sw"]
-        if self.subinfo.options.dynamic.buildStatic:
-            self.subinfo.options.configure.staticArgs = Arguments(["no-shared"])
 
         if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative() and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
             self.subinfo.options.configure.args += ["linux-x86"]
