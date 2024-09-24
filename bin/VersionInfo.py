@@ -127,7 +127,7 @@ class VersionInfo(object):
             "VERSION": ver,
             "PACKAGE_NAME": name,
             "COMPILER_BITS": CraftCore.compiler.architecture.bits,
-            "COMPILER_ARCHITECTURE": CraftCore.compiler.architecture.name,
+            "COMPILER_ARCHITECTURE": CraftCore.compiler.architecture.key.name,
         }
 
         split_ver = ver.split(".")
