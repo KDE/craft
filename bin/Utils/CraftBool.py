@@ -39,5 +39,11 @@ class CraftBool(object):
     def __eq__(self, other) -> bool:
         return self.value == other
 
+    def __or__(self, other) -> "CraftBool":
+        return CraftBool(self.value or other)
+
+    def __and__(self, other) -> "CraftBool":
+        return CraftBool(self.value and other)
+
     def __str__(self):
         return str(self.value)
