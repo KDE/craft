@@ -24,11 +24,6 @@ include:
         path: coverage.xml
       junit: JUnit*Results.xml
 
-py38:
-  extends: .tox_base
-  image: python:3.8
-  script: tox -e py38
-
 py39:
   extends: .tox_base
   image: python:3.9
@@ -62,4 +57,9 @@ lint:
 imports:
   extends: .tox_base
   script: tox -e check-imports
+
+type-check:
+  extends: .tox_base
+  script: tox -e static-type-checker
+
 
