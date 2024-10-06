@@ -4,7 +4,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import List, Set
+from typing import Set
 
 import utils
 from CraftBase import InitGuard
@@ -204,7 +204,7 @@ class MacDylibBundler(object):
         return True
 
     @staticmethod
-    def _updateLibraryReferences(fileToFix: Path, changedRefs: List) -> bool:
+    def _updateLibraryReferences(fileToFix: Path, changedRefs: list) -> bool:
         args = []
         for oldRef, newRef in changedRefs:
             if newRef is None:

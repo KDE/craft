@@ -252,7 +252,7 @@ class Powershell(object):
     def quote(self, s: str) -> str:
         return f"'{s}'"
 
-    def execute(self, args: [str], **kw) -> bool:
+    def execute(self, args: list[str], **kw) -> bool:
         return utils.system(
             [self.pwsh, "-NoProfile", "-ExecutionPolicy", "ByPass", "-Command"] + args,
             **kw,

@@ -158,7 +158,7 @@ class CraftConfig(object):
         exit(1)
 
     @staticmethod
-    def _parseList(s: str) -> [str]:
+    def _parseList(s: str) -> list[str]:
         return [v.strip() for v in s.split(";") if v]
 
     def getList(self, group, key, default=None):
@@ -195,7 +195,7 @@ class CraftConfig(object):
         if CraftCore.settings.getboolean("CraftDebug", "DumpSettings", False):
             CraftCore.settings.dump()
 
-    def cacheRepositoryUrls(self) -> [str]:
+    def cacheRepositoryUrls(self) -> list[str]:
         out = [
             "/".join(
                 [

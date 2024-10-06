@@ -228,7 +228,7 @@ class CraftManifest(object):
         shutil.copy2(cacheFilePath, cacheFilePathTimed)
 
     @staticmethod
-    def load(manifestFileName: str, urls: [str] = None):
+    def load(manifestFileName: str, urls: list[str] = None):
         """
         Load a manifest.
         If a url is provided a manifest is fetch from that the url and merged with a local manifest.

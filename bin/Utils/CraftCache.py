@@ -199,7 +199,7 @@ class CraftCache(object):
                         CraftCore.log.debug(f"cacheJsonFromUrl: {url}\n{data}")
         return self._jsonCache.get(url, {})
 
-    def getNightlyVersionsFromUrl(self, url, pattern, timeout=10) -> [str]:
+    def getNightlyVersionsFromUrl(self, url, pattern, timeout=10) -> list[str]:
         """
         Returns a list of possible version number matching the regular expression in pattern.
         :param url: The url to look for the nightly builds.
