@@ -9,7 +9,6 @@ import os
 # the definition
 from enum import Enum, unique
 from pathlib import Path
-from typing import Tuple
 
 import VersionInfo
 from Blueprints.CraftPackageObject import BlueprintException, CraftPackageObject
@@ -215,7 +214,7 @@ class infoclass(object):
         """return state if target has digest(s) for the recent build target"""
         return self.buildTarget in self.targetDigests
 
-    def targetDigest(self) -> Tuple[list[str], CraftHash.HashAlgorithm]:
+    def targetDigest(self) -> tuple[list[str], CraftHash.HashAlgorithm]:
         """return digest(s) for the recent build target. The return value could be a string or a list"""
         if self.hasTargetDigests():
             out = self.targetDigests[self.buildTarget]
@@ -230,7 +229,7 @@ class infoclass(object):
         """return state if target has digest url(s) for the recent build target"""
         return self.buildTarget in self.targetDigestUrls
 
-    def targetDigestUrl(self) -> Tuple[list[str], CraftHash.HashAlgorithm]:
+    def targetDigestUrl(self) -> tuple[list[str], CraftHash.HashAlgorithm]:
         """return digest url(s) for the recent build target.  The return value could be a string or a list"""
         if self.hasTargetDigestUrls():
             out = self.targetDigestUrls[self.buildTarget]

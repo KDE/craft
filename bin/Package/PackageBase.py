@@ -119,7 +119,7 @@ class PackageBase(CraftBase):
             else:
                 downloadFolder = self.cacheLocation()
 
-            files = {}  # Dict[FileType, Tuple[str, str]]
+            files: dict[FileType, tuple[str, str]] = {}
             fileTypes = [FileType.Binary]
             if CraftCore.settings.getboolean("Packager", "DownloadDebugSymbolsCache", False):
                 fileTypes += [FileType.Debug]
