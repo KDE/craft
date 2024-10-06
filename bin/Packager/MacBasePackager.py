@@ -4,7 +4,6 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import Set
 
 import utils
 from CraftBase import InitGuard
@@ -132,7 +131,7 @@ class MacBasePackager(CollectionPackagerBase):
 class MacDylibBundler(object):
     """Bundle all .dylib files that are not provided by the system with the .app"""
 
-    def __init__(self, appPath: str, externalLibs: Set[str]):
+    def __init__(self, appPath: str, externalLibs: set[str]):
         # Avoid processing the same file more than once
         self.checkedLibs = set()
         self.appPath = appPath

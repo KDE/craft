@@ -28,7 +28,7 @@ class PackagerBase(CraftBase):
         self._manifest = None
         self._currentManifestEnty = None
 
-    def setDefaults(self, defines: {str: str}) -> {str: str}:
+    def setDefaults(self, defines: set[str, str]) -> set[str, str]:
         defines = dict(defines)
         defines.setdefault(
             "setupname",
