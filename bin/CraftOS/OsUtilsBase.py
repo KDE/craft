@@ -6,22 +6,26 @@ from CraftOS.OsDetection import OsDetection
 
 
 class OsUtilsBase(OsDetection, metaclass=abc.ABCMeta):
-    @abc.abstractstaticmethod
+    @staticmethod
+    @abc.abstractmethod
     def rm(path, force=False):
         """Removes a file"""
         pass
 
-    @abc.abstractstaticmethod
+    @staticmethod
+    @abc.abstractmethod
     def rmDir(path, force=False):
         """Removes a file"""
         pass
 
-    @abc.abstractstaticmethod
+    @staticmethod
+    @abc.abstractmethod
     def getFileAttributes(path):
         """Returns the attributes"""
         pass
 
-    @abc.abstractstaticmethod
+    @staticmethod
+    @abc.abstractmethod
     def removeReadOnlyAttribute(path):
         """Removes the readonly flag"""
         pass
@@ -57,15 +61,18 @@ class OsUtilsBase(OsDetection, metaclass=abc.ABCMeta):
         return out
 
     @staticmethod
+    @abc.abstractmethod
     def toNativePath(path: str) -> str:
         """Return a native path"""
         pass
 
     @staticmethod
+    @abc.abstractmethod
     def killProcess(name: str = "*", prefix: str = None) -> bool:
         pass
 
     @staticmethod
+    @abc.abstractmethod
     def detectDocker() -> bool:
         pass
 
