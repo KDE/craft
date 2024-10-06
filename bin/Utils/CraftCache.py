@@ -118,7 +118,7 @@ class CraftCache(object):
             return None
         return appLocation
 
-    def getCommandOutput(self, app: str, command: str, testName: str = None) -> (int, str):
+    def getCommandOutput(self, app: str, command: str, testName: str = None) -> tuple[int, str]:
         if not testName:
             testName = f'"{app}" {command}'
         app = self.findApplication(app)

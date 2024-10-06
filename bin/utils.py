@@ -1189,7 +1189,7 @@ def filterDirectoryContent(
                     raise Exception(f"Unhandled case: {filePath}")
 
 
-def makeWritable(targetPath: Path, log: bool = True) -> (bool, int):
+def makeWritable(targetPath: Path, log: bool = True) -> list[bool, int]:
     """Make a file writable if needed. Returns if the mode was changed and the curent mode of the file"""
     targetPath = Path(targetPath)
     originalMode = targetPath.stat().st_mode
@@ -1307,7 +1307,7 @@ def urljoin(root, path):
     return "/".join([root.rstrip("/"), path])
 
 
-def redact(input: str, secrests: {str}):
+def redact(input: str, secrests: set[str]):
     if secrests is None:
         return input
     if isinstance(input, str):

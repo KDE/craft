@@ -60,7 +60,7 @@ class CraftDependencyPackage(CraftPackageObject):
         else:
             self.dependencies.extend(self.__readDependenciesForChildren([(x, None) for x in self.children.values()]))
 
-    def __readDependenciesForChildren(self, deps: list[(str, str)]) -> []:
+    def __readDependenciesForChildren(self, deps: list[tuple[str, str]]) -> []:
         children = []
         if deps:
             for packaheName, requiredVersion in deps:
