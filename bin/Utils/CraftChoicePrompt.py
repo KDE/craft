@@ -37,7 +37,7 @@ import utils
 from CraftCore import CraftCore
 
 
-def promptForChoice(title: str, choices: [], default: str = None):
+def promptForChoice(title: str, choices: list, default: str = None):
     simpleMode = not isinstance(choices[0], tuple)
     if simpleMode:
         choices = OrderedDict.fromkeys(choices)

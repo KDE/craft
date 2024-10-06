@@ -43,7 +43,7 @@ from Utils.CraftTitleUpdater import CraftTitleUpdater
 from Utils.StageLogger import StageLogger
 
 
-def __recurseCraft(command: [str], args: [str]):
+def __recurseCraft(command: list[str], args: list[str]):
     # command is the essential action, args might get split into multiple calls
     # close the log file and the db
     UserOptions.instance()._save()
@@ -120,7 +120,7 @@ def handlePackage(package, buildAction, directTargets):
         return True
 
 
-def resolvePackage(packageNames: [str], version: str = None) -> [CraftPackageObject]:
+def resolvePackage(packageNames: list[str], version: str = None) -> [CraftPackageObject]:
     package = CraftPackageObject(None)
 
     def resolveChildren(child):
@@ -140,7 +140,7 @@ def resolvePackage(packageNames: [str], version: str = None) -> [CraftPackageObj
     return package
 
 
-def setOption(packageNames: [str], option: str) -> bool:
+def setOption(packageNames: list[str], option: str) -> bool:
     if "=" not in option:
         CraftCore.log.error(f"Invalid option {option}")
         return False
@@ -365,7 +365,7 @@ def packageIsOutdated(package):
         return package.version != version
 
 
-def invoke(command: str, directTargets: [CraftPackageObject]) -> bool:
+def invoke(command: str, directTargets: list[CraftPackageObject]) -> bool:
     args = {}
     key = command
     argsPattern = re.compile(r"(.+)\((.*)\)")
@@ -393,7 +393,7 @@ def invoke(command: str, directTargets: [CraftPackageObject]) -> bool:
     return True
 
 
-def run(package: [CraftPackageObject], action: str, args) -> bool:
+def run(package: list[CraftPackageObject], action: str, args) -> bool:
     if package.isIgnored():
         CraftCore.log.info(f"Skipping package because it has been ignored: {package}")
         return True
