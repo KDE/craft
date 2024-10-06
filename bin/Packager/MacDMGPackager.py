@@ -12,7 +12,7 @@ class MacDMGPackager(MacBasePackager):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def setDefaults(self, defines: {str: str}) -> {str: str}:
+    def setDefaults(self, defines: set[str, str]) -> set[str, str]:
         defines = super().setDefaults(defines)
         defines["setupname"] = f"{defines['setupname']}.dmg"
         return defines

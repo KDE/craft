@@ -16,7 +16,7 @@ class AppImagePackager(CollectionPackagerBase):
         self.linuxdeployExe = None
         self._isInstalled = False
 
-    def setDefaults(self, defines: {str: str}) -> {str: str}:
+    def setDefaults(self, defines: set[str, str]) -> set[str, str]:
         defines = super().setDefaults(defines)
         defines["setupname"] = f"{defines['setupname']}.AppImage"
         defines.setdefault(
