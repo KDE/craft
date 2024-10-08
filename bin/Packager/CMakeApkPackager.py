@@ -27,6 +27,8 @@ class CMakeApkPackager(CollectionPackagerBase):
         see https://invent.kde.org/sysadmin/ci-tooling/-/blob/master/system-images/android/sdk/get-apk-args.py"""
         if not self.__androidApkTargets:
             files = glob.iglob(f"{self.sourceDir()}/**/AndroidManifest.xml*", recursive=True)
+            if not files:
+                CraftCore.log.critical("Craft could not find an AndroidManifest.xml file in the source dir of the package, but it is required to package as APK.")
             for file in files:
                 if "3rdparty" in file or "examples" in file or "tests" in file or "templates" in file:
                     continue
@@ -44,9 +46,10 @@ class CMakeApkPackager(CollectionPackagerBase):
         defines = self.setDefaults(self.defines)
         if not self.internalCreatePackage(defines):
             return False
-        if self.androidApkTargets:
-            self.enterBuildDir()
-            command = Arguments.formatCommand([self.makeProgram], ["create-apk"])
-            return utils.system(command)
-        CraftCore.log.critical("Failed to detect package target")
-        return False
+        if not self.androidApkTargets:
+            CraftCore.log.critical("Failed to detect package target")
+            return False
+        self.enterBuildDir()
+        command = Arguments.formatCommand([self.makeProgram], ["create-apk"])
+        return utils.system(command)
+        
