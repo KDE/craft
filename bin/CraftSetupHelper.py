@@ -167,7 +167,7 @@ class SetupHelper(object):
         os.environ[key] = val
 
     @staticmethod
-    def _callVCVER(version: int, args: list = None, native: bool = True, prerelease: bool = False) -> str:
+    def _callVCVER(version: int, args: [] = None, native: bool = True, prerelease: bool = False) -> str:
         if not args:
             args = []
         vswhere = os.path.join(CraftCore.standardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")

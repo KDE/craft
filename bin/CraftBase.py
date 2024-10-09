@@ -256,7 +256,7 @@ class CraftBase(object):
             return None
         return Path(os.path.join(cacheDir, version, *CraftCore.compiler.signature, self.buildType()))
 
-    def cacheRepositoryUrls(self) -> list[str]:
+    def cacheRepositoryUrls(self) -> [str]:
         buildType = [self.buildType()]
         if self.buildType() == "RelWithDebInfo":
             buildType += ["Release"]

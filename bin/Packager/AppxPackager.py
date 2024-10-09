@@ -245,7 +245,7 @@ class AppxPackager(CollectionPackagerBase):
         ) and utils.system(["makeappx", "pack", "/d", self.archiveDir(), "/p", archive])
 
     def __createSideloadAppX(self, defines) -> bool:
-        def appendToPublisherString(publisher: list[str], field: str, key: str) -> None:
+        def appendToPublisherString(publisher: [str], field: str, key: str) -> None:
             data = CraftCore.settings.get("CodeSigning", key, "")
             if data:
                 publisher += [f"{field}={data}"]
