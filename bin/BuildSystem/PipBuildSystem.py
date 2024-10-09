@@ -18,9 +18,9 @@ class PipBuildSystem(BuildSystemBase):
         suffix = "_d" if CraftCore.compiler.isWindows and craftPython.instance.subinfo.options.dynamic.buildType == "Debug" else ""
         if CraftPackageObject.get("python-modules/virtualenv").isInstalled:
             if CraftCore.compiler.isWindows:
-                return Path(CraftCore.standardDirs.craftRoot()) / f"etc/virtualenv/3/Scripts/python{suffix}"
+                return self.venvDir("3") / f"Scripts/python{suffix}"
             else:
-                return Path(CraftCore.standardDirs.craftRoot()) / "etc/virtualenv/3/bin/python3"
+                return self.venvDir("3") / "bin/python3"
 
         if craftPython.isInstalled:
             python = CraftCore.standardDirs.craftRoot() / f"bin/python{suffix}{CraftCore.compiler.executableSuffix}"
