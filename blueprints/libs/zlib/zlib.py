@@ -72,5 +72,7 @@ else:
             self.subinfo.options.configure.noCacheFile = True
             if self.subinfo.options.dynamic.buildStatic:
                 self.subinfo.options.configure.staticArgs = Arguments(["--static"])
+            else:
+                self.subinfo.options.configure.staticArgs = Arguments(["--shared"])
             self.supportsCCACHE = False
             self.platform = ""
