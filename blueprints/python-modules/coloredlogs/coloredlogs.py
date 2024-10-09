@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
         self.buildDependencies["python-modules/pip"] = None
+        self.runtimeDependencies["libs/python"] = None
         self.buildDependencies["dev-utils/system-python3"] = None
 
 
