@@ -462,10 +462,16 @@ class SetupHelper(object):
         self.prependEnvVar("PATH", CraftCore.standardDirs.craftBin())
 
         # add python site packages to pythonpath
-        self.prependEnvVar(
-            "PYTHONPATH",
-            os.path.join(CraftCore.standardDirs.craftRoot(), "lib", "site-packages"),
-        )
+        if CraftCore.compiler.isMacOS:
+            self.prependEnvVar(
+                "PYTHONPATH",
+                CraftCore.standardDirs.craftRoot() / "lib/Python.framework/Versions/Current/lib/site-packages",
+            )
+        else:
+            self.prependEnvVar(
+                "PYTHONPATH",
+                CraftCore.standardDirs.craftRoot() / "lib/site-packages",
+            )
 
         # prepend our venv python
         self.prependEnvVar(
@@ -479,6 +485,13 @@ class SetupHelper(object):
                 ),
             ],
         )
+
+        if CraftCore.compiler.isMacOS:
+            # because macOS uses a framework for python we need to add it to PATH too
+            self.prependEnvVar(
+                "PATH",
+                CraftCore.standardDirs.craftRoot() / "lib/Python.framework/Versions/Current/bin",
+            )
 
         # make sure that craftroot bin is the first to look for dlls etc
         self.prependEnvVar(
