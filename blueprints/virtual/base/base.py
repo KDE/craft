@@ -46,7 +46,7 @@ class subinfo(info.infoclass):
 
         self.buildDependencies["libs/python"] = None
 
-        # install the shim to libs/python or the system python
+        # install the shim to the system python
         self.buildDependencies["dev-utils/system-python3"] = None
 
         if CraftCore.compiler.platform.isWindows:

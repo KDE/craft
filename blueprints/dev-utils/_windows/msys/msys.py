@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.runtimeDependencies["dev-utils/msys-base"] = None
+        self.runtimeDependencies["libs/python"] = None
         self.runtimeDependencies["dev-utils/system-python3"] = None
 
 

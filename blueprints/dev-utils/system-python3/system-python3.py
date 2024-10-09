@@ -6,6 +6,11 @@ from Package.BinaryPackageBase import BinaryPackageBase
 
 
 class subinfo(info.infoclass):
+    def registerOptions(self):
+        useCraftPython = CraftPackageObject.get("libs/python").categoryInfo.isActive
+        if useCraftPython:
+            self.parent.package.categoryInfo.compiler = CraftCore.compiler.Compiler.NoCompiler
+
     def setTargets(self):
         self.targets["3"] = ""
         self.patchLevel["3"] = 3
@@ -25,15 +30,10 @@ class Package(BinaryPackageBase):
         self.subinfo.options.package.disableBinaryCache = True
 
     def install(self):
-        if not BinaryPackageBase.install(self):
+        if not super().install():
             return False
-        binDir = "bin"
-        suffix = ""
-        if CraftCore.compiler.platform.isWindows:
-            binDir = "Scripts"
-            if CraftPackageObject.get("libs/python").instance.subinfo.options.dynamic.buildType == "Debug":
-                suffix = "_d"
-        python3 = CraftCore.standardDirs.etcDir() / f"virtualenv/3/{binDir}/python{suffix}{CraftCore.compiler.platform.executableSuffix}"
+        binDir = "Scripts" if CraftCore.compiler.platform.isWindows else "bin"
+        python3 = CraftCore.standardDirs.etcDir() / f"virtualenv/3/{binDir}/python{CraftCore.compiler.platform.executableSuffix}"
         return utils.createShim(
             self.installDir() / f"bin/python{CraftCore.compiler.platform.executableSuffix}",
             python3,
