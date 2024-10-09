@@ -478,12 +478,6 @@ class SetupHelper(object):
                     "3",
                     "Scripts" if CraftCore.compiler.isWindows else "bin",
                 ),
-                os.path.join(
-                    CraftCore.standardDirs.etcDir(),
-                    f"virtualenv",
-                    "2",
-                    "Scripts" if CraftCore.compiler.isWindows else "bin",
-                ),
             ],
         )
 
