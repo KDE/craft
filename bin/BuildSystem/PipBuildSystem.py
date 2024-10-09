@@ -75,8 +75,16 @@ class PipBuildSystem(BuildSystemBase):
                     "--upgrade-strategy",
                     "only-if-needed",
                 ]
-                if not self.venvDir(ver).exists():
-                    command += ["--user"]
+                # build binaries ourself
+                command += ["--no-binary", ":all:", "--no-cache-dir"]
+                usesCraftPython = CraftPackageObject.get("libs/python").categoryInfo.isActive
+                if usesCraftPython:
+                    if CraftCore.compiler.platform.isMacOS:
+                        prefix = self.installDir() / "lib/Python.framework/Versions/Current"
+                    else:
+                        prefix = self.installDir()
+                    command += ["--prefix", prefix]
+
                 if self.subinfo.svnTarget():
                     command += ["-e", self.sourceDir()]
                 elif self.subinfo.hasTarget():

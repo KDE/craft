@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
 import info
 import utils
+from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftCore import CraftCore
 from Package.PipPackageBase import PipPackageBase
 
 
 class subinfo(info.infoclass):
+    def registerOptions(self):
+        useCraftPython = CraftPackageObject.get("libs/python").categoryInfo.isActive
+        if useCraftPython:
+            self.parent.package.categoryInfo.compiler = CraftCore.compiler.Compiler.NoCompiler
+
     def setTargets(self):
         self.svnTargets["master"] = ""
         self.defaultTarget = "master"
