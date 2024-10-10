@@ -32,6 +32,6 @@ class Package(CMakePackageBase):
         ]
         self.subinfo.options.configure.args += [
             f"-DEXPAT_BUILD_TOOLS={self.subinfo.options.dynamic.buildTools.asOnOff}",
-            f"-DEXPAT_SHARED_LIBS={self.subinfo.options.dynamic.buildStatic.asOnOff}",
+            f"-DEXPAT_SHARED_LIBS={self.subinfo.options.dynamic.buildStatic.inverted.asOnOff}",
             f"-DEXPAT_BUILD_TESTS={self.subinfo.options.dynamic.buildTests.asOnOff}",
         ]  # available only from 2.1.0-beta3
