@@ -146,7 +146,7 @@ class infoclass(object):
             return self.targets[self.buildTarget]
         return ""
 
-    def archiveName(self) -> list[str]:
+    def archiveName(self) -> List[str]:
         """returns the archive file name"""
         if self.buildTarget in self.archiveNames:
             name = self.archiveNames[self.buildTarget]
@@ -203,7 +203,7 @@ class infoclass(object):
         """return state for having patches for the recent target"""
         return (self.hasTarget() or self.hasSvnTarget()) and self.buildTarget in self.patchToApply
 
-    def patchesToApply(self) -> list[tuple]:
+    def patchesToApply(self) -> List[tuple]:
         """return patch informations for the recent build target"""
         if self.hasPatches():
             out = self.patchToApply[self.buildTarget]

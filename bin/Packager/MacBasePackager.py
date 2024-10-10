@@ -203,7 +203,7 @@ class MacDylibBundler(object):
         return True
 
     @staticmethod
-    def _updateLibraryReferences(fileToFix: Path, changedRefs: list) -> bool:
+    def _updateLibraryReferences(fileToFix: Path, changedRefs: List) -> bool:
         args = []
         for oldRef, newRef in changedRefs:
             if newRef is None:

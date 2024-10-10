@@ -44,7 +44,7 @@ class MSBuildBuildSystem(BuildSystemBase):
             "Debug": "Debug",
         }
 
-    def _globCopy(self, sourceDir: str, destDir: str, patterns: list[str]):
+    def _globCopy(self, sourceDir: str, destDir: str, patterns: [str]):
         for pattern in patterns:
             for f in glob.glob(os.path.join(sourceDir, pattern), recursive=True):
                 if not utils.copyFile(f, os.path.join(destDir, os.path.basename(f)), linkOnly=False):

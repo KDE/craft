@@ -639,7 +639,7 @@ def copyDir(
 def globCopyDir(
     srcDir: str,
     destDir: str,
-    pattern: list[str],
+    pattern: [str],
     linkOnly=CraftCore.settings.getboolean("General", "UseHardlinks", False),
 ) -> bool:
     files = []
@@ -853,7 +853,7 @@ def createShim(shim, target, args=None, guiApp=False, useAbsolutePath=False, kee
     if not args:
         args = []
     elif isinstance(args, str):
-        CraftCore.log.error("Please pass args as list[str]")
+        CraftCore.log.error("Please pass args as [str]")
         return system(f"kshimgen --create {shim} {target} -- {args}")
     command = ["kshimgen", "--create", shim, target]
     if CraftCore.compiler.platform.isWindows and guiApp:
@@ -1001,7 +1001,7 @@ def configureFile(inFile: str, outFile: str, variables: dict) -> bool:
     return True
 
 
-def limitCommandLineLength(command: list[str], args: list[str]) -> list[list[str]]:
+def limitCommandLineLength(command: [str], args: [str]) -> [[str]]:
     if CraftCore.compiler.platform.isWindows:
         # https://docs.microsoft.com/en-US/troubleshoot/windows-client/shell-experience/command-line-string-limitation
         SIZE = 8191

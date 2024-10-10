@@ -28,6 +28,7 @@ import inspect
 import os
 import re
 from pathlib import Path
+from typing import List
 
 import utils
 from Blueprints.CraftDependencyPackage import CraftDependencyPackage, DependencyType
@@ -198,7 +199,7 @@ class CollectionPackagerBase(PackagerBase):
         except Exception as e:
             raise BlueprintException(str(e), self.package)
 
-    def whitelisted(self, filename: os.DirEntry, root: str, whiteList: list[re] = None) -> bool:
+    def whitelisted(self, filename: os.DirEntry, root: str, whiteList: [re] = None) -> bool:
         """return True if pathname is included in the pattern, and False if not"""
         if whiteList is None:
             whiteList = self.whitelist
@@ -208,7 +209,7 @@ class CollectionPackagerBase(PackagerBase):
         self,
         filename: os.DirEntry,
         root: str,
-        blackList: list[re] = None,
+        blackList: [re] = None,
         message: str = "blacklisted",
     ) -> bool:
         """return False if file is not blacklisted, and True if it is blacklisted"""
@@ -225,7 +226,7 @@ class CollectionPackagerBase(PackagerBase):
                 return True
         return False
 
-    def copyFiles(self, srcDir: Path, destDir: Path, filesToSign: list[Path]) -> bool:
+    def copyFiles(self, srcDir: Path, destDir: Path, filesToSign: List[Path]) -> bool:
         """
         Copy the binaries for the Package from srcDir to the imageDir
         directory

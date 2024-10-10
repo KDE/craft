@@ -191,8 +191,8 @@ class BuildSystemBase(CraftBase):
 
     def patchInstallPrefix(
         self,
-        files: list[str],
-        oldPaths: list[Path] = None,
+        files: [str],
+        oldPaths: [Path] = None,
         newPath: Path = Path(CraftCore.standardDirs.craftRoot()),
     ) -> bool:
         if not isinstance(oldPaths, list):

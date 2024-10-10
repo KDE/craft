@@ -2,7 +2,7 @@ import subprocess
 
 
 class Arguments(object):
-    def __init__(self, args: list[str] = None):
+    def __init__(self, args: [str] = None):
         self.__args = []
         self.__legacyString = None
         if args:
@@ -77,6 +77,6 @@ class Arguments(object):
             return self.__args
 
     @staticmethod
-    def formatCommand(command: list[str], args):
+    def formatCommand(command: [str], args):
         tmp = Arguments(command) + args
         return tmp.get()

@@ -59,9 +59,9 @@ class UserOptions(object):
 #     buildTools: [True|False]
 #     buildStatic: [True|False]
 #     # arguments passed to the configure step
-#     args: list[str]
+#     args: [str]
 #     # special args passed to qmake
-#     featureArguments:  list[str]
+#     featureArguments:  [str]
 #
 # Example:
 ##     [libs]

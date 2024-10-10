@@ -39,7 +39,7 @@ from Utils.CaseInsensitiveDict import CaseInsensitiveDict
 
 # The minimum python version for craft please edit here
 # if you add code that changes this requirement
-MIN_PY_VERSION = (3, 8, 0)
+MIN_PY_VERSION = (3, 9, 0)
 
 
 def log(msg, critical=False):
@@ -167,7 +167,7 @@ class SetupHelper(object):
         os.environ[key] = val
 
     @staticmethod
-    def _callVCVER(version: int, args: list = None, native: bool = True, prerelease: bool = False) -> str:
+    def _callVCVER(version: int, args: [] = None, native: bool = True, prerelease: bool = False) -> str:
         if not args:
             args = []
         vswhere = os.path.join(CraftCore.standardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")
@@ -474,12 +474,6 @@ class SetupHelper(object):
                     CraftCore.standardDirs.etcDir(),
                     "virtualenv",
                     "3",
-                    "Scripts" if CraftCore.compiler.platform.isWindows else "bin",
-                ),
-                os.path.join(
-                    CraftCore.standardDirs.etcDir(),
-                    "virtualenv",
-                    "2",
                     "Scripts" if CraftCore.compiler.platform.isWindows else "bin",
                 ),
             ],
