@@ -1,5 +1,6 @@
 # This is a internal recipe
 import info
+import utils
 from Blueprints.CraftPackageObject import *
 
 
@@ -16,7 +17,7 @@ from Package.BlueprintRepositoryPackageBase import *
 
 
 class Package(BlueprintRepositoryPackageBase):
-    NameRegex = re.compile(r".*[\/:](.+?(?=[\||\:|\.]))")
+    NameRegex = re.compile(r".*[\/:]([^.:|\n/]+)")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -28,7 +29,8 @@ class Package(BlueprintRepositoryPackageBase):
             raise BlueprintException(self, "This recipe only works with 'craft --add-blueprint-repository")
 
     def checkoutDir(self, index=0):
-        names = Package.NameRegex.findall(self.repositoryUrl())
+        urlParts = utils.splitVCSUrl(self.repositoryUrl())
+        names = Package.NameRegex.findall(urlParts[0])
         if len(names) != 1:
             CraftCore.log.error(f"Failed to determine the blueprint install folder for {self.repositoryUrl()}")
             return False
