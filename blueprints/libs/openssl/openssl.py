@@ -146,6 +146,8 @@ class PackageMSys(AutoToolsPackageBase):
         # https://github.com/openssl/openssl/issues/18720
         self.subinfo.options.configure.cflags += "-Wno-error=implicit-function-declaration"
         if CraftCore.compiler.isMinGW():
+            # ensure the msys perl is used
+            self.shell.environment["PATH"] = ":".join(["/usr/bin", self.shell.environment["PATH"]])
             if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64:
                 self.platform = "mingw64"
             else:
