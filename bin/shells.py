@@ -90,7 +90,7 @@ class BashShell(object):
             if OsUtils.isWin():
                 if OsUtils.supportsSymlinks():
                     self._environment["MSYS"] = "winsymlinks:nativestrict"
-                path = f"{self.toNativePath(CraftCore.standardDirs.craftRoot())}/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl"
+                path = "/usr/local/bin:/usr/bin:/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl"
                 if CraftCore.compiler.isMinGW():
                     gcc = shutil.which("gcc")
                     if gcc:
