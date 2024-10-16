@@ -28,7 +28,9 @@ class CMakeApkPackager(CollectionPackagerBase):
         if not self.__androidApkTargets:
             files = glob.iglob(f"{self.sourceDir()}/**/AndroidManifest.xml*", recursive=True)
             if not files:
-                CraftCore.log.critical("Craft could not find an AndroidManifest.xml file in the source dir of the package, but it is required to package as APK.")
+                CraftCore.log.critical(
+                    "Craft could not find an AndroidManifest.xml file in the source dir of the package, but it is required to package as APK."
+                )
             for file in files:
                 if "3rdparty" in file or "examples" in file or "tests" in file or "templates" in file:
                     continue
@@ -52,4 +54,3 @@ class CMakeApkPackager(CollectionPackagerBase):
         self.enterBuildDir()
         command = Arguments.formatCommand([self.makeProgram], ["create-apk"])
         return utils.system(command)
-        

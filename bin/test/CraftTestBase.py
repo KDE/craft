@@ -43,7 +43,7 @@ class CraftTestBase(unittest.TestCase):
         CraftCore.log.info(f"etcDir: {CraftCore.standardDirs.etcDir()}")
         CraftCore.log.info(f"BlueprintRoot: {CraftCore.standardDirs.blueprintRoot()}")
         CraftCore.log.info(f"BlueprintsRootDirectories {CraftPackageObject.rootDirectories()}")
-        CraftCore.log.info(f"BlueprintSettings: {CraftCore.settings.get('Blueprints','Settings')}")
+        CraftCore.log.info(f"BlueprintSettings: {CraftCore.settings.get('Blueprints', 'Settings')}")
         CraftCore.log.info(f"dbPath: {dbPath}")
 
         del UserOptions.UserOptionsSingleton._instance

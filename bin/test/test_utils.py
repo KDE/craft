@@ -6,7 +6,6 @@ import utils
 
 class UtilsTest(CraftTestBase.CraftTestBase):
     def test_splitVCSUrl(self):
-
         result = utils.splitVCSUrl("git://servername:path.git|4.5branch|v4.5.1")
         self.assertEqual(result, ["git://servername:path.git", "4.5branch", "v4.5.1"])
 

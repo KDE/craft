@@ -7,8 +7,7 @@ import utils
 from Blueprints.CraftPackageObject import BlueprintException
 from CraftCore import CraftCore
 from CraftStandardDirs import CraftStandardDirs
-from Package.BlueprintRepositoryPackageBase import \
-    BlueprintRepositoryPackageBase
+from Package.BlueprintRepositoryPackageBase import BlueprintRepositoryPackageBase
 
 
 class subinfo(info.infoclass):
