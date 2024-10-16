@@ -93,6 +93,7 @@ class BashShell(object):
             if OsUtils.isWin():
                 if OsUtils.supportsSymlinks():
                     self._environment["MSYS"] = "winsymlinks:nativestrict"
+                # we really want to use all the tools from msys, don't prepend our dirs
                 path = "/usr/local/bin:/usr/bin:/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl"
                 if CraftCore.compiler.compiler.isMinGW:
                     gcc = shutil.which("gcc")

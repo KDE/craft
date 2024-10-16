@@ -436,7 +436,7 @@ def isSvnUrl(url):
 def splitVCSUrl(Url):
     """this function splits up an url provided by Url into the server name, the path, a branch or tag;
     it will return a list with 3 strings according to the following scheme:
-    git://servername/path.git|4.5branch|v4.5.1 will result in ['git://servername:path.git', '4.5branch', 'v4.5.1']
+    git://servername:path.git|4.5branch|v4.5.1 will result in ['git://servername:path.git', '4.5branch', 'v4.5.1']
     This also works for all other dvcs"""
     splitUrl = Url.split("|")
     if len(splitUrl) < 3:

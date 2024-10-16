@@ -16,3 +16,6 @@ share/ndk-modules/.*
 # data files not relevant on Android
 share/licenses/SDL2/.*
 share/zsh/.*
+
+# languages not existing on Android (as in: not selectable in the system settings)
+share/locale/(bs|ca@valencia|eo|ia|sr@ijekavian|sr@ijekavianlatin|sr@latin|tg)/.*

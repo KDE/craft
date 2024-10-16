@@ -67,7 +67,18 @@ class subinfo(info.infoclass):
                 ".",
                 "pacman",
                 Arguments(
-                    ["-S", "base-devel", "msys/binutils", "msys/autoconf-archive", "msys/autotools", "msys/intltool", "--noconfirm", overwrite, "--needed"]
+                    [
+                        "-S",
+                        "base-devel",
+                        "msys/binutils",
+                        "msys/autoconf-archive",
+                        "msys/autotools",
+                        "msys/intltool",
+                        "msys/gettext-devel",
+                        "--noconfirm",
+                        overwrite,
+                        "--needed",
+                    ]
                 ),
             )
             and stopProcesses()
