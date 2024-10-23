@@ -7,6 +7,9 @@ from Package.PackageBase import PackageBase
 from Packager.TypePackager import TypePackager
 from Source.MultiSource import MultiSource
 
+import os
+from Utils import CraftHash
+
 
 class AutoToolsPackageBase(PackageBase, MultiSource, AutoToolsBuildSystem, TypePackager):
     """provides a base class for autotools based packages from any source"""
