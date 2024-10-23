@@ -5,7 +5,6 @@ from BuildSystem.AutoToolsBuildSystem import *
 from Package.PackageBase import *
 from Packager.TypePackager import TypePackager
 from Source.MultiSource import *
-from Utils import CraftHash
 
 
 class AutoToolsPackageBase(PackageBase, MultiSource, AutoToolsBuildSystem, TypePackager):
