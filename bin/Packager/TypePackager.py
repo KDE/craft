@@ -22,6 +22,11 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
+
+# we have to import all packagers because they could be used by the
+#   eval(packager)
+# call where packager is provided for example on the command line via
+#   --option [Packager]PackageType=PortablePackager
 from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftCore import CraftCore
 from Packager.AppImagePackager import AppImagePackager
