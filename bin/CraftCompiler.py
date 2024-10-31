@@ -25,7 +25,7 @@ import os
 import platform
 import re
 import sys
-from enum import IntFlag, auto, unique
+from enum import Enum, IntFlag, auto, unique
 
 from CraftCore import CraftCore
 from Utils.CraftBool import CraftBool
@@ -118,6 +118,8 @@ class CraftCompilerSignature(object):
 
 class CraftCompiler(object):
     class CompilerFlags(IntFlag):
+        __str__ = Enum.__str__
+
         @classmethod
         def fromString(cls, name):
             if not hasattr(cls, "__sting_map"):
@@ -502,6 +504,6 @@ if __name__ == "__main__":
     print(f"Configured compiler (ABI): {CraftCore.compiler}")
     print("Architecture: %s" % CraftCore.compiler.signature)
     print("HostArchitecture: %s" % CraftCore.compiler.hostSignature)
-    print("Native compiler: %s" % ("No", "Yes")[CraftCore.compiler.platform.isNative])
+    print(f"Native compiler: {CraftCore.compiler.platform.isNative.asYesNo}")
     if CraftCore.compiler.compiler.isGCCLike:
         print("Compiler Version: %s" % CraftCore.compiler.getGCCLikeVersion(CraftCore.compiler.compiler.name))
