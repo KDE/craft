@@ -5,7 +5,7 @@ from Package.BinaryPackageBase import BinaryPackageBase
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.NotFreeBSD
+        self.parent.package.categoryInfo.platforms &= ~CraftCore.compiler.Platforms.FreeBSD
 
     def setTargets(self):
         for ver in ["24.09"]:

@@ -271,15 +271,6 @@ class CraftCompiler(object):
         Unix = Linux | MacOS | FreeBSD | Android
         Apple = MacOS | iOS
 
-        # define inverted values to allow usage in info.ini
-        NotLinux = ~Linux
-        NotMacOS = ~MacOS
-        NotFreeBSD = ~FreeBSD
-        NotWindows = ~Windows
-        NotUnix = ~Unix
-        NotAndroid = ~Android
-        NotIOS = ~iOS
-
         All = ~0
 
         # Modifiers, flags that indicate additional conditions
