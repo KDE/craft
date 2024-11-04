@@ -72,23 +72,23 @@ class CategoryPackageObject(object):
             self.runtimeDependencies = CraftCore.settings._parseList(general.get("runtimeDependencies", ""))
             self.buildDependencies = CraftCore.settings._parseList(general.get("buildDependencies", ""))
 
-            platform = set(CraftCore.settings._parseList(general.get("platforms", "")))
-            if platform:
-                self.platforms = CraftCore.compiler.Platforms.NoPlatform
-                for p in platform:
-                    self.platforms |= CraftCore.compiler.Platforms.fromString(p)
+            def readCompileFlags(key: str, default: CraftCore.compiler.CompilerFlags):
+                values = set(CraftCore.settings._parseList(general.get(key, "")))
+                if not values:
+                    return default
+                value = ~default.All
+                for v in values:
+                    if v.startswith("~"):
+                        # invert the value
+                        value |= ~default.fromString(v[1:])
+                    else:
+                        value |= default.fromString(v)
+                return value
 
-            compiler = set(CraftCore.settings._parseList(general.get("compiler", "")))
-            if compiler:
-                self.compiler = CraftCore.compiler.Compiler.NoCompiler
-                for c in compiler:
-                    self.compiler |= CraftCore.compiler.Compiler.fromString(c)
+            self.platforms = readCompileFlags("platforms", self.platforms)
+            self.compiler = readCompileFlags("compiler", self.compiler)
+            self.architecture = readCompileFlags("architecture", self.architecture)
 
-            architecture = set(CraftCore.settings._parseList(general.get("architecture", "")))
-            if architecture:
-                self.architecture = CraftCore.compiler.architecture.NoArchitecture
-                for c in architecture:
-                    self.architecture |= CraftCore.compiler.Architecture.fromString(c)
             self.pathOverride = general.get("pathOverride", None)
             self.forceOverride = general.get("forceOverride", False)
 

@@ -7,7 +7,7 @@ from Utils import CraftHash
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.NotMacOS
+        self.parent.package.categoryInfo.platforms &= ~CraftCore.compiler.Platforms.MacOS
 
     def setTargets(self):
         for ver in ["1.15"]:
