@@ -19,3 +19,10 @@ share/zsh/.*
 
 # languages not existing on Android (as in: not selectable in the system settings)
 share/locale/(bs|ca@valencia|eo|ia|sr@ijekavian|sr@ijekavianlatin|sr@latin|tg)/.*
+
+# translations for Qt development tools
+translations/(assistant|designer|linguist|qt_help)_.*\.qm
+translations/.*\.json
+
+# translations for Qt modules we don't ship on Android
+translations/(qtwebengine|qtserialport)_.*\.qm

@@ -211,8 +211,9 @@ class BuildSystemBase(CraftBase):
                 content = f.read()
             dirty = False
             for oldPath in oldPaths:
-                assert os.path.isabs(oldPath)
-                # allow front and back slashes
+                # absolute path or a msys path starting with a /
+                assert os.path.isabs(oldPath) or oldPath.startswith("/")
+                # allow front and backslashes
                 oldPathPat = oldPath.replace("/", r"[/\\]+")
                 # capture firs seperator
                 oldPathPat = oldPathPat.replace(r"[/\\]+", r"(/+|\\+)", 1)
