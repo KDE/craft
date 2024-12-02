@@ -135,6 +135,10 @@ class CraftCompiler(object):
             mask = ~(~0 << 16)
             return self & mask
 
+        def matchKeys(self, other) -> CraftBool:
+            # first check the key, then the modifiers
+            return CraftBool(self.key & other.key and self & other)
+
     @unique
     class Architecture(CompilerFlags):
         NoArchitecture = 0
