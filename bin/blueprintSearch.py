@@ -54,6 +54,11 @@ class SeachPackage(object):
     Description: {self.description}
     Tags: {self.tags}
     Options: {UserOptions.get(self.package)}
+
+    Platform supported: {self.package.categoryInfo.platforms.matchKeys(CraftCore.compiler.platform)} ({self.package.categoryInfo.platforms})
+    Compiler supported: {self.package.categoryInfo.compiler.matchKeys(CraftCore.compiler.compiler)} ({self.package.categoryInfo.compiler})
+    Architecture supported: {self.package.categoryInfo.architecture.matchKeys(CraftCore.compiler.architecture)} ({self.package.categoryInfo.architecture})
+
     Latest version: {latestVersion}
     Installed versions: {version}
     Installed revision: {revision}

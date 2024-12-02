@@ -94,17 +94,13 @@ class CategoryPackageObject(object):
 
     @property
     def isActive(self) -> CraftBool:
-        def check(left, right):
-            # first check the key, then the modifiers
-            return left.key & right.key and left & right
-
-        if not check(CraftCore.compiler.platform, self.platforms):
+        if not CraftCore.compiler.platform.matchKeys(self.platforms):
             CraftCore.log.debug(f"{self.localPath}, is not supported on {CraftCore.compiler.platform!r}, supported platforms {self.platforms!r}")
             return CraftBool(False)
-        if not check(CraftCore.compiler.compiler, self.compiler):
+        if not CraftCore.compiler.compiler.matchKeys(self.compiler):
             CraftCore.log.debug(f"{self.localPath}, is not supported on {CraftCore.compiler.compiler!r}, supported compiler {self.compiler!r}")
             return CraftBool(False)
-        if not check(CraftCore.compiler.architecture, self.architecture):
+        if not CraftCore.compiler.architecture.matchKeys(self.architecture):
             CraftCore.log.debug(f"{self.localPath}, is not supported on {CraftCore.compiler.architecture!r}, supported architecture {self.architecture!r}")
             return CraftBool(False)
         return CraftBool(True)
