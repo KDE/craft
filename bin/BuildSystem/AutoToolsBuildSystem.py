@@ -9,6 +9,7 @@ from pathlib import Path
 import utils
 from Blueprints.CraftPackageObject import CraftPackageObject
 from BuildSystem.BuildSystemBase import BuildSystemBase
+from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from shells import BashShell

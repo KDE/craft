@@ -109,7 +109,6 @@ class BashShell(object):
                     self._environment["MSYSTEM"] = f"MSYS{CraftCore.compiler.bits}_CRAFT"
 
                 if self.useMSVCCompatEnv and CraftCore.compiler.isMSVC():
-
                     automake = []
                     for d in os.scandir(os.path.join(os.path.dirname(self._findBash()), "..", "share")):
                         if d.name.startswith("automake"):

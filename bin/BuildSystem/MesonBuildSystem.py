@@ -27,6 +27,7 @@ import textwrap
 
 import utils
 from BuildSystem.BuildSystemBase import BuildSystemBase
+from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from CraftStandardDirs import CraftStandardDirs
 from Utils.Arguments import Arguments

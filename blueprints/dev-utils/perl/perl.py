@@ -4,6 +4,7 @@ from pathlib import Path
 import info
 import utils
 from BuildSystem.BuildSystemBase import BuildSystemBase
+from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from Package.AutoToolsPackageBase import AutoToolsPackageBase
@@ -151,10 +152,10 @@ class PackageAutoTools(AutoToolsPackageBase):
                 f"-Dcxx={os.environ['CXX']} -arch {CraftCore.compiler.architecture.name.lower()}",
                 f"-Dld={os.environ['CC']} -arch {CraftCore.compiler.architecture.name.lower()}",
             ]
-        if CraftCore.compiler.isMacOS:
-            lddflags = "-dylib"
-        else:
-            lddflags = "-shared"
+        # if CraftCore.compiler.isMacOS:
+        #     lddflags = "-dylib"
+        # else:
+        #     lddflags = "-shared"
         self.subinfo.options.configure.args += [
             f"-Accflags={cflags}",
             f"-Aldflags={ldflags}",
