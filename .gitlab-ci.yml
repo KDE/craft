@@ -44,11 +44,10 @@ py312:
   image: python:3.12
   script: tox -e py312
 
-# Python 3.13 not released yet (planed for 01.10.2024)
-# py313:
-#   extends: .tox_base
-#   image: python:3.13
-#   script: tox -e py313
+py313:
+  extends: .tox_base
+  image: python:3.13
+  script: tox -e py313
 
 lint:
   extends: .tox_base
