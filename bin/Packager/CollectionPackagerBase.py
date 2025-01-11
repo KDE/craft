@@ -70,7 +70,7 @@ class PackagerLists(object):
     def runtimeBlacklist():
         bls = [
             "applications_blacklist.txt",
-            f"applications_blacklist_{CraftCore.compiler.platform.name.lower()}.txt",
+            f"applications_blacklist_{CraftCore.compiler.name.lower()}.txt",
         ]
         return filter(
             lambda x: x.exists(),
@@ -107,7 +107,7 @@ class CollectionPackagerBase(PackagerBase):
     def runtimeBlacklist(self):
         bls = [
             Path(__file__).absolute().parent / "blacklists" / "applications_blacklist.txt",
-            Path(__file__).absolute().parent / "blacklists" / f"applications_blacklist_{CraftCore.compiler.platform.name.lower()}.txt",
+            Path(__file__).absolute().parent / "blacklists" / f"applications_blacklist_{CraftCore.compiler.name.lower()}.txt",
         ]
         if self.sourceDir():
             bls.append(Path(self.sourceDir()) / ".craftignore")
