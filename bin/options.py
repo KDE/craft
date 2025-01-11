@@ -579,7 +579,7 @@ class Options(object):
         # add the date to the target
         self.dailyUpdate = False
 
-        ## there is a special option available already
+        # there is a special option available already
         self.useShadowBuild = True
 
     @property
