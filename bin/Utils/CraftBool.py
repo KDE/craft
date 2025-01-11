@@ -17,6 +17,8 @@ class CraftBool(object):
             self.value = b
         elif isinstance(b, str):
             self.value = configparser.ConfigParser.BOOLEAN_STATES.get(b.lower())
+        elif isinstance(b, int):
+            self.value = bool(b)
         else:
             raise Exception(f"Failed to cast: {type(b)} to CraftBool")
 

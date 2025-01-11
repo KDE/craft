@@ -27,6 +27,7 @@ import re
 from enum import Enum, IntFlag, auto, unique
 
 from CraftCore import CraftCore
+from Utils.CraftBool import CraftBool
 
 
 class CraftCompilerSignature(object):
@@ -273,28 +274,28 @@ class CraftCompiler(object):
         raise Exception("Unsupported architecture")
 
     @property
-    def isWindows(self) -> bool:
-        return self.platform == CraftCompiler.Platforms.Windows
+    def isWindows(self) -> CraftBool:
+        return CraftBool(self.platform == CraftCompiler.Platforms.Windows)
 
     @property
-    def isMacOS(self) -> bool:
-        return self.platform == CraftCompiler.Platforms.MacOS
+    def isMacOS(self) -> CraftBool:
+        return CraftBool(self.platform == CraftCompiler.Platforms.MacOS)
 
     @property
-    def isLinux(self) -> bool:
-        return self.platform == CraftCompiler.Platforms.Linux
+    def isLinux(self) -> CraftBool:
+        return CraftBool(self.platform == CraftCompiler.Platforms.Linux)
 
     @property
-    def isFreeBSD(self) -> bool:
-        return self.platform == CraftCompiler.Platforms.FreeBSD
+    def isFreeBSD(self) -> CraftBool:
+        return CraftBool(self.platform == CraftCompiler.Platforms.FreeBSD)
 
     @property
-    def isAndroid(self) -> bool:
-        return self.platform == CraftCompiler.Platforms.Android
+    def isAndroid(self) -> CraftBool:
+        return CraftBool(self.platform == CraftCompiler.Platforms.Android)
 
     @property
-    def isUnix(self) -> bool:
-        return bool(self.platform & CraftCompiler.Platforms.Unix)
+    def isUnix(self) -> CraftBool:
+        return CraftBool(self.platform & CraftCompiler.Platforms.Unix)
 
     @property
     def executableSuffix(self):
@@ -309,41 +310,41 @@ class CraftCompiler(object):
         else:
             return ".debug"
 
-    def isNative(self):
-        return self.architecture == self.hostArchitecture and CraftCore.settings.getboolean("General", "Native", True)
+    def isNative(self) -> CraftBool:
+        return CraftBool(self.architecture == self.hostArchitecture and CraftCore.settings.getboolean("General", "Native", True))
 
-    def isGCC(self) -> bool:
-        return self.compiler == CraftCompiler.Compiler.GCC
+    def isGCC(self) -> CraftBool:
+        return CraftBool(self.compiler == CraftCompiler.Compiler.GCC)
 
-    def isClang(self) -> bool:
-        return self.compiler == CraftCompiler.Compiler.CLANG
+    def isClang(self) -> CraftBool:
+        return CraftBool(self.compiler == CraftCompiler.Compiler.CLANG)
 
-    def isGCCLike(self) -> bool:
-        return bool(self.compiler & CraftCompiler.Compiler.GCCLike)
+    def isGCCLike(self) -> CraftBool:
+        return CraftBool(self.compiler & CraftCompiler.Compiler.GCCLike)
 
-    def isCl(self) -> bool:
-        return self.compiler == CraftCompiler.Compiler.CL
+    def isCl(self) -> CraftBool:
+        return CraftBool(self.compiler == CraftCompiler.Compiler.CL)
 
-    def isMinGW(self):
-        return self.isWindows and self.isGCC()
+    def isMinGW(self) -> CraftBool:
+        return CraftBool(self.isWindows and self.isGCC())
 
-    def isMinGW_W32(self):
-        return self.isMinGW() and self.architecture == CraftCompiler.Architecture.x86_32
+    def isMinGW_W32(self) -> CraftBool:
+        return CraftBool(self.isMinGW() and self.architecture == CraftCompiler.Architecture.x86_32)
 
-    def isMinGW_W64(self):
-        return self.isMinGW() and self.architecture == CraftCompiler.Architecture.x86_64
+    def isMinGW_W64(self) -> CraftBool:
+        return CraftBool(self.isMinGW() and self.architecture == CraftCompiler.Architecture.x86_64)
 
-    def isMSVC(self):
-        return self.compiler == CraftCompiler.Compiler.CL
+    def isMSVC(self) -> CraftBool:
+        return CraftBool(self.compiler == CraftCompiler.Compiler.CL)
 
-    def isMSVC2017(self):
-        return self.signature.abi == CraftCompiler.Abi.msvc2017
+    def isMSVC2017(self) -> CraftBool:
+        return CraftBool(self.signature.abi == CraftCompiler.Abi.msvc2017)
 
-    def isMSVC2019(self):
-        return self.signature.abi == CraftCompiler.Abi.msvc2019
+    def isMSVC2019(self) -> CraftBool:
+        return CraftBool(self.signature.abi == CraftCompiler.Abi.msvc2019)
 
-    def isMSVC2022(self):
-        return self.signature.abi == CraftCompiler.Abi.msvc2022
+    def isMSVC2022(self) -> CraftBool:
+        return CraftBool(self.signature.abi == CraftCompiler.Abi.msvc2022)
 
     def getGCCLikeVersion(self, compilerExecutable):
         _, result = CraftCore.cache.getCommandOutput(compilerExecutable, "--version")
