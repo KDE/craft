@@ -139,10 +139,10 @@ class UserOptions(object):
         _register("srcDir", str, persist=False, compatible=True)
         _register("branch", str, persist=False)
         _register("revision", str, persist=False)
-        _register("ignored", CraftBool, persist=False, compatible=True)
+        _register("ignored", CraftBool(bool()), persist=False, compatible=True)
         _register("buildTests", CraftCore.compiler.isNative(), persist=False, compatible=True)
         _register("buildTools", CraftCore.compiler.isNative(), persist=False, compatible=True)
-        _register("buildStatic", CraftBool, persist=False)
+        _register("buildStatic", CraftBool(bool()), persist=False)
 
         _register(
             "buildType",
@@ -405,7 +405,7 @@ class UserOptions(object):
                 if not callable(default):
                     out = default
 
-        # skip lookup in command line options and parent objects the enxt time
+        # skip lookup in command line options and parent objects the next time
         _cache[name] = out
         # print("added to cache", _packagePath, name, type(out), out)
         return out
