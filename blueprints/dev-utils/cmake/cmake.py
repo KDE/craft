@@ -28,7 +28,7 @@ class Package(BinaryPackageBase):
         if not super().install():
             return False
         cmakePath = CraftCore.standardDirs.craftRoot() / "dev-utils/cmake-base"
-        if CraftCore.compiler.isMacOS:
+        if CraftCore.compiler.platform.isMacOS:
             cmakePath /= "CMake.app/Contents/bin"
         else:
             cmakePath /= "bin"

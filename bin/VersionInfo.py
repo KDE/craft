@@ -145,7 +145,7 @@ class VersionInfo(object):
         return VersionInfo._replaceVar(s, ver, self.package.name)
 
     def get(self, key: str, fallback=configparser._UNSET):
-        platformKey = f"{key}_{CraftCore.compiler.name}"
+        platformKey = f"{key}_{CraftCore.compiler.platform.name}"
         if platformKey in self.data.info:
             return self.data.info.get(platformKey)
         return self.data.info.get(key, fallback)

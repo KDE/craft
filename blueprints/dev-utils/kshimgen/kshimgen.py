@@ -58,7 +58,7 @@ else:
 
         def configure(self):
             cmakePath = CraftCore.standardDirs.craftRoot() / "dev-utils/cmake-base"
-            if CraftCore.compiler.isMacOS:
+            if CraftCore.compiler.platform.isMacOS:
                 cmakePath /= "CMake.app/Contents/bin"
             else:
                 cmakePath /= "bin"
