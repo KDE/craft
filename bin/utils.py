@@ -30,7 +30,6 @@ import configparser
 import contextlib
 import ctypes
 import glob
-import inspect
 import io
 import os
 import re
@@ -57,12 +56,6 @@ def __locate7z():
     if appPath.exists():
         return appPath
     return None
-
-
-def abstract():
-    caller = inspect.getouterframes(inspect.currentframe())[1][3]
-    raise NotImplementedError(caller + " must be implemented in subclass")
-
 
 # unpack functions
 

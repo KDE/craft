@@ -3,6 +3,7 @@
 #
 # Packager base
 
+import abc
 import glob
 import os
 from pathlib import Path
@@ -77,8 +78,9 @@ class PackagerBase(CraftBase):
             appPath = apps[0]
         return lookPath / appPath
 
+    @abc.abstractmethod
     def preArchive(self):
-        utils.abstract()
+        pass
 
     def archiveDir(self):
         return self.buildRoot() / "archive"
@@ -90,8 +92,9 @@ class PackagerBase(CraftBase):
         return Path(self.buildRoot()) / "artifacts"
 
     # """ create a package """
+    @abc.abstractmethod
     def createPackage(self):
-        utils.abstract()
+        pass
 
     def _generateManifest(
         self,

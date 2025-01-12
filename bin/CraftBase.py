@@ -1,6 +1,7 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
+import abc
 import datetime
 import functools
 import os
@@ -77,8 +78,9 @@ class CraftBase(object):
         """return base directory name for package related image directory"""
         return f"image-{self.buildType()}-{self.buildTarget.replace('/', '_') if self.buildTarget else None}"
 
+    @abc.abstractmethod
     def sourceDir(self, dummyIndex=0) -> Path:
-        utils.abstract()
+        pass
 
     def logDir(self) -> Path:
         return CraftCore.standardDirs.logDir() / self.package.path
