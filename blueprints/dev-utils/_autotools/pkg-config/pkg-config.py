@@ -40,4 +40,4 @@ class Package(AutoToolsPackageBase):
     def createPackage(self):
         # TODO: reduce package size
         self.blacklist_file.append(self.blueprintDir() / "blacklist.txt")
-        return super().createPackage(self)
+        return super().createPackage()
