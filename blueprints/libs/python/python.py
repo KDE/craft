@@ -10,6 +10,7 @@ from CraftCore import CraftCore
 from Package.AutoToolsPackageBase import AutoToolsPackageBase
 from Package.MSBuildPackageBase import MSBuildPackageBase
 from Utils import CraftHash
+from Utils.Arguments import Arguments
 
 
 class subinfo(info.infoclass):
