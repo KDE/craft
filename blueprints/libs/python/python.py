@@ -139,6 +139,7 @@ else:
             ]
             if CraftCore.compiler.isMacOS:
                 self.subinfo.options.configure.noLibDir = True
+                self.subinfo.options.configure.staticArgs = Arguments()
                 self.subinfo.options.configure.args += [f"--enable-framework={CraftCore.standardDirs.craftRoot()}/lib", "--with-universal-archs=x86_64;arm64"]
                 self.subinfo.options.install.args += [f"PYTHONAPPSDIR={CraftCore.standardDirs.craftRoot()}"]
 
