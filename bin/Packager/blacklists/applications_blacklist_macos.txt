@@ -33,3 +33,4 @@ libexec/qt-internal-configure-tests
 libexec/qt-internal-configure-examples
 libexec/sanitizer-testrunner.py
 libexec/qt-cmake-private
+libexec/qt-android-runner.py
