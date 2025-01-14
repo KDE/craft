@@ -11,8 +11,8 @@ class CraftVersion(Version):
     isBranch_re = re.compile(r"^[a-z]+$", re.IGNORECASE)
 
     def __init__(self, version):
-        Version.__init__(self, version)
-        self.versionstr = version
+        self.versionstr = str(version)
+        Version.__init__(self, self.versionstr)
         self.isBranch = CraftVersion.isBranch_re.match(self.versionstr) if version else None
 
     def __str__(self):
@@ -22,7 +22,7 @@ class CraftVersion(Version):
         return "CraftVersion ('%s')" % self.versionstr
 
     def _cmp(self, other):
-        if isinstance(other, str):
+        if isinstance(other, (str, int, float)):
             other = CraftVersion(other)
         elif not isinstance(other, CraftVersion):
             raise TypeError("Can't compare CraftVersion with %s" % type(other))
