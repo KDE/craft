@@ -78,11 +78,15 @@ class CategoryPackageObject(object):
                     return default
                 value = ~default.All
                 for v in values:
+                    old = value
                     if v.startswith("~"):
                         # invert the value
                         value |= ~default.fromString(v[1:])
                     else:
                         value |= default.fromString(v)
+
+                    if old == value:
+                        CraftCore.log.warning(f"{self.localPath}: The value {v!r} for {default.__class__.__name__} has no effect, values are:{values!r}")
                 return value
 
             self.platforms = readCompileFlags("platforms", self.platforms)
