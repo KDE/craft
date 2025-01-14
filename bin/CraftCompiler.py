@@ -26,6 +26,7 @@ import platform
 import re
 from enum import Enum, IntFlag, auto, unique
 
+from Blueprints.CraftVersion import CraftVersion
 from CraftCore import CraftCore
 from Utils.CraftBool import CraftBool
 
@@ -400,6 +401,10 @@ class CraftCompiler(object):
             CraftCompiler.Architecture.arm64: "arm64-v8a",
         }
         return architectures[self.architecture]
+
+    @property
+    def macOSDeploymentTarget(self) -> CraftVersion:
+        return CraftVersion(CraftCore.settings.get("General", "MacDeploymentTarget", "12"))
 
 
 if __name__ == "__main__":
