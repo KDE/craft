@@ -118,9 +118,9 @@ if CraftCore.compiler.isMSVC():
             if not utils.copyDir(self.sourceDir() / "Lib", self.imageDir() / "bin/Lib"):
                 return False
 
-            # TODO: do we need this? Seems to be a similar mechanism as "python-is-python3" on debian
-            # if not utils.createShim(self.imageDir() / "bin/python3.exe", self.imageDir() / f"bin/python{debugSuffix}.exe"):
-            #     return False
+            # Install python3 too. This is a similar mechanism as "python-is-python3" on debian
+            if not utils.createShim(self.imageDir() / "bin/python3.exe", self.imageDir() / f"bin/python{debugSuffix}.exe"):
+                return False
 
             return True
 
@@ -154,14 +154,6 @@ else:
             if not super().install():
                 return False
 
-            # TODO: do we need this? Seems to be a similar mechanism as "python-is-python3" on debian
-            # if not utils.createShim(
-            #     self.installDir() / f"bin/python3{CraftCore.compiler.platform.executableSuffix}",
-            #     self.installDir() / f"bin/python{CraftCore.compiler.platform.executableSuffix}",
-            #     useAbsolutePath=True,
-            # ):
-            #     return False
-
             if CraftCore.compiler.isMacOS:
                 minorVersion = self.buildTarget.split(".")[1]
                 if not utils.system(
@@ -186,6 +178,15 @@ else:
                 for x in pkgconfigDir.glob("*.pc"):
                     if not utils.createSymlink(x, pkgconfigDirDest / x.name):
                         return False
+
+            # Install python3 too. This is a similar mechanism as "python-is-python3" on debian
+            if not utils.createShim(
+                self.installDir() / f"bin/python3{CraftCore.compiler.platform.executableSuffix}",
+                self.installDir() / f"bin/python{CraftCore.compiler.platform.executableSuffix}",
+                useAbsolutePath=True,
+            ):
+                return False
+
             return True
 
         def unittest(self):
