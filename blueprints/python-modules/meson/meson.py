@@ -40,3 +40,8 @@ class subinfo(info.infoclass):
 class Package(PipPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+    def install(self):
+        if not super().install():
+            return False
+        return self.createMacOSPipShims(["meson"])

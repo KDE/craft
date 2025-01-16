@@ -47,6 +47,19 @@ class PipBuildSystem(BuildSystemBase):
     def venvDir(self, ver):
         return Path(CraftCore.standardDirs.etcDir()) / "virtualenv" / ver
 
+    def createMacOSPipShims(self, binaries: list[str]):
+        if not CraftCore.compiler.isMacOS:
+            return True
+
+        for binary in binaries:
+            if not utils.createShim(
+                self.installDir() / f"bin/{binary}{CraftCore.compiler.executableSuffix}",
+                self.installDir() / f"lib/Python.framework/Versions/Current/bin/{binary}{CraftCore.compiler.executableSuffix}",
+                useAbsolutePath=True,
+            ):
+                return False
+        return True
+
     def make(self):
         if self.subinfo.svnTarget():
             for ver, python in self._pythons:
