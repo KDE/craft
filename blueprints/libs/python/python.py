@@ -179,10 +179,10 @@ else:
                     if not utils.createSymlink(x, pkgconfigDirDest / x.name):
                         return False
 
-            # Install python3 too. This is a similar mechanism as "python-is-python3" on debian
+            # Install versionless python bin too. This is a similar mechanism as "python-is-python3" on debian
             if not utils.createShim(
-                self.installDir() / f"bin/python3{CraftCore.compiler.platform.executableSuffix}",
-                self.installDir() / f"bin/python{CraftCore.compiler.platform.executableSuffix}",
+                self.installDir() / f"bin/python{CraftCore.compiler.executableSuffix}",
+                self.installDir() / f"bin/python3{CraftCore.compiler.executableSuffix}",
                 useAbsolutePath=True,
             ):
                 return False
