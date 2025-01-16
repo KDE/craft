@@ -486,13 +486,6 @@ class SetupHelper(object):
             ],
         )
 
-        if CraftCore.compiler.isMacOS:
-            # because macOS uses a framework for python we need to add it to PATH too
-            self.prependEnvVar(
-                "PATH",
-                CraftCore.standardDirs.craftRoot() / "lib/Python.framework/Versions/Current/bin",
-            )
-
         # make sure that craftroot bin is the first to look for dlls etc
         self.prependEnvVar(
             "PATH",
