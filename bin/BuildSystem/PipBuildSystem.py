@@ -82,6 +82,9 @@ class PipBuildSystem(BuildSystemBase):
                     command += ["--no-binary", ":all:", "--no-cache-dir"]
 
                     if CraftCore.compiler.isMacOS:
+                        # On macOS we use a frameworks
+                        # While on Linux modules are installed to PREFIX/lib/site-packages on macOS a versioned path
+                        # like PREFIX/lib/python3.11/site-packages would be used if set prefix outsite the framwork
                         prefix = self.installDir() / "lib/Python.framework/Versions/Current"
                     else:
                         prefix = self.installDir()
