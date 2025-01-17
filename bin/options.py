@@ -317,6 +317,15 @@ class UserOptions(object):
         return True
 
     def registerOption(self, key: str, default, persist: bool = True, compatible: bool = False) -> bool:
+        """
+        register an option
+         key
+           the name of the attribute
+        default
+         the default value
+         if default is a type, it will be used to convert manual set values, without an actual value the attribute will be None
+         if default is a value, the attribute will return it
+        """
         _instance = UserOptions.instance()
         package = self._package
         if package.path not in _instance.registeredOptions:
@@ -353,6 +362,9 @@ class UserOptions(object):
         return True
 
     def setDefault(self, key: str, default) -> bool:
+        """
+        Set the default value for an already registered option
+        """
         _instance = UserOptions.instance()
         package = self._package
         if key not in _instance.registeredOptions[package.path]:
