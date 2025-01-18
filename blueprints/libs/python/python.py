@@ -30,7 +30,7 @@ class subinfo(info.infoclass):
             self.patchToApply["3.11.7"] = [(".msvc/patches", 1)]
 
         self.patchLevel["3.11.5"] = 4
-        self.patchLevel["3.11.7"] = 1
+        self.patchLevel["3.11.7"] = 2
 
         self.description = "Python is a high-level, general-purpose programming language"
         self.defaultTarget = "3.11.7"
