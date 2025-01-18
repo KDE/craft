@@ -1,5 +1,4 @@
 import info
-import utils
 from CraftCore import CraftCore
 from Package.BinaryPackageBase import BinaryPackageBase
 
@@ -9,7 +8,7 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotFreeBSD & CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
-        for ver in ["24.05", "24.09"]:
+        for ver in ["24.09"]:
             verNoDot = ver.replace(".", "")
             self.targetInstallPath[ver] = "dev-utils/7z"
             if CraftCore.compiler.isWindows:
@@ -40,10 +39,3 @@ class Package(BinaryPackageBase):
             kwargs["fileType"] = ".tar.xz"
 
         return super().binaryArchiveName(**kwargs)
-
-    def unpack(self):
-        if not super().unpack():
-            return False
-        if CraftCore.compiler.isLinux:
-            return utils.deleteFile(self.localFilePath()[0])
-        return True
