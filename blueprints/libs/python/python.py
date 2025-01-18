@@ -189,7 +189,9 @@ else:
 
             if CraftCore.compiler.isLinux:
                 # create a versionless path that we can use eg. in CraftSetupHelper
-                return utils.createSymlink(self.installDir() / f"lib/python3.{minorVersion}/site-packages", self.installDir() / "lib/python/site-packages", targetIsDirectory=True)
+                return utils.createSymlink(
+                    self.installDir() / f"lib/python3.{minorVersion}/site-packages", self.installDir() / "lib/python/site-packages", targetIsDirectory=True
+                )
 
             return True
 
