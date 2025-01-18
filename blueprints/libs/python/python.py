@@ -183,7 +183,6 @@ else:
             if not utils.createShim(
                 self.installDir() / f"bin/python{CraftCore.compiler.executableSuffix}",
                 self.installDir() / f"bin/python3{CraftCore.compiler.executableSuffix}",
-                useAbsolutePath=True,
             ):
                 return False
 
