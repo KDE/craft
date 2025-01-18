@@ -154,8 +154,8 @@ else:
             if not super().install():
                 return False
 
+            minorVersion = self.buildTarget.split(".")[1]
             if CraftCore.compiler.isMacOS:
-                minorVersion = self.buildTarget.split(".")[1]
                 if not utils.system(
                     ["install_name_tool", "-id", f"@rpath/Python.framework/Versions/3.{minorVersion}/Python", self.imageDir() / "lib/Python.framework/Python"]
                 ):
