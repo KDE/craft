@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2023 Hannah von Reth <vonreth@kde.org>
 
 import tempfile
+from contextlib import nullcontext
 
 from CraftCore import CraftCore
 
@@ -14,6 +15,8 @@ class StageLogger(object):
         self.__logFile = None  # type: io.TextIOBase
         self._logPath = (CraftCore.standardDirs.logDir() / name).with_suffix(".log")
         self.buffered = buffered
+        # a log might be buffered but we want to persist it once we finished writing it
+        self.persistBufferOnClose = False
         self.outputOnFailure = outputOnFailure
         if not self._logPath.parent.exists():
             self._logPath.parent.mkdir(parents=True)
@@ -67,11 +70,11 @@ class StageLogger(object):
                 line = "*" * CraftCore.debug.lineWidth
                 activeLog.write(f"\n{line}\n{self._logPath.name}\n{line}\n")
                 self.__logFile.seek(0)
-                while True:
-                    chunk = self.__logFile.read(1024)
-                    if not chunk:
-                        break
-                    activeLog.write(chunk)
+                with self._logPath.open("wt") if self.persistBufferOnClose else nullcontext() as persistBufferLog:
+                    while chunk := self.__logFile.read(1024):
+                        activeLog.write(chunk)
+                        if self.persistBufferOnClose:
+                            persistBufferLog.write(chunk)
             self.__logFile.close()
 
     @staticmethod

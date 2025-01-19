@@ -111,6 +111,10 @@ def handlePackage(package, buildAction, directTargets):
             actions = [buildAction]
         for action in actions:
             with StageLogger(f"{package.path}/{action}", buffered=action == "package") as log:
+                # the log is buffered as we might package the logs themselves during the creation of the cache
+                # once we are done, we can still persist the log step
+                if log.buffered:
+                    log.persistBufferOnClose = True
                 if not doExec(package, action):
                     if StageLogger.isOutputOnFailure():
                         log.dump()
