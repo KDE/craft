@@ -1,3 +1,4 @@
+import multiprocessing
 import os
 from pathlib import Path
 
@@ -18,7 +19,7 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
-        for ver in ["5.36.0", "5.38.2", "5.39.8"]:
+        for ver in ["5.36.0", "5.38.2", "5.39.8", "5.40.1"]:
             self.targets[ver] = f"https://www.cpan.org/src/5.0/perl-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"perl-{ver}"
 
@@ -30,23 +31,22 @@ class subinfo(info.infoclass):
         if CraftCore.compiler.isWindows:
             self.patchToApply["5.38.2"] = [(".perl-5.39.8_win", 1)]
             self.patchToApply["5.39.8"] = [(".perl-5.39.8_win", 1)]
+            self.patchToApply["5.40.1"] = [(".perl-5.39.8_win", 1)]
         else:
             self.patchToApply["5.38.2"] = [(".perl-5.36.0", 1)]
             self.patchToApply["5.39.8"] = [(".perl-5.36.0", 1)]
+            self.patchToApply["5.40.1"] = [(".perl-5.36.0", 1)]
         self.targetDigests["5.36.0"] = (["e26085af8ac396f62add8a533c3a0ea8c8497d836f0689347ac5abd7b7a4e00a"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["5.38.2"] = (["a0a31534451eb7b83c7d6594a497543a54d488bc90ca00f5e34762577f40655e"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["5.39.8"] = (["25f8b4db7a7d91c051b1c2594ed83c291c74c1012da559a8d580755b598bb7e3"], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigests["5.40.1"] = (["02f8c45bb379ed0c3de7514fad48c714fd46be8f0b536bfd5320050165a1ee26"], CraftHash.HashAlgorithm.SHA256)
         self.description = (
             "Perl 5 is a highly capable, feature-rich programming language with over 30 years of "
             "development. Perl 5 runs on over 100 platforms from portables to mainframes and is "
             "suitable for both rapid prototyping and large scale development projects."
         )
         self.patchLevel["5.38.2"] = 4
-        if CraftCore.compiler.isMinGW():
-            # 5.39.8 is a dev release but required for mingw
-            self.defaultTarget = "5.39.8"
-        else:
-            self.defaultTarget = "5.38.2"
+        self.defaultTarget = "5.40.1"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
@@ -69,7 +69,11 @@ class PackageMSVC(MakeFilePackageBase):
         if CraftCore.compiler.isMinGW():
             config["CCHOME"] = os.path.join(CraftCore.standardDirs.craftRoot(), "mingw64")
             config["SHELL"] = os.environ["COMSPEC"]
-            config["CRAFT_CFLAGS"] = f"{os.environ.get('CFLAGS', '')} -I'{root}/include' -L'{root}/lib'"
+            config["CRAFT_CFLAGS"] = f"{os.environ.get('CFLAGS', '')} -I'{root}/include' -L'{root}/lib' -Wno-error=implicit-function-declaration"
+            config["USE_MINGW_ANSI_STDIO"] = "define"
+            config["USE_64_BIT_INT"] = "define"
+            config["CCTYPE"] = "GCC"
+            self.subinfo.options.make.args += [f"-j{CraftCore.settings.get('Compile', 'Jobs', multiprocessing.cpu_count())}"]
         elif CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
             config["PROCESSOR_ARCHITECTURE"] = f"x{CraftCore.compiler.bits}"
 
