@@ -2,9 +2,9 @@ import glob
 import os
 from pathlib import Path
 
-from CraftCore import CraftCore
 import utils
 from CraftBase import InitGuard
+from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from Packager.CollectionPackagerBase import CollectionPackagerBase
 
