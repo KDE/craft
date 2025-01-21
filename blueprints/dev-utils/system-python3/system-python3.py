@@ -34,7 +34,7 @@ class Package(BinaryPackageBase):
             return False
 
         binDir = "Scripts" if CraftCore.compiler.isWindows else "bin"
-        python3 = CraftCore.standardDirs.etcDir() / f"virtualenv/3/{binDir}/python{CraftCore.compiler.platform.executableSuffix}"
+        python3 = CraftCore.standardDirs.etcDir() / f"virtualenv/3/{binDir}/python{CraftCore.compiler.executableSuffix}"
         return utils.createShim(
             self.installDir() / f"bin/python{CraftCore.compiler.executableSuffix}",
             python3,
