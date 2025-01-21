@@ -32,7 +32,7 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
-        self.runtimeDependencies["dev-utils/pkg-config"] = None
+        self.runtimeDependencies["dev-utils/pkgconf"] = None
         self.buildDependencies["python-modules/pip"] = None
         self.buildDependencies["python-modules/virtualenv"] = None
 
