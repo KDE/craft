@@ -102,6 +102,8 @@ class PipBuildSystem(BuildSystemBase):
                     else:
                         prefix = self.installDir()
                     command += ["--prefix", prefix]
+                else:
+                    command += ["--require-virtualenv"]
 
                 if self.subinfo.svnTarget():
                     command += ["-e", self.sourceDir()]
