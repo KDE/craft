@@ -3,6 +3,7 @@ import subprocess
 
 import info
 import utils
+from CraftCore import CraftCore
 from Package.PipPackageBase import PipPackageBase
 
 
