@@ -467,6 +467,11 @@ class SetupHelper(object):
                 "PYTHONPATH",
                 CraftCore.standardDirs.craftRoot() / "lib/Python.framework/Versions/Current/lib/site-packages",
             )
+        elif CraftCore.compiler.isWindows:
+            self.prependEnvVar(
+                "PYTHONPATH",
+                CraftCore.standardDirs.craftRoot() / "lib/site-packages",
+            )
         else:
             # yes, this path is correct: we created it as a symlink in the libs\python blueprint
             self.prependEnvVar(
@@ -486,6 +491,12 @@ class SetupHelper(object):
                 ),
             ],
         )
+
+        if CraftCore.compiler.isWindows:
+            self.prependEnvVar(
+                "PATH",
+                CraftCore.standardDirs.craftRoot() / "Scripts",
+            )
 
         # make sure that craftroot bin is the first to look for dlls etc
         self.prependEnvVar(
