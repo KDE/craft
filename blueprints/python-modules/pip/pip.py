@@ -37,20 +37,21 @@ class Package(PipPackageBase):
         if not CraftCore.compiler.isWindows:
             return super.install()
 
-        # Run "pip install pip" to install the lateste version
-        # We can't use the install step from PipBuildSystem,
-        # because installing pip itself causes issues when --prefix is used
-        # See https://github.com/pypa/pip/issues/11349
-        # TODO: re-evaluate when we use a newer python in libs/python
-        command = [
-            python,
-            "-m",
-            "pip",
-            "install",
-            "--upgrade",
-            "--upgrade-strategy",
-            "only-if-needed",
-            "pip"
-        ]
+        for ver, python in self._pythons:
+            # Run "pip install pip" to install the lateste version
+            # We can't use the install step from PipBuildSystem,
+            # because installing pip itself causes issues when --prefix is used
+            # See https://github.com/pypa/pip/issues/11349
+            # TODO: re-evaluate when we use a newer python in libs/python
+            command = [
+                python,
+                "-m",
+                "pip",
+                "install",
+                "--upgrade",
+                "--upgrade-strategy",
+                "only-if-needed",
+                "pip"
+            ]
 
         return utils.system(command)
