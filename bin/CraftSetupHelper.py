@@ -66,11 +66,15 @@ class SetupHelper(object):
 
     def __init__(self, args=None):
         self.args = args
-        if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+
+        ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
+        if ciMode:
             CraftCore.settings.set("General", "AllowAnsiColor", "False")
 
         if SetupHelper.NeedsSetup:
             SetupHelper.NeedsSetup = False
+            if ciMode:  # directly print to stderr as log() might get redirected
+                print("**Populating Craft environment variables...**", file=sys.stderr)
             self.checkForEvilApplication()
             self.setupEnvironment()
 
