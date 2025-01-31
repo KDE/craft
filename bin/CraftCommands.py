@@ -49,7 +49,7 @@ def __recurseCraft(command: [str], args: [str]):
     if hasattr(CraftCore, "installdb"):
         del CraftCore.installdb
     for args in utils.limitCommandLineLength([sys.executable, sys.argv[0]] + command, args):
-        if not subprocess.call(args) == 0:
+        if not subprocess.call(args, env={"CRAFT_FORCE_RESET": "1"}) == 0:
             return False
     return True
 
