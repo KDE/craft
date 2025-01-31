@@ -16,6 +16,7 @@ class PipBuildSystem(BuildSystemBase):
         self.python3 = True
 
         self.pipPackageName = self.package.name
+        self.allowNotVenv = False
 
     def _getPython3(self):
         craftPython = CraftPackageObject.get("libs/python")
@@ -102,7 +103,7 @@ class PipBuildSystem(BuildSystemBase):
                     else:
                         prefix = self.installDir()
                     command += ["--prefix", prefix]
-                else:
+                elif not self.allowNotVenv:
                     command += ["--require-virtualenv"]
 
                 if self.subinfo.svnTarget():
