@@ -63,6 +63,7 @@ if not platform.machine().endswith("64"):
 
 class SetupHelper(object):
     NeedsSetup = "KDEROOT" not in os.environ
+    ForceReSetup = "CRAFT_FORCE_RESET" in os.environ
 
     def __init__(self, args=None):
         self.args = args
@@ -70,6 +71,16 @@ class SetupHelper(object):
         ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
         if ciMode:
             CraftCore.settings.set("General", "AllowAnsiColor", "False")
+
+        pristineEnvFile = CraftCore.standardDirs.etcDir() / "PristineCraftenv.json"
+
+        if SetupHelper.ForceReSetup and pristineEnvFile.exists():
+            with pristineEnvFile.open("rt", encoding="utf-8") as input:
+                os.environ.clear()
+                os.environ.update(json.loads(input.read()))
+        elif SetupHelper.NeedsSetup:
+            with pristineEnvFile.open("wt", encoding="utf-8") as out:
+                json.dump(dict(os.environ), out, indent=4, sort_keys=True)
 
         if SetupHelper.NeedsSetup:
             SetupHelper.NeedsSetup = False
