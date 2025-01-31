@@ -17,6 +17,7 @@ class Package(PipPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.pipPackageName = "pip"
+        self.allowNotVenv = True
 
     def make(self):
         for ver, python in self._pythons:
