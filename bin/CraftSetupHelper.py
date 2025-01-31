@@ -74,6 +74,8 @@ class SetupHelper(object):
 
         pristineEnvFile = CraftCore.standardDirs.etcDir() / "PristineCraftenv.json"
 
+        print(pristineEnvFile)
+
         if SetupHelper.ForceReSetup and pristineEnvFile.exists():
             with pristineEnvFile.open("rt", encoding="utf-8") as input:
                 os.environ.clear()
@@ -82,6 +84,8 @@ class SetupHelper(object):
         elif SetupHelper.NeedsSetup:
             pristineEnvFile.parent.mkdir(parents=True, exist_ok=True)
             with pristineEnvFile.open("wt", encoding="utf-8") as out:
+                print("DUMP ENV")
+                print(os.environ)
                 json.dump(dict(os.environ), out, indent=4, sort_keys=True)
 
         if SetupHelper.NeedsSetup:
