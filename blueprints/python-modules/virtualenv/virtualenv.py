@@ -24,6 +24,7 @@ class subinfo(info.infoclass):
 class Package(PipPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.allowNotVenv = True
 
     def install(self):
         if CraftCore.compiler.isLinux:
