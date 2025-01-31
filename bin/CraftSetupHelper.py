@@ -77,6 +77,7 @@ class SetupHelper(object):
                 os.environ.clear()
                 os.environ.update(json.loads(input.read()))
         elif SetupHelper.NeedsSetup:
+            pristineEnvFile.parent.mkdir(parents=True, exist_ok=True)
             with pristineEnvFile.open("wt", encoding="utf-8") as out:
                 json.dump(dict(os.environ), out, indent=4, sort_keys=True)
 
