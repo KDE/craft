@@ -18,7 +18,7 @@ class PipBuildSystem(BuildSystemBase):
         self.pipPackageName = self.package.name
         self.allowNotVenv = False
 
-        self._isPipTarget = not (self.subinfo.hasTarget() or self.subinfo.hasSvnTarget())
+        self._isPipTarget = not (self.subinfo.hasTarget() or self.subinfo.svnTarget())
 
     def _getPython3(self):
         craftPython = CraftPackageObject.get("libs/python")
@@ -67,8 +67,8 @@ class PipBuildSystem(BuildSystemBase):
         if self._isPipTarget:
             return True
 
+        setupFile = self.sourceDir() / "setup.py"
         for ver, python in self._pythons:
-            setupFile = self.sourceDir() / "setup.py"
             # See https://bernat.tech/posts/pep-517-518/
             if setupFile.is_file():
                 # This is the legacy approach
@@ -98,8 +98,8 @@ class PipBuildSystem(BuildSystemBase):
                 usesCraftPython = CraftPackageObject.get("libs/python").categoryInfo.isActive
                 if usesCraftPython:
                     if self._isPipTarget:
-                        # build binaries ourself when installing from pip
-                        # in case we use a SVN or tarball target we don't want
+                        # Build binaries ourself when installing from pip.
+                        # In case we use a SVN or tarball target we don't want
                         # to enforce that here, because already done via the make step
                         command += ["--no-binary", ":all:", "--no-cache-dir"]
 
