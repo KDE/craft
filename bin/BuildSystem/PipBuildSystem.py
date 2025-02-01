@@ -17,6 +17,7 @@ class PipBuildSystem(BuildSystemBase):
 
         self.pipPackageName = self.package.name
         self.allowNotVenv = False
+        self.allowPrebuildBinaries = False
 
         self._isPipTarget = not (self.subinfo.hasTarget() or self.subinfo.svnTarget())
 
@@ -97,7 +98,7 @@ class PipBuildSystem(BuildSystemBase):
 
                 usesCraftPython = CraftPackageObject.get("libs/python").categoryInfo.isActive
                 if usesCraftPython:
-                    if self._isPipTarget:
+                    if self._isPipTarget and not self.allowPrebuildBinaries:
                         # Build binaries ourself when installing from pip.
                         # In case we use a SVN or tarball target we don't want
                         # to enforce that here, because already done via the make step
