@@ -18,6 +18,8 @@ class PipBuildSystem(BuildSystemBase):
         self.pipPackageName = self.package.name
         self.allowNotVenv = False
 
+        self._isPipTarget = not (self.subinfo.hasTarget() or self.subinfo.hasSvnTarget())
+
     def _getPython3(self):
         craftPython = CraftPackageObject.get("libs/python")
         suffix = "_d" if CraftCore.compiler.isWindows and craftPython.instance.subinfo.options.dynamic.buildType == "Debug" else ""
@@ -62,10 +64,21 @@ class PipBuildSystem(BuildSystemBase):
         return True
 
     def make(self):
-        if self.subinfo.svnTarget():
-            for ver, python in self._pythons:
-                if not utils.system([python, "setup.py", "sdist"], cwd=self.sourceDir()):
+        if self._isPipTarget:
+            return True
+
+        for ver, python in self._pythons:
+            setupFile = self.sourceDir() / "setup.py"
+            # See https://bernat.tech/posts/pep-517-518/
+            if setupFile.is_file():
+                # This is the legacy approach
+                if not utils.system([python, "setup.py", "sdist", "--dist-dir", self.buildDir()], cwd=self.sourceDir()):
                     return False
+            else:
+                # The modern approach
+                if not utils.system([python, "-m", "build", "--outdir", self.buildDir()], cwd=self.sourceDir()):
+                    return False
+
         return True
 
     def install(self):
@@ -80,20 +93,15 @@ class PipBuildSystem(BuildSystemBase):
         with ScopedEnv(env):
             ok = True
             for ver, python in self._pythons:
-                command = [
-                    python,
-                    "-m",
-                    "pip",
-                    "install",
-                    "--upgrade",
-                    "--no-input",
-                    "--verbose"
-                ]
+                command = [python, "-m", "pip", "install", "--upgrade", "--no-input", "--verbose"]
 
                 usesCraftPython = CraftPackageObject.get("libs/python").categoryInfo.isActive
                 if usesCraftPython:
-                    # build binaries ourself
-                    command += ["--no-binary", ":all:", "--no-cache-dir"]
+                    if self._isPipTarget:
+                        # build binaries ourself when installing from pip
+                        # in case we use a SVN or tarball target we don't want
+                        # to enforce that here, because already done via the make step
+                        command += ["--no-binary", ":all:", "--no-cache-dir"]
 
                     if CraftCore.compiler.isMacOS:
                         # On macOS we use a frameworks
@@ -106,10 +114,11 @@ class PipBuildSystem(BuildSystemBase):
                 elif not self.allowNotVenv:
                     command += ["--require-virtualenv"]
 
-                if self.subinfo.svnTarget():
-                    command += ["-e", self.sourceDir()]
-                elif self.subinfo.hasTarget():
-                    command += ["-e", self.sourceDir()]
+                if not self._isPipTarget:
+                    # Installing with wildcards (pip install dir/*) does not work on Windows,
+                    # hence we use the --find-links approach which might be a bit cleaner anyway.
+                    # See https://stackoverflow.com/questions/48183160/how-to-pip-install-whl-on-windows-using-a-wildcard
+                    command += ["--no-index", "--find-links", self.buildDir(), self.pipPackageName]
                 else:
                     if self.buildTarget in {"master", "latest"}:
                         command += [self.pipPackageName]
