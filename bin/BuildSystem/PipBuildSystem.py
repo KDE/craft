@@ -86,8 +86,8 @@ class PipBuildSystem(BuildSystemBase):
                     "pip",
                     "install",
                     "--upgrade",
-                    "--upgrade-strategy",
-                    "only-if-needed",
+                    "--no-input",
+                    "--verbose"
                 ]
 
                 usesCraftPython = CraftPackageObject.get("libs/python").categoryInfo.isActive
