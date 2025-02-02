@@ -43,15 +43,6 @@ class Package(PipPackageBase):
             # because installing pip itself causes issues when --prefix is used
             # See https://github.com/pypa/pip/issues/11349
             # TODO: re-evaluate when we use a newer python in libs/python
-            command = [
-                python,
-                "-m",
-                "pip",
-                "install",
-                "--upgrade",
-                "--upgrade-strategy",
-                "only-if-needed",
-                "pip"
-            ]
+            command = [python, "-m", "pip", "install", "--upgrade", "--upgrade-strategy", "only-if-needed", "pip"]
 
         return utils.system(command)

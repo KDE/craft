@@ -142,7 +142,7 @@ else:
                 # if enabled it will somtimes install pip sometimes not,
                 # if needed we can still call python3 -m ensurepip
                 "--with-ensurepip=no",
-                "LIBB2_LIBS=:"
+                "LIBB2_LIBS=:",
             ]
             if CraftCore.compiler.isMacOS:
                 self.subinfo.options.configure.noLibDir = True
