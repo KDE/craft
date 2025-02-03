@@ -64,12 +64,12 @@ if not platform.machine().endswith("64"):
 class SetupHelper(object):
     NeedsSetup = "KDEROOT" not in os.environ
     ForceReSetup = "CRAFT_FORCE_RESET" in os.environ
+    _EnvironmentPopulated = False
 
     def __init__(self, args=None):
         self.args = args
 
-        ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
-        if ciMode:
+        if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
             CraftCore.settings.set("General", "AllowAnsiColor", "False")
 
         pristineEnvFile = CraftCore.standardDirs.etcDir() / "PristineCraftenv.json"
@@ -86,8 +86,7 @@ class SetupHelper(object):
 
         if SetupHelper.NeedsSetup:
             SetupHelper.NeedsSetup = False
-            if ciMode:  # directly print to stderr as log() might get redirected
-                print("**Populating Craft environment variables...**", file=sys.stderr)
+            SetupHelper._EnvironmentPopulated = True
             self.checkForEvilApplication()
             self.setupEnvironment()
 
@@ -161,6 +160,8 @@ class SetupHelper(object):
         printRow("ABI", CraftCore.compiler)
         printRow("Download directory", CraftCore.standardDirs.downloadDir())
         printRow("Cache repository", ", ".join(CraftCore.settings.cacheRepositoryUrls()))
+        if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+            printRow("EnvironmentUpdated", SetupHelper._EnvironmentPopulated)
 
     def addEnvVar(self, key, val):
         os.environ[key] = str(val)
