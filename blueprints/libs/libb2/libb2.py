@@ -17,6 +17,7 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/automake"] = None
+        self.buildDependencies["dev-utils/pkg-config"] = None
 
 
 class Package(AutoToolsPackageBase):
