@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # SPDX-FileCopyrightText: 2025 Hannah von Reth <vonreth@kde.org>
 import info
+from CraftCore import CraftCore
 from Package.AutoToolsPackageBase import AutoToolsPackageBase
 from Utils import CraftHash
 
@@ -23,3 +24,6 @@ class subinfo(info.infoclass):
 class Package(AutoToolsPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.shell.useMSVCCompatEnv = True
+        if CraftCore.compiler.isWindows or CraftCore.compiler.isAndroid:
+            self.subinfo.options.configure.args += ["--disable-native"]
