@@ -7,6 +7,11 @@ from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
+    def registerOptions(self):
+        # On Android this links against libomp.so which is part of the toolchain but not properly deployed
+        # resulting in APKs that don't start
+        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
+
     def setTargets(self):
         for ver in ["0.98.1"]:
             self.targets[ver] = f"https://github.com/BLAKE2/libb2/releases/download/v{ver}/libb2-{ver}.tar.gz"
