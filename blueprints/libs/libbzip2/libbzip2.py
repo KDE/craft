@@ -38,5 +38,5 @@ class Package(CMakePackageBase):
         utils.createShim(linkTarget, linkSource, keepArgv0=True)
 
         for file in glob.glob(str(self.imageDir() / "lib/libbzip2.*")):
-            utils.copyFile(file, self.imageDir() / f"lib/libbz2 {os.path.splitext(file)[1]}", linkOnly=True)
+            utils.copyFile(file, self.imageDir() / f"lib/libbz2{os.path.splitext(file)[1]}", linkOnly=True)
         return ret
