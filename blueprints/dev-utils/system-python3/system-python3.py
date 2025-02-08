@@ -1,13 +1,12 @@
 import info
 import utils
-from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftCore import CraftCore
 from Package.BinaryPackageBase import BinaryPackageBase
 
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        useCraftPython = CraftPackageObject.get("libs/python").categoryInfo.isActive
+        useCraftPython = self.options.isActive("libs/python")
         if useCraftPython:
             self.parent.package.categoryInfo.compiler = CraftCore.compiler.Compiler.NoCompiler
 
