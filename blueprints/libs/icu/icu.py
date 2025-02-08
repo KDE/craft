@@ -48,7 +48,7 @@ class Package(AutoToolsPackageBase):
         if CraftCore.compiler.isWindows:
             self.subinfo.options.configure.args += ["--with-data-packaging=dll"]
             if CraftCore.compiler.isMSVC():
-                self.subinfo.options.configure.args += ["--enable-extras=no"]
+                self.subinfo.options.configure.args += ["--enable-extras=no", "CPPFLAGS=/std:c++17"]
 
     def make(self):
         utils.createDir(Path(self.buildDir()) / "data/out/tmp/")
