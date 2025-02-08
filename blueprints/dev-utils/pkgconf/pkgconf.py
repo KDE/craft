@@ -8,9 +8,7 @@ from Utils import CraftHash
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
-        # we require a static build on Windows, as the symbols are not exported
-        # self.options.dynamic.setDefault("buildStatic", True)
+        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroids
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
