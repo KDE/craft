@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.patchToApply["1.0.6"] = [("bzip.diff", 1), ("libbzip2-1.0.6-20210422.diff", 1)]
         self.targetDigests["1.0.6"] = "3f89f861209ce81a6bab1fd1998c0ef311712002"
         self.description = "shared libraries for handling bzip2 archives (runtime)"
-        self.patchLevel["1.0.6"] = 4
+        self.patchLevel["1.0.6"] = 5
         self.defaultTarget = "1.0.6"
 
     def setDependencies(self):
@@ -38,5 +38,5 @@ class Package(CMakePackageBase):
         utils.createShim(linkTarget, linkSource, keepArgv0=True)
 
         for file in glob.glob(str(self.imageDir() / "lib/libbzip2.*")):
-            utils.copyFile(file, self.imageDir() / f"lib/libbz2 {os.path.splitext(file)[1]}", linkOnly=True)
+            utils.copyFile(file, self.imageDir() / f"lib/libbz2{os.path.splitext(file)[1]}", linkOnly=True)
         return ret

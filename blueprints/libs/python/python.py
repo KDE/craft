@@ -30,13 +30,14 @@ class subinfo(info.infoclass):
             self.patchToApply["3.11.7"] = [(".msvc/patches", 1)]
 
         self.patchLevel["3.11.5"] = 4
-        self.patchLevel["3.11.7"] = 2
+        self.patchLevel["3.11.7"] = 3
 
         self.description = "Python is a high-level, general-purpose programming language"
         self.defaultTarget = "3.11.7"
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/automake"] = None
+        self.runtimeDependencies["libs/libb2"] = None
         self.runtimeDependencies["libs/libbzip2"] = None
         self.runtimeDependencies["libs/expat"] = None
         self.runtimeDependencies["libs/openssl"] = None
@@ -142,7 +143,6 @@ else:
                 # if enabled it will somtimes install pip sometimes not,
                 # if needed we can still call python3 -m ensurepip
                 "--with-ensurepip=no",
-                "LIBB2_LIBS=:",
             ]
             if CraftCore.compiler.isMacOS:
                 self.subinfo.options.configure.noLibDir = True
