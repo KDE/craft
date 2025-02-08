@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
             ["9fa5768ba0e628203c4631d447ce533335cdd1fd9c318d84c774e729efa4edad"],
             CraftHash.HashAlgorithm.SHA256,
         )
-        self.defaultTarget = "13.2.0-1"
+        self.defaultTarget = "14.2.0-1"
 
     def setDependencies(self):
         self.buildDependencies["core/cacert"] = None
