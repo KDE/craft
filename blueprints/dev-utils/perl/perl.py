@@ -64,6 +64,7 @@ class PackageMSVC(MakeFilePackageBase):
             "CRAFT_DESTDIR": self.installDir(),
             "CRAFT_WIN64": "" if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64 else "undef",
             "PLMAKE": "nmake" if CraftCore.compiler.isMSVC() else "mingw32-make",
+            "PROCESSOR_ARCHITECTURE": f"x{CraftCore.compiler.bits}"
         }
 
         if CraftCore.compiler.isMinGW():
@@ -74,8 +75,7 @@ class PackageMSVC(MakeFilePackageBase):
             config["USE_64_BIT_INT"] = "define"
             config["CCTYPE"] = "GCC"
             self.subinfo.options.make.args += [f"-j{CraftCore.settings.get('Compile', 'Jobs', multiprocessing.cpu_count())}"]
-        elif CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
-            config["PROCESSOR_ARCHITECTURE"] = f"x{CraftCore.compiler.bits}"
+            
 
         self.subinfo.options.make.args += ["{0}={1}".format(x, y) for x, y in config.items()]
         self.subinfo.options.install.args += self.subinfo.options.make.args + ["installbare"]
