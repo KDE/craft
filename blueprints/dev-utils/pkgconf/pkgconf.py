@@ -29,6 +29,12 @@ class Package(AutoToolsPackageBase):
         # we could also use meson, but its not available during bootstrapping
         self.shell.useMSVCCompatEnv = True
         self.subinfo.options.configure.autoreconf = False
+        # the trailing slash is important
+        # else pkgconf skipps the prefix
+        self.subinfo.options.configure.args += [
+            f"--with-system-includedir={CraftCore.standardDirs.craftRoot()}/include/",
+            f"--with-system-libdir={CraftCore.standardDirs.craftRoot()}/lib/",
+        ]
         if CraftCore.compiler.isMSVC():
             self.subinfo.options.configure.args += ["LIBS=-lAdvapi32"]
 
