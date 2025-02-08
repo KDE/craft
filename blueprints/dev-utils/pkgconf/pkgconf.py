@@ -29,7 +29,7 @@ class Package(AutoToolsPackageBase):
         # we could also use meson, but its not available during bootstrapping
         self.shell.useMSVCCompatEnv = True
         self.subinfo.options.configure.autoreconf = False
-        if CraftCore.compiler.isMSVC:
+        if CraftCore.compiler.isMSVC():
             self.subinfo.options.configure.args += ["LIBS=-lAdvapi32"]
 
     def postInstall(self):
