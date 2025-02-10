@@ -26,7 +26,6 @@ import os
 
 import info
 import utils
-from Blueprints.CraftVersion import CraftVersion
 from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
@@ -45,18 +44,11 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = f"openssl-{ver}"
             self.targetDigestUrls[ver] = ([f"https://openssl.org/source/openssl-{ver}.tar.gz.sha256"], CraftHash.HashAlgorithm.SHA256)
 
-        for ver in ["3.1.4", "3.2.0", "3.2.1", "3.3.1", "3.3.2"]:
+        for ver in ["3.2.1", "3.3.1", "3.3.2", "3.4.0"]:
             self.targets[ver] = f"https://openssl.org/source/openssl-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"openssl-{ver}"
             self.targetDigestUrls[ver] = ([f"https://openssl.org/source/openssl-{ver}.tar.gz.sha256"], CraftHash.HashAlgorithm.SHA256)
-            if CraftVersion(ver) < CraftVersion("3.2.0"):
-                self.patchToApply[ver] = [
-                    ("disable-install-docs.patch", 1)
-                ]  # https://github.com/microsoft/vcpkg/blob/9055f88ba53a99f51e3c733fe9c79703dc23d57d/ports/openssl/disable-install-docs.patch
 
-        self.patchToApply["3.2.0"] = [("fix-msvc.patch", 1)]  # https://bugreports.qt.io/browse/QTBUG-119510
-
-        self.patchLevel["3.2.0"] = 1
         self.patchLevel["3.3.1"] = 1
 
         self.description = "The OpenSSL runtime environment"
@@ -81,7 +73,7 @@ class subinfo(info.infoclass):
             f"--openssldir={OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}/etc/ssl",
         ]
 
-        self.defaultTarget = "3.3.2"
+        self.defaultTarget = "3.4.0"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
