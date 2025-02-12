@@ -44,7 +44,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = f"openssl-{ver}"
             self.targetDigestUrls[ver] = ([f"https://openssl.org/source/openssl-{ver}.tar.gz.sha256"], CraftHash.HashAlgorithm.SHA256)
 
-        for ver in ["3.2.1", "3.3.1", "3.3.2", "3.4.0"]:
+        for ver in ["3.2.1", "3.3.1", "3.3.2", "3.4.0", "3.4.1"]:
             self.targets[ver] = f"https://openssl.org/source/openssl-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"openssl-{ver}"
             self.targetDigestUrls[ver] = ([f"https://openssl.org/source/openssl-{ver}.tar.gz.sha256"], CraftHash.HashAlgorithm.SHA256)
@@ -73,7 +73,7 @@ class subinfo(info.infoclass):
             f"--openssldir={OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}/etc/ssl",
         ]
 
-        self.defaultTarget = "3.4.0"
+        self.defaultTarget = "3.4.1"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
