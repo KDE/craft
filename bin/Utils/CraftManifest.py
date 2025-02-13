@@ -197,7 +197,7 @@ class CraftManifest(object):
     def toJson(self) -> dict:
         out = {
             "date": str(self.date),
-            "origin": self.origin,
+            "origin": str(self.origin),
             "packages": {},
             "version": CraftManifest.version(),
         }
