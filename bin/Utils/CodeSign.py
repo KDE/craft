@@ -340,7 +340,7 @@ def signMacApp(appPath: Path):
                 return False
 
             if __verifyMacApp(appPath):
-                CraftCore.log.info(f"Signature of {appPath} was succesfully verfied")
+                CraftCore.log.info(f"Signature of {appPath} was successfully verified")
             else:
                 CraftCore.log.warning(f"Signature verification of {appPath} failed!")
             return True
