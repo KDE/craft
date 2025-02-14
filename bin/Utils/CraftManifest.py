@@ -62,7 +62,7 @@ class CraftManifestBuild(object):
 
     def addFile(self, fileType: FileType, fileName: str, checksum: str) -> CraftManifestEntryFile:
         f = CraftManifestEntryFile(fileType=fileType, fileName=fileName, checksum=checksum)
-        self.files[fileType] = str(f)
+        self.files[fileType] = f
         return f
 
     @staticmethod
