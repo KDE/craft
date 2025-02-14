@@ -224,7 +224,14 @@ class CraftManifest(object):
             CraftCore.log.info(f"Create new cache manifest: {cacheFilePath}")
         cacheFilePath.parent.mkdir(parents=True, exist_ok=True)
         with open(cacheFilePath, "wt") as cacheFile:
-            json.dump(self, cacheFile, sort_keys=True, indent=2, default=lambda x: x.toJson())
+
+            def toJson(x):
+                try:
+                    return x.toJson()
+                except:
+                    raise Exception(f"Failed to convert {x} of type{type(x)} to json")
+
+            json.dump(self, cacheFile, sort_keys=True, indent=2, default=toJson)
         shutil.copy2(cacheFilePath, cacheFilePathTimed)
 
     @staticmethod
