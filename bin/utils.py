@@ -297,7 +297,7 @@ def systemWithoutShell(
         if logCommand:
             if pipeProcess:
                 _logCommand = "{0} | ".format(" ".join(pipeProcess.args))
-            _logCommand += " ".join(cmd) if isinstance(cmd, list) else cmd
+            _logCommand += " ".join([str(c) for c in cmd]) if isinstance(cmd, list) else cmd
         if pipeProcess:
             _debugCommand = f"executing command: {pipeProcess.args!r} | {cmd!r}"
         else:

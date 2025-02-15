@@ -13,7 +13,6 @@ from pathlib import Path
 
 from Blueprints.CraftVersion import CraftVersion
 from CraftCore import AutoImport, CraftCore
-from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 from Utils import GetFiles
 
@@ -91,9 +90,9 @@ class CraftCache(object):
         CraftCore.log.debug("Clear utils cache")
         CraftCore.cache = CraftCache()
 
-    def findApplication(self, app, path=None, forceCache: bool = False) -> str:
+    def findApplication(self, app, path=None, forceCache: bool = False) -> Path:
         if app in self._nonPersistentCache.applicationLocations:
-            appLocation = self._nonPersistentCache.applicationLocations[app]
+            appLocation = Path(self._nonPersistentCache.applicationLocations[app])
             if os.path.exists(appLocation):
                 return appLocation
             else:
@@ -106,11 +105,8 @@ class CraftCache(object):
         os.chdir(_cwd)
 
         if appLocation:
-            if OsUtils.isWin():
-                # prettify command
-                path, ext = os.path.splitext(appLocation)
-                appLocation = path + ext.lower()
-            if forceCache or Path(CraftCore.standardDirs.craftRoot()) in Path(appLocation).parents:
+            appLocation = Path(appLocation).resolve()
+            if forceCache or CraftCore.standardDirs.craftRoot() in appLocation.parents:
                 CraftCore.log.debug(f"Adding {app} to app cache {appLocation}")
                 self._nonPersistentCache.applicationLocations[app] = appLocation
         else:
