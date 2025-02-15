@@ -45,7 +45,7 @@ def toRegExp(fname, targetName) -> re:
     assert os.path.isabs(fname)
 
     if not os.path.isfile(fname):
-        CraftCore.log.critical("%s not found at: %s" % (targetName.capitalize(), os.path.abspath(fname)))
+        CraftCore.log.critical(f"{targetName.capitalize()} not found at: {os.path.abspath(fname)}")
     regex = []
     with open(fname, "rt+") as f:
         for line in f:
@@ -135,7 +135,7 @@ class CollectionPackagerBase(PackagerBase):
     def whitelist(self):
         if not self._whitelist:
             for entry in self.whitelist_file:
-                CraftCore.log.debug("reading whitelist: %s" % entry)
+                CraftCore.log.debug(f"reading whitelist: {entry}")
                 if callable(entry):
                     for line in entry():
                         self._whitelist.append(line)
@@ -147,7 +147,7 @@ class CollectionPackagerBase(PackagerBase):
     def blacklist(self):
         if not self._blacklist:
             for entry in self.blacklist_file:
-                CraftCore.log.debug("reading blacklist: %s" % entry)
+                CraftCore.log.debug(f"reading blacklist: {entry}")
                 if callable(entry):
                     if entry == self.runtimeBlacklist:
                         CraftCore.log.warn(
@@ -230,7 +230,7 @@ class CollectionPackagerBase(PackagerBase):
         Copy the binaries for the Package from srcDir to the imageDir
         directory
         """
-        CraftCore.log.debug("Copying %s -> %s" % (srcDir, destDir))
+        CraftCore.log.debug(f"Copying {srcDir} -> {destDir}")
 
         # Only sign all files on Windows. On MacOS we recursively sign the whole .app Folder
         doSign = CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "Enabled", False)
@@ -260,7 +260,7 @@ class CollectionPackagerBase(PackagerBase):
         packageSymbols = CraftCore.settings.getboolean("Packager", "PackageDebugSymbols", False)
         archiveDir = self.archiveDir()
 
-        CraftCore.log.debug("cleaning package dir: %s" % archiveDir)
+        CraftCore.log.debug(f"cleaning package dir: {archiveDir}")
         utils.cleanDirectory(archiveDir)
         if packageSymbols:
             utils.cleanDirectory(self.archiveDebugDir())
@@ -272,14 +272,14 @@ class CollectionPackagerBase(PackagerBase):
                 if not self.copyFiles(package.imageDir(), archiveDir, filesToSign):
                     return False
             else:
-                CraftCore.log.critical("image directory %s does not exist!" % package.imageDir())
+                CraftCore.log.critical(f"image directory {package.imageDir()} does not exist!")
                 return False
             if packageSymbols:
                 if package.symbolsImageDir().exists():
                     if not self.copyFiles(package.symbolsImageDir(), self.archiveDebugDir(), filesToSign):
                         return False
                 else:
-                    CraftCore.log.warning("symbols directory %s does not exist!" % package.symbolsImageDir())
+                    CraftCore.log.warning(f"symbols directory {package.symbolsImageDir()} does not exist!")
 
         if filesToSign:
             if not CodeSign.signWindows(filesToSign):

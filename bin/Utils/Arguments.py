@@ -41,7 +41,7 @@ class Arguments(object):
                 else:
                     self.__legacyString = join(self.__legacyString, subprocess.list2cmdline(other.__args))
             else:
-                raise Exception("error unsupported argumen" + other)
+                raise Exception(f"error unsupported argumen{other}")
         else:
             if isinstance(other, Arguments):
                 if other.__legacyString is not None:

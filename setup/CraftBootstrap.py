@@ -156,7 +156,7 @@ class CraftBootstrap(object):
             ) as out:
                 out.write("\n".join(self.settings))
         else:
-            with open(self.dryRun + ".dry_run", "wt+", encoding="UTF-8") as out:
+            with open(f"{self.dryRun}.dry_run", "wt+", encoding="UTF-8") as out:
                 out.write("\n".join(self.settings))
 
     @staticmethod
@@ -168,7 +168,7 @@ class CraftBootstrap(object):
             _, _, path, _, _, _ = urllib.parse.urlparse(url)
             filename = os.path.basename(path)
 
-        print("Starting to download %s to %s" % (url, os.path.join(destdir, filename)))
+        print(f"Starting to download {url} to {os.path.join(destdir, filename)}")
         if os.path.exists(os.path.join(destdir, filename)):
             return True
 

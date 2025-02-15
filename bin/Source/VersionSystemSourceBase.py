@@ -46,13 +46,13 @@ class VersionSystemSourceBase(SourceBase):
         # @todo move to SvnSource
         server = CraftCore.settings.get("General", "KDESVNSERVER", "svn://anonsvn.kde.org")
 
-        return server + "/home/kde/"
+        return f"{server}/home/kde/"
 
     def unpack(self):
         CraftCore.debug.trace("VersionSystemSourceBase unpack")
         self.enterBuildDir()
 
-        CraftCore.log.debug("cleaning %s" % self.buildDir())
+        CraftCore.log.debug(f"cleaning {self.buildDir()}")
         self.cleanBuild()
         return self.applyPatches()
 
@@ -105,7 +105,7 @@ class VersionSystemSourceBase(SourceBase):
             CraftCore.log.critical("svnTarget property not set for this target")
 
         if self.subinfo.targetSourceSuffix() is not None:
-            sourcedir = Path("%s-%s" % (sourcedir, self.subinfo.targetSourceSuffix()))
+            sourcedir = Path(f"{sourcedir}-{self.subinfo.targetSourceSuffix()}")
 
         return sourcedir.absolute()
 
@@ -117,7 +117,7 @@ class VersionSystemSourceBase(SourceBase):
         if self.subinfo.hasTargetSourcePath():
             sourcedir = sourcedir / self.subinfo.targetSourcePath()
 
-        CraftCore.log.debug("using sourcedir: %s" % sourcedir)
+        CraftCore.log.debug(f"using sourcedir: {sourcedir}")
         return sourcedir.absolute()
 
     def sourceRevision(self):

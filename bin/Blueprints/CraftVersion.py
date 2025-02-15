@@ -19,13 +19,13 @@ class CraftVersion(Version):
         return self.versionstr
 
     def __repr__(self):
-        return "CraftVersion ('%s')" % self.versionstr
+        return f"CraftVersion ('{self.versionstr}')"
 
     def _cmp(self, other):
         if isinstance(other, (str, int, float)):
             other = CraftVersion(other)
         elif not isinstance(other, CraftVersion):
-            raise TypeError("Can't compare CraftVersion with %s" % type(other))
+            raise TypeError(f"Can't compare CraftVersion with {type(other)}")
         if self.isBranch or other.isBranch:
             return 0 if self.versionstr == other.versionstr else -1 if self.isBranch and not other.isBranch else 1
         return 0 if self.version == other.version else -1 if self.version < other.version else 1
@@ -41,7 +41,7 @@ class CraftVersion(Version):
     def normalizedVersion(self):
         v = CraftVersion.invalid_re.sub("", self.versionstr)
         if self.isBranch or not re.match(r"^\d+.*", v):
-            CraftCore.log.warning("Can't convert %s to StrictVersion, please use release versions for packaging" % self.versionstr)
+            CraftCore.log.warning(f"Can't convert {self.versionstr} to StrictVersion, please use release versions for packaging")
             return CraftVersion("0")
         loose = LooseVersion(re.sub("-|_", ".", v))
         out = []
@@ -128,6 +128,6 @@ class CraftVersion(Version):
             if part[:1] in "0123456789":
                 yield part.zfill(8)  # pad for numeric comparison
             else:
-                yield "*" + part
+                yield f"*{part}"
 
         yield "*final"  # ensure that alpha/beta/candidate are before final
