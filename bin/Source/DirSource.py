@@ -48,7 +48,7 @@ class DirSource(SourceBase):
         CraftCore.debug.trace("DirSource.unpack called")
         self.enterBuildDir()
 
-        CraftCore.log.debug("cleaning %s" % self.buildDir())
+        CraftCore.log.debug(f"cleaning {self.buildDir()}")
         self.cleanBuild()
 
         return True

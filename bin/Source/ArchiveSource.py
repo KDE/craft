@@ -230,7 +230,7 @@ class ArchiveSource(SourceBase):
             CraftCore.log.error("source directory doesn't exist, please run unpack first")
             return False
 
-        CraftCore.log.debug("unpacking files into work root %s" % destdir)
+        CraftCore.log.debug(f"unpacking files into work root {destdir}")
 
         # make a temporary directory so the original packages don't overwrite the already existing ones
         with tempfile.TemporaryDirectory() as tmpdir:

@@ -207,7 +207,7 @@ class MacDylibBundler(object):
         args = []
         for oldRef, newRef in changedRefs:
             if newRef is None:
-                newRef = "@executable_path/../Frameworks/" + os.path.basename(oldRef)
+                newRef = f"@executable_path/../Frameworks/{os.path.basename(oldRef)}"
             args += ["-change", oldRef, newRef]
         with utils.makeTemporaryWritable(fileToFix):
             if not utils.system(
@@ -304,7 +304,7 @@ class MacDylibBundler(object):
                         os.path.join(self.appPath, "Contents/Frameworks"),
                     )
                     # Update possible new ref for deps in framework
-                    if "{}.framework".format(os.path.basename(guessedPath)) in guessedPath:
+                    if f"{os.path.basename(guessedPath)}.framework" in guessedPath:
                         guessedNewRef = path.replace(
                             str(CraftStandardDirs.craftRoot() / "lib"),
                             "@executable_path/../Frameworks/",
@@ -359,7 +359,7 @@ class MacDylibBundler(object):
 
 if __name__ == "__main__":
     print("Testing MacDMGPackager.py")
-    defaultFile = CraftStandardDirs.craftRoot() + "/lib/libKF5TextEditor.5.dylib"
+    defaultFile = f"{CraftStandardDirs.craftRoot()}/lib/libKF5TextEditor.5.dylib"
     sourceFile = defaultFile if len(sys.argv) else sys.argv[1]
     utils.system(["otool", "-L", sourceFile])
     import tempfile

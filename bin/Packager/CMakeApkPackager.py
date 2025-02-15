@@ -37,8 +37,8 @@ class CMakeApkPackager(CollectionPackagerBase):
                 tree = ElementTree.parse(file)
                 prefix = "{http://schemas.android.com/apk/res/android}"
                 for md in tree.findall("application/activity/meta-data"):
-                    if md.attrib[prefix + "name"] == "android.app.lib_name":
-                        targetName = md.attrib[prefix + "value"]
+                    if md.attrib[f"{prefix}name"] == "android.app.lib_name":
+                        targetName = md.attrib[f"{prefix}value"]
                         if targetName not in self.__androidApkTargets:
                             self.__androidApkTargets.add(targetName)
                             self.__androidApkDirs.add(os.path.dirname(file))

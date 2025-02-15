@@ -153,7 +153,7 @@ class CraftCache(object):
             else:
                 supports = command.match(output) is not None
             self._helpCache[(app, command)] = supports
-            CraftCore.log.debug("%s %s %s" % (app, "supports" if supports else "does not support", command))
+            CraftCore.log.debug(f'{app} {"supports" if supports else "does not support"} {command}')
         return self._helpCache[(app, command)]
 
     def getVersion(self, app, pattern=None, versionCommand=None) -> CraftVersion:
@@ -209,7 +209,7 @@ class CraftCache(object):
         """
         if url not in self._nightlyVersions:
             if CraftCore.settings.getboolean("General", "WorkOffline"):
-                CraftCore.debug.step("Nightly builds unavailable for %s in offline mode." % url)
+                CraftCore.debug.step(f"Nightly builds unavailable for {url} in offline mode.")
                 return []
             try:
                 with urllib.request.urlopen(url, timeout=timeout) as fh:
@@ -222,5 +222,5 @@ class CraftCache(object):
                     CraftCore.log.debug(f"Found nightlies for {url}: {out}")
                     return out
             except Exception as e:
-                CraftCore.log.warning("Nightly builds unavailable for %s: %s" % (url, e))
+                CraftCore.log.warning(f"Nightly builds unavailable for {url}: {e}")
         return self._nightlyVersions.get(url, [])
