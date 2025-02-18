@@ -286,17 +286,25 @@ class AppxPackager(CollectionPackagerBase):
 
         if createStorePackage:
             defines.setdefault("publisher", publisherId)
+            artifacts = [defines["setupname"]]
             if not self.__createAppX(defines):
                 return False
-            appxSym = Path(defines["setupname"]).with_suffix(".appxsym")
-            if appxSym.exists():
-                appxSym.unlink()
-            if not utils.compress(appxSym, self.archiveDebugDir()):
-                return False
+            if (
+                CraftCore.settings.getboolean("Packager", "PackageDebugSymbols", False)
+                and self.symbolsImageDir().exists()
+                and any(self.symbolsImageDir().iterdir())
+            ):
+                appxSym = Path(defines["setupname"]).with_suffix(".appxsym")
+                artifacts += [appxSym]
+                if appxSym.exists():
+                    appxSym.unlink()
+                if not utils.compress(appxSym, self.archiveDebugDir()):
+                    return False
+
             appxUpload = (Path(self.packageDestinationDir()) / os.path.basename(defines["setupname"])).with_suffix(".appxupload")
             if appxUpload.exists():
                 appxUpload.unlink()
-            if not utils.compress(appxUpload, [defines["setupname"], appxSym]):
+            if not utils.compress(appxUpload, artifacts):
                 return False
 
         return self.__createSideloadAppX(defines)
