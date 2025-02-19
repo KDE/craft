@@ -35,7 +35,7 @@ class Package(PipPackageBase):
 
     def install(self):
         if not CraftCore.compiler.isWindows:
-            return super().install()
+            return super().install() and self.createMacOSPipShims(["pip", "pip3"])
 
         for ver, python in self._pythons:
             # Run "pip install pip" to install the lateste version
