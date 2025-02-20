@@ -308,4 +308,9 @@ class AppxPackager(CollectionPackagerBase):
             if not utils.compress(appxUpload, artifacts):
                 return False
 
-        return self.__createSideloadAppX(defines)
+        # the sideload app only works if signed
+        if CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
+            self.__createSideloadAppX(defines)
+        else:
+            CraftCore.log.info("Skipping sideload package creation, as it requires a signed package")
+        return True
