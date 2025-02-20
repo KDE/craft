@@ -144,7 +144,8 @@ class AppxPackager(CollectionPackagerBase):
         version[3] = 0
         defines["version"] = ".".join([str(x) for x in version])
 
-        defines.setdefault("name", f"{defines['company']}{defines['display_name']}".replace(" ", ""))
+        # based on experience with KDE e.V., the trailing dot is removed from the company name
+        defines.setdefault("name", f"{defines['company'].rstrip('.')}.{defines['display_name']}".replace(" ", ""))
         defines.setdefault("appx_identity_name", defines["name"])
 
         utils.createDir(self.artifactsDir())
