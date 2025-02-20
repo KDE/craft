@@ -254,7 +254,7 @@ class CollectionPackagerBase(PackagerBase):
 
         return True
 
-    def internalCreatePackage(self, defines) -> bool:
+    def internalCreatePackage(self, defines, createSymbolsPackage: bool = False) -> bool:
         """create a package"""
 
         packageSymbols = CraftCore.settings.getboolean("Packager", "PackageDebugSymbols", False)
@@ -312,7 +312,7 @@ class CollectionPackagerBase(PackagerBase):
             return False
 
         # package symbols if the dir isn't empty
-        if packageSymbols and os.listdir(self.archiveDebugDir()):
+        if packageSymbols and createSymbolsPackage and os.listdir(self.archiveDebugDir()):
             dbgName = Path("{0}-dbg{1}".format(*os.path.splitext(defines["setupname"])))
             if not CraftCore.compiler.isWindows:
                 dbgName = dbgName.with_suffix(".tar.7z")

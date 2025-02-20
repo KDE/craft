@@ -278,8 +278,9 @@ class AppxPackager(CollectionPackagerBase):
             return False
         publisherId = CraftCore.settings.get("Packager", "AppxPublisherId", "")
         createStorePackage = bool(publisherId)
+        createSideloadAppX = CraftCore.settings.getboolean("CodeSigning", "Enabled", False)
         utils.cleanDirectory(self.artifactsDir())
-        if not self.internalCreatePackage(defines):
+        if not self.internalCreatePackage(defines, createSymbolsPackage=createSideloadAppX):
             return False
 
         if not self.__prepareIcons(defines):
@@ -309,7 +310,7 @@ class AppxPackager(CollectionPackagerBase):
                 return False
 
         # the sideload app only works if signed
-        if CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
+        if createSideloadAppX:
             self.__createSideloadAppX(defines)
         else:
             CraftCore.log.info("Skipping sideload package creation, as it requires a signed package")
