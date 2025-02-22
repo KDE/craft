@@ -112,7 +112,7 @@ class PipBuildSystem(BuildSystemBase):
                         # Build binaries ourself when installing from pip.
                         # In case we use a SVN or tarball target we don't want
                         # to enforce that here, because already done via the make step
-                        command += ["--no-binary", ":all:", "--no-cache-dir", "--no-build-isolation"]
+                        command += ["--no-binary", ":all:", "--no-cache-dir", "--no-build-isolation", "--use-deprecated=legacy-resolver"]
 
                     if CraftCore.compiler.isMacOS:
                         # On macOS we use a frameworks
