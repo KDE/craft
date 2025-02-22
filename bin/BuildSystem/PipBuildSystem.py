@@ -15,7 +15,7 @@ class PipBuildSystem(BuildSystemBase):
         BuildSystemBase.__init__(self, package, "pip")
         self.python3 = True
 
-        self.pipPackageName = self.package.name
+        self.subinfo.options.package.disableBinaryCache = True
         self.allowNotVenv = False
         self.allowPrebuildBinaries = False
 

@@ -1,11 +1,15 @@
+import io
+from email.parser import HeaderParser
+
+import utils
 from BuildSystem.PipBuildSystem import PipBuildSystem
 from CraftCore import CraftCore
 from Package.PackageBase import PackageBase
-from Packager.PackagerBase import PackagerBase
+from Packager.TypePackager import TypePackager
 from Source.MultiSource import MultiSource
 
 
-class PipPackageBase(PackageBase, MultiSource, PipBuildSystem, PackagerBase):
+class PipPackageBase(PackageBase, MultiSource, PipBuildSystem, TypePackager):
     """provides a base class for pip packages"""
 
     def __init__(self, **kwargs):
@@ -13,7 +17,9 @@ class PipPackageBase(PackageBase, MultiSource, PipBuildSystem, PackagerBase):
         PackageBase.__init__(self, **kwargs)
         MultiSource.__init__(self, **kwargs)
         PipBuildSystem.__init__(self, **kwargs)
-        PackagerBase.__init__(self, **kwargs)
+        TypePackager.__init__(self, **kwargs)
+
+        self.pipPackageName = self.package.name
 
     def fetch(self):
         if self._sourceClass:
@@ -28,11 +34,7 @@ class PipPackageBase(PackageBase, MultiSource, PipBuildSystem, PackagerBase):
     def sourceRevision(self):
         if self._sourceClass:
             return self._sourceClass.sourceRevision(self)
-        return ""
-
-    # from PackagerBase
-    def createPackage(self):
-        return True
-
-    def preArchive(self):
-        return True
+        with io.StringIO() as tmp:
+            if not utils.system(["python3", "-m", "pip", "show", self.pipPackageName], stdout=tmp):
+                return ""
+            return HeaderParser().parsestr(tmp.getvalue().strip())["Version"]
