@@ -85,10 +85,14 @@ class PipBuildSystem(BuildSystemBase):
     def install(self):
         env = {}
         if CraftCore.compiler.isMSVC():
+            tmpDir = CraftCore.standardDirs.junctionsDir() / "tmp"
+            tmpDir.mkdir(parents=True, exist_ok=True)
             env.update(
                 {
                     "LIB": f"{os.environ['LIB']};{CraftStandardDirs.craftRoot() / 'lib'}",
                     "INCLUDE": f"{os.environ['INCLUDE']};{CraftStandardDirs.craftRoot() / 'include'}",
+                    # we can't use a normal short path as python would resolve it
+                    "TMPDIR": tmpDir,
                 }
             )
         if self.supportsCCACHE:
