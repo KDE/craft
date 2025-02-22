@@ -118,10 +118,10 @@ class PipBuildSystem(BuildSystemBase):
                         # On macOS we use a frameworks
                         # While on Linux modules are installed to PREFIX/lib/site-packages on macOS a versioned path
                         # like PREFIX/lib/python3.11/site-packages would be used if set prefix outsite the framwork
-                        prefix = self.installDir() / "lib/Python.framework/Versions/Current"
+                        prefix = CraftCore.standardDirs.craftRoot() / "lib/Python.framework/Versions/Current"
                     else:
-                        prefix = self.installDir()
-                    command += ["--prefix", CraftCore.standardDirs.craftRoot(), "--root", prefix]
+                        prefix = CraftCore.standardDirs.craftRoot()
+                    command += ["--prefix", prefix, "--root", self.installDir()]
                 elif not self.allowNotVenv:
                     command += ["--require-virtualenv"]
 
