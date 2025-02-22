@@ -111,9 +111,9 @@ class PackagerBase(CraftBase):
 
         name = archiveName if not os.path.isabs(archiveName) else os.path.relpath(archiveName, destDir)
         if not self._manifest:
-            self._manifest = manifest = CraftManifest.load(manifestLocation, urls=manifestUrls)
+            self._manifest = CraftManifest.load(manifestLocation, urls=manifestUrls)
         if not self._currentManifestEnty:
-            self._currentManifestEnty = manifest.get(str(self)).addBuild(self.version, self.subinfo.options.dynamic, revision=self.sourceRevision())
+            self._currentManifestEnty = self._manifest.get(str(self)).addBuild(self.version, self.subinfo.options.dynamic, revision=self.sourceRevision())
         self._currentManifestEnty.addFile(
             fileType,
             name,

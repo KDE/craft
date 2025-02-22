@@ -106,7 +106,7 @@ class AppImagePackager(CollectionPackagerBase):
                 hook.writelines([f"{i}\nexport {i.split('=')[0]}\n" for i in defines["runenv"]])
         if not utils.createDir(self.packageDestinationDir()):
             return False
-        desktopFiles = glob.glob(f"{archiveDir}/usr/share/applications/*{defines['appname']}.desktop")
+        desktopFiles = glob.glob(f"{archiveDir}/usr/share/applications/*{defines.get('desktopFile', defines['appname'])}.desktop")
         if len(desktopFiles) != 1:
             CraftCore.log.error("Failed to find the .desktop file")
             return False

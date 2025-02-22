@@ -17,7 +17,7 @@ from Utils.Arguments import Arguments
 class subinfo(info.infoclass):
     def setTargets(self):
         # as updates are applied with msys and not by craft don't ever change the name of the target, its a bad idea...
-        self.targets["base"] = "https://github.com/msys2/msys2-installer/releases/download/2024-11-16/msys2-base-x86_64-20241116.tar.xz"
+        self.targets["base"] = "https://github.com/msys2/msys2-installer/releases/download/2025-02-21/msys2-base-x86_64-20250221.tar.xz"
         self.targetDigestUrls["base"] = f"{self.targets['base']}.sha256"
         self.targetInstSrc["base"] = "msys64"
         self.targetInstallPath["base"] = "msys"

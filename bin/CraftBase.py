@@ -139,7 +139,7 @@ class CraftBase(object):
                 "Destination",
                 CraftCore.standardDirs.tmpDir(),
             )
-        )
+        ).resolve()
         utils.createDir(dstpath)
         return dstpath
 
@@ -245,11 +245,13 @@ class CraftBase(object):
 
     def cacheLocation(self, baseDir=None) -> Path:
         if not baseDir:
-            cacheDir = CraftCore.settings.get(
-                "Packager",
-                "CacheDir",
-                os.path.join(CraftStandardDirs.downloadDir(), "binary"),
-            )
+            cacheDir = Path(
+                CraftCore.settings.get(
+                    "Packager",
+                    "CacheDir",
+                    os.path.join(CraftStandardDirs.downloadDir(), "binary"),
+                )
+            ).resolve()
         else:
             cacheDir = Path(baseDir)
 

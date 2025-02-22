@@ -144,7 +144,8 @@ class AppxPackager(CollectionPackagerBase):
         version[3] = 0
         defines["version"] = ".".join([str(x) for x in version])
 
-        defines.setdefault("name", f"{defines['company']}{defines['display_name']}".replace(" ", ""))
+        # based on experience with KDE e.V., the trailing dot is removed from the company name
+        defines.setdefault("name", f"{defines['company'].rstrip('.')}.{defines['display_name']}".replace(" ", ""))
         defines.setdefault("appx_identity_name", defines["name"])
 
         utils.createDir(self.artifactsDir())
@@ -277,8 +278,9 @@ class AppxPackager(CollectionPackagerBase):
             return False
         publisherId = CraftCore.settings.get("Packager", "AppxPublisherId", "")
         createStorePackage = bool(publisherId)
+        createSideloadAppX = CraftCore.settings.getboolean("CodeSigning", "Enabled", False)
         utils.cleanDirectory(self.artifactsDir())
-        if not self.internalCreatePackage(defines):
+        if not self.internalCreatePackage(defines, createSymbolsPackage=createSideloadAppX):
             return False
 
         if not self.__prepareIcons(defines):
@@ -286,17 +288,30 @@ class AppxPackager(CollectionPackagerBase):
 
         if createStorePackage:
             defines.setdefault("publisher", publisherId)
+            artifacts = [defines["setupname"]]
             if not self.__createAppX(defines):
                 return False
-            appxSym = Path(defines["setupname"]).with_suffix(".appxsym")
-            if appxSym.exists():
-                appxSym.unlink()
-            if not utils.compress(appxSym, self.archiveDebugDir()):
-                return False
+            if (
+                CraftCore.settings.getboolean("Packager", "PackageDebugSymbols", False)
+                and self.symbolsImageDir().exists()
+                and any(self.symbolsImageDir().iterdir())
+            ):
+                appxSym = Path(defines["setupname"]).with_suffix(".appxsym")
+                artifacts += [appxSym]
+                if appxSym.exists():
+                    appxSym.unlink()
+                if not utils.compress(appxSym, self.archiveDebugDir()):
+                    return False
+
             appxUpload = (Path(self.packageDestinationDir()) / os.path.basename(defines["setupname"])).with_suffix(".appxupload")
             if appxUpload.exists():
                 appxUpload.unlink()
-            if not utils.compress(appxUpload, [defines["setupname"], appxSym]):
+            if not utils.compress(appxUpload, artifacts):
                 return False
 
-        return self.__createSideloadAppX(defines)
+        # the sideload app only works if signed
+        if createSideloadAppX:
+            self.__createSideloadAppX(defines)
+        else:
+            CraftCore.log.info("Skipping sideload package creation, as it requires a signed package")
+        return True

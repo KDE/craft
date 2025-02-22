@@ -91,6 +91,13 @@ class PipBuildSystem(BuildSystemBase):
                     "INCLUDE": f"{os.environ['INCLUDE']};{CraftStandardDirs.craftRoot() / 'include'}",
                 }
             )
+        if self.supportsCCACHE:
+            cxx = CraftCore.standardDirs.craftRoot() / "dev-utils/ccache/bin" / Path(os.environ["CXX"]).name
+            if CraftCore.compiler.isWindows and not cxx.suffix:
+                cxx = Path(str(cxx) + CraftCore.compiler.executableSuffix)
+            if cxx.exists():
+                env["CXX"] = cxx
+                env["CC"] = cxx.parent / Path(os.environ["CC"]).name
         with ScopedEnv(env):
             ok = True
             for ver, python in self._pythons:
