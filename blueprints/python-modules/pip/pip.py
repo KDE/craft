@@ -1,6 +1,3 @@
-import io
-import subprocess
-
 import info
 import utils
 from CraftCore import CraftCore
@@ -14,24 +11,13 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["core/cacert"] = None
-        self.buildDependencies["python-modules/virtualenv"] = None
+        self.buildDependencies["python-modules/ensurepip"] = None
+        self.buildDependencies["python-modules/setuptools"] = None
 
 
 class Package(PipPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-    def make(self):
-        for ver, python in self._pythons:
-            # if its installed we get the help text if not we get an empty string
-            with io.StringIO() as tmp:
-                utils.system([python, "-m", "pip"], stdout=tmp, stderr=subprocess.DEVNULL)
-                if tmp.getvalue():
-                    return True
-
-                if not utils.system([python, "-m", "ensurepip"]):
-                    return False
-        return True
 
     def install(self):
         if not CraftCore.compiler.isWindows:
