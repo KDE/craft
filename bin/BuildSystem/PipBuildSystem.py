@@ -103,7 +103,6 @@ class PipBuildSystem(BuildSystemBase):
                 env["CXX"] = cxx
                 env["CC"] = cxx.parent / Path(os.environ["CC"]).name
         with ScopedEnv(env):
-            ok = True
             for ver, python in self._pythons:
                 command = [python, "-m", "pip", "install", "--upgrade", "--no-input", "--verbose"]
 
@@ -122,7 +121,7 @@ class PipBuildSystem(BuildSystemBase):
                         prefix = self.installDir() / "lib/Python.framework/Versions/Current"
                     else:
                         prefix = self.installDir()
-                    command += ["--prefix", prefix]
+                    command += ["--prefix", CraftCore.standardDirs.craftRoot(), "--root", prefix]
                 elif not self.allowNotVenv:
                     command += ["--require-virtualenv"]
 
@@ -136,8 +135,12 @@ class PipBuildSystem(BuildSystemBase):
                         command += [self.pipPackageName]
                     else:
                         command += [f"{self.pipPackageName}=={self.buildTarget}"]
-                ok = ok and utils.system(command)
-            return ok
+                if not utils.system(command):
+                    return False
+                if usesCraftPython:
+                    if not self._fixInstallPrefix():
+                        return False
+            return True
 
     def runTest(self):
         return False
