@@ -1,8 +1,10 @@
 #
 # copyright (c) 2009 Ralf Habacker <ralf.habacker@freenet.de>
 #
+import dataclasses
 import json
 import os
+from pathlib import Path
 
 import utils
 from Blueprints.CraftPackageObject import BlueprintException
@@ -211,28 +213,45 @@ class PackageBase(CraftBase):
     @staticmethod
     def unmergeFileList(rootdir, fileList):
         """delete files in the fileList if has matches"""
-        for filename, filehash in fileList:
-            fullPath = os.path.join(rootdir, os.path.normcase(filename))
-            if os.path.isfile(fullPath) or os.path.islink(fullPath):
-                if filehash:
-                    algorithm = CraftHash.HashAlgorithm.getAlgorithmFromPrefix(filehash)
-                    currentHash = algorithm.stringPrefix() + CraftHash.digestFile(fullPath, algorithm)
-                if not filehash or currentHash == filehash:
-                    OsUtils.rm(fullPath, True)
+        rootdir = Path(rootdir)
+
+        @dataclasses.dataclass
+        class File:
+            path: Path
+            hash: str
+
+        fileList = [File(rootdir / file, hash) for file, hash in fileList]
+        # ensure the files are sorted, that way we can delete empty dirs when going a lvl up
+        fileList = sorted(fileList, key=lambda x: (len(x.path.parents), x.path))
+
+        while len(fileList) > 0:
+            file = fileList.pop()
+            if file.path.is_file():
+                if file.hash:
+                    algorithm = CraftHash.HashAlgorithm.getAlgorithmFromPrefix(file.hash)
+                    currentHash = algorithm.stringPrefix() + CraftHash.digestFile(file.path, algorithm)
+                if not file.hash or currentHash == file.hash:
+                    OsUtils.rm(file.path, True)
                 else:
                     CraftCore.log.warning(
-                        f"We can't remove {fullPath} as its hash has changed," f" that usually implies that the file was modified or replaced"
+                        f"We can't remove {file.path} as its hash has changed," f" that usually implies that the file was modified or replaced"
                     )
-            elif not os.path.isdir(fullPath) and os.path.lexists(fullPath):
-                CraftCore.log.debug(f"Remove a dead symlink {fullPath}")
-                OsUtils.rm(fullPath, True)
-            elif not os.path.isdir(fullPath):
-                CraftCore.log.warning("file %s does not exist" % fullPath)
+            elif file.path.is_symlink():
+                if file.path.is_dir():
+                    CraftCore.log.debug(f"Remove symlink {file.path} to a directory")
+                else:
+                    CraftCore.log.debug(f"Remove a dead symlink {file.path}")
+                OsUtils.rm(file.path, True)
+            elif not file.path.is_dir():
+                CraftCore.log.warning(f"file {file.path} does not exist")
 
-            containingDir = os.path.dirname(fullPath)
-            if os.path.exists(containingDir) and not os.listdir(containingDir):
-                CraftCore.log.debug(f"Delete empty dir {containingDir}")
-                utils.rmtree(containingDir)
+            # if we are the last element in the list or the next parent is a different path
+            # check whether we are in an empty dir that we should remove
+            if not fileList or fileList[-1].path.parent != file.path.parent:
+                containingDir = file.path.parent
+                if containingDir.exists() and not any(containingDir.iterdir()):
+                    CraftCore.log.debug(f"Delete empty dir {containingDir}")
+                    utils.rmtree(containingDir)
 
     def _update(self):
         from Source.GitSource import GitSource
