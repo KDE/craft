@@ -112,16 +112,9 @@ class PipBuildSystem(BuildSystemBase):
                         # Build binaries ourself when installing from pip.
                         # In case we use a SVN or tarball target we don't want
                         # to enforce that here, because already done via the make step
-                        command += ["--no-binary", ":all:", "--no-cache-dir", "--no-build-isolation", "--use-deprecated=legacy-resolver"]
-
-                    if CraftCore.compiler.isMacOS:
-                        # On macOS we use a frameworks
-                        # While on Linux modules are installed to PREFIX/lib/site-packages on macOS a versioned path
-                        # like PREFIX/lib/python3.11/site-packages would be used if set prefix outsite the framwork
-                        prefix = CraftCore.standardDirs.craftRoot() / "lib/Python.framework/Versions/Current"
-                    else:
-                        prefix = CraftCore.standardDirs.craftRoot()
-                    command += ["--prefix", prefix, "--root", self.installDir()]
+                        command += ["--no-binary", ":all:", "--no-cache-dir", "--no-build-isolation",
+                                    "--use-deprecated=legacy-resolver"]
+                    command += ["--root", self.installDir()]
                 elif not self.allowNotVenv:
                     command += ["--require-virtualenv"]
 
