@@ -84,6 +84,7 @@ class PipBuildSystem(BuildSystemBase):
 
     def install(self):
         env = {}
+        bootstrap = False
         if CraftCore.compiler.isMSVC():
             tmpDir = CraftCore.standardDirs.junctionsDir() / "tmp"
             tmpDir.mkdir(parents=True, exist_ok=True)
@@ -102,9 +103,24 @@ class PipBuildSystem(BuildSystemBase):
             if cxx.exists():
                 env["CXX"] = cxx
                 env["CC"] = cxx.parent / Path(os.environ["CC"]).name
+        if self.pipPackageName in ["setuptools", "pip"]:
+            bootstrap = True
+            ensurePipPath = CraftPackageObject.get("python-modules/ensurepip").instance.installDir()
+            # TODO: query sysconfig.get_paths() for the site-packages path
+            if CraftCore.compiler.isWindows:
+                ensurePipPath /= "bin/Lib/site-packages"
+            elif CraftCore.compiler.isMacOS:
+                ensurePipPath /= "lib/Python.framework/Versions/Current/lib/python3.11/site-packages/"
+            else:
+                ensurePipPath /= "lib/site-packages/"
+            env["PYTHONPATH"] = f"{os.environ['PYTHONPATH']}{os.pathsep}{ensurePipPath}"
+
         with ScopedEnv(env):
             for ver, python in self._pythons:
                 command = [python, "-m", "pip", "install", "--upgrade", "--no-input", "--verbose"]
+                if bootstrap:
+                    # don't try to uninstall pip
+                    command += ["--ignore-installed"]
 
                 usesCraftPython = CraftPackageObject.get("libs/python").categoryInfo.isActive
                 if usesCraftPython:

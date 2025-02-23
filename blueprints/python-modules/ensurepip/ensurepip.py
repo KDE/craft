@@ -5,6 +5,7 @@ import subprocess
 
 import info
 import utils
+from Package.PackageBase import PackageBase
 from Package.PipPackageBase import PipPackageBase
 
 
@@ -22,7 +23,7 @@ class Package(PipPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def make(self):
+    def install(self):
         for ver, python in self._pythons:
             # if its installed we get the help text if not we get an empty string
             with io.StringIO() as tmp:
@@ -30,9 +31,12 @@ class Package(PipPackageBase):
                 if tmp.getvalue():
                     return True
 
-                if not utils.system([python, "-m", "ensurepip"]):
+                if not utils.system([python, "-m", "ensurepip", "--upgrade", "--root", self.installDir()]):
+                    return False
+                if not self._fixInstallPrefix():
                     return False
         return True
 
-    def install(self):
-        return True
+    # don't actually install the files
+    def qmerge(self):
+        return PackageBase.qmerge(self, dbOnly=True)
