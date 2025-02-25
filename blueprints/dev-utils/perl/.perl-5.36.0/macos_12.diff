@@ -1,12 +1,13 @@
-diff -Nrub -x *~ -x *\.rej -x *\.orig -x *\.o -x *\.pyc -x CMakeLists.txt.user perl-5.38.2.orig/hints/darwin.sh perl-5.38.2/hints/darwin.sh
---- perl-5.38.2.orig/hints/darwin.sh	2025-01-25 16:17:07
-+++ perl-5.38.2/hints/darwin.sh	2025-01-25 16:16:02
+diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x '*\.o' -x '*\.pyc' -x CMakeLists.txt.user perl-5.36.0.orig/hints/darwin.sh perl-5.36.0/hints/darwin.sh
+--- perl-5.36.0.orig/hints/darwin.sh	2021-09-21 04:38:30.000000000 +0200
++++ perl-5.36.0/hints/darwin.sh	2023-11-10 16:12:16.354440000 +0100
 @@ -301,7 +301,7 @@
     # We now use MACOSX_DEPLOYMENT_TARGET, if set, as an override by
     # capturing its value and adding it to the flags.
      case "$MACOSX_DEPLOYMENT_TARGET" in
--    [1-9][0-9].* | 11)
-+    [1-9][0-9].* | 11| 12)
+-    [1-9][0-9].*)
++    [1-9][0-9].* | 11 | 12)
        add_macosx_version_min ccflags $MACOSX_DEPLOYMENT_TARGET
        add_macosx_version_min ldflags $MACOSX_DEPLOYMENT_TARGET
        ;;
+

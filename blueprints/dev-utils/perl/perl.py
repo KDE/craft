@@ -24,15 +24,14 @@ class subinfo(info.infoclass):
 
         if CraftCore.compiler.isWindows:
             self.patchToApply["5.36.0"] = [(".perl-5.36.0_win", 1)]
-        else:
-            self.patchToApply["5.36.0"] = [(".perl-5.36.0", 1)]
-
-        if CraftCore.compiler.isWindows:
             self.patchToApply["5.38.2"] = [(".perl-5.39.8_win", 1)]
             self.patchToApply["5.39.8"] = [(".perl-5.39.8_win", 1)]
         else:
+            # for MacOS the 5.36 patch applies to all supported version
+            self.patchToApply["5.36.0"] = [(".perl-5.36.0", 1)]
             self.patchToApply["5.38.2"] = [(".perl-5.36.0", 1)]
             self.patchToApply["5.39.8"] = [(".perl-5.36.0", 1)]
+
         self.targetDigests["5.36.0"] = (["e26085af8ac396f62add8a533c3a0ea8c8497d836f0689347ac5abd7b7a4e00a"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["5.38.2"] = (["a0a31534451eb7b83c7d6594a497543a54d488bc90ca00f5e34762577f40655e"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["5.39.8"] = (["25f8b4db7a7d91c051b1c2594ed83c291c74c1012da559a8d580755b598bb7e3"], CraftHash.HashAlgorithm.SHA256)
