@@ -10,9 +10,6 @@ from Utils.Arguments import Arguments
 class subinfo(info.infoclass):
     def registerOptions(self):
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
-        # TODO: remove with the next cache rebuild and make it the default
-        # https://invent.kde.org/packaging/craft/-/issues/15
-        self.options.dynamic.registerOption("msvcCompat", False)
 
     def setTargets(self):
         for ver in ["1.3", "1.3.1"]:
@@ -33,11 +30,10 @@ class subinfo(info.infoclass):
                 "zlib-1.2.12-20220503.diff",
                 1,
             ),
+            # use the same dll name with mingw and msvc
+            # this allows using zlib in prebuilt libraries like gpg
+            ("zlib-1.3.1-20240818.diff", 1),
         ]
-        if self.options.dynamic.msvcCompat:
-            self.patchToApply["1.3.1"] += [
-                ("zlib-1.3.1-20240818.diff", 1),
-            ]
 
         self.targetDigests["1.3"] = (
             ["8a9ba2898e1d0d774eca6ba5b4627a11e5588ba85c8851336eb38de4683050a7"],
