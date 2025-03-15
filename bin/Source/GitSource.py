@@ -24,11 +24,12 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
+import datetime
+
 # git support
 import io
 import os
 import tempfile
-from datetime import datetime
 from pathlib import Path
 
 import utils

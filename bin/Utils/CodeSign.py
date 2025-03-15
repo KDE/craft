@@ -28,6 +28,7 @@ import secrets
 import shlex
 import subprocess
 import tempfile
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Union
 
@@ -267,14 +268,24 @@ def __signMacApp(appPath: Path, scope: _MacSignScope):
     devID = CraftCore.settings.get("CodeSigning", "MacDeveloperId")
     bundlePattern = re.compile(r".*(\.app|\.framework)$", re.IGNORECASE)
     # get all bundles, as we specify handleAppBundleAsFile we will not yet get nested bundles
-    for bun in utils.filterDirectoryContent(
-        appPath,
-        whitelist=lambda x, root: bundlePattern.match(x.path),
-        blacklist=lambda x, root: True,
-        handleAppBundleAsFile=True,
-    ):
-        if not __signMacApp(Path(bun), scope):
-            return False
+
+    with ThreadPoolExecutor() as executor:
+
+        def signBundle(bundle):
+            return __signMacApp(Path(bundle), scope)
+
+        for result in executor.map(
+            signBundle,
+            utils.filterDirectoryContent(
+                appPath,
+                whitelist=lambda x, root: bundlePattern.match(x.path),
+                blacklist=lambda x, root: True,
+                handleAppBundleAsFile=True,
+            ),
+        ):
+            if not result:
+                executor.shutdown(cancel_futures=True)
+                return False
 
     # all files in the bundle
     def bundeFilter(x, root):

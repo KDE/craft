@@ -22,9 +22,7 @@ class MacPkgPackager(MacBasePackager):
         """create a package"""
         CraftCore.log.debug("packaging using the MacDMGPackager")
         if not CraftCore.cache.findApplication("packagesutil"):
-            CraftCore.log.critical(
-                "Craft requires dev-utils/packagesdev to create a package, please install dev-utils/packagesdev\n" "\t'craft dev-utils/packagesdev'"
-            )
+            CraftCore.log.critical("Craft requires packages to create a pkg installer, please install packages\n" "\t'brew install packages'")
             return False
 
         defines = self.setDefaults(self.defines)

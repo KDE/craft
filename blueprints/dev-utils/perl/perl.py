@@ -25,14 +25,12 @@ class subinfo(info.infoclass):
 
         if CraftCore.compiler.isWindows:
             self.patchToApply["5.36.0"] = [(".perl-5.36.0_win", 1)]
-        else:
-            self.patchToApply["5.36.0"] = [(".perl-5.36.0", 1)]
-
-        if CraftCore.compiler.isWindows:
             self.patchToApply["5.38.2"] = [(".perl-5.39.8_win", 1)]
             self.patchToApply["5.39.8"] = [(".perl-5.39.8_win", 1)]
             self.patchToApply["5.40.1"] = [(".perl-5.39.8_win", 1)]
         else:
+            # for MacOS the 5.36 patch applies to all supported version
+            self.patchToApply["5.36.0"] = [(".perl-5.36.0", 1)]
             self.patchToApply["5.38.2"] = [(".perl-5.36.0", 1)]
             self.patchToApply["5.39.8"] = [(".perl-5.36.0", 1)]
             self.patchToApply["5.40.1"] = [(".perl-5.36.0", 1)]
