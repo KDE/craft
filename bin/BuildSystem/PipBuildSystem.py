@@ -57,7 +57,7 @@ class PipBuildSystem(BuildSystemBase):
             if not utils.createShim(
                 self.installDir() / f"bin/{binary}{CraftCore.compiler.executableSuffix}",
                 self.installDir() / f"lib/Python.framework/Versions/Current/bin/{binary}{CraftCore.compiler.executableSuffix}",
-                useAbsolutePath=True,
+                useAbsolutePath=False,
             ):
                 return False
         return True
