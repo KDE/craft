@@ -8,6 +8,7 @@ from BuildSystem.BuildSystemBase import BuildSystemBase
 from CraftCore import CraftCore
 from CraftStandardDirs import CraftStandardDirs
 from utils import ScopedEnv
+from Utils.Arguments import Arguments
 
 
 class PipBuildSystem(BuildSystemBase):
@@ -84,6 +85,7 @@ class PipBuildSystem(BuildSystemBase):
 
     def install(self):
         env = {}
+        bootstrap = False
         if CraftCore.compiler.isMSVC():
             tmpDir = CraftCore.standardDirs.junctionsDir() / "tmp"
             tmpDir.mkdir(parents=True, exist_ok=True)
@@ -102,10 +104,18 @@ class PipBuildSystem(BuildSystemBase):
             if cxx.exists():
                 env["CXX"] = cxx
                 env["CC"] = cxx.parent / Path(os.environ["CC"]).name
+
         with ScopedEnv(env):
-            ok = True
             for ver, python in self._pythons:
-                command = [python, "-m", "pip", "install", "--upgrade", "--no-input", "--verbose"]
+                command = Arguments([python])
+                if self.pipPackageName in ["pip"]:
+                    bootstrap = True
+                    command += [self.localFilePath()[0]]
+                else:
+                    bootstrap = False
+                    command += ["-m", "pip"]
+                command += ["install", "--upgrade", "--no-input", "--verbose"]
+                command += self.subinfo.options.configure.args
 
                 usesCraftPython = CraftPackageObject.get("libs/python").categoryInfo.isActive
                 if usesCraftPython:
@@ -113,20 +123,12 @@ class PipBuildSystem(BuildSystemBase):
                         # Build binaries ourself when installing from pip.
                         # In case we use a SVN or tarball target we don't want
                         # to enforce that here, because already done via the make step
-                        command += ["--no-binary", ":all:", "--no-cache-dir"]
-
-                    if CraftCore.compiler.isMacOS:
-                        # On macOS we use a frameworks
-                        # While on Linux modules are installed to PREFIX/lib/site-packages on macOS a versioned path
-                        # like PREFIX/lib/python3.11/site-packages would be used if set prefix outsite the framwork
-                        prefix = self.installDir() / "lib/Python.framework/Versions/Current"
-                    else:
-                        prefix = self.installDir()
-                    command += ["--prefix", prefix]
+                        command += ["--no-binary", ":all:", "--no-cache-dir", "--no-build-isolation"]
+                    command += ["--root", self.installDir()]
                 elif not self.allowNotVenv:
                     command += ["--require-virtualenv"]
 
-                if not self._isPipTarget:
+                if not self._isPipTarget and not bootstrap:
                     # Installing with wildcards (pip install dir/*) does not work on Windows,
                     # hence we use the --find-links approach which might be a bit cleaner anyway.
                     # See https://stackoverflow.com/questions/48183160/how-to-pip-install-whl-on-windows-using-a-wildcard
@@ -136,8 +138,12 @@ class PipBuildSystem(BuildSystemBase):
                         command += [self.pipPackageName]
                     else:
                         command += [f"{self.pipPackageName}=={self.buildTarget}"]
-                ok = ok and utils.system(command)
-            return ok
+                if not utils.system(command):
+                    return False
+                if usesCraftPython:
+                    if not self._fixInstallPrefix():
+                        return False
+            return True
 
     def runTest(self):
         return False

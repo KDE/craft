@@ -35,6 +35,9 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["dev-utils/pkgconf"] = None
         self.buildDependencies["python-modules/pip"] = None
         self.buildDependencies["python-modules/virtualenv"] = None
+        self.buildDependencies["python-modules/setuptools"] = None
+        self.buildDependencies["python-modules/flit-core"] = None
+        self.buildDependencies["python-modules/hatchling"] = None
 
 
 class Package(PipPackageBase):

@@ -1,48 +1,30 @@
-import io
-import subprocess
-
+# SPDX-License-Identifier: BSD-2-Clause
+# SPDX-FileCopyrightText: 2025 Hannah von Reth <vonreth@kde.org>
 import info
-import utils
-from CraftCore import CraftCore
 from Package.PipPackageBase import PipPackageBase
+from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.svnTargets["master"] = ""
-        self.defaultTarget = "master"
+        self.targets["25.0.1"] = "https://bootstrap.pypa.io/pip/zipapp/pip-25.0.1.pyz"
+        self.targetDigests["25.0.1"] = (["0a7353fc4c345a9589c1cff7b59eb1868079d3de5c2663846bcb4290a69e3b41"], CraftHash.HashAlgorithm.SHA256)
+        self.defaultTarget = "25.0.1"
 
     def setDependencies(self):
         self.buildDependencies["core/cacert"] = None
-        self.buildDependencies["python-modules/virtualenv"] = None
 
 
 class Package(PipPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def make(self):
-        for ver, python in self._pythons:
-            # if its installed we get the help text if not we get an empty string
-            with io.StringIO() as tmp:
-                utils.system([python, "-m", "pip"], stdout=tmp, stderr=subprocess.DEVNULL)
-                if tmp.getvalue():
-                    return True
+    def unpack(self):
+        return self.checkDigest(3)
 
-                if not utils.system([python, "-m", "ensurepip"]):
-                    return False
+    def make(self):
+        self.enterBuildDir()
         return True
 
     def install(self):
-        if not CraftCore.compiler.isWindows:
-            return super().install() and self.createMacOSPipShims(["pip", "pip3"])
-
-        for ver, python in self._pythons:
-            # Run "pip install pip" to install the lateste version
-            # We can't use the install step from PipBuildSystem,
-            # because installing pip itself causes issues when --prefix is used
-            # See https://github.com/pypa/pip/issues/11349
-            # TODO: re-evaluate when we use a newer python in libs/python
-            command = [python, "-m", "pip", "install", "--upgrade", "--upgrade-strategy", "only-if-needed", "pip"]
-
-        return utils.system(command)
+        return super().install() and self.createMacOSPipShims(["pip", "pip3"])
