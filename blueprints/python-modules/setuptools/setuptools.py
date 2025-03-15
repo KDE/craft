@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
+        self.buildDependencies["python-modules/pip"] = None
 
 
 class Package(PipPackageBase):
