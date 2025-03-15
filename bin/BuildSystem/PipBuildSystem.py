@@ -6,7 +6,6 @@ import utils
 from Blueprints.CraftPackageObject import CraftPackageObject
 from BuildSystem.BuildSystemBase import BuildSystemBase
 from CraftCore import CraftCore
-from CraftStandardDirs import CraftStandardDirs
 from utils import ScopedEnv
 from Utils.Arguments import Arguments
 
@@ -89,8 +88,6 @@ class PipBuildSystem(BuildSystemBase):
             tmpDir.mkdir(parents=True, exist_ok=True)
             env.update(
                 {
-                    "LIB": f"{os.environ['LIB']};{CraftStandardDirs.craftRoot() / 'lib'}",
-                    "INCLUDE": f"{os.environ['INCLUDE']};{CraftStandardDirs.craftRoot() / 'include'}",
                     # we can't use a normal short path as python would resolve it
                     "TMPDIR": tmpDir,
                 }
@@ -121,7 +118,15 @@ class PipBuildSystem(BuildSystemBase):
                         # Build binaries ourself when installing from pip.
                         # In case we use a SVN or tarball target we don't want
                         # to enforce that here, because already done via the make step
-                        command += ["--no-binary", ":all:", "--no-cache-dir", "--no-build-isolation"]
+                        command += [
+                            "--no-binary",
+                            ":all:",
+                            "--no-cache-dir",
+                            "--no-build-isolation",
+                            "--config-settings=--global-option=build_ext",
+                            f"--config-settings=--global-option=--include-dirs={CraftCore.standardDirs.craftRoot()}/include",
+                            f"--config-settings=--global-option=--library-dirs={CraftCore.standardDirs.craftRoot()}/lib",
+                        ]
                     command += ["--root", self.installDir()]
                 elif not self.allowNotVenv:
                     command += ["--require-virtualenv"]
