@@ -14,17 +14,17 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
 
     @staticmethod
     def rm(path, force=False):
-        CraftCore.log.debug("deleting file %s" % path)
+        CraftCore.log.debug(f"deleting file {path}")
         try:
             os.remove(path)
             return True
         except OSError as e:
-            CraftCore.log.warning("could not delete file %s: %s" % (path, e))
+            CraftCore.log.warning(f"could not delete file {path}: {e}")
             return False
 
     @staticmethod
     def rmDir(path, force=False):
-        CraftCore.log.debug("deleting directory %s" % path)
+        CraftCore.log.debug(f"deleting directory {path}")
         try:
             shutil.rmtree(path)
             return True

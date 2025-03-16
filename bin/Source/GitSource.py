@@ -116,7 +116,7 @@ class GitSource(VersionSystemSourceBase):
         # get the path where the repositories should be stored to
 
         repopath = self.repositoryUrl()
-        CraftCore.log.debug("fetching %s" % repopath)
+        CraftCore.log.debug(f"fetching {repopath}")
 
         # in case you need to move from a read only Url to a writeable one, here it gets replaced
         repopath = repopath.replace("[git]", "")
@@ -184,7 +184,7 @@ class GitSource(VersionSystemSourceBase):
             # we can have tags or revisions in repoTag
             if ret and repoTag:
                 if self.__isTag(repoTag):
-                    if not self.__isLocalBranch("_" + repoTag):
+                    if not self.__isLocalBranch(f"_{repoTag}"):
                         ret = self.__git("checkout", ["-b", f"_{repoTag}", repoTag])
                     else:
                         ret = self.__git("checkout", [f"_{repoTag}"])
@@ -223,9 +223,9 @@ class GitSource(VersionSystemSourceBase):
         CraftCore.debug.trace("GitSource createPatch")
         patchFileName = os.path.join(
             self.blueprintDir(),
-            "%s-%s.patch" % (self.package.name, str(datetime.date.today()).replace("-", "")),
+            f'{self.package.name}-{str(datetime.date.today()).replace("-", "")}.patch',
         )
-        CraftCore.log.debug("git diff %s" % patchFileName)
+        CraftCore.log.debug(f"git diff {patchFileName}")
         with open(patchFileName, "wt+") as patchFile:
             return self.__git("diff", stdout=patchFile)
 
@@ -251,7 +251,7 @@ class GitSource(VersionSystemSourceBase):
         if self.subinfo.hasTargetSourcePath():
             sourcedir = sourcedir / self.subinfo.targetSourcePath()
 
-        CraftCore.log.debug("using sourcedir: %s" % sourcedir)
+        CraftCore.log.debug(f"using sourcedir: {sourcedir}")
         return sourcedir
 
     def getUrls(self):

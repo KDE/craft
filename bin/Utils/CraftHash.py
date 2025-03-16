@@ -14,10 +14,10 @@ class HashAlgorithm(Enum):
     MD5 = 5  # deprecated
 
     def stringPrefix(self):
-        return "[%s]" % self.name
+        return f"[{self.name}]"
 
     def fileEnding(self):
-        return "." + self.name.lower()
+        return f".{self.name.lower()}"
 
     @classmethod
     def fileEndings(cls):
@@ -89,13 +89,13 @@ def checkFilesDigests(downloaddir, filenames, digests=None, digestAlgorithm=Hash
                         CraftCore.log.error(f"Failed to decode digests file {digestFileName}: {f.read(100)}...")
                     return False
                 if not re.findall(currentHash, data):
-                    CraftCore.log.error("%s hash for file %s (%s) does not match (%s)" % (digestAlgorithm.name, pathName, currentHash, data))
+                    CraftCore.log.error(f"{digestAlgorithm.name} hash for file {pathName} ({currentHash}) does not match ({data})")
                     return False
                     # digest provided in digests parameter
         else:
             currentHash = digestFile(pathName, digestAlgorithm)
             if len(digests) != len(currentHash) or digests.find(currentHash) == -1:
-                CraftCore.log.error("%s hash for file %s (%s) does not match (%s)" % (digestAlgorithm.name, pathName, currentHash, digests))
+                CraftCore.log.error(f"{digestAlgorithm.name} hash for file {pathName} ({currentHash}) does not match ({digests})")
                 return False
     return True
 
