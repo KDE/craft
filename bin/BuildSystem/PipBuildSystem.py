@@ -101,9 +101,11 @@ class PipBuildSystem(BuildSystemBase):
                 env["CC"] = cxx.parent / Path(os.environ["CC"]).name
 
         with ScopedEnv(env):
+            usesCraftPython = CraftPackageObject.get("libs/python").categoryInfo.isActive
+
             for ver, python in self._pythons:
                 command = Arguments([python])
-                if self.pipPackageName in ["pip"]:
+                if self.pipPackageName in ["pip", "pip-system"]:
                     bootstrap = True
                     command += [self.localFilePath()[0]]
                 else:
@@ -112,7 +114,6 @@ class PipBuildSystem(BuildSystemBase):
                 command += ["install", "--upgrade", "--no-input", "--verbose"]
                 command += self.subinfo.options.configure.args
 
-                usesCraftPython = CraftPackageObject.get("libs/python").categoryInfo.isActive
                 if usesCraftPython:
                     if self._isPipTarget and not self.allowPrebuildBinaries:
                         # Build binaries ourself when installing from pip.
@@ -150,3 +151,8 @@ class PipBuildSystem(BuildSystemBase):
 
     def runTest(self):
         return False
+
+    def package(self):
+        if CraftPackageObject.get("libs/python").categoryInfo.isActive:
+            return super().package()
+        return True

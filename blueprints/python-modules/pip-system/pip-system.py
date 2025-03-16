@@ -1,35 +1,16 @@
-import io
-import subprocess
-
+# SPDX-License-Identifier: BSD-2-Clause
+# SPDX-FileCopyrightText: 2025 Hannah von Reth <vonreth@kde.org>
 import info
-import utils
-from CraftCore import CraftCore
 from Package.PipPackageBase import PipPackageBase
+from Blueprints.CraftPackageObject import CraftPackageObject
 
-
-class subinfo(info.infoclass):
-    def setTargets(self):
-        self.svnTargets["master"] = ""
-        self.defaultTarget = "master"
-
+pipPackage = CraftPackageObject.get("python-modules/pip")
+subinfo = pipPackage.subinfo.__class__
 
 class Package(PipPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.pipPackageName = "pip"
         self.allowNotVenv = True
-
-    def make(self):
-        for ver, python in self._pythons:
-            # if its installed we get the help text if not we get an empty string
-            with io.StringIO() as tmp:
-                utils.system([python, "-m", "pip"], stdout=tmp, stderr=subprocess.DEVNULL)
-                if not tmp.getvalue():
-                    if not utils.system([python, "-m", "ensurepip", "--user"]):
-                        return False
-        return True
-
-    def install(self):
-        if CraftCore.compiler.isLinux:
-            return True
-        return super().install()
+        self.unpack = pipPackage.instance.unpack
+        self.make = pipPackage.instance.make
