@@ -22,11 +22,12 @@ class PipBuildSystem(BuildSystemBase):
     def _getPython3(self):
         craftPython = CraftPackageObject.get("libs/python")
         suffix = "_d" if CraftCore.compiler.isWindows and craftPython.instance.subinfo.options.dynamic.buildType == "Debug" else ""
-        if CraftPackageObject.get("python-modules/virtualenv").isInstalled:
-            if CraftCore.compiler.isWindows:
-                return self.venvDir("3") / f"Scripts/python{suffix}"
-            else:
-                return self.venvDir("3") / "bin/python3"
+        if not craftPython.categoryInfo.isActive:
+            if CraftPackageObject.get("python-modules/virtualenv").isInstalled:
+                if CraftCore.compiler.isWindows:
+                    return self.venvDir("3") / f"Scripts/python{suffix}"
+                else:
+                    return self.venvDir("3") / "bin/python3"
 
         if craftPython.isInstalled:
             python = CraftCore.standardDirs.craftRoot() / f"bin/python{suffix}{CraftCore.compiler.executableSuffix}"
