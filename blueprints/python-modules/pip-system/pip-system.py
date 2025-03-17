@@ -1,20 +1,27 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # SPDX-FileCopyrightText: 2025 Hannah von Reth <vonreth@kde.org>
+import info
 from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftCore import CraftCore
 from Package.PipPackageBase import PipPackageBase
 
-pipPackage = CraftPackageObject.get("python-modules/pip")
 
+class subinfo(info.infoclass):
+    def registerOptions(self):
+        useCraftPython = CraftPackageObject.get("libs/python").categoryInfo.isActive
+        if useCraftPython:
+            self.parent.package.categoryInfo.compiler = CraftCore.compiler.Compiler.NoCompiler
 
-def registerOptions(self):
-    useCraftPython = CraftPackageObject.get("libs/python").categoryInfo.isActive
-    if useCraftPython:
-        self.parent.package.categoryInfo.compiler = CraftCore.compiler.Compiler.NoCompiler
+    def setTargets(self):
+        pip = CraftPackageObject.get("python-modules/pip").instance.subinfo
 
+        for ver in pip.targets:
+            self.targets[ver] = pip.targets[ver]
+            self.targetDigests[ver] = pip.targetDigests[ver]
+        self.defaultTarget = pip.defaultTarget
 
-subinfo = pipPackage.subinfo.__class__
-subinfo.registerOptions = registerOptions
+    def setDependencies(self):
+        self.buildDependencies["core/cacert"] = None
 
 
 class Package(PipPackageBase):
@@ -22,5 +29,10 @@ class Package(PipPackageBase):
         super().__init__(**kwargs)
         self.pipPackageName = "pip"
         self.allowNotVenv = True
-        self.unpack = pipPackage.instance.unpack
-        self.make = pipPackage.instance.make
+
+    def unpack(self):
+        return self.checkDigest(3)
+
+    def make(self):
+        self.enterBuildDir()
+        return True
