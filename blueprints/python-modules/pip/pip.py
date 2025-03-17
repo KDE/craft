@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.targets["25.0.1"] = "https://bootstrap.pypa.io/pip/zipapp/pip-25.0.1.pyz"
         self.targetDigests["25.0.1"] = (["0a7353fc4c345a9589c1cff7b59eb1868079d3de5c2663846bcb4290a69e3b41"], CraftHash.HashAlgorithm.SHA256)
+        self.patchLevel["25.0.1"] = 1
         self.defaultTarget = "25.0.1"
 
     def setDependencies(self):

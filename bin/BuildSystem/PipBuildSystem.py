@@ -115,6 +115,10 @@ class PipBuildSystem(BuildSystemBase):
                 command += self.subinfo.options.configure.args
 
                 if usesCraftPython:
+                    # we can only cache stuff if we actually do something
+                    command += [
+                        "--force-reinstall",
+                    ]
                     if self._isPipTarget and not self.allowPrebuildBinaries:
                         # Build binaries ourself when installing from pip.
                         # In case we use a SVN or tarball target we don't want
