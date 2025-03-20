@@ -440,7 +440,7 @@ class BuildSystemBase(CraftBase):
 
             # sign the binaries before we add them to the cache
             if CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
-                if not CodeSign.signWindows(binaryFiles):
+                if not CodeSign.signWindows(binaryFiles, package=self):
                     return False
         else:
             # restoring from cache
@@ -453,7 +453,7 @@ class BuildSystemBase(CraftBase):
             # sign the binaries if we can.
             # only needed if the cache was not signed
             if CraftCore.compiler.isWindows and not CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
-                if not CodeSign.signWindows(binaryFiles):
+                if not CodeSign.signWindows(binaryFiles, package=self):
                     return False
 
         return True

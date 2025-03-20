@@ -40,12 +40,23 @@ from Utils import CraftChoicePrompt
 from Utils.StageLogger import StageLogger
 
 
-def signWindows(fileNames: Union[Path, str]) -> bool:
+def signWindows(fileNames: Union[Path, str], package = None) -> bool:
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
         return True
     if not CraftCore.compiler.isWindows:
         CraftCore.log.warning("Code signing is currently only supported on Windows")
         return True
+
+    if package and "PipPackageBase" in [x.__name__ for x in package.__class__.__bases__]:
+        filteredNames = []
+        for f in fileNames:
+            f = Path(f)
+            if f.parent.name == "Scripts" and f.parent.parent.name == "bin":
+                CraftCore.log.warning(f"Skip singing of {f}, the python script files are not signable")
+                continue
+            filteredNames.append(f)
+        fileNames = filteredNames
+
     if not fileNames:
         return True
 
