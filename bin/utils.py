@@ -1005,7 +1005,7 @@ def limitCommandLineLength(command: list[str], args: list[str]) -> list[list[str
             return False
         SIZE = int(result.strip())
     out = []
-    commandSize = sum(map(len, command))
+    commandSize = sum(map(lambda c : len(str(c)), command))
     if commandSize >= SIZE:
         CraftCore.log.error("Failed to compute command, command too long")
         return []
