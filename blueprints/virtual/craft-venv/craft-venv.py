@@ -3,7 +3,6 @@
 # SPDX-FileCopyrightText: 2025 Julius Künzel <julius.kuenzel@kde.org>
 import info
 import utils
-from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftCore import CraftCore
 from Package.PipPackageBase import PipPackageBase
 
