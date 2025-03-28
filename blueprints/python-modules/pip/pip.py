@@ -14,6 +14,7 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["core/cacert"] = None
+        self.buildDependencies["virtual/craft-venv"] = None
 
 
 class Package(PipPackageBase):
