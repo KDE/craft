@@ -40,7 +40,7 @@ from Utils import CraftChoicePrompt
 from Utils.StageLogger import StageLogger
 
 
-def signWindows(fileNames: Union[Path, str], package = None) -> bool:
+def signWindows(fileNames: Union[Path, str], package=None) -> bool:
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
         return True
     if not CraftCore.compiler.isWindows:
