@@ -27,6 +27,7 @@ class subinfo(info.infoclass):
 class Package(PipPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.subinfo.options.package.disableBinaryCache = True
         self.pipPackageName = "pip"
         self.allowNotVenv = True
 
