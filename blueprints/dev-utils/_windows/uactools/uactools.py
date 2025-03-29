@@ -5,10 +5,14 @@
 
 
 import info
+from CraftCore import CraftCore
 from Package.BinaryPackageBase import BinaryPackageBase
 
 
 class subinfo(info.infoclass):
+    def registerOptions(self):
+        self.parent.package.categoryInfo.compiler = CraftCore.compiler.Compiler.GCCLike
+
     def setTargets(self):
         latest = "20100711"
         self.targets[latest] = f"http://downloads.sourceforge.net/kde-windows/uactools-mingw4-{latest}-bin.tar.bz2"

@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/kshimgen"] = None
+        self.buildDependencies["dev-utils/uactools"] = None
         self.buildDependencies["dev-utils/git"] = None
 
 
@@ -29,8 +30,9 @@ class Package(BinaryPackageBase):
             return False
         gitPath = gitPath.parent
 
+        # TODO: kshimgen should copy the manifest
         return utils.createShim(
-            self.imageDir() / "dev-utils/bin/patch",
+            self.imageDir() / "dev-utils/bin/patch.exe",
             gitPath.parent / "usr/bin/patch.exe",
             useAbsolutePath=True,
-        )
+        ) and utils.embedManifest(self.imageDir() / "dev-utils/bin/patch.exe", self.blueprintDir() / "patch.manifest")

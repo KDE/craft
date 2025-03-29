@@ -1,8 +1,12 @@
 import info
+from CraftCore import CraftCore
 from Package.CMakePackageBase import CMakePackageBase
 
 
 class subinfo(info.infoclass):
+    def registerOptions(self):
+        self.parent.package.categoryInfo.compiler = CraftCore.compiler.Compiler.GCCLike
+
     def setDependencies(self):
         # This Package provides the binaries for uactools-bin but virtual/base can
         # not depend on it because it needs a compiler itself.
