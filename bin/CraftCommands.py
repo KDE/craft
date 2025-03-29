@@ -281,6 +281,9 @@ def unShelve(shelve, args):
         updateCommand += ["--options", f"{category}.ignored=True"]
     if not __recurseCraft(updateCommand, ["craft"]):
         return False
+    # ensure we are properly bootstrapped
+    if not __recurseCraft(opt, ["craft"]):
+        return False
     return __recurseCraft(opt, list(packages.keys()))
 
 
