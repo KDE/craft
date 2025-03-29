@@ -2,6 +2,7 @@ import io
 from email.parser import HeaderParser
 
 import utils
+from Blueprints.CraftPackageObject import CraftPackageObject
 from BuildSystem.PipBuildSystem import PipBuildSystem
 from CraftCore import CraftCore
 from Package.PackageBase import PackageBase
@@ -38,3 +39,8 @@ class PipPackageBase(PackageBase, MultiSource, PipBuildSystem, TypePackager):
             if not utils.system(["python3", "-m", "pip", "show", self.pipPackageName], stdout=tmp):
                 return ""
             return HeaderParser().parsestr(tmp.getvalue().strip())["Version"]
+
+    def package(self):
+        if CraftPackageObject.get("libs/python").categoryInfo.isActive:
+            return super().package()
+        return True

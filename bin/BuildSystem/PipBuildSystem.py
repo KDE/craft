@@ -158,8 +158,3 @@ class PipBuildSystem(BuildSystemBase):
 
     def runTest(self):
         return False
-
-    def package(self):
-        if CraftPackageObject.get("libs/python").categoryInfo.isActive:
-            return super().package()
-        return True
