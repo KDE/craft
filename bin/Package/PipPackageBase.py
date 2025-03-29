@@ -33,7 +33,7 @@ class PipPackageBase(PackageBase, MultiSource, PipBuildSystem, TypePackager):
         if self._sourceClass:
             return self._sourceClass.sourceRevision(self)
         with io.StringIO() as tmp:
-            if not utils.system(["python3", "-m", "pip", "show", self.pipPackageName], stdout=tmp):
+            if not utils.system([self.python, "-m", "pip", "show", self.pipPackageName], stdout=tmp):
                 return ""
             return HeaderParser().parsestr(tmp.getvalue().strip())["Version"]
 
