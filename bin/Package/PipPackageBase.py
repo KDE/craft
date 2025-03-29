@@ -19,8 +19,6 @@ class PipPackageBase(PackageBase, MultiSource, PipBuildSystem, TypePackager):
         PipBuildSystem.__init__(self, **kwargs)
         TypePackager.__init__(self, **kwargs)
 
-        self.pipPackageName = self.package.name
-
     def fetch(self):
         if self._sourceClass:
             return self._sourceClass.fetch(self)

@@ -22,17 +22,16 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         # use the system wide pip
-        self.runtimeDependencies["python-modules/pip-system"] = None
+        self.buildDependencies["python-modules/pip-system"] = None
 
 
 class Package(PipPackageBase):
     # Theoretically this is more a virtual package or helper,
-    # but we use PipPackageBase to have access to self._pythons
+    # but we use PipPackageBase  to have access to self._pythons
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.subinfo.options.package.disableBinaryCache = True
 
-    def fetc(self):
+    def fetch(self):
         return True
 
     def unpack(self):
@@ -45,13 +44,12 @@ class Package(PipPackageBase):
         return True
 
     def install(self):
-        for ver, python in self._pythons:
-            venvPath = self.venvDir(ver)
-            if not venvPath.exists():
-                if not utils.system([python, "-m", "venv", venvPath]):
-                    return False
-            else:
-                CraftCore.log.info(f"venv at {venvPath} does already exist, nothing to do")
+        venvPath = self.venvDir()
+        if not venvPath.exists():
+            if not utils.system([self.python, "-m", "venv", venvPath]):
+                return False
+        else:
+            CraftCore.log.info(f"venv at {venvPath} does already exist, nothing to do")
         return True
 
     def qmerge(self):
