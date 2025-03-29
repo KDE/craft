@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
             self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NoPlatform
 
     def setTargets(self):
-        for ver, rev, rt in [("13.2.0", "1", "11"), ("14.2.0", "1", "12")]:
+        for ver, rev, rt in [("13.2.0", "1", "11"), ("14.2.0", "1", "12"), ("14.2.0", "2", "12")]:
             # https://github.com/niXman/mingw-builds-binaries/releases/download/13.2.0-rt_v11-rev1/x86_64-13.2.0-release-posix-seh-ucrt-rt_v11-rev1.7z
             self.targets[
                 f"{ver}-{rev}"
@@ -23,7 +23,11 @@ class subinfo(info.infoclass):
             ["9fa5768ba0e628203c4631d447ce533335cdd1fd9c318d84c774e729efa4edad"],
             CraftHash.HashAlgorithm.SHA256,
         )
-        self.defaultTarget = "14.2.0-1"
+        self.targetDigests["14.2.0-2"] = (
+            ["918732a84fc8006586be0f5909b75896ab85d5e0e9df521b4d4f9202e7debc12"],
+            CraftHash.HashAlgorithm.SHA256,
+        )
+        self.defaultTarget = "14.2.0-2"
 
     def setDependencies(self):
         self.buildDependencies["core/cacert"] = None
