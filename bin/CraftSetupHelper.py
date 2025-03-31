@@ -163,7 +163,7 @@ class SetupHelper(object):
         if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
             printRow("EnvironmentUpdated", SetupHelper._EnvironmentPopulated)
             for key in ["CC", "CXX"]:
-                printRow(key, f"{os.environ[key]} => {CraftCore.cache.findApplication(os.environ[key])}")
+                printRow(key, f"{os.environ[key]!r} => {CraftCore.cache.findApplication(os.environ[key])}")
 
     def addEnvVar(self, key, val):
         os.environ[key] = str(val)
