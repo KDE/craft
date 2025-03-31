@@ -173,7 +173,8 @@ class SetupHelper(object):
             del os.environ[key]
 
     def addDefaultEnvVar(self, key, val):
-        if key not in os.environ:
+        """call addEnvVar if key does not exist or is empty"""
+        if key not in os.environ or not os.environ[key]:
             self.addEnvVar(key, val)
 
     def prependEnvVar(self, key: str, var: str, sep: str = os.path.pathsep) -> None:
