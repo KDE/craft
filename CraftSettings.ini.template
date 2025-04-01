@@ -254,6 +254,9 @@ State = Berlin
 ###################
 ## Your mac deveoper id asigned with your certificates
 MacDeveloperId = K Desktop Environment e.V. (5433B4KXM8)
+## Your Apple ID email, used for notarization
+## By default this value is empty and notarization is disabled
+# MacAppleID = ci@kde.org
 ## Specify the certificates directly instead of using a certificate from standard
 ## keychain, craft will create a temporary keychain
 ## The path to the Application certigicate

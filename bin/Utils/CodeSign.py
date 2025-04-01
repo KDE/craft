@@ -257,9 +257,6 @@ def __verifyMacApp(appPath: Path):
 
     if not utils.system(["codesign", "--verify", "--verbose", "--strict", "--deep", appPath]):
         return False
-
-    # TODO: this step might require notarisation
-    utils.system(["spctl", "-a", "-t", "exec", "-vv", appPath])
     return True
 
 
@@ -381,9 +378,12 @@ def __signMacPackage(packagePath: Path, scope: _MacSignScope):
         ):
             return False
 
-        # TODO: this step would require notarisation
+        if CraftCore.settings.get("CodeSigning", "MacAppleID", None):
+            if not __notarizeMacPackage(packagePath):
+                return False
+
         # verify dmg signature
-        utils.system(
+        return utils.system(
             [
                 "spctl",
                 "-a",
@@ -411,9 +411,25 @@ def __signMacPackage(packagePath: Path, scope: _MacSignScope):
         ):
             return False
 
-        utils.moveFile(packagePathTmp, packagePath)
-
+        if not utils.moveFile(packagePathTmp, packagePath):
+            return False
+        if CraftCore.settings.get("CodeSigning", "MacAppleID", None):
+            if not __notarizeMacPackage(packagePath):
+                return False
     return True
+
+
+def __notarizeMacPackage(packagePath: Path):
+    devID = CraftCore.settings.get("CodeSigning", "MacDeveloperId")
+    appleID = CraftCore.settings.get("CodeSigning", "MacAppleID")
+    teamId = re.search(r"\((.*)\)", devID).group(1)
+    password = CraftChoicePrompt.promptForPassword(
+        message=f"Enter the app password for {appleID}",
+        key="MAC_APP_PASSWORD",
+    )
+    return utils.system(
+        ["xcrun", "notarytool", "submit", packagePath, "--wait", "--apple-id", appleID, "--team-id", teamId, "--password", password], secret=[password]
+    )
 
 
 def signMacPackage(packagePath: str):
