@@ -73,6 +73,8 @@ class CMakeBuildSystem(BuildSystemBase):
                 f"-DKDE_INSTALL_BUNDLEDIR={OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}/Applications/KDE",
                 "-DAPPLE_SUPPRESS_X11_WARNING=ON",
                 f"-DCMAKE_OSX_ARCHITECTURES={CraftCore.compiler.architecture.name.lower()}",
+                # we want to provide everything ourselves
+                "-DCMAKE_IGNORE_PREFIX_PATH=/opt/homebrew/",
             ]
         elif CraftCore.compiler.isLinux:
             # use the same lib dir on all distributions
