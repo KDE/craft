@@ -7,7 +7,7 @@ from Utils import CraftHash
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        for ver in ["3.3", "3.4.6"]:
+        for ver in ["3.3", "3.4.6", "3.4.7"]:
             self.targets[ver] = f"https://github.com/libffi/libffi/releases/download/v{ver}/libffi-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"libffi-{ver}"
         self.targetDigests["3.3"] = (["72fba7922703ddfa7a028d513ac15a85c8d54c8d67f55fa5a4802885dc652056"], CraftHash.HashAlgorithm.SHA256)
@@ -17,7 +17,7 @@ class subinfo(info.infoclass):
 
         self.webpage = "https://github.com/libffi/libffi/"
         self.description = "A portable foreign-function interface library."
-        self.defaultTarget = "3.4.6"
+        self.defaultTarget = "3.4.7"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = None
