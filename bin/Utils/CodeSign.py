@@ -28,7 +28,6 @@ import secrets
 import shlex
 import subprocess
 import tempfile
-from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Union
 
@@ -268,9 +267,6 @@ def __verifyMacApp(appPath: Path):
 
     if not utils.system(["codesign", "--verify", "--verbose", "--strict", "--deep", appPath]):
         return False
-
-    # TODO: this step might require notarisation
-    utils.system(["spctl", "-a", "-t", "exec", "-vv", appPath])
     return True
 
 
@@ -279,24 +275,14 @@ def __signMacApp(appPath: Path, scope: _MacSignScope):
     devID = CraftCore.settings.get("CodeSigning", "MacDeveloperId")
     bundlePattern = re.compile(r".*(\.app|\.framework)$", re.IGNORECASE)
     # get all bundles, as we specify handleAppBundleAsFile we will not yet get nested bundles
-
-    with ThreadPoolExecutor() as executor:
-
-        def signBundle(bundle):
-            return __signMacApp(Path(bundle), scope)
-
-        for result in executor.map(
-            signBundle,
-            utils.filterDirectoryContent(
-                appPath,
-                whitelist=lambda x, root: bundlePattern.match(x.path),
-                blacklist=lambda x, root: True,
-                handleAppBundleAsFile=True,
-            ),
-        ):
-            if not result:
-                executor.shutdown(cancel_futures=True)
-                return False
+    for bun in utils.filterDirectoryContent(
+        appPath,
+        whitelist=lambda x, root: bundlePattern.match(x.path),
+        blacklist=lambda x, root: True,
+        handleAppBundleAsFile=True,
+    ):
+        if not __signMacApp(Path(bun), scope):
+            return False
 
     # all files in the bundle
     def bundeFilter(x, root):
@@ -392,9 +378,12 @@ def __signMacPackage(packagePath: Path, scope: _MacSignScope):
         ):
             return False
 
-        # TODO: this step would require notarisation
+        if CraftCore.settings.get("CodeSigning", "MacAppleID", ""):
+            if not __notarizeMacPackage(packagePath):
+                return False
+
         # verify dmg signature
-        utils.system(
+        return utils.system(
             [
                 "spctl",
                 "-a",
@@ -422,9 +411,25 @@ def __signMacPackage(packagePath: Path, scope: _MacSignScope):
         ):
             return False
 
-        utils.moveFile(packagePathTmp, packagePath)
-
+        if not utils.moveFile(packagePathTmp, packagePath):
+            return False
+        if CraftCore.settings.get("CodeSigning", "MacAppleID", ""):
+            if not __notarizeMacPackage(packagePath):
+                return False
     return True
+
+
+def __notarizeMacPackage(packagePath: Path):
+    devID = CraftCore.settings.get("CodeSigning", "MacDeveloperId")
+    appleID = CraftCore.settings.get("CodeSigning", "MacAppleID")
+    teamId = re.search(r"\((.*)\)", devID).group(1)
+    password = CraftChoicePrompt.promptForPassword(
+        message=f"Enter the app password for {appleID}",
+        key="MAC_APP_PASSWORD",
+    )
+    return utils.system(
+        ["xcrun", "notarytool", "submit", packagePath, "--wait", "--apple-id", appleID, "--team-id", teamId, "--password", password], secret=[password]
+    )
 
 
 def signMacPackage(packagePath: str):
