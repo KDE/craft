@@ -367,7 +367,7 @@ def __signMacPackage(packagePath: Path, scope: _MacSignScope):
         ):
             return False
 
-        if CraftCore.settings.get("CodeSigning", "MacAppleID", None):
+        if CraftCore.settings.get("CodeSigning", "MacAppleID", ""):
             if not __notarizeMacPackage(packagePath):
                 return False
 
@@ -402,7 +402,7 @@ def __signMacPackage(packagePath: Path, scope: _MacSignScope):
 
         if not utils.moveFile(packagePathTmp, packagePath):
             return False
-        if CraftCore.settings.get("CodeSigning", "MacAppleID", None):
+        if CraftCore.settings.get("CodeSigning", "MacAppleID", ""):
             if not __notarizeMacPackage(packagePath):
                 return False
     return True
