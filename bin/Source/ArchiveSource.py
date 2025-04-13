@@ -234,6 +234,7 @@ class ArchiveSource(SourceBase):
 
         # make a temporary directory so the original packages don't overwrite the already existing ones
         with tempfile.TemporaryDirectory() as tmpdir:
+            tmpdir = Path(tmpdir)
             _patchName = f"{self.package.name}-{self.buildTarget}-{str(datetime.date.today()).replace('-', '')}.diff"
 
             # unpack all packages
@@ -257,8 +258,8 @@ class ArchiveSource(SourceBase):
                 ):
                     return False
 
-            srcSubDir = os.path.relpath(self.sourceDir(), self.workDir())
-            tmpSourceDir = os.path.join(tmpdir, srcSubDir)
+            srcSubDir = self.sourceDir().relative_to(self.workDir())
+            tmpSourceDir = tmpdir / srcSubDir
             with io.BytesIO() as out:
                 ignores = []
                 for x in [
@@ -273,7 +274,7 @@ class ArchiveSource(SourceBase):
 
                 # TODO: actually we should not accept code 2
                 if not utils.system(
-                    ["diff", "-Nrub"] + ignores + [tmpSourceDir, self.sourceDir()],
+                    ["diff", "-Nrub"] + ignores + [tmpSourceDir.as_posix(), self.sourceDir().as_posix()],
                     stdout=out,
                     acceptableExitCodes=[0, 1, 2],
                     cwd=destdir,
@@ -281,8 +282,8 @@ class ArchiveSource(SourceBase):
                     return False
                 patchContent = out.getvalue()
             # make the patch a -p1 patch
-            patchContent = patchContent.replace(tmpSourceDir.encode(), f"{srcSubDir}.orig".encode())
-            patchContent = patchContent.replace(str(self.sourceDir()).encode(), srcSubDir.encode())
+            patchContent = patchContent.replace(tmpSourceDir.as_posix().encode(), f"{srcSubDir.as_posix()}.orig".encode())
+            patchContent = patchContent.replace(self.sourceDir().as_posix().encode(), srcSubDir.as_posix().encode())
             patchPath = os.path.join(self.blueprintDir(), _patchName)
             with open(patchPath, "wb") as out:
                 out.write(patchContent)
