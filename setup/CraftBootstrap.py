@@ -198,15 +198,15 @@ def run(args, command):
             exit(1)
 
 
-def getABI(args, qtMajorVersion):
+def getABI(args):
     arch = "x86_64"
     abi = None
     if CraftBootstrap.isWin():
         platform = "windows"
-        msvcVer = "Microsoft Visual Studio 2019" if qtMajorVersion == "5" else "Microsoft Visual Studio 2022"
+        msvcVer = "Microsoft Visual Studio 2022"
         abi, compiler = CraftBootstrap.promptForChoice(
             "Select compiler",
-            [("Mingw-w64", (None, "gcc")), (msvcVer, ("msvc2019" if qtMajorVersion == "5" else "msvc2022", "cl"))],
+            [("Mingw-w64", (None, "gcc")), (msvcVer, ("msvc2022", "cl"))],
             msvcVer,
             returnDefaultWithoutPrompt=args.use_defaults,
         )
@@ -297,18 +297,7 @@ def setUp(args):
 
     print("Welcome to the Craft setup wizard!")
     print(f"Craft will be installed to: {args.prefix}")
-    qtMajorVersion = CraftBootstrap.promptForChoice(
-        "Select the version of Qt you want to use (Craft can't mix Qt5 and Qt6). This will change the cache version used by craft",
-        [("Qt5", "5"), ("Qt6", "6")],
-        default="Qt6",
-        returnDefaultWithoutPrompt=args.use_defaults,
-    )
-    if qtMajorVersion == "5":
-        args.branch = "qt5-lts"
-        shelf["craft/craft-core"].version = "qt5-lts"
-        shelf["craft/craft-blueprints-kde"].version = "qt5-lts"
-
-    abi = getABI(args, qtMajorVersion)
+    abi = getABI(args)
 
     shortPath, installShortCut = windowsSetup()
 
@@ -357,11 +346,8 @@ def setUp(args):
 
     boot.setSettingsValue("ShortPath", "JunctionDir", shortPath)
 
-    if qtMajorVersion == "6":
-        boot.setSettingsValue("General", "KFHostToolingVersion", "6")
-        boot.setSettingsValue("Packager", "RepositoryUrl", "https://files.kde.org/craft/Qt6/")
-    else:
-        boot.setSettingsValue("Packager", "RepositoryUrl", "https://files.kde.org/craft/Qt5/")
+    boot.setSettingsValue("General", "KFHostToolingVersion", "6")
+    boot.setSettingsValue("Packager", "RepositoryUrl", "https://files.kde.org/craft/Qt6/")
 
     boot.writeSettings()
 
