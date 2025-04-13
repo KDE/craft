@@ -3,7 +3,6 @@
 # SPDX-FileCopyrightText: 2025 Julius Künzel <julius.kuenzel@kde.org>
 import info
 import utils
-from BuildSystem.BuildSystemBase import BuildSystemBase
 from CraftCore import CraftCore
 from Package.PipPackageBase import PipPackageBase
 
