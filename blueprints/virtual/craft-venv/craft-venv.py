@@ -51,6 +51,3 @@ class Package(PipPackageBase):
         else:
             CraftCore.log.info(f"venv at {venvPath} does already exist, nothing to do")
         return True
-
-    def qmerge(self):
-        return BuildSystemBase.postQmerge(self)
