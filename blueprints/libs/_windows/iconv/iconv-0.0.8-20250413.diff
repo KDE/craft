@@ -1,0 +1,12 @@
+diff -Nrub -x '*~' -x '*.rej' -x '*.orig' -x '*.o' -x '*.pyc' -x CMakeLists.txt.user win-iconv-0.0.8.orig/iconv.h win-iconv-0.0.8/iconv.h
+--- win-iconv-0.0.8.orig/iconv.h	2016-01-31 01:49:42.000000000 +0100
++++ win-iconv-0.0.8/iconv.h	2025-04-13 13:36:40.065956700 +0100
+@@ -5,7 +5,7 @@
+ # ifdef ICONV_CONST
+ #  define WINICONV_CONST ICONV_CONST
+ # else
+-#  define WINICONV_CONST const
++#  define WINICONV_CONST
+ # endif
+ #endif
+ #ifdef __cplusplus

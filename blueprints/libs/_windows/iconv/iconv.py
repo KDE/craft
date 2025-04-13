@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.targets[ver] = f"https://github.com/win-iconv/win-iconv/archive/v{ver}.tar.gz"
             self.archiveNames[ver] = f"win-iconv-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"win-iconv-{ver}"
+        self.patchToApply["0.0.8"] = [("iconv-0.0.8-20250413.diff", 1)]
 
         self.targetDigests["0.0.8"] = (["23adea990a8303c6e69e32a64a30171efcb1b73824a1c2da1bbf576b0ae7c520"], CraftHash.HashAlgorithm.SHA256)
 
