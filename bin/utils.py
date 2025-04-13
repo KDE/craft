@@ -45,6 +45,7 @@ from CraftCore import CraftCore
 from CraftDebug import deprecated
 from CraftOS.osutils import OsUtils
 from Utils.Arguments import Arguments
+from Utils.Dos2UnixFile import Dos2UnixFile
 from Utils.StageLogger import StageLogger
 
 
@@ -759,25 +760,27 @@ def putenv(name, value):
 
 def applyPatch(sourceDir, f, patchLevel="0"):
     """apply single patch"""
-    if os.path.isdir(f):
+    f = Path(f)
+    if f.is_dir():
         # apply a whole dir of patches
         out = True
         with os.scandir(f) as scan:
             for patch in scan:
                 if patch.is_file() and not patch.name.startswith("."):
-                    out = applyPatch(sourceDir, os.path.join(f, patch), patchLevel) and out
+                    out = applyPatch(sourceDir, f / patch, patchLevel) and out
         return out
-    cmd = [
-        "patch",
-        "--ignore-whitespace",
-        "-d",
-        sourceDir,
-        "-p",
-        str(patchLevel),
-        "-i",
-        f,
-    ]
-    result = system(cmd)
+    with Dos2UnixFile(f) as unixFile:
+        cmd = [
+            "patch",
+            "--ignore-whitespace",
+            "-d",
+            Path(sourceDir).as_posix(),
+            "-p",
+            str(patchLevel),
+            "-i",
+            unixFile
+        ]
+        result = system(cmd)
     if not result:
         CraftCore.log.warning(f"applying {f} failed!")
     return result

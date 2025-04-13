@@ -37,6 +37,8 @@ from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftCore import CraftCore
 from Source.VersionSystemSourceBase import VersionSystemSourceBase
 from Utils.CraftShortPath import CraftShortPath
+from Utils.Dos2UnixFile import Dos2UnixFile
+
 
 # \todo requires installed git package -> add suport for installing packages
 
@@ -208,11 +210,8 @@ class GitSource(VersionSystemSourceBase):
                         out = self.applyPatch(patchfile / patch, patchdepth=patchdepth) and out
             return out
         CraftCore.log.info(f"git apply {patchfile}")
-        with tempfile.TemporaryDirectory() as tmp:
-            tmpPatch = Path(tmp) / patchfile.name
-            with patchfile.open("rt", newline=None) as patch, tmpPatch.open("wt", newline="\n") as tmpFile:
-                tmpFile.write(patch.read())
-            patchArgs = ["--ignore-space-change", "--verbose", "-p", str(patchdepth), tmpPatch]
+        with Dos2UnixFile(patchfile) as unixFile:
+            patchArgs = ["--ignore-space-change", "--verbose", "-p", str(patchdepth), unixFile]
             if self.__git("apply", ["--check", "--reverse"] + patchArgs, logCommand=True):
                 return True
             return self.__git("apply", patchArgs, logCommand=True)
