@@ -804,9 +804,7 @@ def notify(title, message, alertClass=None, log=True):
     if log:
         CraftCore.debug.step(f"{title}: {message}")
     default = ""
-    if CraftCore.compiler.isWindows:
-        default = "SnoreToast"
-    elif CraftCore.compiler.isMacOS:
+    if CraftCore.compiler.isMacOS:
         default = "TerminalNotifier"
     backends = CraftCore.settings.getList("General", "Notify", default)
 
