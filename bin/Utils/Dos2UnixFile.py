@@ -4,12 +4,12 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+
 class Dos2UnixFile(object):
-    def __init__(self, filePath : Path):
+    def __init__(self, filePath: Path):
         self.filePath = filePath
         self._tmp = None
         self._unixFilePath = None
-
 
     @property
     def unixFilePath(self) -> Path:

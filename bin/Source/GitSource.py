@@ -29,7 +29,6 @@ import datetime
 # git support
 import io
 import os
-import tempfile
 from pathlib import Path
 
 import utils
@@ -38,7 +37,6 @@ from CraftCore import CraftCore
 from Source.VersionSystemSourceBase import VersionSystemSourceBase
 from Utils.CraftShortPath import CraftShortPath
 from Utils.Dos2UnixFile import Dos2UnixFile
-
 
 # \todo requires installed git package -> add suport for installing packages
 
