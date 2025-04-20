@@ -401,14 +401,18 @@ class BuildSystemBase(CraftBase):
                 sym.symlink_to(os.path.relpath(target, sym.parent))
 
         # a post install routine to fix the prefix (make things relocatable)
-        newPrefix = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
+        newPrefix = CraftCore.standardDirs.craftRoot().as_posix()
         oldPrefixes = [self.subinfo.buildPrefix]
         if CraftCore.compiler.isWindows:
-            oldPrefixes += [OsUtils.toMSysPath(self.subinfo.buildPrefix)]
+            oldPrefixes += [OsUtils.toMSysPath(self.subinfo.buildPrefix), str(Path(self.subinfo.buildPrefix))]
+
+        def isPipScript(x):
+            # handle special launcher exe that has a python script appended
+            return CraftCore.compiler.isWindows and (self.installDir() / "bin/Scripts") in Path(x).parents and utils.isBinary(x.path)
 
         files = utils.filterDirectoryContent(
             self.installDir(),
-            whitelist=lambda x, root: Path(x).suffix.lower() in BuildSystemBase.PatchableFile or utils.isScript(x),
+            whitelist=lambda x, root: Path(x).suffix.lower() in BuildSystemBase.PatchableFile or utils.isScript(x) or isPipScript(x),
             blacklist=lambda x, root: True,
         )
 
