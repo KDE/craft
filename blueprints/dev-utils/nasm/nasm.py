@@ -41,5 +41,5 @@ else:
     class Package(AutoToolsPackageBase):
         def __init__(self, **kwargs):
             super().__init__(**kwargs)
-            self.subinfo.options.make.supportsMultijob = not CraftCore.compiler.isWindows
+            self.subinfo.options.useShadowBuild = not CraftCore.compiler.isWindows
             self.subinfo.options.configure.autoreconf = False
