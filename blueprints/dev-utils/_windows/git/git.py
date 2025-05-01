@@ -23,6 +23,7 @@
 # SUCH DAMAGE.
 
 import os
+from pathlib import Path
 
 import info
 import utils
@@ -50,6 +51,14 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-utils/7zip"] = None
         self.buildDependencies["dev-utils/wget"] = None
         self.buildDependencies["dev-utils/kshimgen"] = None
+
+    def locateGit(self) -> Path:
+        gitPath = CraftCore.cache.findApplication("git")
+        if not gitPath:
+            return None
+        if (CraftCore.standardDirs.craftRoot() / "dev-utils") in gitPath.parents:
+            return CraftCore.standardDirs.craftRoot() / "dev-utils/git/usr/bin"
+        return gitPath.parent
 
 
 class GitPackage(BinaryPackageBase):

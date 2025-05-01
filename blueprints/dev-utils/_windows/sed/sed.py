@@ -3,7 +3,7 @@
 
 import info
 import utils
-from CraftCore import CraftCore
+from Blueprints.CraftPackageObject import CraftPackageObject
 from Package.BinaryPackageBase import BinaryPackageBase
 
 
@@ -25,10 +25,7 @@ class Package(BinaryPackageBase):
         self.subinfo.options.package.disableBinaryCache = True
 
     def postInstall(self):
-        gitPath = CraftCore.cache.findApplication("git")
-        if not gitPath:
-            return False
-        gitPath = gitPath.parent
+        gitPath = CraftPackageObject.get("dev-utils/git").subinfo.locateGit()
 
         return utils.createShim(
             self.imageDir() / "dev-utils/bin/sed",
