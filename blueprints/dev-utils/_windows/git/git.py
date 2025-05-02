@@ -36,13 +36,13 @@ from Utils import CraftHash
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        ver = "2.38.1"
+        ver = "2.49.0"
         build = "1"
         self.targets[ver] = f"https://github.com/git-for-windows/git/releases/download/v{ver}.windows.{build}/PortableGit-{ver}-64-bit.7z.exe"
         self.archiveNames[ver] = f"PortableGit-{ver}-64-bit.7z"
         self.targetInstallPath[ver] = os.path.join("dev-utils", "git")
         self.targetDigests[ver] = (
-            ["cdcdb268aaed1dd2ac33d1dfdaf105369e3d7bd8d84d641d26d30b34e706b843"],
+            ["bc980a64e875304ea5aa88386fda37e8a0089d0f2023616b9995b1ca75b471dd"],
             CraftHash.HashAlgorithm.SHA256,
         )
         self.defaultTarget = ver
@@ -53,11 +53,11 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-utils/kshimgen"] = None
 
     def locateGit(self) -> Path:
+        if self.parent.package.isInstalled:
+            return CraftCore.standardDirs.craftRoot() / "dev-utils/git/bin"
         gitPath = CraftCore.cache.findApplication("git")
         if not gitPath:
             return None
-        if (CraftCore.standardDirs.craftRoot() / "dev-utils") in gitPath.parents:
-            return CraftCore.standardDirs.craftRoot() / "dev-utils/git/usr/bin"
         return gitPath.parent
 
 
