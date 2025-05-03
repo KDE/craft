@@ -53,11 +53,12 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-utils/kshimgen"] = None
 
     def locateGit(self) -> Path:
-        if self.parent.package.isInstalled:
-            return CraftCore.standardDirs.craftRoot() / "dev-utils/git/bin"
         gitPath = CraftCore.cache.findApplication("git")
         if not gitPath:
             return None
+        # check whether git is installed by the system or us
+        if (CraftCore.standardDirs.craftRoot() / "dev-utils") in gitPath.parents:
+            return CraftCore.standardDirs.craftRoot() / "dev-utils/git/bin"
         return gitPath.parent
 
 
