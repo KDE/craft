@@ -160,7 +160,7 @@ class SetupHelper(object):
         printRow("ABI", CraftCore.compiler)
         printRow("Download directory", CraftCore.standardDirs.downloadDir())
         printRow("Cache repository", ", ".join(CraftCore.settings.cacheRepositoryUrls()))
-        if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+        if not CraftCore.compiler.isAndroid and CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
             printRow("EnvironmentUpdated", SetupHelper._EnvironmentPopulated)
             for key in ["CC", "CXX"]:
                 printRow(key, f"{os.environ[key]!r} => {CraftCore.cache.findApplication(os.environ[key])}")

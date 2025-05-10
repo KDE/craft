@@ -1,11 +1,7 @@
-import os
-
 import info
-from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from Package.AutoToolsPackageBase import AutoToolsPackageBase
 from Package.BinaryPackageBase import BinaryPackageBase
-from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
@@ -13,30 +9,22 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
-        for ver in ["2.13.03", "2.14.02", "2.15.05"]:
+        for ver in ["2.16.03"]:
             if CraftCore.compiler.isMSVC():
-                self.targets[ver] = f"https://www.nasm.us/pub/nasm/releasebuilds/{ver}/win{CraftCore.compiler.bits}/nasm-{ver}-win{CraftCore.compiler.bits}.zip"
+                self.targets[ver] = f"https://files.kde.org/craft/3rdparty/nasm/{ver}/nasm-{ver}-win64.zip"
+                self.targetDigestUrls[ver] = f"https://files.kde.org/craft/3rdparty/nasm/{ver}/nasm-{ver}-win64.zip.sha256"
             else:
-                self.targets[ver] = f"https://www.nasm.us/pub/nasm/releasebuilds/{ver}/nasm-{ver}.tar.bz2"
+                self.targets[ver] = f"https://files.kde.org/craft/3rdparty/nasm/{ver}/nasm-{ver}.tar.xz"
+                self.targetDigestUrls[ver] = f"https://files.kde.org/craft/3rdparty/nasm/{ver}/nasm-{ver}.tar.xz.sha256"
 
             self.targetInstSrc[ver] = f"nasm-{ver}"
             if CraftCore.compiler.isMSVC():
-                self.targetInstallPath[ver] = os.path.join("dev-utils", "bin")
+                self.targetInstallPath[ver] = "dev-utils/bin"
             else:
                 self.targetInstallPath[ver] = "dev-utils"
-
-        if CraftCore.compiler.isMSVC():
-            if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64:
-                self.targetDigests["2.14.02"] = (["18918ac906e29417b936466e7a2517068206c8db8c04b9762a5befa18bfea5f0"], CraftHash.HashAlgorithm.SHA256)
-                self.targetDigests["2.15.05"] = (["f5c93c146f52b4f1664fa3ce6579f961a910e869ab0dae431bd871bdd2584ef2"], CraftHash.HashAlgorithm.SHA256)
-            else:
-                self.targetDigests["2.15.05"] = (["258c7d1076e435511cf2fdf94e2281eadbdb9e3003fd57f356f446e2bce3119e"], CraftHash.HashAlgorithm.SHA256)
-        else:
-            self.targetDigests["2.15.05"] = (["3c4b8339e5ab54b1bcb2316101f8985a5da50a3f9e504d43fa6f35668bee2fd0"], CraftHash.HashAlgorithm.SHA256)
-
         self.description = "This is NASM - the famous Netwide Assembler"
         self.webpage = "https://www.nasm.us/"
-        self.defaultTarget = "2.15.05"
+        self.defaultTarget = "2.16.03"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
@@ -53,4 +41,5 @@ else:
     class Package(AutoToolsPackageBase):
         def __init__(self, **kwargs):
             super().__init__(**kwargs)
+            self.subinfo.options.useShadowBuild = not CraftCore.compiler.isWindows
             self.subinfo.options.configure.autoreconf = False
