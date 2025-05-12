@@ -38,11 +38,12 @@ class infoclass(object):
         self.shelveAble = True
         self.targets = {}
         self.archiveNames = {}
-        # Specifiy that the fetched source should be placed into a
+        # Specify that the fetched source should be placed into a
         # subdirectory of the default source directory
         self.targetInstSrc = {}
         # Specifiy that the default source directory should have a suffix after
         # the package name. This is usefull for package which needs different sources.
+        # cvs based sources only
         self.targetSrcSuffix = {}
         self.targetConfigurePath = {}
         self.targetInstallPath = {}
