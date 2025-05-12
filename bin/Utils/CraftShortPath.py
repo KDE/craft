@@ -88,8 +88,7 @@ class CraftShortPath(object):
             if not utils.system(["subst"], stdout=tmp, logCommand=False):
                 CraftCore.debug.log.critical(f"Could not create shortpath {drive}, for {longPath}. Failed to list substituted paths.")
                 return longPath
-            lines = filter(None, tmp.getvalue().strip().split("\r\n"))
-            drives = dict(line.split(": =>") for line in lines) if lines else {}
+            drives = dict(line.split(": =>") for line in filter(None, tmp.getvalue().strip().split("\r\n")))
         if str(drive) in drives:
             if drives[str(drive)] == longPath:
                 return drive
