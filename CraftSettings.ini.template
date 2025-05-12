@@ -126,6 +126,10 @@ KDE_L10N_AUTO_TRANSLATIONS = OFF
 ## Defaults to CurrentDirve:\_
 #JunctionDir=
 
+## Windows only
+## A drive letter which is used to "mount" directories to in order to shorten the build path.
+#DriveLetter = Z:/
+
 [Blueprints]
 ## The location where the default blueprints are stored
 ## This is especially useful when using multiple Craft setups

@@ -1,7 +1,10 @@
+import io
 import os
 import subprocess
 import zlib
+from pathlib import Path
 
+import utils
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 
@@ -14,7 +17,7 @@ class CraftShortPath(object):
         self._longPath = path
         self._shortPath = None  # type: Path
         if not createShortPath:
-            self._createShortPathLambda = CraftShortPath._createShortPath
+            self._createShortPathLambda = CraftShortPath.createJunctionShortPath
         else:
             self._createShortPathLambda = createShortPath
 
@@ -38,7 +41,7 @@ class CraftShortPath(object):
         return self._shortPath
 
     @staticmethod
-    def _createShortPath(longPath) -> str:
+    def createJunctionShortPath(longPath) -> Path:
         if not CraftShortPath._useShortpaths:
             return longPath
         import utils
@@ -73,3 +76,27 @@ class CraftShortPath(object):
                 return longPath
         CraftCore.debug.log.debug(f"Mapped \n" f"{longPath} to\n" f"{path}, gained {delta}")
         return path
+
+    @staticmethod
+    def createSubstShortPath(longPath) -> Path:
+        drive = CraftCore.settings.get("ShortPath", "DriveLetter", None)
+        if not drive:
+            raise Exception("Please specify a drive letter, for drive based short paths")
+        # ensure we end on /
+        drive = Path(drive) / "/"
+        with io.StringIO() as tmp:
+            if not utils.system(["subst"], stdout=tmp, logCommand=False):
+                CraftCore.debug.log.critical(f"Could not create shortpath {drive}, for {longPath}. Failed to list substituted paths.")
+                return longPath
+            drives = dict(line.split(": =>") for line in tmp.getvalue().strip().split("\r\n"))
+        if str(drive) in drives:
+            if drives[str(drive)] == longPath:
+                return drive
+            else:
+                if not utils.system(["subst", "/D", drive.drive], stdout=subprocess.DEVNULL, logCommand=False):
+                    CraftCore.debug.log.critical(f"Could not create shortpath {drive}, for {longPath}. Failed to unset substituted path.")
+                    return longPath
+        if not utils.system(["subst", drive.drive, longPath], stdout=subprocess.DEVNULL, logCommand=False):
+            CraftCore.debug.log.critical(f"Could not create shortpath {drive}, for {longPath}. Failed to substitute path.")
+            return longPath
+        return drive
