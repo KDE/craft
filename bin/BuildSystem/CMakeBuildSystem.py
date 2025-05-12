@@ -152,7 +152,7 @@ class CMakeBuildSystem(BuildSystemBase):
             options += self.subinfo.options.configure.staticArgs
 
         options += [BuildSystemBase.configureOptions(self)]
-        options += ["-S", self.configureSourceDir()]
+        options += ["-B", self.buildDir(), "-S", self.configureSourceDir()]
         return options
 
     def configure(self, defines=""):
