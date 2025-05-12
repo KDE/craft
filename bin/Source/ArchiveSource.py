@@ -177,6 +177,11 @@ class ArchiveSource(SourceBase):
             )
         return True
 
+    def sourceDir(self, dummyIndex=0) -> Path:
+        if self.subinfo.options.unpack.renameSourceDir:
+            return self.workDir() / "src"
+        return super().sourceDir(dummyIndex)
+
     def unpack(self):
         """unpacking all zipped(gz, zip, bz2) tarballs"""
         CraftCore.log.debug("ArchiveSource.unpack called")
@@ -205,7 +210,9 @@ class ArchiveSource(SourceBase):
             else:
                 if not utils.unpackFile(self.__downloadDir, filename, self.workDir(), keepSymlinksOnWindows=self.subinfo.options.unpack.keepSymlinksOnWindows):
                     return False
-
+            if self.subinfo.options.unpack.renameSourceDir:
+                if not utils.moveFile(super().sourceDir(), self.sourceDir()):
+                    return False
         return self.applyPatches()
 
     def getUrls(self):

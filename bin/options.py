@@ -446,6 +446,8 @@ class OptionsUnpack(OptionsBase):
         # CMake on Windows still has no proper support for symlinks, so we replace them with copies
         # The option is only supported on Windows
         self.keepSymlinksOnWindows = False
+        # archive src, rename the src dir to workaround long path issues
+        self.renameSourceDir = False
 
 
 # options for the configure action
