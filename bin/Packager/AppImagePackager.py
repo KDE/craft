@@ -7,6 +7,7 @@ from CraftBase import InitGuard
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from Packager.CollectionPackagerBase import CollectionPackagerBase
+from Utils import CraftHash
 
 
 class AppImagePackager(CollectionPackagerBase):
@@ -148,4 +149,9 @@ class AppImagePackager(CollectionPackagerBase):
         if CraftCore.debug.verbose() > 0:
             args += ["-v0"]
         with utils.ScopedEnv(env):
-            return utils.system([self.linuxdeployExe] + args, cwd=self.packageDestinationDir())
+            if not utils.system([self.linuxdeployExe] + args, cwd=self.packageDestinationDir()):
+                return False
+        destDir, archiveName = os.path.split(defines["setupname"])
+        self._generateManifest(destDir, archiveName)
+        CraftHash.createDigestFiles(defines["setupname"])
+        return True
