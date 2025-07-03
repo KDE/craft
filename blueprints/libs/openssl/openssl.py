@@ -38,13 +38,7 @@ from Utils.Arguments import Arguments
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        # latest versions -> inside source/
-        for ver in ["1.1.1u", "1.1.1v"]:
-            self.targets[ver] = f"https://openssl.org/source/openssl-{ver}.tar.gz"
-            self.targetInstSrc[ver] = f"openssl-{ver}"
-            self.targetDigestUrls[ver] = ([f"https://openssl.org/source/openssl-{ver}.tar.gz.sha256"], CraftHash.HashAlgorithm.SHA256)
-
-        for ver in ["3.2.1", "3.3.1", "3.3.2", "3.4.0", "3.4.1"]:
+        for ver in ["3.2.1", "3.3.1", "3.3.2", "3.4.0", "3.4.1", "3.5.1"]:
             self.targets[ver] = f"https://openssl.org/source/openssl-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"openssl-{ver}"
             self.targetDigestUrls[ver] = ([f"https://openssl.org/source/openssl-{ver}.tar.gz.sha256"], CraftHash.HashAlgorithm.SHA256)
@@ -73,7 +67,7 @@ class subinfo(info.infoclass):
             f"--openssldir={OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}/etc/ssl",
         ]
 
-        self.defaultTarget = "3.4.1"
+        self.defaultTarget = "3.5.1"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
