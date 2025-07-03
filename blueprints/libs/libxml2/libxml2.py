@@ -19,6 +19,9 @@ class subinfo(info.infoclass):
         ]
         self.patchLevel["2.10.3"] = 3
 
+        self.patchToApply["2.14.4"] = [(".2.14.4", 1)]
+        self.patchLevel["2.14.4"] = 1
+
         self.description = "XML C parser and toolkit (runtime and applications)"
         self.defaultTarget = "2.14.4"
 
@@ -37,7 +40,8 @@ class Package(CMakePackageBase):
             "-DLIBXML2_WITH_PYTHON=OFF",
             f"-DLIBXML2_WITH_ICU={self.subinfo.options.isActive('libs/icu').asOnOff}",
             f"-DLIBXML2_WITH_LZMA={self.subinfo.options.isActive('libs/liblzma').asOnOff}",
-            f"-DLIBXML2_WITH_ICONV={self.subinfo.options.isActive('libs/iconv').asOnOff}",
+            # we use the system iconv on macOS
+            f"-DLIBXML2_WITH_ICONV={(self.subinfo.options.isActive('libs/iconv') or CraftCore.compiler.isMacOS).asOnOff}",
         ]
         if CraftCore.compiler.isAndroid:
             self.subinfo.options.configure.args += ["-DLIBXML2_WITH_PROGRAMS=OFF", "-DLIBXML2_WITH_TESTS=OFF"]

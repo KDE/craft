@@ -1,0 +1,39 @@
+From 477f9c6b20ef4a0745aefe735e9ebc7573a4fdae Mon Sep 17 00:00:00 2001
+From: Markus Rickert <markus.rickert@uni-bamberg.de>
+Date: Wed, 18 Jun 2025 13:48:55 +0200
+Subject: [PATCH] Fix CMake iconv handling after change to private dependency
+
+---
+ CMakeLists.txt          | 2 +-
+ libxml2-config.cmake.in | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 834f10789..ab3d0d245 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -347,7 +347,7 @@ if(WIN32)
+ endif()
+ 
+ if(LIBXML2_WITH_ICONV)
+-    target_link_libraries(LibXml2 PUBLIC Iconv::Iconv)
++    target_link_libraries(LibXml2 PRIVATE Iconv::Iconv)
+     if(NOT Iconv_IS_BUILT_IN)
+         set(ICONV_LIBS "-liconv")
+     endif()
+diff --git a/libxml2-config.cmake.in b/libxml2-config.cmake.in
+index 4e5453999..b70eb1ddf 100644
+--- a/libxml2-config.cmake.in
++++ b/libxml2-config.cmake.in
+@@ -55,7 +55,7 @@ if(NOT LIBXML2_SHARED)
+     if(LIBXML2_WITH_ICONV)
+         find_dependency(Iconv)
+         list(APPEND LIBXML2_LIBRARIES    ${Iconv_LIBRARIES})
+-        list(APPEND LIBXML2_INTERFACE_LINK_LIBRARIES "Iconv::Iconv")
++        list(APPEND LIBXML2_INTERFACE_LINK_LIBRARIES "\$<LINK_ONLY:Iconv::Iconv>")
+         if(NOT Iconv_FOUND)
+             set(${CMAKE_FIND_PACKAGE_NAME}_FOUND FALSE)
+             set(${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE "Iconv dependency was not found")
+-- 
+GitLab
+
