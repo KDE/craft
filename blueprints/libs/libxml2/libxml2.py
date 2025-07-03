@@ -6,11 +6,12 @@ from Utils import CraftHash
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        for ver in ["2.10.3", "2.12.7"]:
+        for ver in ["2.10.3", "2.12.7", "2.14.4"]:
             self.targets[ver] = f"https://download.gnome.org/sources/libxml2/{'.'.join(ver.split('.')[:-1])}/libxml2-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"libxml2-{ver}"
         self.targetDigests["2.10.3"] = (["5d2cc3d78bec3dbe212a9d7fa629ada25a7da928af432c93060ff5c17ee28a9c"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["2.12.7"] = (["24ae78ff1363a973e6d8beba941a7945da2ac056e19b53956aeb6927fd6cfb56"], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigests["2.14.4"] = (["24175ec30a97cfa86bdf9befb7ccf4613f8f4b2713c5103e0dd0bc9c711a2773"], CraftHash.HashAlgorithm.SHA256)
         self.patchToApply["2.10.3"] = [
             ("libxml2-2.10.3-20221105.diff", 1),
             ("libxml2-2.10.3-20221114.diff", 1),
@@ -19,7 +20,7 @@ class subinfo(info.infoclass):
         self.patchLevel["2.10.3"] = 3
 
         self.description = "XML C parser and toolkit (runtime and applications)"
-        self.defaultTarget = "2.12.7"
+        self.defaultTarget = "2.14.4"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
@@ -34,8 +35,9 @@ class Package(CMakePackageBase):
         super().__init__(**kwargs)
         self.subinfo.options.configure.args += [
             "-DLIBXML2_WITH_PYTHON=OFF",
-            f"-DLIBXML2_WITH_ICU={'ON' if self.subinfo.options.isActive('libs/icu') else 'OFF'}",
-            f"-DLIBXML2_WITH_LZMA={'ON' if self.subinfo.options.isActive('libs/liblzma') else 'OFF'}",
+            f"-DLIBXML2_WITH_ICU={self.subinfo.options.isActive('libs/icu').asOnOff}",
+            f"-DLIBXML2_WITH_LZMA={self.subinfo.options.isActive('libs/liblzma').asOnOff}",
+            f"-DLIBXML2_WITH_ICONV={self.subinfo.options.isActive('libs/iconv').asOnOff}",
         ]
         if CraftCore.compiler.isAndroid:
-            self.subinfo.options.configure.args += ["-DLIBXML2_WITH_ICONV=OFF", "-DLIBXML2_WITH_PROGRAMS=OFF", "-DLIBXML2_WITH_TESTS=OFF"]
+            self.subinfo.options.configure.args += ["-DLIBXML2_WITH_PROGRAMS=OFF", "-DLIBXML2_WITH_TESTS=OFF"]
