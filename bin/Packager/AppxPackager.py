@@ -253,6 +253,7 @@ class AppxPackager(CollectionPackagerBase):
 
         publisher = []
         appendToPublisherString(publisher, "CN", "CommonName")
+        appendToPublisherString(publisher, "OU", "OrganizationalUnit")
         appendToPublisherString(publisher, "O", "Organization")
         appendToPublisherString(publisher, "STREET", "Street")
         appendToPublisherString(publisher, "L", "Locality")
