@@ -35,7 +35,13 @@ class Package(BinaryPackageBase):
         if CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
             args = ["-arch", CraftCore.compiler.hostArchitecture.name.lower(), str(appPath)]
             appPath = "arch"
-        return utils.createShim(self.imageDir() / f"dev-utils/bin/7za{CraftCore.compiler.executableSuffix}", appPath, useAbsolutePath=True, args=args)
+
+        # on Windows, we expect the file to be called 7za, the same applies to craft itself.
+        # on Unix most apps expect 7zz, create both for compatibility
+        for alias in ["7za", "7zz"]:
+            if not utils.createShim(self.imageDir() / f"dev-utils/bin/{alias}{CraftCore.compiler.executableSuffix}", appPath, useAbsolutePath=True, args=args):
+                return False
+        return True
 
     def postQmerge(self):
         CraftCore.cache.clear()

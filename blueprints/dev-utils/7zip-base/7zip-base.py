@@ -8,11 +8,11 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotFreeBSD & CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
-        for ver in ["24.09"]:
+        for ver in ["24.09", "25.00"]:
             verNoDot = ver.replace(".", "")
             self.targetInstallPath[ver] = "dev-utils/7z"
             if CraftCore.compiler.isWindows:
-                self.targets[ver] = f"https://files.kde.org/craft/3rdparty/7zip/{verNoDot}/7z{verNoDot}-extra.zip"
+                self.targets[ver] = f"https://files.kde.org/craft/3rdparty/7zip/7z{verNoDot}-extra.tar.xz"
                 self.targetInstSrc[ver] = f"7z{verNoDot}-extra"
                 self.targetDigestUrls[ver] = self.targets[ver] + ".sha256"
             elif CraftCore.compiler.isLinux:
@@ -24,7 +24,7 @@ class subinfo(info.infoclass):
                 self.targets[ver] = f"https://7-zip.org/a/7z{verNoDot}-mac.tar.xz"
         self.description = "7-Zip is a file archiver with a high compression ratio."
         self.webpage = "http://www.7-zip.org/"
-        self.defaultTarget = "24.09"
+        self.defaultTarget = "25.00"
 
 
 class Package(BinaryPackageBase):
