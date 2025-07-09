@@ -450,7 +450,9 @@ class SetupHelper(object):
                 out = self._getOutput("pkg-config --variable pc_path pkg-config", shell=True)
                 if out[0] == 0:
                     PKG_CONFIG_PATH.update(collections.OrderedDict.fromkeys(out[1].split(os.path.pathsep)))
-        self.prependEnvVar("PKG_CONFIG_PATH", os.path.pathsep.join(PKG_CONFIG_PATH.keys()))
+        # remove homebrew paths on macOS, and covert the dict to a list
+        PKG_CONFIG_PATH = [key for key in PKG_CONFIG_PATH if not (CraftCore.compiler.isMacOS and key.startswith("/opt/homebrew"))]
+        self.prependEnvVar("PKG_CONFIG_PATH", os.path.pathsep.join(PKG_CONFIG_PATH))
 
         self.prependEnvVar(
             "QT_PLUGIN_PATH",
