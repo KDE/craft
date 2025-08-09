@@ -22,7 +22,6 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-import glob
 import mimetypes
 import os
 import re
@@ -207,9 +206,10 @@ class AppxPackager(CollectionPackagerBase):
             defines.setdefault("executable", self.defines["shortcuts"][0]["target"])
         return defines
 
+    # we will nomalize the names in the Asset folder to the define name with a suffix
     def __prepareIcons(self, defines):
         utils.createDir(os.path.join(self.archiveDir(), "Assets"))
-        defines["logo"] = os.path.join("Assets", os.path.basename(defines["icon_png"]))
+        defines["logo"] = os.path.join("Assets", "icon_png.png")
         for propertyName, define, required in [
             ("Square150x150Logo", "icon_png", True),
             ("Square44x44Logo", "icon_png_44", True),
@@ -224,15 +224,16 @@ class AppxPackager(CollectionPackagerBase):
                     defines[define] = ""
                     continue
 
-            icon = defines[define]
-            defines[define] = f"{propertyName}=\"{os.path.join('Assets', os.path.basename(icon))}\""
-            names = glob.glob("{0}*{1}".format(*os.path.splitext(icon)))
-            if not names:
-                CraftCore.log.error(f"Failed to find {icon}")
+            # install with normalized define.png name
+            if not utils.copyFile(defines[define], os.path.join(self.archiveDir(), "Assets", f'{define}.png')):
                 return False
-            for n in names:
-                if not utils.copyFile(n, os.path.join(self.archiveDir(), "Assets", os.path.basename(n))):
-                    return False
+
+            # addititional install as unplated variant
+            if not utils.copyFile(defines[define], os.path.join(self.archiveDir(), "Assets", f'{define}.altform-unplated.png')):
+                return False
+
+            # we prefer the unplated ones
+            defines[define] = f"{propertyName}=\"{os.path.join('Assets', f'{define}.altform-unplated.png')}\""
         return True
 
     def __createAppX(self, defines) -> bool:
