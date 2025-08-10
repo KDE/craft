@@ -1,8 +1,9 @@
 import subprocess
+from typing import Optional
 
 
 class Arguments(object):
-    def __init__(self, args: list[str] = None):
+    def __init__(self, args: Optional[list[str]] = None):
         self.__args = []
         self.__legacyString = None
         if args:

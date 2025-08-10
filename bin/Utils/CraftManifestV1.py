@@ -1,5 +1,6 @@
 import collections
 import datetime
+from typing import Optional
 
 from CraftCore import CraftCore
 
@@ -121,7 +122,7 @@ class CraftManifest(object):
             out["packages"][compiler] = [x.toJson() for x in self.packages[compiler].values()]
         return out
 
-    def get(self, package: str, compiler: str = None) -> CraftManifestEntry:
+    def get(self, package: str, compiler: Optional[str] = None) -> CraftManifestEntry:
         if not compiler:
             compiler = str(CraftCore.compiler)
         if compiler not in self.packages:

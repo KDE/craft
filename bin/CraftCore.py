@@ -1,4 +1,5 @@
 import importlib
+from typing import Optional
 
 # Add imports that cause a cyclic dependency in a not taken branch to make code completion work
 if False:
@@ -20,9 +21,9 @@ class AutoImport(object):
         self,
         name: str,
         module: str,
-        className: str = None,
+        className: Optional[str] = None,
         function=None,
-        member: str = None,
+        member: Optional[str] = None,
     ) -> None:
         self.name = name
         self.module = module

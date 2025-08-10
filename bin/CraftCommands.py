@@ -30,6 +30,7 @@ import sys
 import tempfile
 from collections import OrderedDict, namedtuple
 from pathlib import Path
+from typing import Optional
 
 import CraftBase
 import utils
@@ -126,7 +127,7 @@ def handlePackage(package, buildAction, directTargets):
         return True
 
 
-def resolvePackage(packageNames: list[str], version: str = None) -> [CraftPackageObject]:
+def resolvePackage(packageNames: list[str], version: Optional[str] = None) -> [CraftPackageObject]:
     package = CraftPackageObject(None)
 
     def resolveChildren(child):

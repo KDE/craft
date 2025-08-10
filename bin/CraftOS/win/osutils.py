@@ -6,6 +6,7 @@ import tempfile
 import uuid
 from enum import IntFlag
 from pathlib import Path
+from typing import Optional
 
 import CraftOS.OsUtilsBase
 from CraftCore import CraftCore
@@ -121,7 +122,7 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
         return OsUtils.toWindowsPath(path)
 
     @staticmethod
-    def killProcess(name: str = "*", prefix: str = None) -> bool:
+    def killProcess(name: str = "*", prefix: Optional[str] = None) -> bool:
         import shells
 
         if not prefix:

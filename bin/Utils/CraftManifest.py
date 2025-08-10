@@ -5,6 +5,7 @@ import os
 import shutil
 from enum import Enum, auto, unique
 from pathlib import Path
+from typing import Optional
 
 import utils
 from CraftCompiler import CraftCompilerSignature
@@ -205,7 +206,7 @@ class CraftManifest(object):
             out["packages"][compiler] = [x.toJson() for x in self.packages[compiler].values()]
         return out
 
-    def get(self, package: str, compiler: str = None) -> CraftManifestEntry:
+    def get(self, package: str, compiler: Optional[str] = None) -> CraftManifestEntry:
         if not compiler:
             compiler = str(CraftCore.compiler)
         if compiler not in self.packages:
@@ -235,7 +236,7 @@ class CraftManifest(object):
         shutil.copy2(cacheFilePath, cacheFilePathTimed)
 
     @staticmethod
-    def load(manifestFileName: str, urls: list[str] = None):
+    def load(manifestFileName: str, urls: Optional[list[str]] = None):
         """
         Load a manifest.
         If a url is provided a manifest is fetch from that the url and merged with a local manifest.

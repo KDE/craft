@@ -30,6 +30,7 @@ import os
 import re
 import subprocess
 from pathlib import Path
+from typing import Optional
 
 import utils
 from Blueprints.CraftPackageObject import CraftPackageObject
@@ -192,7 +193,7 @@ class BuildSystemBase(CraftBase):
     def patchInstallPrefix(
         self,
         files: list[str],
-        oldPaths: list[Path] = None,
+        oldPaths: Optional[list[Path]] = None,
         newPath: Path = Path(CraftCore.standardDirs.craftRoot()),
     ) -> bool:
         if not isinstance(oldPaths, list):

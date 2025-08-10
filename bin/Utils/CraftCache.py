@@ -10,6 +10,7 @@ import time
 import urllib.error
 import urllib.request
 from pathlib import Path
+from typing import Optional
 
 from Blueprints.CraftVersion import CraftVersion
 from CraftCore import AutoImport, CraftCore
@@ -114,7 +115,7 @@ class CraftCache(object):
             return None
         return appLocation
 
-    def getCommandOutput(self, app: str, command: str, testName: str = None) -> tuple[int, str]:
+    def getCommandOutput(self, app: str, command: str, testName: Optional[str] = None) -> tuple[int, str]:
         if not testName:
             testName = f'"{app}" {command}'
         app = self.findApplication(app)

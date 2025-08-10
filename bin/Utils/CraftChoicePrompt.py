@@ -25,6 +25,7 @@
 import os
 import sys
 from collections import OrderedDict
+from typing import Optional
 
 # HACK for direct invocation, better provide a test scrip
 if __name__ == "__main__":
@@ -37,7 +38,7 @@ import utils
 from CraftCore import CraftCore
 
 
-def promptForChoice(title: str, choices: list, default: str = None):
+def promptForChoice(title: str, choices: list, default: Optional[str] = None):
     simpleMode = not isinstance(choices[0], tuple)
     if simpleMode:
         choices = OrderedDict.fromkeys(choices)
@@ -78,7 +79,7 @@ def promptForChoice(title: str, choices: list, default: str = None):
     return out
 
 
-def promptForPassword(message: str, key: str = None):
+def promptForPassword(message: str, key: Optional[str] = None):
     if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", True):
         if key:
             key = f"CRAFT_SECRET_{key}"
