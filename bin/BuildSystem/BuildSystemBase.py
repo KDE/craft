@@ -101,6 +101,7 @@ class BuildSystemBase(CraftBase):
             return "gmake"
         elif OsUtils.isUnix():
             return "make"
+        return ""
 
     def configureSourceDir(self):
         """returns source dir used for configure step"""

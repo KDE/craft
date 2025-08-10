@@ -170,6 +170,7 @@ class infoclass(object):
         """return local source path suffix for the recent target"""
         if self.buildTarget in self.targetSrcSuffix:
             return self.targetSrcSuffix[self.buildTarget]
+        return ""
 
     def hasTargetSourcePath(self) -> bool:
         """return true if relative path appendable to local source path is given for the recent target"""
@@ -179,6 +180,7 @@ class infoclass(object):
         """return relative path appendable to local source path for the recent target"""
         if self.buildTarget in self.targetInstSrc:
             return self.targetInstSrc[self.buildTarget]
+        return ""
 
     def hasConfigurePath(self) -> bool:
         """return true if relative path appendable to local source path is given for the recent target"""
@@ -188,6 +190,7 @@ class infoclass(object):
         """return relative path appendable to local source path for the recent target"""
         if (self.hasTarget() or self.hasSvnTarget()) and self.buildTarget in self.targetConfigurePath:
             return self.targetConfigurePath[self.buildTarget]
+        return ""
 
     def hasInstallPath(self) -> bool:
         """return true if relative path appendable to local install path is given for the recent target"""
@@ -198,6 +201,7 @@ class infoclass(object):
         if self.buildTarget in self.targetInstallPath:
             return self.targetInstallPath[self.buildTarget]
         CraftCore.log.critical("no install path for this build target defined")
+        return ""
 
     def hasPatches(self) -> bool:
         """return state for having patches for the recent target"""
