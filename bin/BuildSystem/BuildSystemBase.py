@@ -72,7 +72,7 @@ class BuildSystemBase(CraftBase):
         self.buildSystemType = typeName
 
     @property
-    def makeProgram(self) -> str:
+    def makeProgram(self) -> Optional[str]:
         if self.subinfo.options.make.supportsMultijob:
             if self.supportsNinja and CraftCore.settings.getboolean("Compile", "UseNinja", False) and CraftCore.cache.findApplication("ninja"):
                 return "ninja"
@@ -101,7 +101,7 @@ class BuildSystemBase(CraftBase):
             return "gmake"
         elif OsUtils.isUnix():
             return "make"
-        return ""
+        return None
 
     def configureSourceDir(self):
         """returns source dir used for configure step"""

@@ -9,6 +9,7 @@ import os
 # the definition
 from enum import Enum, unique
 from pathlib import Path
+from typing import Optional
 
 import VersionInfo
 from Blueprints.CraftPackageObject import BlueprintException, CraftPackageObject
@@ -166,11 +167,11 @@ class infoclass(object):
             return self.svnTargets[self.buildTarget]
         return ""
 
-    def targetSourceSuffix(self) -> str:
+    def targetSourceSuffix(self) -> Optional[str]:
         """return local source path suffix for the recent target"""
         if self.buildTarget in self.targetSrcSuffix:
             return self.targetSrcSuffix[self.buildTarget]
-        return ""
+        return None
 
     def hasTargetSourcePath(self) -> bool:
         """return true if relative path appendable to local source path is given for the recent target"""
@@ -186,11 +187,11 @@ class infoclass(object):
         """return true if relative path appendable to local source path is given for the recent target"""
         return self.buildTarget in self.targetConfigurePath
 
-    def configurePath(self) -> str:
+    def configurePath(self) -> Optional[str]:
         """return relative path appendable to local source path for the recent target"""
         if (self.hasTarget() or self.hasSvnTarget()) and self.buildTarget in self.targetConfigurePath:
             return self.targetConfigurePath[self.buildTarget]
-        return ""
+        return None
 
     def hasInstallPath(self) -> bool:
         """return true if relative path appendable to local install path is given for the recent target"""

@@ -246,6 +246,7 @@ class GitSource(VersionSystemSourceBase):
         sourcedir = Path(CraftShortPath(chkDir.parent).shortPath) / chkDir.name
 
         if self.subinfo.hasTargetSourcePath():
+            assert self.subinfo.targetSourcePath()
             sourcedir = sourcedir / self.subinfo.targetSourcePath()
 
         CraftCore.log.debug(f"using sourcedir: {sourcedir}")
