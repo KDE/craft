@@ -212,23 +212,24 @@ class BuildSystemBase(CraftBase):
                 content = f.read()
             dirty = False
             for oldPath in oldPaths:
+                oldPathStr = str(oldPath)
                 # absolute path or a msys path starting with a /
-                assert os.path.isabs(oldPath) or oldPath.startswith("/")
+                assert os.path.isabs(oldPathStr) or oldPathStr.startswith("/")
                 # allow front and backslashes
-                oldPathPat = oldPath.replace("/", r"[/\\]+")
+                oldPathPat = oldPathStr.replace("/", r"[/\\]+")
                 # capture firs seperator
                 oldPathPat = oldPathPat.replace(r"[/\\]+", r"(/+|\\+)", 1)
                 oldPathPat = f"({oldPathPat})"
                 oldPathPat = re.compile(oldPathPat.encode())
                 for match in set(oldPathPat.findall(content)):
                     dirty = True
-                    oldPath = match[0]
-                    newPath = newValue.replace(b"/", match[1])
-                    if oldPath != newPath:
-                        CraftCore.log.info(f"Patching {fileName}: replacing {oldPath} with {newPath}")
-                        content = content.replace(oldPath, newPath)
+                    oldPathStr = match[0]
+                    newPathStr = newValue.replace(b"/", match[1])
+                    if oldPathStr != newPathStr:
+                        CraftCore.log.info(f"Patching {fileName}: replacing {oldPathStr!r} with {newPathStr!r}")
+                        content = content.replace(oldPathStr, newPathStr)
                     else:
-                        CraftCore.log.debug(f"Skip Patching {fileName}:  prefix is unchanged {newPath}")
+                        CraftCore.log.debug(f"Skip Patching {fileName}:  prefix is unchanged {newPathStr!r}")
             if dirty:
                 with utils.makeTemporaryWritable(fileName):
                     with fileName.open("wb") as f:
