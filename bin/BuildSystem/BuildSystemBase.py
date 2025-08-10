@@ -197,7 +197,7 @@ class BuildSystemBase(CraftBase):
         oldPaths: Optional[list[Path]] = None,
         newPath: Path = Path(CraftCore.standardDirs.craftRoot()),
     ) -> bool:
-        if not isinstance(oldPaths, list):
+        if oldPaths and not isinstance(oldPaths, list):
             oldPaths = [oldPaths]
         elif not oldPaths:
             oldPaths = [self.subinfo.buildPrefix]

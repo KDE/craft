@@ -343,7 +343,7 @@ def signMacApp(appPath: Path):
         if customComand:
             CraftCore.log.info(f"Sign {appPath} with custom command")
             cmd = shlex.split(customComand)
-            cmd += [appPath]
+            cmd += [str(appPath)]
             if not utils.system(cmd):
                 return False
 
