@@ -179,12 +179,15 @@ class SetupHelper(object):
             self.addEnvVar(key, val)
 
     def prependEnvVar(self, key: str, var: str, sep: str = os.path.pathsep) -> None:
+        varList = []
         if not isinstance(var, list):
-            var = [var]
+            varList = [var]
+        else:
+            varList = var
         if key in os.environ:
-            env = var + os.environ[key].split(sep)
-            var = list(collections.OrderedDict.fromkeys(env))
-        val = sep.join([str(x) for x in var])
+            env = varList + os.environ[key].split(sep)
+            varList = list(collections.OrderedDict.fromkeys(env))
+        val = sep.join([str(x) for x in varList])
         CraftCore.log.debug(f"Setting {key}={val}")
         os.environ[key] = val
 
