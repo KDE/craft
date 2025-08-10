@@ -47,7 +47,7 @@ class CraftManifestEntryFile(object):
 class CraftManifestEntry(object):
     def __init__(self, name: str) -> None:
         self.name = name
-        self.files = []  # type: List[CraftManifestEntryFile]
+        self.files = []  # type: list[CraftManifestEntryFile]
 
     @staticmethod
     def fromJson(data: dict):

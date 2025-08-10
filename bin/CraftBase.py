@@ -7,6 +7,7 @@ import functools
 import os
 from pathlib import Path
 
+import info
 import utils
 from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftCore import CraftCore
@@ -55,7 +56,7 @@ class CraftBase(object):
 
         # ugly workaround we need to replace the constructor
         self.package = package
-        self.subinfo = self.package._Module.subinfo(self)  # type: info.infoclass
+        self.subinfo: info.infoclass = self.package._Module.subinfo(self)
 
         self.buildSystemType = None
 

@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # SPDX-FileCopyrightText: 2023 Hannah von Reth <vonreth@kde.org>
 
+import io
 import tempfile
 from contextlib import nullcontext
 
@@ -9,10 +10,10 @@ from CraftCore import CraftCore
 
 
 class StageLogger(object):
-    ActiveLogs = []  # type: List[StageLogger]
+    ActiveLogs = []  # type: list[StageLogger]
 
     def __init__(self, name: str, buffered: bool = False, outputOnFailure: bool = False):
-        self.__logFile = None  # type: io.TextIOBase
+        self.__logFile: io.TextIOBase = None
         self._logPath = (CraftCore.standardDirs.logDir() / name).with_suffix(".log")
         self.buffered = buffered
         # a log might be buffered but we want to persist it once we finished writing it

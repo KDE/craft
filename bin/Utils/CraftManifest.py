@@ -103,7 +103,7 @@ class CraftManifestBuild(object):
 class CraftManifestEntry(object):
     def __init__(self, name: str) -> None:
         self.name = name
-        self.build = []  # type: List[CraftManifestBuild]
+        self.build = []  # type: list[CraftManifestBuild]
 
     @staticmethod
     def fromJson(data: dict):
