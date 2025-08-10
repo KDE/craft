@@ -127,7 +127,7 @@ def handlePackage(package, buildAction, directTargets):
         return True
 
 
-def resolvePackage(packageNames: list[str], version: Optional[str] = None) -> [CraftPackageObject]:
+def resolvePackage(packageNames: list[str], version: Optional[str] = None) -> list[CraftPackageObject]:
     package = CraftPackageObject(None)
 
     def resolveChildren(child):

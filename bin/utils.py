@@ -1128,7 +1128,7 @@ def updateRpath(path: Path, oldRpath: set, newRpath: set):
     return True
 
 
-def regexFileFilter(filename: os.DirEntry, root: str, patterns: [re] = None) -> bool:
+def regexFileFilter(filename: os.DirEntry, root: str, patterns: list[re.Pattern] = None) -> bool:
     """return False if file does not match pattern"""
     # use linux style seperators
     relFilePath = Path(filename.path).relative_to(root).as_posix()

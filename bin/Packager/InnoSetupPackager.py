@@ -72,7 +72,7 @@ class InnoSetupPackager(PortablePackager):
         self.nsisExe = None
         self._isInstalled = False
 
-    def setDefaults(self, defines) -> {}:
+    def setDefaults(self, defines):
         defines = super().setDefaults(defines)
         defines.setdefault("srcdir", self.archiveDir())  # deprecated
         defines.setdefault("registry_keys", [])

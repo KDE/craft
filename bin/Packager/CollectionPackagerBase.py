@@ -41,7 +41,7 @@ from Utils import CodeSign
 from Utils.CraftManifest import FileType
 
 
-def toRegExp(fname, targetName) -> re:
+def toRegExp(fname, targetName) -> re.Pattern:
     """Read regular expressions from fname"""
     assert os.path.isabs(fname)
 
@@ -181,7 +181,7 @@ class CollectionPackagerBase(PackagerBase):
             CraftCore.log.debug(f"__getImageDirectories: package: {x}, version: {x.version}")
         return imageDirs
 
-    def read_whitelist(self, fname: str) -> re:
+    def read_whitelist(self, fname: str) -> re.Pattern:
         if not os.path.isabs(fname):
             fname = os.path.join(self.blueprintDir(), fname)
         """ Read regular expressions from fname """
@@ -190,7 +190,7 @@ class CollectionPackagerBase(PackagerBase):
         except Exception as e:
             raise BlueprintException(str(e), self.package)
 
-    def read_blacklist(self, fname: str) -> re:
+    def read_blacklist(self, fname: str) -> re.Pattern:
         if not os.path.isabs(fname):
             fname = os.path.join(self.blueprintDir(), fname)
         """ Read regular expressions from fname """
@@ -199,7 +199,7 @@ class CollectionPackagerBase(PackagerBase):
         except Exception as e:
             raise BlueprintException(str(e), self.package)
 
-    def whitelisted(self, filename: os.DirEntry, root: str, whiteList: Optional[list[re]] = None) -> bool:
+    def whitelisted(self, filename: os.DirEntry, root: str, whiteList: Optional[list[re.Pattern]] = None) -> bool:
         """return True if pathname is included in the pattern, and False if not"""
         if whiteList is None:
             whiteList = self.whitelist
@@ -209,7 +209,7 @@ class CollectionPackagerBase(PackagerBase):
         self,
         filename: os.DirEntry,
         root: str,
-        blackList: Optional[list[re]] = None,
+        blackList: Optional[list[re.Pattern]] = None,
         message: str = "blacklisted",
     ) -> bool:
         """return False if file is not blacklisted, and True if it is blacklisted"""
