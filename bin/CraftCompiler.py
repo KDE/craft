@@ -25,6 +25,7 @@ import os
 import platform
 import re
 from enum import Enum, IntFlag, auto, unique
+from typing import Optional
 
 from Blueprints.CraftVersion import CraftVersion
 from CraftCore import CraftCore
@@ -32,7 +33,7 @@ from Utils.CraftBool import CraftBool
 
 
 class CraftCompilerSignature(object):
-    def __init__(self, platform, compiler, abiString, architecture, sourceString: str = None) -> None:
+    def __init__(self, platform, compiler, abiString, architecture, sourceString: Optional[str] = None) -> None:
         self.platform = platform
         self.compiler = compiler
         self.abi = CraftCompiler.Abi.fromString(abiString) if abiString else None

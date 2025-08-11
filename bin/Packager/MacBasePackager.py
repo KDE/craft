@@ -222,10 +222,14 @@ class MacDylibBundler(object):
     def _getLibraryNameId(fileToFix: Path) -> str:
         libraryIdOutput = io.StringIO(subprocess.check_output(["otool", "-D", str(fileToFix)]).decode("utf-8").strip())
         lines = libraryIdOutput.readlines()
+        stringOutput = "".join(lines)
         if len(lines) == 1:
             return ""
-        # Should have exactly one line with the id now
-        assert len(lines) == 2, lines
+        # Should have exactly one line with the id now, unless it is a universal binary
+        if "arm64" in stringOutput and "x86_64" in stringOutput:
+            CraftCore.log.info(f"{fileToFix} is a universal binary.")
+        else:
+            assert len(lines) == 2, lines
         return lines[1].strip()
 
     @classmethod

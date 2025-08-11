@@ -249,6 +249,7 @@ SignCache = ${CodeSigning:Enabled}
 ## Attributes of the certificate's DN (aka Subject)
 CommonName = K Desktop Environment e. V.
 Organization = K Desktop Environment e. V.
+#OrganizationUnit =
 #Street =
 #Locality =
 Country = DE

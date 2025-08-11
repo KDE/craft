@@ -1,2 +1,6 @@
 [tool.black]
 line-length= 160
+
+[tool.mypy]
+# TODO: enable the rules step by step and fix the code
+disable_error_code = "import-untyped, var-annotated, arg-type, type-arg, index, assignment, attr-defined, return-value, union-attr, override, import-not-found, call-overload, abstract, misc"

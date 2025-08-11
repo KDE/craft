@@ -57,3 +57,6 @@ imports:
   extends: .tox_base
   script: tox -e check-imports
 
+type-check:
+  extends: .tox_base
+  script: tox -e static-type-checker

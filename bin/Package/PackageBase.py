@@ -95,14 +95,14 @@ class PackageBase(CraftBase):
             else:
                 manifest = CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json"))
             fileEntry = manifest.get(str(self)).build
-            files = []
+            allFiles = []
             for f in fileEntry:
                 if f.version == self.version:
-                    files.append(f)
-            if not files:
+                    allFiles.append(f)
+            if not allFiles:
                 CraftCore.log.info(f"Could not find {self}={self.version} in {url}")
                 continue
-            latest = files[0]
+            latest = allFiles[0]
 
             if not self.subinfo.options.dynamic.compatible(latest.config, latest.configHash):
                 CraftCore.log.info("Failed to restore package, configuration missmatch")

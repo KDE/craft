@@ -2,12 +2,13 @@ param(
     [alias("root")][string]$Script:installRoot=$null,
     [alias("python")][string]$Script:python=$null,
     [alias("branch")][string]$Script:branch="master",
-    [alias("localdev")][string]$Script:localdev=$null
+    [alias("localdev")][string]$Script:localdev=$null,
+    [alias("use-defaults")][switch]$Script:useDefaults
     )
 
 [Net.ServicePointManager]::SecurityProtocol = "SystemDefault, tls12, tls11"
 [version]$minPythonVersion = 3.9
-$Script:PythonInstallDir = "C:\python39"
+$Script:PythonInstallDir = "C:\python311"
 
 if($env:PROCESSOR_ARCHITECTURE.contains("64"))
 {
@@ -44,7 +45,7 @@ function FetchPython()
                 }
                 [string[]]$command = @("/quiet", "InstallAllUsers=0", "PrependPath=1", "TargetDir=`"$Script:PythonInstallDir`"", "AssociateFiles=0",  "InstallLauncherAllUsers=0")
                 Write-Host "$archive" $command
-                & "$archive" $command
+                Start-Process -FilePath "$archive" -ArgumentList $command -Wait
                 $Script:python = "$Script:PythonInstallDir\python.exe"
                 break
             }
@@ -147,6 +148,9 @@ Start-Sleep -s 10
 [string[]]$command = @("$Script:installRoot\download\CraftBootstrap.py", "--prefix", "$Script:installRoot", "--branch", "$Script:branch")
 if ($Script:localdev) {
    [string[]]$command += @("--localDev", $Script:localdev)
+}
+if ($Script:useDefaults) {
+   [string[]]$command += "--use-defaults"
 }
 Write-Host "$Script:python" $command
 & "$Script:python" $command

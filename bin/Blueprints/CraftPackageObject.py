@@ -139,13 +139,15 @@ class CraftPackageObject(object):
     @property
     def pattern(self) -> "BuildSystemBase":
         if not self.source:
-            raise BlueprintException(f"{self.source} dos not provide a Pattern", self)
+            raise BlueprintException(f"{self.source} does not provide a Pattern", self)
         if not self.isCategory():
             raise BlueprintException("Only a catergory can provide a Pattern", self)
         # load the module
         self.instance
-        if self._pattern:
-            return self._pattern
+        if not self._pattern:
+            raise BlueprintException("Failed to resolve pattern, pattern is None", self)
+
+        return self._pattern
 
     @property
     def parent(self):

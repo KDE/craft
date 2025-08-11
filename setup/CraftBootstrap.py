@@ -207,7 +207,7 @@ def getABI(args):
         abi, compiler = CraftBootstrap.promptForChoice(
             "Select compiler",
             [("Mingw-w64", (None, "gcc")), (msvcVer, ("msvc2022", "cl"))],
-            msvcVer,
+            ("msvc2022", "cl"),
             returnDefaultWithoutPrompt=args.use_defaults,
         )
 

@@ -30,6 +30,7 @@ import os
 import re
 import subprocess
 from pathlib import Path
+from typing import Optional
 
 import utils
 from Blueprints.CraftPackageObject import CraftPackageObject
@@ -71,7 +72,7 @@ class BuildSystemBase(CraftBase):
         self.buildSystemType = typeName
 
     @property
-    def makeProgram(self) -> str:
+    def makeProgram(self) -> Optional[str]:
         if self.subinfo.options.make.supportsMultijob:
             if self.supportsNinja and CraftCore.settings.getboolean("Compile", "UseNinja", False) and CraftCore.cache.findApplication("ninja"):
                 return "ninja"
@@ -100,6 +101,7 @@ class BuildSystemBase(CraftBase):
             return "gmake"
         elif OsUtils.isUnix():
             return "make"
+        return None
 
     def configureSourceDir(self):
         """returns source dir used for configure step"""
@@ -192,10 +194,10 @@ class BuildSystemBase(CraftBase):
     def patchInstallPrefix(
         self,
         files: list[str],
-        oldPaths: list[Path] = None,
+        oldPaths: Optional[list[Path]] = None,
         newPath: Path = Path(CraftCore.standardDirs.craftRoot()),
     ) -> bool:
-        if not isinstance(oldPaths, list):
+        if oldPaths and not isinstance(oldPaths, list):
             oldPaths = [oldPaths]
         elif not oldPaths:
             oldPaths = [self.subinfo.buildPrefix]
@@ -211,23 +213,24 @@ class BuildSystemBase(CraftBase):
                 content = f.read()
             dirty = False
             for oldPath in oldPaths:
+                oldPathStr = str(oldPath)
                 # absolute path or a msys path starting with a /
-                assert os.path.isabs(oldPath) or oldPath.startswith("/")
+                assert os.path.isabs(oldPathStr) or oldPathStr.startswith("/")
                 # allow front and backslashes
-                oldPathPat = oldPath.replace("/", r"[/\\]+")
+                oldPathPat = oldPathStr.replace("/", r"[/\\]+")
                 # capture firs seperator
                 oldPathPat = oldPathPat.replace(r"[/\\]+", r"(/+|\\+)", 1)
                 oldPathPat = f"({oldPathPat})"
                 oldPathPat = re.compile(oldPathPat.encode())
                 for match in set(oldPathPat.findall(content)):
                     dirty = True
-                    oldPath = match[0]
-                    newPath = newValue.replace(b"/", match[1])
-                    if oldPath != newPath:
-                        CraftCore.log.info(f"Patching {fileName}: replacing {oldPath} with {newPath}")
-                        content = content.replace(oldPath, newPath)
+                    oldPathStr = match[0]
+                    newPathStr = newValue.replace(b"/", match[1])
+                    if oldPathStr != newPathStr:
+                        CraftCore.log.info(f"Patching {fileName}: replacing {oldPathStr!r} with {newPathStr!r}")
+                        content = content.replace(oldPathStr, newPathStr)
                     else:
-                        CraftCore.log.debug(f"Skip Patching {fileName}:  prefix is unchanged {newPath}")
+                        CraftCore.log.debug(f"Skip Patching {fileName}:  prefix is unchanged {newPathStr!r}")
             if dirty:
                 with utils.makeTemporaryWritable(fileName):
                     with fileName.open("wb") as f:

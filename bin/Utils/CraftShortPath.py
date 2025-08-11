@@ -15,7 +15,7 @@ class CraftShortPath(object):
 
     def __init__(self, path, createShortPath=None) -> None:
         self._longPath = path
-        self._shortPath = None  # type: Path
+        self._shortPath: Path = None
         if not createShortPath:
             self._createShortPathLambda = CraftShortPath.createJunctionShortPath
         else:

@@ -32,6 +32,7 @@ import sqlite3
 import subprocess
 import sys
 from pathlib import Path
+from typing import Optional
 
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
@@ -178,17 +179,20 @@ class SetupHelper(object):
             self.addEnvVar(key, val)
 
     def prependEnvVar(self, key: str, var: str, sep: str = os.path.pathsep) -> None:
+        varList = []
         if not isinstance(var, list):
-            var = [var]
+            varList = [var]
+        else:
+            varList = var
         if key in os.environ:
-            env = var + os.environ[key].split(sep)
-            var = list(collections.OrderedDict.fromkeys(env))
-        val = sep.join([str(x) for x in var])
+            env = varList + os.environ[key].split(sep)
+            varList = list(collections.OrderedDict.fromkeys(env))
+        val = sep.join([str(x) for x in varList])
         CraftCore.log.debug(f"Setting {key}={val}")
         os.environ[key] = val
 
     @staticmethod
-    def _callVCVER(version: int, args: list = None, native: bool = True, prerelease: bool = False) -> str:
+    def _callVCVER(version: int, args: Optional[list] = None, native: bool = True, prerelease: bool = False) -> str:
         if not args:
             args = []
         vswhere = os.path.join(CraftCore.standardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")

@@ -1,6 +1,7 @@
 import abc
 import os
 from pathlib import Path
+from typing import Optional
 
 from CraftOS.OsDetection import OsDetection
 
@@ -68,7 +69,7 @@ class OsUtilsBase(OsDetection, metaclass=abc.ABCMeta):
 
     @staticmethod
     @abc.abstractmethod
-    def killProcess(name: str = "*", prefix: str = None) -> bool:
+    def killProcess(name: str = "*", prefix: Optional[str] = None) -> bool:
         pass
 
     @staticmethod

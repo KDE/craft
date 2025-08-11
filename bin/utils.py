@@ -39,6 +39,7 @@ import stat
 import subprocess
 import sys
 from pathlib import Path
+from typing import Optional
 
 import Notifier.NotificationLoader
 from CraftCore import CraftCore
@@ -1127,7 +1128,7 @@ def updateRpath(path: Path, oldRpath: set, newRpath: set):
     return True
 
 
-def regexFileFilter(filename: os.DirEntry, root: str, patterns: [re] = None) -> bool:
+def regexFileFilter(filename: os.DirEntry, root: str, patterns: list[re.Pattern] = None) -> bool:
     """return False if file does not match pattern"""
     # use linux style seperators
     relFilePath = Path(filename.path).relative_to(root).as_posix()
@@ -1272,7 +1273,7 @@ def symFileName(fileName: Path) -> Path:
         return Path(f"{fileName}{CraftCore.compiler.symbolsSuffix}")
 
 
-def strip(fileName: Path, destFileName: Path = None) -> Path:
+def strip(fileName: Path, destFileName: Optional[Path] = None) -> Path:
     """strip debugging informations from shared libraries and executables"""
     """ Returns the path to the sym file on success, None on error"""
     if CraftCore.compiler.isMSVC() or not CraftCore.compiler.isGCCLike():

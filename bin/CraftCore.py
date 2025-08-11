@@ -1,4 +1,6 @@
 import importlib
+import logging
+from typing import Optional
 
 # Add imports that cause a cyclic dependency in a not taken branch to make code completion work
 if False:
@@ -20,9 +22,9 @@ class AutoImport(object):
         self,
         name: str,
         module: str,
-        className: str = None,
+        className: Optional[str] = None,
         function=None,
-        member: str = None,
+        member: Optional[str] = None,
     ) -> None:
         self.name = name
         self.module = module
@@ -70,7 +72,7 @@ class State(object):
 class CraftCore(object):
     debug = AutoImport("debug", "CraftDebug")  # type: CraftDebug
     # log will be replaced once debug is loaded
-    log = AutoImport("debug", "CraftDebug", member="log")  # type: logging.Logger
+    log: logging.Logger = AutoImport("debug", "CraftDebug", member="log")
     standardDirs = AutoImport("standardDirs", "CraftStandardDirs")  # type: CraftStandardDirs
     settings = AutoImport("settings", "CraftConfig")  # type: CraftConfig
     cache = AutoImport("cache", "Utils.CraftCache", "CraftCache", "_loadInstance")  # type: CraftCache
