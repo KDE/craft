@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
 
     def setTargets(self):
         for ver in ["2.4.6", "2.4.7"]:
-            self.targets[ver] = f"https://ftp.gnu.org/gnu/libtool/libtool-{ver}.tar.xz"
+            self.targets[ver] = f"https://files.kde.org/craft/sources/dev-utils/libtool/libtool-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"libtool-{ver}"
 
         self.targetDigests["2.4.6"] = (
