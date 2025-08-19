@@ -313,7 +313,7 @@ class CraftCompiler(object):
             return ".debug"
 
     def isNative(self) -> CraftBool:
-        return CraftBool(self.architecture == self.hostArchitecture and CraftCore.settings.getboolean("General", "Native", True))
+        return CraftBool(self.architecture == self.hostArchitecture and not self.isAndroid and CraftCore.settings.getboolean("General", "Native", True))
 
     def isGCC(self) -> CraftBool:
         return CraftBool(self.compiler == CraftCompiler.Compiler.GCC)
