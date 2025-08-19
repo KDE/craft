@@ -208,7 +208,13 @@ class ArchiveSource(SourceBase):
                 if not utils.copyFile(filePath, os.path.join(self.workDir(), filename)):
                     return False
             else:
-                if not utils.unpackFile(self.__downloadDir, filename, self.workDir(), keepSymlinksOnWindows=self.subinfo.options.unpack.keepSymlinksOnWindows):
+                if not utils.unpackFile(
+                    self.__downloadDir,
+                    filename,
+                    self.workDir(),
+                    keepSymlinksOnWindows=self.subinfo.options.unpack.keepSymlinksOnWindows,
+                    sevenZipExtraArgs=self.subinfo.options.unpack.sevenZipExtraArgs,
+                ):
                     return False
             if self.subinfo.options.unpack.renameSourceDir:
                 if not utils.moveFile(super().sourceDir(), self.sourceDir()):

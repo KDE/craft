@@ -448,6 +448,8 @@ class OptionsUnpack(OptionsBase):
         self.keepSymlinksOnWindows = False
         # archive src, rename the src dir to workaround long path issues
         self.renameSourceDir = False
+        # In some rare cases you may want to add addional args / flags to 7zip like to exclude files from extraction
+        self.sevenZipExtraArgs = []
 
 
 # options for the configure action

@@ -73,7 +73,7 @@ def unpackFiles(downloaddir, filenames, workdir):
     return True
 
 
-def unpackFile(downloaddir, filename, workdir, keepSymlinksOnWindows=True):
+def unpackFile(downloaddir, filename, workdir, keepSymlinksOnWindows=True, sevenZipExtraArgs=[]):
     """unpack file specified by 'filename' from 'downloaddir' into 'workdir'"""
     CraftCore.log.debug(f"unpacking this file: {filename}")
     if not filename:
@@ -98,7 +98,7 @@ def unpackFile(downloaddir, filename, workdir, keepSymlinksOnWindows=True):
             or (OsUtils.supportsSymlinks() and CraftCore.cache.getVersion(__locate7z(), versionCommand="-version") >= "16")
             or not re.match(r"(.*\.tar.*$|.*\.tgz$)", filename)
         ):
-            return un7zip(os.path.join(downloaddir, filename), workdir, ext, keepSymlinksOnWindows=keepSymlinksOnWindows)
+            return un7zip(os.path.join(downloaddir, filename), workdir, ext, keepSymlinksOnWindows=keepSymlinksOnWindows, extraArgs=sevenZipExtraArgs)
     try:
         shutil.unpack_archive(os.path.join(downloaddir, filename), workdir)
     except Exception as e:
@@ -107,7 +107,7 @@ def unpackFile(downloaddir, filename, workdir, keepSymlinksOnWindows=True):
     return True
 
 
-def un7zip(fileName, destdir, flag=None, keepSymlinksOnWindows=True):
+def un7zip(fileName, destdir, flag=None, keepSymlinksOnWindows=True, extraArgs=[]):
     ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
     createDir(destdir)
     kw = {}
@@ -134,13 +134,13 @@ def un7zip(fileName, destdir, flag=None, keepSymlinksOnWindows=True):
         if CraftCore.compiler.isWindows:
             if progressFlags:
                 progressFlags = ["-bsp0"]
-            command = [app, "x", "-si", f"-o{destdir}", "-ttar"] + progressFlags
+            command = [app, "x", "-si", f"-o{destdir}", "-ttar"] + extraArgs + progressFlags
             kw["stdout"] = subprocess.DEVNULL
         else:
             tar = CraftCore.cache.findApplication("tar")
             command = [tar, "--directory", destdir, "-xf", "-"]
     else:
-        command = [app, "x", "-r", "-y", f"-o{destdir}", fileName] + type + progressFlags
+        command = [app, "x", "-r", "-y", f"-o{destdir}", fileName] + type + extraArgs + progressFlags
 
     # While 7zip supports symlinks cmake 3.8.0 does not support symlinks
     if not system(command, **kw):
@@ -771,16 +771,7 @@ def applyPatch(sourceDir, f, patchLevel="0"):
                     out = applyPatch(sourceDir, f / patch, patchLevel) and out
         return out
     with Dos2UnixFile(f) as unixFile:
-        cmd = [
-            "patch",
-            "--ignore-whitespace",
-            "-d",
-            Path(sourceDir).as_posix(),
-            "-p",
-            str(patchLevel),
-            "-i",
-            unixFile
-        ]
+        cmd = ["patch", "--ignore-whitespace", "-d", Path(sourceDir).as_posix(), "-p", str(patchLevel), "-i", unixFile]
         result = system(cmd)
     if not result:
         CraftCore.log.warning(f"applying {f} failed!")
