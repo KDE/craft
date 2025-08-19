@@ -130,7 +130,7 @@ def un7zip(fileName, destdir, flag=None, keepSymlinksOnWindows=True, extraArgs=[
             else:
                 # print progress to stderr
                 progressFlags = ["-bsp2"]
-        kw["pipeProcess"] = subprocess.Popen([app, "x", fileName, "-so"] + progressFlags, stdout=subprocess.PIPE)
+        kw["pipeProcess"] = subprocess.Popen([app, "x", fileName, "-so"] + extraArgs + progressFlags, stdout=subprocess.PIPE)
         if CraftCore.compiler.isWindows:
             if progressFlags:
                 progressFlags = ["-bsp0"]
