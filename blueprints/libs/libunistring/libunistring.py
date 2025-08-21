@@ -14,7 +14,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = f"libunistring-{ver}"
         self.targetDigests["0.9.10"] = (["eb8fb2c3e4b6e2d336608377050892b54c3c983b646c561836550863003c05d7"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["1.2"] = (["632bd65ed74a881ca8a0309a1001c428bd1cbd5cd7ddbf8cedcd2e65f4dcdc44"], CraftHash.HashAlgorithm.SHA256)
-        self.targetDigests["1.3"] = (["62201b5b7ce9c0b033c50cefa5d7769dff4b7cee8205572e0cf917653cae9e33"], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigests["1.3"] = (["f245786c831d25150f3dfb4317cda1acc5e3f79a5da4ad073ddca58886569527"], CraftHash.HashAlgorithm.SHA256)
 
         self.defaultTarget = "1.3"
 
