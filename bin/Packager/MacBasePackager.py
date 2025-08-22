@@ -227,7 +227,9 @@ class MacDylibBundler(object):
             return ""
         # Should have exactly one line with the id now, unless it is a universal binary
         if "arm64" in stringOutput and "x86_64" in stringOutput:
-            CraftCore.log.info(f"{fileToFix} is a universal binary.")
+            CraftCore.log.info(f"{fileToFix} is a MacOS Intel/Silicon universal binary.")
+        elif "i386" in stringOutput and "x86_64" in stringOutput:
+            CraftCore.log.info(f"{fileToFix} is a 32/64 bit Intel universal binary.")
         else:
             assert len(lines) == 2, lines
         return lines[1].strip()
