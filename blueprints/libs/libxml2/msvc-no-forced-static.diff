@@ -1,0 +1,14 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 561dac75..d78c9db6 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -657,7 +657,7 @@ else()
+     set(XML_PRIVATE_LIBS_NO_SHARED "${XML_PRIVATE_LIBS}")
+ endif()
+ 
+-if(WIN32)
++if(WIN32 AND NOT MSVC)
+     set(XML_STATIC_CFLAGS "-DLIBXML_STATIC")
+     if (BUILD_SHARED_LIBS)
+         set(XML_PC_CFLAGS_PRIVATE "
+
