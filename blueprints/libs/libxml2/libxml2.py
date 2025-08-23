@@ -22,6 +22,8 @@ class subinfo(info.infoclass):
         self.patchToApply["2.14.4"] = [(".2.14.4", 1)]
         self.patchLevel["2.14.4"] = 1
 
+        self.svnTargets["master"] = "https://gitlab.gnome.org/GNOME/libxml2.git"
+
         self.description = "XML C parser and toolkit (runtime and applications)"
         self.defaultTarget = "2.14.4"
 
