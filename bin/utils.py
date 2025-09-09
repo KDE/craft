@@ -251,6 +251,7 @@ def systemWithoutShell(
 
     environment = kw.get("env", os.environ)
     cwd = kw.get("cwd", os.getcwd())
+    acceptableExitCodes = acceptableExitCodes or [0]
 
     # make sure our venv python is used
     python_venv = Path(CraftCore.standardDirs.etcDir()) / f"virtualenv/3/Scripts/python{CraftCore.compiler.executableSuffix}"
@@ -355,13 +356,14 @@ def systemWithoutShell(
     # if there was no output
     ansiFix()
 
-    if proc.returncode == 0:
-        return True
-    if acceptableExitCodes and proc.returncode in acceptableExitCodes:
+    if proc.returncode in acceptableExitCodes:
         resultMessage = f"Command {redact(cmd, secret)} succeeded with exit code {proc.returncode}"
         StageLogger.logLine(resultMessage)
         if not outputOnFailure:
-            CraftCore.log.info(resultMessage)
+            if proc.returncode == 0:
+                CraftCore.log.debug(resultMessage)
+            else:
+                CraftCore.log.info(resultMessage)
         return True
     resultMessage = f"Command {redact(cmd, secret)} failed with exit code {proc.returncode}"
     StageLogger.logLine(resultMessage)
