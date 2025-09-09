@@ -24,16 +24,6 @@ include:
         path: coverage.xml
       junit: JUnit*Results.xml
 
-py39:
-  extends: .tox_base
-  image: python:3.9
-  script: tox -e py39
-
-py310:
-  extends: .tox_base
-  image: python:3.10
-  script: tox -e py310
-
 py311:
   extends: .tox_base
   image: python:3.11
