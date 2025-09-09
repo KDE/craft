@@ -8,11 +8,6 @@ from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
-    def registerOptions(self):
-        # We need this as a host tool. Craft at this point isn't set up to produce both
-        # host and target binaries, so on Android we have host tools in the docker image.
-        self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.NotAndroid
-
     def setTargets(self):
         self.description = "Autoconf is an extensible package of M4 macros that produce shell scripts to automatically configure software source code packages."
         self.webpage = "http://www.gnu.org/software/autoconf/"

@@ -12,7 +12,7 @@ from Utils import CraftHash
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
+        self.parent.package.categoryInfo.platforms = ~CraftCore.compiler.Platforms.Android
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
@@ -44,7 +44,7 @@ class Package(MesonPackageBase):
         env = self._env()
         env["CFLAGS"] += " -DBOOTSTRAP_NO_SAMU "
         with utils.ScopedEnv(env):
-            return utils.system([f"{self.sourceDir()}/bootstrap{'.sh' if CraftCore.compiler.isUnix else '.bat'}", self.buildDir()], cwd=self.sourceDir()) and utils.system(
+            return utils.system([f"{self.sourceDir()}/bootstrap{'.sh' if CraftCore.compiler.platform.isUnix else '.bat'}", self.buildDir()], cwd=self.sourceDir()) and utils.system(
                 [
                     f"{self.buildDir()}/muon-bootstrap",
                     "setup",
@@ -61,7 +61,7 @@ class Package(MesonPackageBase):
             )
 
     def installPrefix(self) -> Path:
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             # muon struggles with windows paths
             return Path(super().installPrefix().as_posix()[2:])
         return super().installPrefix()

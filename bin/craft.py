@@ -353,7 +353,7 @@ def main(timer):
     elif args.run_detached:
         run_detached = list(filter(lambda entry: not entry.startswith("-psn"), args.run_detached))
         kwargs = {}
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             kwargs["creationflags"] = subprocess.DETACHED_PROCESS
         return subprocess.Popen(run_detached, **kwargs)
     elif args.exec:

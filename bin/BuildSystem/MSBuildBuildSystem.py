@@ -29,7 +29,6 @@ import re
 import utils
 from Blueprints.CraftPackageObject import CraftPackageObject
 from BuildSystem.BuildSystemBase import BuildSystemBase
-from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from CraftStandardDirs import CraftStandardDirs
 
@@ -64,7 +63,7 @@ class MSBuildBuildSystem(BuildSystemBase):
             self.enterSourceDir()
             msbuildVersion = CraftCore.cache.getVersion("msbuild", versionCommand="-ver", pattern=re.compile(r"(\d+\.\d+)"))
             buildType = self.buildTypes[self.buildType()]
-            if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
+            if CraftCore.compiler.architecture.isX86_32:
                 platform = " /p:Platform=win32"
             else:
                 platform = ""

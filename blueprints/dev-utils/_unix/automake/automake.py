@@ -5,11 +5,6 @@ from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
-    def registerOptions(self):
-        # We need this as a host tool. Craft at this point isn't set up to produce both
-        # host and target binaries, so on Android we have host tools in the docker image.
-        self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.NotAndroid
-
     def setTargets(self):
         self.description = "Automake is a tool for automatically generating Makefile.in files compliant with the GNU Coding Standards."
         self.webpage = "http://www.gnu.org/software/automake/"

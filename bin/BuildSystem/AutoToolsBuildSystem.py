@@ -9,7 +9,6 @@ from pathlib import Path
 import utils
 from Blueprints.CraftPackageObject import CraftPackageObject
 from BuildSystem.BuildSystemBase import BuildSystemBase
-from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from shells import BashShell
@@ -22,14 +21,14 @@ class AutoToolsBuildSystem(BuildSystemBase):
         self._shell = BashShell()
         self.platform = Arguments()  # hope for auto detection
         if (
-            CraftCore.compiler.isLinux
-            and CraftCore.compiler.isGCC()
-            and not CraftCore.compiler.isNative()
-            and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32
+            CraftCore.compiler.platform.isLinux
+            and CraftCore.compiler.compiler.isGCC
+            and not CraftCore.compiler.architecture.isNative
+            and CraftCore.compiler.architecture.isX86_32
         ):
             self.platform = Arguments(["--host=i686-pc-linux-gnu"])
-        elif CraftCore.compiler.isWindows:
-            if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
+        elif CraftCore.compiler.platform.isWindows:
+            if CraftCore.compiler.architecture.isX86_32:
                 self.platform = Arguments(
                     [
                         "--host=i686-w64-mingw32",
@@ -45,23 +44,24 @@ class AutoToolsBuildSystem(BuildSystemBase):
                         "--target=x86_64-w64-mingw32",
                     ]
                 )
-        elif CraftCore.compiler.isAndroid:
-            if CraftCore.compiler.architecture == CraftCompiler.Architecture.arm64:
+        elif CraftCore.compiler.platform.isAndroid:
+            if CraftCore.compiler.architecture.isArm64:
                 self.platform = Arguments(["--host=aarch64-linux-android"])
             else:
-                self.platform = Arguments([f"--host={CraftCore.compiler.androidArchitecture}-linux-android"])
-        elif CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
-            self.platform = Arguments(
-                [
-                    f"--host={CraftCore.compiler.architecture.name.lower()}-apple-darwin{os.uname().release}",
-                    f"--build={CraftCore.compiler.architecture.name.lower()}-apple-darwin{os.uname().release}",
-                    f"--target={CraftCore.compiler.architecture.name.lower()}-apple-darwin{os.uname().release}",
-                ]
-            )
+                self.platform = Arguments([f"--host={CraftCore.compiler.architecture.androidArchitecture}-linux-android"])
+        elif CraftCore.compiler.hostPlatform.isApple:
+            if not CraftCore.compiler.platform.isNative or not CraftCore.compiler.architecture.isNative:
+                targetPlatform = "darwin" if CraftCore.compiler.platform.isMacOS else "ios"
+                self.platform = Arguments(
+                    [
+                        f"--host={CraftCore.compiler.architecture.key.name.lower()}-apple-darwin{os.uname().release}",
+                        f"--target={CraftCore.compiler.architecture.key.name.lower()}-apple-{targetPlatform}",
+                    ]
+                )
 
     @property
     def makeProgram(self):
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             return "make"
         else:
             return super().makeProgram
@@ -88,8 +88,8 @@ class AutoToolsBuildSystem(BuildSystemBase):
         env = {"CLICOLOR_FORCE": None}
         if self.supportsCCACHE:
             cxx = CraftCore.standardDirs.craftRoot() / "dev-utils/ccache/bin" / Path(os.environ["CXX"]).name
-            if CraftCore.compiler.isWindows and not cxx.suffix:
-                cxx = Path(str(cxx) + CraftCore.compiler.executableSuffix)
+            if CraftCore.compiler.platform.isWindows and not cxx.suffix:
+                cxx = Path(str(cxx) + CraftCore.compiler.platform.executableSuffix)
             if cxx.exists():
                 env["CXX"] = OsUtils.toMSysPath(cxx)
                 env["CC"] = OsUtils.toMSysPath(cxx.parent / Path(os.environ["CC"]).name)
@@ -106,7 +106,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
                 if self.subinfo.options.configure.useDefaultAutoreconfIncludes:
                     includes = []
                     dataDirs = [CraftCore.standardDirs.craftRoot() / "dev-utils/cmake/share"]
-                    if CraftCore.compiler.isWindows:
+                    if CraftCore.compiler.platform.isWindows:
                         # on Windows data location lies outside of the autotools prefix (msys)
                         dataDirs.append(CraftCore.standardDirs.locations.data)
                     for i in dataDirs:
@@ -157,7 +157,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
 
         if not self._fixInstallPrefix(self.shell.toNativePath(self.installPrefix())):
             return False
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             # libtool produces intl.dll.lib while we expect intl.lib
             lib = glob.glob(os.path.join(self.imageDir(), "lib/**/*.dll.lib"), recursive=True)
             for src in lib:

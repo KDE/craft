@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
     def registerOptions(self):
         # On Android we use libintl-lite instead
         # (however gettext added Adnroid support recently so maybe we should look into switching to it?)
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
+        self.parent.package.categoryInfo.platforms |= CraftCore.compiler.Platforms.Native
 
     def setTargets(self):
         self.description = "GNU internationalization (i18n)"
@@ -31,7 +31,7 @@ class subinfo(info.infoclass):
         ]
         self.patchToApply["1.0"] = []
 
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             # with msvc we need to link libxml2 not xml2
             self.patchToApply["0.22.3"] += [("msvc-fix-libxml2.diff", 1)]
             self.patchToApply["1.0"] += [("msvc-fix-libxml2.diff", 1)]
@@ -59,7 +59,7 @@ class subinfo(info.infoclass):
         ../gnulib-lib/stdio.h:349:24: note: in expansion of macro 'error_at_line'
           349 |   _GL_EXTERN_C rettype func parameters_and_attributes
         """
-        if not CraftCore.compiler.isMinGW():
+        if not CraftCore.compiler.compiler.isMinGW:
             # https://src.fedoraproject.org/rpms/gettext/blob/6a2dc0e302225010471d92fc1abd9938b256855a/f/gettext-0.22-disable-libtextstyle.patch
             #
             # * Fri Apr 30 2021 Sundeep Anand <suanand@redhat.com> - 0.21-5
@@ -107,10 +107,10 @@ class Package(AutoToolsPackageBase):
             "gl_cv_libxml_use_included=no",
         ]
 
-        if CraftCore.compiler.isMacOS:
+        if CraftCore.compiler.compiler.isMSVC:
             self.subinfo.options.configure.args += ["am_cv_func_iconv_works=yes"]  # https://savannah.gnu.org/bugs/index.php?66541
 
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             # workaround for "'C:C:/CraftRoot/msys/CraftRoot/build/_/527d4567/gettext-0.21/gettext-runtime/libasprintf/autosprintf.cc'"
             self.subinfo.options.useShadowBuild = False
             # self.subinfo.options.configure.autoreconf = False

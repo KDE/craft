@@ -1,7 +1,6 @@
 import re
 
 from Blueprints.distutils_version import LooseVersion, StrictVersion, Version
-from CraftCore import CraftCore
 
 
 class CraftVersion(Version):
@@ -41,6 +40,8 @@ class CraftVersion(Version):
     def normalizedVersion(self):
         v = CraftVersion.invalid_re.sub("", self.versionstr)
         if self.isBranch or not re.match(r"^\d+.*", v):
+            from CraftCore import CraftCore
+
             CraftCore.log.warning(f"Can't convert {self.versionstr} to StrictVersion, please use release versions for packaging")
             return CraftVersion("0")
         loose = LooseVersion(re.sub("-|_", ".", v))

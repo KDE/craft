@@ -58,7 +58,7 @@ class PerlBuildSystem(MakeFileBuildSystem):
             "PERL_MM_USE_DEFAULT": "1",
             "PERL_AUTOINSTALL": "--skipdeps",
         }
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             root = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
             env.update(
                 {
@@ -72,7 +72,7 @@ class PerlBuildSystem(MakeFileBuildSystem):
     def install(self):
         env = {"PERL5LIB": None, "PERL_MM_OPT": None, "PERL_LOCAL_LIB_ROOT": None}
         with utils.ScopedEnv(env):
-            if 1 and CraftCore.compiler.isWindows:
+            if 1 and CraftCore.compiler.platform.isWindows:
                 # ugly hack to make destdir work, it probably breaks some scripts
                 makeFile = self.buildDir() / "Makefile"
                 with open(makeFile, "rt") as make:

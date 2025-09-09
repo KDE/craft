@@ -44,9 +44,9 @@ class CategoryPackageObject(object):
         self.webpage = ""
         self.displayName = ""
         self.tags = ""
-        self.platforms = CraftCore.compiler.Platforms.All
-        self.compiler = CraftCore.compiler.Compiler.All
-        self.architecture = CraftCore.compiler.Architecture.All
+        self.platforms = CraftCore.compiler.Platforms.All()
+        self.compiler = CraftCore.compiler.Compiler.All()
+        self.architecture = CraftCore.compiler.Architecture.All()
         self.pathOverride = None
         self.valid = False
         self.patchLevel = 0
@@ -72,35 +72,39 @@ class CategoryPackageObject(object):
             self.runtimeDependencies = CraftCore.settings._parseList(general.get("runtimeDependencies", ""))
             self.buildDependencies = CraftCore.settings._parseList(general.get("buildDependencies", ""))
 
-            platform = set(CraftCore.settings._parseList(general.get("platforms", "")))
-            if platform:
-                self.platforms = CraftCore.compiler.Platforms.NoPlatform
-                for p in platform:
-                    self.platforms |= CraftCore.compiler.Platforms.fromString(p)
+            def readCompileFlags(key: str, default: CraftCore.compiler.CompilerFlags):
+                values = set(CraftCore.settings._parseList(general.get(key, "")))
+                if not values:
+                    return default
+                value = type(default)(0)
+                for v in values:
+                    old = value
+                    if v.startswith("~"):
+                        # invert the value
+                        value |= ~default.fromString(v[1:])
+                    else:
+                        value |= default.fromString(v)
 
-            compiler = set(CraftCore.settings._parseList(general.get("compiler", "")))
-            if compiler:
-                self.compiler = CraftCore.compiler.Compiler.NoCompiler
-                for c in compiler:
-                    self.compiler |= CraftCore.compiler.Compiler.fromString(c)
+                    if old == value:
+                        CraftCore.log.warning(f"{self.localPath}: The value {v!r} for {default.__class__.__name__} has no effect, values are:{values!r}")
+                return value
 
-            architecture = set(CraftCore.settings._parseList(general.get("architecture", "")))
-            if architecture:
-                self.architecture = CraftCore.compiler.architecture.NoArchitecture
-                for c in architecture:
-                    self.architecture |= CraftCore.compiler.Architecture.fromString(c)
+            self.platforms = readCompileFlags("platforms", self.platforms)
+            self.compiler = readCompileFlags("compiler", self.compiler)
+            self.architecture = readCompileFlags("architecture", self.architecture)
+
             self.pathOverride = general.get("pathOverride", None)
             self.forceOverride = general.get("forceOverride", False)
 
     @property
     def isActive(self) -> CraftBool:
-        if not CraftCore.compiler.platform & self.platforms:
+        if not CraftCore.compiler.platform.matchKeys(self.platforms):
             CraftCore.log.debug(f"{self.localPath}, is not supported on {CraftCore.compiler.platform!r}, supported platforms {self.platforms!r}")
             return CraftBool(False)
-        if not CraftCore.compiler.compiler & self.compiler:
+        if not CraftCore.compiler.compiler.matchKeys(self.compiler):
             CraftCore.log.debug(f"{self.localPath}, is not supported on {CraftCore.compiler.compiler!r}, supported compiler {self.compiler!r}")
             return CraftBool(False)
-        if not CraftCore.compiler.architecture & self.architecture:
+        if not CraftCore.compiler.architecture.matchKeys(self.architecture):
             CraftCore.log.debug(f"{self.localPath}, is not supported on {CraftCore.compiler.architecture!r}, supported architecture {self.architecture!r}")
             return CraftBool(False)
         return CraftBool(True)
@@ -366,7 +370,7 @@ class CraftPackageObject(object):
         return self.instance.subinfo
 
     def isCategory(self) -> CraftBool:
-        return CraftBool(self.children)
+        return CraftBool(bool(self.children))
 
     def isIgnored(self) -> CraftBool:
         if self.categoryInfo and not self.categoryInfo.isActive:

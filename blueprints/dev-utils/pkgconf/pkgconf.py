@@ -15,10 +15,10 @@ from Utils import CraftHash
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
+        self.parent.package.categoryInfo.platforms = ~CraftCore.compiler.Platforms.Android
         # muon currently doesn't set the correct rpath for pkgconf
         # https://github.com/muon-build/muon/issues/135
-        self.options.dynamic.setDefault("buildStatic", CraftCore.compiler.isMacOS)
+        self.options.dynamic.setDefault("buildStatic", CraftCore.compiler.platform.isMacOS)
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
@@ -47,7 +47,7 @@ class Package(MesonPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.tmpPython = None
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             self.subinfo.options.configure.ldflags += "advapi32.lib"
 
     @property
@@ -57,20 +57,20 @@ class Package(MesonPackageBase):
 
     def _env(self):
         env = super()._env()
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             # help it find the system python
             if not self.tmpPython:
                 self.tmpPython = tempfile.TemporaryDirectory()
-                if not utils.createShim(Path(self.tmpPython.name) / f"python3{CraftCore.compiler.executableSuffix}", os.environ["CRAFT_PYTHON"]):
+                if not utils.createShim(Path(self.tmpPython.name) / f"python3{CraftCore.compiler.platform.executableSuffix}", os.environ["CRAFT_PYTHON"]):
                     raise Exception("Failed to create shim")
             env["PATH"] = os.pathsep.join([os.environ["PATH"]] + [self.tmpPython.name])
         return env
 
     def installPrefix(self) -> Path:
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             # muon struggles with windows paths
             return Path(super().installPrefix().as_posix()[2:])
         return super().installPrefix()
 
     def postInstall(self):
-        return utils.createShim(self.installDir() / "bin/pkg-config", self.installDir() / f"bin/pkgconf{CraftCore.compiler.executableSuffix}")
+        return utils.createShim(self.installDir() / "bin/pkg-config", self.installDir() / f"bin/pkgconf{CraftCore.compiler.platform.executableSuffix}")

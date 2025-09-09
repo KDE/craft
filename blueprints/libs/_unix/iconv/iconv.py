@@ -7,7 +7,7 @@ from Utils import CraftHash
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotMacOS
+        self.parent.package.categoryInfo.platforms &= ~CraftCore.compiler.Platforms.MacOS
 
     def setTargets(self):
         for ver in ["1.15", "1.18"]:
@@ -28,5 +28,4 @@ class Package(AutoToolsPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.subinfo.options.configure.autoreconf = False
-
         self.subinfo.shelveAble = False

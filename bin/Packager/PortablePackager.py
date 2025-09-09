@@ -12,7 +12,7 @@ from .MacBasePackager import MacBasePackager
 from .SevenZipPackager import SevenZipPackager
 
 # on mac os we use MacBasePackager otherwise CollectionPackagerBase
-_packagerBase = MacBasePackager if CraftCore.compiler.isMacOS else CollectionPackagerBase
+_packagerBase = MacBasePackager if CraftCore.compiler.platform.isMacOS else CollectionPackagerBase
 
 
 class PortablePackager(_packagerBase, SevenZipPackager):  # type: ignore[valid-type]
@@ -33,7 +33,7 @@ class PortablePackager(_packagerBase, SevenZipPackager):  # type: ignore[valid-t
     @property
     def archiveExtension(self):
         extension = "." + CraftCore.settings.get("Packager", "7ZipArchiveType", "7z")
-        if extension == ".7z" and not CraftCore.compiler.isWindows:
+        if extension == ".7z" and not CraftCore.compiler.platform.isWindows:
             # .tar.xz is better supported on macos
             extension = ".tar.xz"
         return extension
@@ -43,12 +43,12 @@ class PortablePackager(_packagerBase, SevenZipPackager):  # type: ignore[valid-t
         defines["setupname"] = f"{defines['setupname']}{self.archiveExtension}"
         # TODO: we use the parent dir of foo.app, as we want the foo.app to be the root of the archive
         # however the parent dir might contain more than just foo.app
-        defines["srcdir"] = self.archiveDir() if CraftCore.compiler.isWindows else self.getMacAppPath(defines).parent
+        defines["srcdir"] = self.archiveDir() if CraftCore.compiler.platform.isWindows else self.getMacAppPath(defines).parent
         return defines
 
     def createPortablePackage(self, defines) -> bool:
         """create portable 7z package with digest files located in the manifest subdir"""
-        if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False) and CraftCore.compiler.isMacOS:
+        if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False) and CraftCore.compiler.platform.isMacOS:
             localSign = Path(defines["srcdir"]) / "localSign.sh"
             with localSign.open("wt") as f:
                 f.write(PortablePackager.LocalSignSh.format(setupname=self.getMacAppPath(defines).name))

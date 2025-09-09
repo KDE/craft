@@ -1,6 +1,92 @@
-diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x '*\.o' -x '*\.pyc' -x CMakeLists.txt.user sqlite-amalgamation-3420000.orig/cmake/ecm/ECMGeneratePkgConfigFile.cmake sqlite-amalgamation-3420000/cmake/ecm/ECMGeneratePkgConfigFile.cmake
---- sqlite-amalgamation-3420000.orig/cmake/ecm/ECMGeneratePkgConfigFile.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ sqlite-amalgamation-3420000/cmake/ecm/ECMGeneratePkgConfigFile.cmake	2023-06-30 15:20:37.294023200 +0200
+diff -Nrub -x *~ -x *\.rej -x *\.orig -x *\.o -x *\.pyc -x CMakeLists.txt.user sqlite-amalgamation-3420000.orig/CMakeLists.txt sqlite-amalgamation-3420000/CMakeLists.txt
+--- sqlite-amalgamation-3420000.orig/CMakeLists.txt	1970-01-01 01:00:00
++++ sqlite-amalgamation-3420000/CMakeLists.txt	2024-09-10 16:34:47
+@@ -0,0 +1,82 @@
++cmake_minimum_required( VERSION 3.0)
++
++
++file(STRINGS sqlite3.h SQLITE_VERSION_STRING REGEX "define SQLITE_VERSION.*")
++list(GET SQLITE_VERSION_STRING 0 SQLITE_VERSION_STRING)
++string(REGEX MATCH "[0-9]+.[0-9]+.[0-9]+" SQLITE_VERSION_STRING ${SQLITE_VERSION_STRING})
++project( SQLITE VERSION ${SQLITE_VERSION_STRING})
++
++
++set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/ecm)
++
++include(GenerateExportHeader)
++include(GNUInstallDirs)
++include(ECMSetupVersion)
++include(ECMGeneratePkgConfigFile)
++
++if(STATIC_LIBRARY)
++    set(LIBRARY_TYPE STATIC)
++else(STATIC_LIBRARY)
++    set(LIBRARY_TYPE SHARED)
++endif(STATIC_LIBRARY)
++
++option(SQLITE_ENABLE_UNLOCK_NOTIFY    "ENABLE_UNLOCK_NOTIFY"    ON)
++option(SQLITE_ENABLE_COLUMN_METADATA  "ENABLE_COLUMN_METADATA"  ON)
++option(SQLITE_ENABLE_FTS3             "ENABLE_FTS3"             ON)
++option(SQLITE_ENABLE_FTS3_PARENTHESIS "ENABLE_FTS3_PARENTHESIS" ON)
++option(SQLITE_ENABLE_FTS5             "ENABLE_FTS5"             ON)
++option(SQLITE_ENABLE_RTREE            "ENABLE_RTREE"            ON)
++option(SQLITE_DISABLE_DIRSYNC         "DISABLE_DIRSYNC"         ON)
++option(SQLITE_SECURE_DELETE           "SECURE_DELETE"           ON)
++option(SQLITE_ENABLE_DBSTAT_VTAB      "ENABLE_DBSTAT_VTAB"      ON)
++option(SQLITE_ENABLE_JSON1            "ENABLE_JSON1"            ON)
++option(SQLITE_ENABLE_COLUMN_METADATA  "ENABLE_COLUMN_METADATA"  ON)
++option(SQLITE_ENABLE_COLUMN_METADATA  "ENABLE_SHELL"  ON)
++
++if(NOT WIN32)
++  set(HAVE_USLEEP TRUE)
++else()
++  set(HAVE_USLEEP FALSE)
++endif()
++
++find_package( Threads )
++
++
++configure_file(config.h.in sqlite_cfg.h)
++set( sqlite_HEADER sqlite3.h sqlite3ext.h ${CMAKE_CURRENT_BINARY_DIR}/libsqlite3_export.h)
++
++set( libsqlite_SRC sqlite3.c  )
++
++add_library( libsqlite3 ${LIBRARY_TYPE} ${libsqlite_SRC} )
++target_include_directories(libsqlite3 PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
++generate_export_header(libsqlite3 EXPORT_MACRO_NAME SQLITE_API STATIC_DEFINE SQLITE3_STATIC)
++target_compile_definitions(libsqlite3 PRIVATE _HAVE_SQLITE_CONFIG_H)
++target_link_libraries(libsqlite3 PUBLIC Threads::Threads ${CMAKE_DL_LIBS})
++
++if("${LIBRARY_TYPE}" STREQUAL "STATIC")
++  target_compile_definitions(libsqlite3 PRIVATE SQLITE3_STATIC)
++endif()
++
++if(NOT WIN32)
++  target_link_libraries(libsqlite3 PUBLIC m)
++endif()
++
++ecm_generate_pkgconfig_file(
++    BASE_NAME sqlite3
++    INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR}
++    INSTALL
++)
++
++set_target_properties( libsqlite3 PROPERTIES RUNTIME_OUTPUT_NAME libsqlite ARCHIVE_OUTPUT_NAME sqlite3 PREFIX ""
++                                  VERSION ${SQLITE_VERSION_STRING} SOVERSION ${SQLITE_VERSION_MAJOR})
++install( TARGETS libsqlite3 RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} )
++
++if (ENABLE_SHELL)
++    add_executable(sqlite3_bin shell.c)
++    target_link_libraries( sqlite3_bin libsqlite3)
++    target_include_directories(sqlite3_bin PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
++    set_target_properties( sqlite3_bin PROPERTIES RUNTIME_OUTPUT_NAME sqlite3 ARCHIVE_OUTPUT_NAME sqlite3_bin )
++    install( TARGETS sqlite3_bin DESTINATION ${CMAKE_INSTALL_BINDIR})
++endif()
++
++install( FILES ${sqlite_HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} )
+diff -Nrub -x *~ -x *\.rej -x *\.orig -x *\.o -x *\.pyc -x CMakeLists.txt.user sqlite-amalgamation-3420000.orig/cmake/ecm/ECMGeneratePkgConfigFile.cmake sqlite-amalgamation-3420000/cmake/ecm/ECMGeneratePkgConfigFile.cmake
+--- sqlite-amalgamation-3420000.orig/cmake/ecm/ECMGeneratePkgConfigFile.cmake	1970-01-01 01:00:00
++++ sqlite-amalgamation-3420000/cmake/ecm/ECMGeneratePkgConfigFile.cmake	2024-09-10 16:34:04
 @@ -0,0 +1,182 @@
 +#.rst:
 +# ECMGeneratePkgConfigFile
@@ -184,9 +270,9 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x '*\.o' -x '*\.pyc' -x CMakeLists.
 +    install(FILES ${PKGCONFIG_FILENAME} DESTINATION ${ECM_PKGCONFIG_INSTALL_DIR})
 +  endif()
 +endfunction()
-diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x '*\.o' -x '*\.pyc' -x CMakeLists.txt.user sqlite-amalgamation-3420000.orig/cmake/ecm/ECMSetupVersion.cmake sqlite-amalgamation-3420000/cmake/ecm/ECMSetupVersion.cmake
---- sqlite-amalgamation-3420000.orig/cmake/ecm/ECMSetupVersion.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ sqlite-amalgamation-3420000/cmake/ecm/ECMSetupVersion.cmake	2023-06-30 15:20:37.295027200 +0200
+diff -Nrub -x *~ -x *\.rej -x *\.orig -x *\.o -x *\.pyc -x CMakeLists.txt.user sqlite-amalgamation-3420000.orig/cmake/ecm/ECMSetupVersion.cmake sqlite-amalgamation-3420000/cmake/ecm/ECMSetupVersion.cmake
+--- sqlite-amalgamation-3420000.orig/cmake/ecm/ECMSetupVersion.cmake	1970-01-01 01:00:00
++++ sqlite-amalgamation-3420000/cmake/ecm/ECMSetupVersion.cmake	2024-09-10 16:34:04
 @@ -0,0 +1,202 @@
 +#.rst:
 +# ECMSetupVersion
@@ -390,94 +476,9 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x '*\.o' -x '*\.pyc' -x CMakeLists.
 +    set(${ESV_VARIABLE_PREFIX}_VERSION_STRING "${${ESV_VARIABLE_PREFIX}_VERSION}" PARENT_SCOPE)
 +
 +endfunction()
-diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x '*\.o' -x '*\.pyc' -x CMakeLists.txt.user sqlite-amalgamation-3420000.orig/CMakeLists.txt sqlite-amalgamation-3420000/CMakeLists.txt
---- sqlite-amalgamation-3420000.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ sqlite-amalgamation-3420000/CMakeLists.txt	2023-06-30 15:20:37.297027500 +0200
-@@ -0,0 +1,81 @@
-+cmake_minimum_required( VERSION 3.0)
-+
-+
-+file(STRINGS sqlite3.h SQLITE_VERSION_STRING REGEX "define SQLITE_VERSION.*")
-+list(GET SQLITE_VERSION_STRING 0 SQLITE_VERSION_STRING)
-+string(REGEX MATCH "[0-9]+.[0-9]+.[0-9]+" SQLITE_VERSION_STRING ${SQLITE_VERSION_STRING})
-+project( SQLITE VERSION ${SQLITE_VERSION_STRING})
-+
-+
-+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/ecm)
-+
-+include(GenerateExportHeader)
-+include(GNUInstallDirs)
-+include(ECMSetupVersion)
-+include(ECMGeneratePkgConfigFile)
-+
-+if(STATIC_LIBRARY)
-+    set(LIBRARY_TYPE STATIC)
-+else(STATIC_LIBRARY)
-+    set(LIBRARY_TYPE SHARED)
-+endif(STATIC_LIBRARY)
-+
-+option(SQLITE_ENABLE_UNLOCK_NOTIFY    "ENABLE_UNLOCK_NOTIFY"    ON)
-+option(SQLITE_ENABLE_COLUMN_METADATA  "ENABLE_COLUMN_METADATA"  ON)
-+option(SQLITE_ENABLE_FTS3             "ENABLE_FTS3"             ON)
-+option(SQLITE_ENABLE_FTS3_PARENTHESIS "ENABLE_FTS3_PARENTHESIS" ON)
-+option(SQLITE_ENABLE_FTS5             "ENABLE_FTS5"             ON)
-+option(SQLITE_ENABLE_RTREE            "ENABLE_RTREE"            ON)
-+option(SQLITE_DISABLE_DIRSYNC         "DISABLE_DIRSYNC"         ON)
-+option(SQLITE_SECURE_DELETE           "SECURE_DELETE"           ON)
-+option(SQLITE_ENABLE_DBSTAT_VTAB      "ENABLE_DBSTAT_VTAB"      ON)
-+option(SQLITE_ENABLE_JSON1            "ENABLE_JSON1"            ON)
-+option(SQLITE_ENABLE_COLUMN_METADATA  "ENABLE_COLUMN_METADATA"  ON)
-+
-+if(NOT WIN32)
-+  set(HAVE_USLEEP TRUE)
-+else()
-+  set(HAVE_USLEEP FALSE)
-+endif()
-+
-+find_package( Threads )
-+
-+
-+configure_file(config.h.in sqlite_cfg.h)
-+set( sqlite_HEADER sqlite3.h sqlite3ext.h ${CMAKE_CURRENT_BINARY_DIR}/libsqlite3_export.h)
-+
-+set( libsqlite_SRC sqlite3.c  )
-+set( sqlite_SRC shell.c )
-+
-+add_library( libsqlite3 ${LIBRARY_TYPE} ${libsqlite_SRC} )
-+target_include_directories(libsqlite3 PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-+generate_export_header(libsqlite3 EXPORT_MACRO_NAME SQLITE_API STATIC_DEFINE SQLITE3_STATIC)
-+target_compile_definitions(libsqlite3 PRIVATE _HAVE_SQLITE_CONFIG_H)
-+target_link_libraries(libsqlite3 PUBLIC Threads::Threads ${CMAKE_DL_LIBS})
-+
-+if("${LIBRARY_TYPE}" STREQUAL "STATIC")
-+  target_compile_definitions(libsqlite3 PRIVATE SQLITE3_STATIC)
-+endif()
-+
-+if(NOT WIN32)
-+  target_link_libraries(libsqlite3 PUBLIC m)
-+endif()
-+
-+ecm_generate_pkgconfig_file(
-+    BASE_NAME sqlite3
-+    INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR}
-+    INSTALL
-+)
-+
-+set_target_properties( libsqlite3 PROPERTIES RUNTIME_OUTPUT_NAME libsqlite ARCHIVE_OUTPUT_NAME sqlite3 PREFIX ""
-+                                  VERSION ${SQLITE_VERSION_STRING} SOVERSION ${SQLITE_VERSION_MAJOR})
-+install( TARGETS libsqlite3 RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} )
-+
-+add_executable( sqlite3_bin ${sqlite_SRC} )
-+target_link_libraries( sqlite3_bin libsqlite3)
-+target_include_directories(sqlite3_bin PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-+set_target_properties( sqlite3_bin PROPERTIES RUNTIME_OUTPUT_NAME sqlite3 ARCHIVE_OUTPUT_NAME sqlite3_bin )
-+
-+install( TARGETS sqlite3_bin DESTINATION ${CMAKE_INSTALL_BINDIR})
-+
-+install( FILES ${sqlite_HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} )
-diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x '*\.o' -x '*\.pyc' -x CMakeLists.txt.user sqlite-amalgamation-3420000.orig/config.h.in sqlite-amalgamation-3420000/config.h.in
---- sqlite-amalgamation-3420000.orig/config.h.in	1970-01-01 01:00:00.000000000 +0100
-+++ sqlite-amalgamation-3420000/config.h.in	2023-06-30 15:20:37.298027500 +0200
+diff -Nrub -x *~ -x *\.rej -x *\.orig -x *\.o -x *\.pyc -x CMakeLists.txt.user sqlite-amalgamation-3420000.orig/config.h.in sqlite-amalgamation-3420000/config.h.in
+--- sqlite-amalgamation-3420000.orig/config.h.in	1970-01-01 01:00:00
++++ sqlite-amalgamation-3420000/config.h.in	2024-09-10 16:34:04
 @@ -0,0 +1,19 @@
 +#ifndef SQLITECONFIG_H
 +#define SQLITECONFIG_H 1
@@ -498,17 +499,17 @@ diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x '*\.o' -x '*\.pyc' -x CMakeLists.
 +#cmakedefine01 HAVE_USLEEP
 +
 +#endif
-diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x '*\.o' -x '*\.pyc' -x CMakeLists.txt.user sqlite-amalgamation-3420000.orig/sqlite3.c sqlite-amalgamation-3420000/sqlite3.c
---- sqlite-amalgamation-3420000.orig/sqlite3.c	2023-05-16 15:45:23.000000000 +0200
-+++ sqlite-amalgamation-3420000/sqlite3.c	2023-06-30 15:20:37.264754800 +0200
+diff -Nrub -x *~ -x *\.rej -x *\.orig -x *\.o -x *\.pyc -x CMakeLists.txt.user sqlite-amalgamation-3420000.orig/sqlite3.c sqlite-amalgamation-3420000/sqlite3.c
+--- sqlite-amalgamation-3420000.orig/sqlite3.c	2023-05-16 15:45:23
++++ sqlite-amalgamation-3420000/sqlite3.c	2024-09-10 16:34:04
 @@ -1,3 +1,4 @@
 +#include "libsqlite3_export.h"
  /******************************************************************************
  ** This file is an amalgamation of many separate C source files from SQLite
  ** version 3.42.0.  By combining all the individual C code files into this
-diff -Nrub -x '*~' -x '*\.rej' -x '*\.orig' -x '*\.o' -x '*\.pyc' -x CMakeLists.txt.user sqlite-amalgamation-3420000.orig/sqlite3.h sqlite-amalgamation-3420000/sqlite3.h
---- sqlite-amalgamation-3420000.orig/sqlite3.h	2023-05-16 15:45:23.000000000 +0200
-+++ sqlite-amalgamation-3420000/sqlite3.h	2023-06-30 15:20:37.241174400 +0200
+diff -Nrub -x *~ -x *\.rej -x *\.orig -x *\.o -x *\.pyc -x CMakeLists.txt.user sqlite-amalgamation-3420000.orig/sqlite3.h sqlite-amalgamation-3420000/sqlite3.h
+--- sqlite-amalgamation-3420000.orig/sqlite3.h	2023-05-16 15:45:23
++++ sqlite-amalgamation-3420000/sqlite3.h	2024-09-10 16:34:04
 @@ -32,6 +32,8 @@
  */
  #ifndef SQLITE3_H
