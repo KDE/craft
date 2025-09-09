@@ -40,7 +40,7 @@ from Utils.CaseInsensitiveDict import CaseInsensitiveDict
 
 # The minimum python version for craft please edit here
 # if you add code that changes this requirement
-MIN_PY_VERSION = (3, 9, 0)
+MIN_PY_VERSION = (3, 11, 0)
 
 
 def log(msg, critical=False):
@@ -161,7 +161,7 @@ class SetupHelper(object):
         printRow("ABI", CraftCore.compiler)
         printRow("Download directory", CraftCore.standardDirs.downloadDir())
         printRow("Cache repository", ", ".join(CraftCore.settings.cacheRepositoryUrls()))
-        if not CraftCore.compiler.isAndroid and CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+        if not CraftCore.compiler.platform.isAndroid and CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
             printRow("EnvironmentUpdated", SetupHelper._EnvironmentPopulated)
             for key in ["CC", "CXX"]:
                 printRow(key, f"{os.environ[key]!r} => {CraftCore.cache.findApplication(os.environ[key])}")
@@ -232,8 +232,7 @@ class SetupHelper(object):
                 CraftCore.compiler.Architecture.x86_32: "x86",
                 CraftCore.compiler.Architecture.x86_64: "x86_amd64",
             }
-
-        args = architectures[architecture]
+        args = architectures[architecture.key]
         path = ""
         # we prefer newer compiler that provide legacy toolchains
         if version:
@@ -284,12 +283,11 @@ class SetupHelper(object):
         return CaseInsensitiveDict(json.loads(result))
 
     def getEnv(self):
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             return SetupHelper.getMSVCEnv(
                 CraftCore.compiler.getInternalVersion(),
                 CraftCore.compiler.architecture,
                 CraftCore.compiler.msvcToolset,
-                CraftCore.compiler.isNative(),
             )
         return os.environ
 
@@ -325,17 +323,17 @@ class SetupHelper(object):
     def _setupUnix(self):
         craftLibDir = CraftCore.standardDirs.craftRoot() / "lib"
 
-        if CraftCore.compiler.isFreeBSD:
+        if CraftCore.compiler.platform.isFreeBSD:
             self.prependEnvVar("LD_LIBRARY_PATH", [craftLibDir])
             self.prependEnvVar("LDFLAGS", ["-Wl,-rpath,'$ORIGIN/../lib'", f"-L{craftLibDir}"], sep=" ")
-        elif CraftCore.compiler.isLinux:
+        elif CraftCore.compiler.platform.isLinux:
             # we will later replace the hard coded path in BuildSystemBase.internalPostInstall
             self.prependEnvVar("LDFLAGS", [f"-Wl,-rpath,{craftLibDir}", f"-L{craftLibDir}"], sep=" ")
         self.prependEnvVar(
             "BISON_PKGDATADIR",
             os.path.join(CraftCore.standardDirs.craftRoot(), "share", "bison"),
         )
-        self.prependEnvVar("M4", os.path.join(CraftCore.standardDirs.craftRoot(), "bin", "m4"))
+        self.addEnvVar("M4", CraftCore.standardDirs.craftHostRoot() / "bin/m4")
 
         # use the system fonts, keep the logic in sync with AppImagePackager
         fontConfigPath = Path("/etc/fonts")
@@ -349,31 +347,32 @@ class SetupHelper(object):
             [f"-Wl,-rpath,{CraftCore.standardDirs.craftRoot() / 'lib'}", f"-L{CraftCore.standardDirs.craftRoot() / 'lib'}"],
             sep=" ",
         )
-        if CraftCore.compiler.macOSDeploymentTarget < 12:
-            # https://developer.apple.com/documentation/xcode-release-notes/xcode-15-release-notes
-            # Binaries using symbols with a weak definition crash at runtime on iOS 14/macOS 12 or older. This impacts primarily C++ projects due to their extensive use of weak symbols. (114813650) (FB13097713)
-            # Workaround: Bump the minimum deployment target to iOS 15, macOS 12, watchOS 8 or tvOS 15, or add -Wl,-ld_classic to the OTHER_LDFLAGS build setting.
-            try:
-                # does ld support -ld_classic
-                subprocess.check_call(
-                    """echo "int main() {}" | /usr/bin/clang "-Wl,-ld_classic" -x c++ - -o /dev/null""", shell=True, stderr=subprocess.DEVNULL
-                )
-                self.prependEnvVar(
-                    "LDFLAGS",
-                    ["-Wl,-ld_classic"],
-                    sep=" ",
-                )
-            except:
-                pass
-        self.addEnvVar(
-            "MACOSX_DEPLOYMENT_TARGET",
-            str(CraftCore.compiler.macOSDeploymentTarget),
-        )
+        if CraftCore.compiler.platform.isNative:
+            if CraftCore.compiler.macOSDeploymentTarget < 12:
+                # https://developer.apple.com/documentation/xcode-release-notes/xcode-15-release-notes
+                # Binaries using symbols with a weak definition crash at runtime on iOS 14/macOS 12 or older. This impacts primarily C++ projects due to their extensive use of weak symbols. (114813650) (FB13097713)
+                # Workaround: Bump the minimum deployment target to iOS 15, macOS 12, watchOS 8 or tvOS 15, or add -Wl,-ld_classic to the OTHER_LDFLAGS build setting.
+                try:
+                    # does ld support -ld_classic
+                    subprocess.check_call(
+                        """echo "int main() {}" | /usr/bin/clang "-Wl,-ld_classic" -x c++ - -o /dev/null""", shell=True, stderr=subprocess.DEVNULL
+                    )
+                    self.prependEnvVar(
+                        "LDFLAGS",
+                        ["-Wl,-ld_classic"],
+                        sep=" ",
+                    )
+                except:
+                    pass
+            self.addEnvVar(
+                "MACOSX_DEPLOYMENT_TARGET",
+                str(CraftCore.compiler.macOSDeploymentTarget),
+            )
         self.prependEnvVar(
             "BISON_PKGDATADIR",
             os.path.join(CraftCore.standardDirs.craftRoot(), "share", "bison"),
         )
-        self.prependEnvVar("M4", os.path.join(CraftCore.standardDirs.craftRoot(), "bin", "m4"))
+        self.addEnvVar("M4", CraftCore.standardDirs.craftHostRoot() / "bin/m4")
         try:
             dbusInstalled = bool(CraftCore.installdb.isInstalled("libs/dbus"))
         except sqlite3.OperationalError:
@@ -400,15 +399,15 @@ class SetupHelper(object):
             os.path.join(CraftCore.standardDirs.craftRoot(), "bin"),
         )
 
-        if CraftCore.compiler.isMinGW():
+        if CraftCore.compiler.compiler.isMinGW:
             self.prependEnvVar(
                 "PATH",
                 os.path.join(CraftCore.standardDirs.craftRoot(), "mingw64", "bin"),
             )
 
     def _setupAndroid(self):
-        self.addEnvVar("ANDROID_ARCH", CraftCore.compiler.androidArchitecture)
-        self.addEnvVar("ANDROID_ARCH_ABI", CraftCore.compiler.androidAbi)
+        self.addEnvVar("ANDROID_ARCH", CraftCore.compiler.architecture.androidArchitecture)
+        self.addEnvVar("ANDROID_ARCH_ABI", CraftCore.compiler.architecture.androidAbi)
 
     def setupEnvironment(self):
         originaleEnv = CaseInsensitiveDict(os.environ)
@@ -436,11 +435,11 @@ class SetupHelper(object):
                 ),
             )
 
-        if OsUtils.isWin():
+        if CraftCore.compiler.platform.isWindows:
             self._setupWin()
-        elif OsUtils.isMac():
+        elif CraftCore.compiler.platform & (CraftCore.compiler.Platforms.MacOS | CraftCore.compiler.Platforms.iOS):
             self._setupMac()
-        elif CraftCore.compiler.isAndroid:
+        elif CraftCore.compiler.platform.isAndroid:
             self._setupAndroid()
         else:
             self._setupUnix()
@@ -455,7 +454,7 @@ class SetupHelper(object):
                 if out[0] == 0:
                     PKG_CONFIG_PATH.update(collections.OrderedDict.fromkeys(out[1].split(os.path.pathsep)))
         # remove homebrew paths on macOS, and covert the dict to a list
-        PKG_CONFIG_PATH = [key for key in PKG_CONFIG_PATH if not (CraftCore.compiler.isMacOS and key.startswith("/opt/homebrew"))]
+        PKG_CONFIG_PATH = [key for key in PKG_CONFIG_PATH if not (CraftCore.compiler.platform.isMacOS and key.startswith("/opt/homebrew"))]
         self.prependEnvVar("PKG_CONFIG_PATH", os.path.pathsep.join(PKG_CONFIG_PATH))
 
         self.prependEnvVar(
@@ -496,43 +495,52 @@ class SetupHelper(object):
                     CraftCore.standardDirs.etcDir(),
                     "virtualenv",
                     "3",
-                    "Scripts" if CraftCore.compiler.isWindows else "bin",
+                    "Scripts" if CraftCore.compiler.platform.isWindows else "bin",
                 ),
             ],
         )
 
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             self.prependEnvVar(
                 "PATH",
                 CraftCore.standardDirs.craftRoot() / "bin/Scripts",
             )
 
         # make sure that craftroot bin is the first to look for dlls etc
+        if not CraftCore.compiler.platform.isNative:
+            self.prependEnvVar(
+                "PATH",
+                [
+                    CraftCore.standardDirs.craftHostRoot() / "dev-utils/bin",
+                    CraftCore.standardDirs.craftHostRoot() / "bin",
+                    CraftCore.standardDirs.craftHostRoot() / "libexec",
+                ],
+            )
         self.prependEnvVar(
             "PATH",
             [CraftCore.standardDirs.craftRoot() / "dev-utils/bin", CraftCore.standardDirs.craftRoot() / "bin", CraftCore.standardDirs.craftRoot() / "libexec"],
         )
 
-        if CraftCore.compiler.isClang() and not CraftCore.compiler.isAndroid:
+        if CraftCore.compiler.compiler.isClang and not CraftCore.compiler.platform.isAndroid:
             if OsUtils.isUnix() and CraftCore.settings.getboolean("General", "UseSystemClang", True):
                 self.addEnvVar("CC", "/usr/bin/clang")
                 self.addEnvVar("CXX", "/usr/bin/clang++")
             else:
-                if CraftCore.compiler.isMSVC():
+                if CraftCore.compiler.compiler.isMSVC:
                     self.addDefaultEnvVar("CC", "clang-cl")
                     self.addDefaultEnvVar("CXX", "clang-cl")
                 else:
                     self.addDefaultEnvVar("CC", "clang")
                     self.addDefaultEnvVar("CXX", "clang")
-        elif CraftCore.compiler.isGCC():
-            if not CraftCore.compiler.isNative() and CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_32:
+        elif CraftCore.compiler.compiler.isGCC:
+            if not CraftCore.compiler.architecture.isNative and CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_32:
                 self.addEnvVar("CC", "gcc -m32")
                 self.addEnvVar("CXX", "g++ -m32")
                 self.addEnvVar("AS", "gcc -c -m32")
             else:
                 self.addDefaultEnvVar("CC", "gcc")
                 self.addDefaultEnvVar("CXX", "g++")
-        elif CraftCore.compiler.isMSVC():
+        elif CraftCore.compiler.compiler.isMSVC:
             self.addDefaultEnvVar("CC", "cl")
             self.addDefaultEnvVar("CXX", "cl")
 
@@ -545,10 +553,10 @@ class SetupHelper(object):
             self.addEnvVar("CLICOLOR_FORCE", "1")
             self.addEnvVar("CLICOLOR", "1")
             self.addEnvVar("ANSICON", "1")
-            if CraftCore.compiler.isClang() and CraftCore.compiler.isMSVC():
+            if CraftCore.compiler.compiler.isClang and CraftCore.compiler.compiler.isMSVC:
                 self.prependEnvVar("CFLAGS", "-fcolor-diagnostics -fansi-escape-codes", sep=" ")
                 self.prependEnvVar("CXXFLAGS", "-fcolor-diagnostics -fansi-escape-codes", sep=" ")
-            elif CraftCore.compiler.isGCCLike():
+            elif CraftCore.compiler.compiler.isGCCLike:
                 self.prependEnvVar("CFLAGS", "-fdiagnostics-color=always", sep=" ")
                 self.prependEnvVar("CXXFLAGS", "-fdiagnostics-color=always", sep=" ")
 

@@ -5,11 +5,6 @@ from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
-    def registerOptions(self):
-        # We need this as a host tool. Craft at this point isn't set up to produce both
-        # host and target binaries, so on Android we have host tools in the docker image.
-        self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.NotAndroid
-
     def setTargets(self):
         for ver in ["1.4.18", "1.4.19"]:
             self.targets[ver] = f"https://ftp.gnu.org/gnu/m4/m4-{ver}.tar.xz"
@@ -43,6 +38,6 @@ class Package(AutoToolsPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.subinfo.options.configure.autoreconf = False
-        if CraftCore.compiler.isLinux and CraftCore.compiler.isClang():
+        if CraftCore.compiler.platform.isLinux and CraftCore.compiler.compiler.isClang:
             self.subinfo.options.configure.cflags += " --rtlib=compiler-rt"
             self.subinfo.options.configure.cxxflags += " --rtlib=compiler-rt"

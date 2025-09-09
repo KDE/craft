@@ -21,23 +21,23 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-utils/cmake"] = None
         self.buildDependencies["dev-utils/wget"] = None
 
-        if CraftCore.compiler.isLinux:
+        if CraftCore.compiler.platform.isLinux:
             self.buildDependencies["dev-utils/patchelf"] = None
 
         self.buildDependencies["dev-utils/git"] = None
         self.buildDependencies["dev-utils/patch"] = None
         self.buildDependencies["dev-utils/sed"] = None
 
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             self.buildDependencies["dev-utils/msys-base"] = None
         else:
             self.buildDependencies["dev-utils/automake"] = None
             self.buildDependencies["dev-utils/libtool"] = None
 
-        if CraftCore.compiler.isMacOS:
+        if CraftCore.compiler.platform.isMacOS:
             self.buildDependencies["dev-utils/create-dmg"] = None
 
-        if CraftCore.compiler.isMSVC() or CraftCore.settings.get("Compile", "MakeProgram", "") == "jom":
+        if CraftCore.compiler.compiler.isMSVC or CraftCore.settings.get("Compile", "MakeProgram", "") == "jom":
             self.buildDependencies["dev-utils/jom"] = None
         if CraftCore.settings.getboolean("Compile", "UseNinja", False):
             self.buildDependencies["dev-utils/ninja"] = None
@@ -49,7 +49,7 @@ class subinfo(info.infoclass):
         # install the shim to the system python
         self.buildDependencies["dev-utils/system-python3"] = None
 
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             self.buildDependencies["dev-utils/msys"] = None
 
         # update the blueprints

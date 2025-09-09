@@ -27,7 +27,6 @@ import textwrap
 
 import utils
 from BuildSystem.BuildSystemBase import BuildSystemBase
-from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from CraftStandardDirs import CraftStandardDirs
 from Utils.Arguments import Arguments
@@ -49,7 +48,7 @@ class MesonBuildSystem(BuildSystemBase):
         }
         if CraftCore.settings.getboolean("General", "AllowAnsiColor", True):
             env["FORCE_COLOR"] = 1
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             env.update(
                 {
                     "LIB": f"{os.environ['LIB']};{CraftStandardDirs.craftRoot() / 'lib'}",
@@ -94,19 +93,19 @@ class MesonBuildSystem(BuildSystemBase):
         args = []
         config = ""
 
-        if CraftCore.compiler.isAndroid:
-            if CraftCore.compiler.architecture == CraftCompiler.Architecture.arm64:
+        if CraftCore.compiler.platform.isAndroid:
+            if CraftCore.compiler.architecture.isArm64:
                 toolchain = "aarch64-linux-android"
                 compiler = "aarch64-linux-android"
-            elif CraftCore.compiler.architecture == CraftCompiler.Architecture.arm32:
+            elif CraftCore.compiler.architecture.isArm32:
                 toolchain = "arm-linux-androideabi"
                 compiler = "armv7a-linux-androideabi"
-            elif CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
+            elif CraftCore.compiler.architecture.isX86_32:
                 toolchain = "i686-linux-android"
                 compiler = "i686-linux-android"
             else:
-                toolchain = f"{CraftCore.compiler.androidArchitecture}-linux-android"
-                compiler = f"{CraftCore.compiler.androidArchitecture}-linux-android"
+                toolchain = f"{CraftCore.compiler.architecture.androidArchitecture}-linux-android"
+                compiler = f"{CraftCore.compiler.architecture.androidArchitecture}-linux-android"
 
             toolchain_path = os.path.join(os.environ["ANDROID_NDK"], "toolchains/llvm/prebuilt", os.environ.get("ANDROID_NDK_HOST", "linux-x86_64"), "bin")
 
@@ -126,14 +125,14 @@ class MesonBuildSystem(BuildSystemBase):
                 "pkgconfig = '/usr/bin/pkg-config'\n"
                 "[host_machine]\n"
                 "system = 'linux'\n"
-                f"cpu_family = '{CraftCore.compiler.androidArchitecture}'\n"
-                f"cpu = '{CraftCore.compiler.androidArchitecture}'\n"  # according to meson, this value is meaningless (https://github.com/mesonbuild/meson/issues/7037#issuecomment-620137436)
+                f"cpu_family = '{CraftCore.compiler.architecture.androidArchitecture}'\n"
+                f"cpu = '{CraftCore.compiler.architecture.androidArchitecture}'\n"  # according to meson, this value is meaningless (https://github.com/mesonbuild/meson/issues/7037#issuecomment-620137436)
                 "endian = 'little'\n"
             )
             args = ["--cross-file", craftCrossFilePath]
-        elif CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
+        elif CraftCore.compiler.platform.isMacOS and not CraftCore.compiler.architecture.isNative:
             # based on https://github.com/mesonbuild/meson-python/blob/main/mesonpy/__init__.py#L687
-            arch = CraftCore.compiler.architecture.name.lower()
+            arch = CraftCore.compiler.architecture.key.name.lower()
             config = textwrap.dedent(
                 f"""
                         [binaries]

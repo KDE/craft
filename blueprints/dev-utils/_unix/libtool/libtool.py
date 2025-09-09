@@ -5,11 +5,6 @@ from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
-    def registerOptions(self):
-        # We need this as a host tool. Craft at this point isn't set up to produce both
-        # host and target binaries, so on Android we have host tools in the docker image.
-        self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.NotAndroid
-
     def setTargets(self):
         for ver in ["2.4.6", "2.4.7"]:
             self.targets[ver] = f"https://files.kde.org/craft/sources/dev-utils/libtool/libtool-{ver}.tar.xz"

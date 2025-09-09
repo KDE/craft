@@ -1,5 +1,4 @@
 import info
-from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from Package.AutoToolsPackageBase import AutoToolsPackageBase
 from Utils import CraftHash
@@ -27,10 +26,10 @@ class Package(AutoToolsPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.shell.useMSVCCompatEnv = True
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             wrapper = self.shell.toNativePath(self.sourceDir() / "msvcc.sh")
             arch = ""
-            if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64:
+            if CraftCore.compiler.architecture.isX86_64:
                 arch = " -m64"
             self.subinfo.options.configure.args += [f"CCAS={wrapper}{arch}"]
             self.subinfo.options.configure.cflags += " -DFFI_BUILDING_DLL"

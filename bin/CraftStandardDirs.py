@@ -14,7 +14,7 @@ class Location(object):
 
     @property
     def data(self) -> Path:
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             return self._standardDirs.craftRoot() / "bin/data"
         else:
             return self._standardDirs.craftRoot() / "share"
@@ -50,6 +50,12 @@ class CraftStandardDirs(object):
     @staticmethod
     def craftRoot() -> Path:
         return CraftCore.standardDirs._craftRoot
+
+    @staticmethod
+    def craftHostRoot() -> Path:
+        if CraftCore.compiler.platform.isNative:
+            return CraftCore.standardDirs.craftRoot()
+        return Path(CraftCore.settings.get("Paths", "HostRoot"))
 
     @staticmethod
     def etcDir() -> Path:

@@ -26,7 +26,6 @@ import os
 
 import info
 import utils
-from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
@@ -73,7 +72,7 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["virtual/base"] = None
         self.buildDependencies["dev-utils/perl"] = None
         self.runtimeDependencies["libs/zlib"] = None
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             self.buildDependencies["dev-utils/nasm"] = None
 
 
@@ -86,12 +85,12 @@ class PackageCMake(CMakePackageBase):
         self.subinfo.options.install.args += ["install_sw", f"DESTDIR={self.installDir()}"]
 
         self.env = {}
-        if CraftCore.compiler.isAndroid:
+        if CraftCore.compiler.platform.isAndroid:
             ndkToolchainPath = os.path.join(os.environ["ANDROID_NDK"], "toolchains/llvm/prebuilt", os.environ.get("ANDROID_NDK_HOST", "linux-x86_64"), "bin")
             self.env["PATH"] = os.pathsep.join([ndkToolchainPath, os.environ["PATH"]])
             self.env["CFLAGS"] = "-Os"
             self.subinfo.options.configure.args += [
-                f"android-{CraftCore.compiler.androidArchitecture}",
+                f"android-{CraftCore.compiler.architecture.androidArchitecture}",
                 f"-D__ANDROID_API__={CraftCore.compiler.androidApiLevel()}",
                 "no-apps",
             ]
@@ -104,11 +103,11 @@ class PackageCMake(CMakePackageBase):
             + self.subinfo.options.configure.args
             + self.subinfo.options.configure.staticArgs
         )
-        if not CraftCore.compiler.isAndroid:
+        if not CraftCore.compiler.platform.isAndroid:
             args += [
                 "-FS",
                 f"-I{OsUtils.toUnixPath(os.path.join(CraftStandardDirs.craftRoot(), 'include'))}",
-                "VC-WIN64A" if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64 else "VC-WIN32",
+                "VC-WIN64A" if CraftCore.compiler.architecture.isX86_64 else "VC-WIN32",
             ]
         with utils.ScopedEnv(self.env):
             return utils.system(args)
@@ -138,8 +137,8 @@ class PackageMSys(AutoToolsPackageBase):
         super().__init__(**kwargs)
         # https://github.com/openssl/openssl/issues/18720
         self.subinfo.options.configure.cflags += "-Wno-error=implicit-function-declaration"
-        if CraftCore.compiler.isMinGW():
-            if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64:
+        if CraftCore.compiler.compiler.isMinGW:
+            if CraftCore.compiler.architecture.isX86_64:
                 self.platform = "mingw64"
             else:
                 self.platform = "mingw"
@@ -152,11 +151,11 @@ class PackageMSys(AutoToolsPackageBase):
         self.subinfo.options.configure.noLibDir = True
         self.subinfo.options.install.args += ["install_sw"]
 
-        if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative() and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
+        if CraftCore.compiler.compiler.isGCC and not CraftCore.compiler.architecture.isNative and CraftCore.compiler.architecture.isX86_32:
             self.subinfo.options.configure.args += ["linux-x86"]
             self.subinfo.options.configure.projectFile = "Configure"
-        if CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
-            self.subinfo.options.configure.args += [f"darwin64-{CraftCore.compiler.architecture.name.lower()}"]
+        if CraftCore.compiler.platform.isMacOS and not CraftCore.compiler.architecture.isNative:
+            self.subinfo.options.configure.args += [f"darwin64-{CraftCore.compiler.architecture.key.name.lower()}"]
 
     def install(self):
         self.subinfo.options.make.supportsMultijob = False
@@ -173,7 +172,7 @@ class PackageMSys(AutoToolsPackageBase):
             )
 
 
-if CraftCore.compiler.isGCCLike() and not CraftCore.compiler.isMSVC() and not CraftCore.compiler.isAndroid:
+if CraftCore.compiler.compiler.isGCCLike and not CraftCore.compiler.compiler.isMSVC and not CraftCore.compiler.platform.isAndroid:
 
     class Package(PackageMSys):
         pass

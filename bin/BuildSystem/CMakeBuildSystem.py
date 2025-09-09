@@ -31,9 +31,9 @@ class CMakeBuildSystem(BuildSystemBase):
         if self.makeProgram == "ninja":
             return "Ninja"
         if OsUtils.isWin():
-            if CraftCore.compiler.isMSVC():
+            if CraftCore.compiler.compiler.isMSVC:
                 return "NMake Makefiles"
-            if CraftCore.compiler.isMinGW():
+            if CraftCore.compiler.compiler.isMinGW:
                 return "MinGW Makefiles"
         elif OsUtils.isUnix():
             return "Unix Makefiles"
@@ -57,29 +57,29 @@ class CMakeBuildSystem(BuildSystemBase):
         if self.buildType() is not None:
             options.append(f"-DCMAKE_BUILD_TYPE={self.buildType()}")
 
-        # if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative():
+        # if CraftCore.compiler.isGCC() and not CraftCore.compiler.platform.isNative:
         #    options += " -DCMAKE_TOOLCHAIN_FILE=%s" % os.path.join(CraftStandardDirs.craftRoot(), "craft", "bin", "toolchains", "Toolchain-cross-mingw32-linux-%s.cmake" % CraftCore.compiler.architecture)
 
         if CraftCore.settings.getboolean("CMake", "KDE_L10N_AUTO_TRANSLATIONS", False):
             options.append("-DKDE_L10N_AUTO_TRANSLATIONS=ON")
             options.append("-DKDE_L10N_SYNC_TRANSLATIONS=ON")
 
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             # people use InstallRequiredSystemLibraries.cmake wrong and unconditionally install the
             # msvc crt...
             options.append("-DCMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP=ON")
-        elif CraftCore.compiler.isMacOS:
+        elif CraftCore.compiler.platform.isMacOS:
             options += [
                 f"-DKDE_INSTALL_BUNDLEDIR={OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}/Applications/KDE",
                 "-DAPPLE_SUPPRESS_X11_WARNING=ON",
-                f"-DCMAKE_OSX_ARCHITECTURES={CraftCore.compiler.architecture.name.lower()}",
+                f"-DCMAKE_OSX_ARCHITECTURES={CraftCore.compiler.architecture.key.name.lower()}",
                 # we want to provide everything ourselves
                 "-DCMAKE_IGNORE_PREFIX_PATH=/opt/homebrew/",
             ]
-        elif CraftCore.compiler.isLinux:
+        elif CraftCore.compiler.platform.isLinux:
             # use the same lib dir on all distributions
             options += ["-DCMAKE_INSTALL_LIBDIR:PATH=lib"]
-        elif CraftCore.compiler.isAndroid:
+        elif CraftCore.compiler.platform.isAndroid:
             kfVersion = CraftCore.settings.get("General", "KFHostToolingVersion", "5")
             nativeToolingRoot = CraftCore.settings.get("General", f"KF{kfVersion}HostToolingRoot", "/opt/nativetooling")
 
@@ -143,7 +143,7 @@ class CMakeBuildSystem(BuildSystemBase):
                 if self.buildType() == "Release" or self.buildType() == "MinSizeRel":
                     options += ["-DANDROIDDEPLOYQT_EXTRA_ARGS=--release"]
 
-        if CraftCore.compiler.isWindows or CraftCore.compiler.isMacOS:
+        if CraftCore.compiler.platform.isWindows or CraftCore.compiler.platform.isMacOS:
             options.append("-DKDE_INSTALL_USE_QT_SYS_PATHS=ON")
 
         if self.subinfo.options.dynamic.buildTools:
@@ -161,9 +161,9 @@ class CMakeBuildSystem(BuildSystemBase):
         self.enterBuildDir()
         env = {}
         if self.supportsCCACHE:
-            cxx = CraftCore.standardDirs.craftRoot() / "dev-utils/ccache/bin" / Path(os.environ["CXX"]).name
-            if CraftCore.compiler.isWindows and not cxx.suffix:
-                cxx = Path(str(cxx) + CraftCore.compiler.executableSuffix)
+            cxx = CraftCore.standardDirs.craftHostRoot() / "dev-utils/ccache/bin" / Path(os.environ["CXX"]).name
+            if CraftCore.compiler.platform.isWindows and not cxx.suffix:
+                cxx = Path(str(cxx) + CraftCore.compiler.platform.executableSuffix)
             if cxx.exists():
                 env["CXX"] = cxx
                 env["CC"] = cxx.parent / Path(os.environ["CC"]).name

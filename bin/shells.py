@@ -42,7 +42,7 @@ class BashShell(object):
             ldflags = f" -L{mergeroot}/lib "
             cflags = f" -I{mergeroot}/include "
 
-            if CraftCore.compiler.isMacOS:
+            if CraftCore.compiler.platform.isApple:
                 # Only look for includes/libraries in the XCode SDK on MacOS to avoid errors with
                 # libraries installed by homebrew (causes errors e.g. with iconv since headers will be
                 # found in /usr/local/include first but libraries are searched for in /usr/lib before
@@ -50,13 +50,17 @@ class BashShell(object):
                 # Ensure that /usr/include comes before /usr/local/include in the header search path to avoid
                 # pulling in headers from /usr/local/include (e.g. installed by homebrew) that will cause
                 # linker errors later.
-                sdkPath = CraftCore.cache.getCommandOutput("xcrun", "--show-sdk-path")[1].strip()
-                deploymentFlag = f"-mmacosx-version-min={os.environ['MACOSX_DEPLOYMENT_TARGET']}"
+                platform = "macosx" if CraftCore.compiler.platform.isMacOS else "iphonesimulator"
+                sdkPath = CraftCore.cache.getCommandOutput("xcrun", f"--sdk {platform} --show-sdk-path")[1].strip()
+                if CraftCore.compiler.platform.isMacOS:
+                    deploymentFlag = f"-mmacosx-version-min={os.environ['MACOSX_DEPLOYMENT_TARGET']}"
+                else:
+                    deploymentFlag = ""
                 cflags = f" -isysroot {sdkPath} {deploymentFlag} {cflags} -isystem /usr/include"
                 ldflags = f" -isysroot {sdkPath} {deploymentFlag} {ldflags}"
 
-                if not CraftCore.compiler.isNative():
-                    arch = CraftCore.compiler.architecture.name.lower()
+                if not CraftCore.compiler.architecture.isNative:
+                    arch = CraftCore.compiler.architecture.key.name.lower()
                     self._environment["CC"] = f"{os.environ['CC']} -arch {arch}"
                     self._environment["CXX"] = f"{os.environ['CXX']} -arch {arch}"
 
@@ -65,7 +69,7 @@ class BashShell(object):
                 # See https://github.com/Homebrew/homebrew-core/issues/2674 for the -no_weak_imports flag
                 # ldflags = f" -Wl,-no_weak_imports {ldflags}"
 
-            if CraftCore.compiler.isMSVC():
+            if CraftCore.compiler.compiler.isMSVC:
                 self._environment["INCLUDE"] = f"{mergeroot}/include:{convertPath(os.environ['INCLUDE'])}"
                 self._environment["LIB"] = f"{mergeroot}/lib:{convertPath(os.environ['LIB'])}"
 
@@ -91,11 +95,11 @@ class BashShell(object):
                     self._environment["MSYS"] = "winsymlinks:nativestrict"
                 # we really want to use all the tools from msys, don't prepend our dirs
                 path = "/usr/local/bin:/usr/bin:/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl"
-                if CraftCore.compiler.isMinGW():
+                if CraftCore.compiler.compiler.isMinGW:
                     gcc = shutil.which("gcc")
                     if gcc:
                         path = f"{self.toNativePath(os.path.dirname(gcc))}:{path}"
-                elif CraftCore.compiler.isMSVC():
+                elif CraftCore.compiler.compiler.isMSVC:
                     path = f"{self.toNativePath(os.path.dirname(shutil.which('cl')))}:{path}"
                 self._environment["PATH"] = f"{path}:{convertPath(os.environ['PATH'])}"
                 self._environment["PKG_CONFIG_PATH"] = convertPath(os.environ["PKG_CONFIG_PATH"])
@@ -103,12 +107,12 @@ class BashShell(object):
                 if "make" in self._environment:
                     del self._environment["make"]
                 # MSYSTEM is used by uname
-                if CraftCore.compiler.isMinGW():
-                    self._environment["MSYSTEM"] = f"MINGW{CraftCore.compiler.bits}_CRAFT"
-                elif CraftCore.compiler.isMSVC():
-                    self._environment["MSYSTEM"] = f"MSYS{CraftCore.compiler.bits}_CRAFT"
+                if CraftCore.compiler.compiler.isMinGW:
+                    self._environment["MSYSTEM"] = f"MINGW{CraftCore.compiler.architecture.bits}_CRAFT"
+                elif CraftCore.compiler.compiler.isMSVC:
+                    self._environment["MSYSTEM"] = f"MSYS{CraftCore.compiler.architecture.bits}_CRAFT"
 
-                if self.useMSVCCompatEnv and CraftCore.compiler.isMSVC():
+                if self.useMSVCCompatEnv and CraftCore.compiler.compiler.isMSVC:
                     automake = []
                     for d in os.scandir(os.path.join(os.path.dirname(self._findBash()), "..", "share")):
                         if d.name.startswith("automake"):
@@ -156,7 +160,7 @@ class BashShell(object):
                     if CraftCore.compiler.getMsvcPlatformToolset() > 120:
                         cflags += " -FS"
 
-            if CraftCore.compiler.isAndroid:
+            if CraftCore.compiler.platform.isAndroid:
                 toolchainPath = os.path.join(
                     CraftCore.standardDirs.tmpDir(),
                     f"android-{CraftCore.compiler.architecture}-toolchain",
@@ -171,7 +175,7 @@ class BashShell(object):
                         "--install-dir",
                         toolchainPath,
                         "--arch",
-                        CraftCore.compiler.androidArchitecture,
+                        CraftCore.compiler.architecture.androidArchitecture,
                         "--api",
                         CraftCore.compiler.androidApiLevel(),
                     ]
@@ -216,7 +220,7 @@ class BashShell(object):
         bashArgs = []
         if "bashArguments" in kwargs:
             bashArgs = kwargs.pop("bashArguments")
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             tmp = CraftCore.cache.findApplication(cmd)
             if tmp:
                 cmd = tmp
@@ -229,7 +233,7 @@ class BashShell(object):
         return utils.system(command, cwd=path, env=env, **kwargs)
 
     def login(self):
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             self.useMSVCCompatEnv = True
         return self.execute(os.curdir, self._findBash(), "-i", displayProgress=True)
 

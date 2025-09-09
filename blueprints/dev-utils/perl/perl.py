@@ -5,7 +5,6 @@ from pathlib import Path
 import info
 import utils
 from BuildSystem.BuildSystemBase import BuildSystemBase
-from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from Package.AutoToolsPackageBase import AutoToolsPackageBase
@@ -16,14 +15,14 @@ from Utils.Arguments import Arguments
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
+        self.parent.package.categoryInfo.platforms = ~CraftCore.compiler.Platforms.Android
 
     def setTargets(self):
         for ver in ["5.36.0", "5.38.2", "5.39.8", "5.40.1"]:
             self.targets[ver] = f"https://www.cpan.org/src/5.0/perl-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"perl-{ver}"
 
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             self.patchToApply["5.36.0"] = [(".perl-5.36.0_win", 1)]
             self.patchToApply["5.38.2"] = [(".perl-5.39.8_win", 1)]
             self.patchToApply["5.39.8"] = [(".perl-5.39.8_win", 1)]
@@ -58,13 +57,13 @@ class PackageMSVC(MakeFilePackageBase):
 
         root = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
         config = {
-            "CCTYPE": "MSVC141" if CraftCore.compiler.isMSVC() else "GCC",
+            "CCTYPE": "MSVC141" if CraftCore.compiler.compiler.isMSVC else "GCC",
             "CRAFT_DESTDIR": self.installDir(),
-            "CRAFT_WIN64": "" if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_64 else "undef",
-            "PLMAKE": "nmake" if CraftCore.compiler.isMSVC() else "mingw32-make",
+            "CRAFT_WIN64": "" if CraftCore.compiler.architecture.isX86_64 else "undef",
+            "PLMAKE": "nmake" if CraftCore.compiler.compiler.isMSVC else "mingw32-make",
         }
 
-        if CraftCore.compiler.isMinGW():
+        if CraftCore.compiler.compiler.isMinGW:
             config["CCHOME"] = os.path.join(CraftCore.standardDirs.craftRoot(), "mingw64")
             config["SHELL"] = os.environ["COMSPEC"]
             config["CRAFT_CFLAGS"] = f"{os.environ.get('CFLAGS', '')} -I'{root}/include' -L'{root}/lib' -Wno-error=implicit-function-declaration"
@@ -72,15 +71,15 @@ class PackageMSVC(MakeFilePackageBase):
             config["USE_64_BIT_INT"] = "define"
             config["CCTYPE"] = "GCC"
             self.subinfo.options.make.args += [f"-j{CraftCore.settings.get('Compile', 'Jobs', multiprocessing.cpu_count())}"]
-        elif CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
-            config["PROCESSOR_ARCHITECTURE"] = f"x{CraftCore.compiler.bits}"
+        elif CraftCore.compiler.architecture.isX86_32:
+            config["PROCESSOR_ARCHITECTURE"] = f"x{CraftCore.compiler.architecture.bits}"
 
         self.subinfo.options.make.args += ["{0}={1}".format(x, y) for x, y in config.items()]
         self.subinfo.options.install.args += self.subinfo.options.make.args + ["installbare"]
 
     def _globEnv(self):
         env = {}
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             env = {"PATH": f"{self.blueprintDir()};{os.environ['PATH']}"}
         return env
 
@@ -142,19 +141,20 @@ class PackageAutoTools(AutoToolsPackageBase):
 
         cflags = self.shell.environment["CFLAGS"]
         ldflags = self.shell.environment["LDFLAGS"]
-        if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative() and CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32:
+        if CraftCore.compiler.compiler.isGCC and not CraftCore.compiler.architecture.isNative and CraftCore.compiler.architecture.isX86_32:
             cflags += " -m32"
             ldflags += " -m32"
             self.subinfo.options.configure.args += ["-Alddlflags=-m32 -shared", "-Uuse64bitint -Uuse64bitall"]
-        if CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
-            cflags = f"-arch {CraftCore.compiler.architecture.name.lower()} {cflags}"
-            ldflags = f"-arch {CraftCore.compiler.architecture.name.lower()} {ldflags}"
+        if CraftCore.compiler.platform.isMacOS and not CraftCore.compiler.architecture.isNative:
+            cflags = f"-arch {CraftCore.compiler.architecture.key.name.lower()} {cflags}"
+            ldflags = f"-arch {CraftCore.compiler.architecture.key.name.lower()} {ldflags}"
             self.subinfo.options.configure.args += [
-                f"-Dcc={os.environ['CC']} -arch {CraftCore.compiler.architecture.name.lower()}",
-                f"-Dcxx={os.environ['CXX']} -arch {CraftCore.compiler.architecture.name.lower()}",
-                f"-Dld={os.environ['CC']} -arch {CraftCore.compiler.architecture.name.lower()}",
+                f"-Dcc={os.environ['CC']} -arch {CraftCore.compiler.architecture.key.name.lower()}",
+                f"-Dcxx={os.environ['CXX']} -arch {CraftCore.compiler.architecture.key.name.lower()}",
+                f"-Dld={os.environ['CC']} -arch {CraftCore.compiler.architecture.key.name.lower()}",
             ]
-        # if CraftCore.compiler.isMacOS:
+        # TODO: fix use
+        # if CraftCore.compiler.platform.isMacOS:
         #     lddflags = "-dylib"
         # else:
         #     lddflags = "-shared"
@@ -187,13 +187,13 @@ class PackageAutoTools(AutoToolsPackageBase):
 
     @property
     def makeProgram(self):
-        if CraftCore.compiler.isFreeBSD:
+        if CraftCore.compiler.platform.isFreeBSD:
             return "make"
         else:
             return super().makeProgram
 
 
-if CraftCore.compiler.isUnix:
+if CraftCore.compiler.platform.isUnix:
 
     class Package(PackageAutoTools):
         pass

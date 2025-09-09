@@ -14,9 +14,6 @@
 ## freebsd-[gcc, clang]-[x86_32, x86_64]
 ## android-[gcc, clang]-[arm, arm64, x86_32, x86_64]
 ABI = windows-cl-msvc2019-x86_64
-## This option should be set to False if you use the msvc 201X Express Edition 64bit compiler
-## in all other cases, simply keep this option commented out
-#Native=False
 ## This option specifies which MSVC toolset to use. Leave this commented out for MSVC to pick
 ## the newest available toolset.
 ## This is an expert option, do not touch it unless you know exactly what it means.

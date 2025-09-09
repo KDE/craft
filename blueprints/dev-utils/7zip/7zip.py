@@ -6,7 +6,7 @@ from Package.BinaryPackageBase import BinaryPackageBase
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotFreeBSD & CraftCore.compiler.Platforms.NotAndroid
+        self.parent.package.categoryInfo.platforms &= ~CraftCore.compiler.Platforms.FreeBSD
 
     def setTargets(self):
         self.targets["latest"] = ""
@@ -27,19 +27,18 @@ class Package(BinaryPackageBase):
     def postInstall(self):
         args = []
         appPath = CraftCore.standardDirs.craftRoot() / "dev-utils/7z"
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             # TODO: arm
             appPath /= "x64/7za.exe"
         else:
             appPath /= "7zz"
-        if CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
+        if CraftCore.compiler.platform.isMacOS and not CraftCore.compiler.architecture.isNative:
             args = ["-arch", CraftCore.compiler.hostArchitecture.name.lower(), str(appPath)]
             appPath = "arch"
-
         # on Windows, we expect the file to be called 7za, the same applies to craft itself.
         # on Unix most apps expect 7zz, create both for compatibility
         for alias in ["7za", "7zz"]:
-            if not utils.createShim(self.imageDir() / f"dev-utils/bin/{alias}{CraftCore.compiler.executableSuffix}", appPath, useAbsolutePath=True, args=args):
+            if not utils.createShim(self.imageDir() / f"dev-utils/bin/{alias}{CraftCore.compiler.platform.executableSuffix}", appPath, useAbsolutePath=True, args=args):
                 return False
         return True
 

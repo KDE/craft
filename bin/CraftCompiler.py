@@ -24,6 +24,7 @@
 import os
 import platform
 import re
+import sys
 from enum import Enum, IntFlag, auto, unique
 from typing import Optional
 
@@ -33,12 +34,30 @@ from Utils.CraftBool import CraftBool
 
 
 class CraftCompilerSignature(object):
-    def __init__(self, platform, compiler, abiString, architecture, sourceString: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        platform,
+        compiler: "CraftCompiler.Compiler" = None,
+        abiString: str = None,
+        architecture: "CraftCompiler.Architecture" = None,
+        host: "CraftCompilerSignature" = None,
+        sourceString: Optional[str] = None,
+    ) -> None:
         self.platform = platform
         self.compiler = compiler
         self.abi = CraftCompiler.Abi.fromString(abiString) if abiString else None
         self.architecture = architecture
         self._sourceString = sourceString
+
+        if self.compiler and self.compiler.isGCC and self.platform.isWindows:
+            # I'm pretty sure there is a more elegant solution
+            self.compiler |= CraftCompiler.Compiler.MinGW
+
+        if not host or self.architecture.key == host.architecture.key:
+            self.architecture |= CraftCompiler.Architecture.Native
+
+        if not host or self.platform & host.platform:
+            self.platform |= CraftCompiler.Platforms.Native
 
     def __str__(self):
         return "-".join(self.signature)
@@ -48,22 +67,17 @@ class CraftCompilerSignature(object):
 
     @property
     def signature(self):
+        sig = [self.platform.key.name.lower()]
+        if self.compiler:
+            sig += [self.compiler.key.name.lower()]
         if self.abi:
-            return (
-                self.platform.name.lower(),
-                self.compiler.name.lower(),
-                self.abi.name.lower(),
-                self.architecture.name.lower(),
-            )
-        else:
-            return (
-                self.platform.name.lower(),
-                self.compiler.name.lower(),
-                self.architecture.name.lower(),
-            )
+            sig += [self.abi.key.name.lower()]
+
+        sig += [self.architecture.key.name.lower()]
+        return tuple(sig)
 
     @staticmethod
-    def parseAbi(s: str):
+    def parseAbi(s: str, host: "CraftCompilerSignature"):
         split = s.split("-")
         if 3 < len(split) < 4:
             raise Exception(f"Invalid compiler: {s}")
@@ -102,22 +116,12 @@ class CraftCompilerSignature(object):
                     abi = None
             except:
                 raise Exception(f"Invalid compiler: {s}")
-        return CraftCompilerSignature(platform, compiler, abi, arch, sourceString=s)
+        return CraftCompilerSignature(platform, compiler, abi, arch, host=host, sourceString=s)
 
 
 class CraftCompiler(object):
-    class Architecture(IntFlag):
-        NoArchitecture = 0
-        x86 = 0x1 << 0
-        x86_32 = 0x1 << 1 | x86
-        x86_64 = 0x1 << 2 | x86
-        arm = 0x1 << 3
-        arm32 = 0x1 << 4 | arm
-        arm64 = 0x1 << 5 | arm
-        arm64e = 0x1 << 6 | arm64  # Apple
-
-        All = ~0
-        # TODO:...
+    class CompilerFlags(IntFlag):
+        __str__ = Enum.__str__
 
         @classmethod
         def fromString(cls, name):
@@ -125,69 +129,269 @@ class CraftCompiler(object):
                 cls.__sting_map = dict([(k.lower(), v) for k, v in cls.__members__.items()])
             return cls.__sting_map[name.lower()]
 
-    class Platforms(IntFlag):
+        @property
+        def key(self):
+            """
+            Raw value without modifiers, to be used as key in dict's etc
+            """
+            mask = ~(~0 << 16)
+            return self & mask
+
+        def matchKeys(self, other) -> CraftBool:
+            # first check the key, then the modifiers
+            return CraftBool(self.key & other.key and self & other)
+
+        @classmethod
+        def All(cls):
+            return cls(0xFFFFFFFF)
+
+    @unique
+    class Architecture(CompilerFlags):
+        NoArchitecture = 0
+
+        bits64 = 0x1 << 0
+        bits32 = 0x1 << 1
+
+        # Values
+        x86 = 0x1 << 2
+        x86_32 = bits32 | x86
+        x86_64 = bits64 | x86
+        arm = 0x1 << 3
+        arm32 = bits32 | arm
+        arm64 = bits64 | arm
+        arm64e = 0x1 << 4 | arm64  # Apple
+
+        # Modifiers, flags that indicate additional conditions
+
+        # Native: Whether the Architecture is cross compiled
+        Native = 0x1 << 17
+
+        @property
+        def isX86(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Architecture.x86)
+
+        @property
+        def isX86_32(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Architecture.x86_32 & ~CraftCompiler.Architecture.x86)
+
+        @property
+        def isX86_64(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Architecture.x86_64 & ~CraftCompiler.Architecture.x86)
+
+        @property
+        def isArm(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Architecture.arm)
+
+        @property
+        def isArm32(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Architecture.arm32 & ~CraftCompiler.Architecture.arm)
+
+        @property
+        def isArm64(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Architecture.arm64 & ~CraftCompiler.Architecture.arm64)
+
+        @property
+        def isArm64e(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Architecture.arm64e & ~CraftCompiler.Architecture.arm64)
+
+        @property
+        def is32bit(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Architecture.bits32)
+
+        @property
+        def is64bit(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Architecture.bits64)
+
+        @property
+        def bits(self) -> str:
+            if self.value & CraftCompiler.Architecture.bits64:
+                return "64"
+            if self.value & CraftCompiler.Architecture.bits32:
+                return "32"
+            raise Exception("Unsupported architecture")
+
+        @property
+        def isNative(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Architecture.Native)
+
+        @property
+        def rpmArchitecture(self):
+            architectures = {
+                # values from Fedora, your mileage may vary on other distributions
+                CraftCompiler.Architecture.x86_32: "i686",
+                CraftCompiler.Architecture.x86_64: "x86_64",
+                CraftCompiler.Architecture.arm32: "armhfp",
+                CraftCompiler.Architecture.arm64: "arm64",
+            }
+            return architectures[self.key]
+
+        @property
+        def debArchitecture(self):
+            # https://wiki.debian.org/SupportedArchitectures
+            architectures = {
+                CraftCompiler.Architecture.x86_32: "i386",
+                CraftCompiler.Architecture.x86_64: "amd64",
+                CraftCompiler.Architecture.arm32: "armhf",
+                CraftCompiler.Architecture.arm64: "arm64",
+            }
+            return architectures[self.key]
+
+        @property
+        def appImageArchitecture(self):
+            architectures = {
+                CraftCompiler.Architecture.x86_32: "i686",
+                CraftCompiler.Architecture.x86_64: "x86_64",
+                CraftCompiler.Architecture.arm32: "armhf",
+                CraftCompiler.Architecture.arm64: "aarch64",
+            }
+            return architectures[self.key]
+
+        @property
+        def androidArchitecture(self):
+            architectures = {
+                CraftCompiler.Architecture.x86_32: "x86",
+                CraftCompiler.Architecture.x86_64: "x86_64",
+                CraftCompiler.Architecture.arm32: "arm",
+                CraftCompiler.Architecture.arm64: "arm64",
+            }
+            return architectures[self.key]
+
+        @property
+        def androidAbi(self):
+            architectures = {
+                CraftCompiler.Architecture.x86_32: "x86",
+                CraftCompiler.Architecture.x86_64: "x86_64",
+                CraftCompiler.Architecture.arm32: "armeabi-v7a",
+                CraftCompiler.Architecture.arm64: "arm64-v8a",
+            }
+            return architectures[self.key]
+
+    @unique
+    class Platforms(CompilerFlags):
         NoPlatform = 0
+
         Windows = 0x1 << 0
         Linux = 0x1 << 1
         MacOS = 0x1 << 2
         FreeBSD = 0x1 << 3
         Android = 0x1 << 4
+        iOS = 0x1 << 5
 
+        Mobile = Android | iOS
         Unix = Linux | MacOS | FreeBSD | Android
-        All = ~0
+        Apple = MacOS | iOS
 
-        # define inverted values to allow usage in info.ini
-        NotLinux = ~Linux
-        NotMacOS = ~MacOS
-        NotFreeBSD = ~FreeBSD
-        NotWindows = ~Windows
-        NotUnix = ~Unix
-        NotAndroid = ~Android
+        # Modifiers, flags that indicate additional conditions
 
-        @classmethod
-        def fromString(cls, name):
-            if not hasattr(cls, "__sting_map"):
-                cls.__sting_map = dict([(k.lower(), v) for k, v in cls.__members__.items()])
-            return cls.__sting_map[name.lower()]
+        # Native: Whether the Platform is cross compiled
+        Native = 0x1 << 17
+
+        @property
+        def isWindows(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Platforms.Windows)
+
+        @property
+        def isMacOS(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Platforms.MacOS)
+
+        @property
+        def isIOS(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Platforms.iOS)
+
+        @property
+        def isLinux(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Platforms.Linux)
+
+        @property
+        def isFreeBSD(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Platforms.FreeBSD)
+
+        @property
+        def isAndroid(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Platforms.Android)
+
+        @property
+        def isUnix(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Platforms.Unix)
+
+        @property
+        def isApple(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Platforms.Apple)
+
+        @property
+        def isMobile(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Platforms.Mobile)
+
+        @property
+        def isNative(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Platforms.Native)
+
+        @property
+        def executableSuffix(self):
+            return ".exe" if self.isWindows else ""
 
     @unique
-    class Abi(Enum):
+    class Abi(CompilerFlags):
         Error = auto()
-        msvc2017 = auto()
         msvc2019 = auto()
         msvc2022 = auto()
 
-        @classmethod
-        def fromString(cls, name):
-            if not hasattr(cls, "__sting_map"):
-                cls.__sting_map = dict([(k.lower(), v) for k, v in cls.__members__.items()])
-            return cls.__sting_map[name.lower().replace("-", "_")] or cls.Error
+        @property
+        def isMSVC2019(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Abi.msvc2019)
+
+        @property
+        def isMSVC2022(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Abi.msvc2022)
 
     @unique
-    class Compiler(IntFlag):
+    class Compiler(CompilerFlags):
         NoCompiler = 0
+
         CL = 0x1 << 0
         GCC = 0x1 << 1
         CLANG = 0x1 << 2
 
         GCCLike = CLANG | GCC
-        All = ~0
+        # Modifiers, flags that indicate additional conditions
 
-        @classmethod
-        def fromString(cls, name):
-            if not hasattr(cls, "__sting_map"):
-                cls.__sting_map = dict([(k.lower(), v) for k, v in cls.__members__.items()])
-            return cls.__sting_map[name.lower()]
+        # Native: Whether the Compiler is cross compiling
+        Native = 0x1 << 17
+        MinGW = 0x1 << 18
+
+        @property
+        def isGCC(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Compiler.GCC)
+
+        @property
+        def isClang(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Compiler.CLANG)
+
+        @property
+        def isGCCLike(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Compiler.GCCLike)
+
+        @property
+        def isCl(self) -> CraftBool:
+            return CraftBool(self.value & CraftCompiler.Compiler.CL)
+
+        @property
+        def isMinGW(self):
+            return CraftBool(self.value & CraftCompiler.Compiler.MinGW)
+
+        @property
+        def isMSVC(self):
+            return CraftBool(self.value & CraftCompiler.Compiler.CL)
 
     def __init__(self):
-        self.signature = CraftCompilerSignature.parseAbi(CraftCore.settings.get("General", "ABI"))
-        self._hostArchitecture = None
+        self.hostSignature = self._detectHost()
+        self.signature = CraftCompilerSignature.parseAbi(CraftCore.settings.get("General", "ABI"), self.hostSignature)
 
         self._MSVCToolset = None
         self._apiLevel = None
-        if self.isMSVC():
+        if self.compiler.isMSVC:
             self._MSVCToolset = CraftCore.settings.get("General", "MSVCToolset", "")
-        if self.isAndroid:
+        if self.platform.isAndroid:
             self._apiLevel = CraftCore.settings.get("General", "AndroidAPI", 21)
 
     def __str__(self):
@@ -206,144 +410,52 @@ class CraftCompiler(object):
         return self.signature.architecture
 
     @property
+    def abi(self) -> Abi:
+        return self.signature.abi
+
+    @staticmethod
+    def _detectHost() -> CraftCompilerSignature:
+        hostPlatform = {
+            "windows": CraftCompiler.Platforms.Windows,
+            "linux": CraftCompiler.Platforms.Linux,
+            "darwin": CraftCompiler.Platforms.MacOS,
+        }.get(platform.system().lower())
+
+        # if we are in a x64 binary on mac the platform class will not report the correct arch
+        if hostPlatform == CraftCompiler.Platforms.MacOS and "RELEASE_ARM64" in platform.uname().version:
+            hostArchitecture = CraftCompiler.Architecture.arm64
+        else:
+            hostArchitecture = {
+                "i386": CraftCompiler.Architecture.x86_32,
+                "amd64": CraftCompiler.Architecture.x86_64,
+                "x86_64": CraftCompiler.Architecture.x86_64,
+                "arm64": CraftCompiler.Architecture.arm64,
+            }.get(platform.machine().lower())
+        if not hostArchitecture or not hostPlatform:
+            print(f"Unsupported host platform: {platform.system()} {platform.machine()}", file=sys.stderr)
+            exit(1)
+        return CraftCompilerSignature(hostPlatform | CraftCompiler.Platforms.Native, architecture=hostArchitecture | CraftCompiler.Architecture.Native)
+
+    @property
+    def hostPlatform(self) -> Platforms:
+        return self.hostSignature.platform
+
+    @property
     def hostArchitecture(self) -> Architecture:
-        if not self._hostArchitecture:
-            # if we are in a x64 binary on mac the platform class will not report the correct arch
-            if self.isMacOS and self.architecture == CraftCompiler.Architecture.x86_64:
-                if "RELEASE_ARM64" in platform.uname().version:
-                    self._hostArchitecture = CraftCompiler.Architecture.arm64
-            if not self._hostArchitecture:
-                arch_map = {
-                    "i386": CraftCompiler.Architecture.x86_32,
-                    "amd64": CraftCompiler.Architecture.x86_64,
-                    "x86_64": CraftCompiler.Architecture.x86_64,
-                    "arm64": CraftCompiler.Architecture.arm64,
-                }
-                self._hostArchitecture = arch_map.get(platform.machine().lower())
-                if not self._hostArchitecture:
-                    print("Unsupported host platform:", platform.machine())
-                    exit(1)
-        return self._hostArchitecture
-
-    @property
-    def rpmArchitecture(self):
-        architectures = {
-            # values from Fedora, your mileage may vary on other distributions
-            CraftCompiler.Architecture.x86_32: "i686",
-            CraftCompiler.Architecture.x86_64: "x86_64",
-            CraftCompiler.Architecture.arm32: "armhfp",
-            CraftCompiler.Architecture.arm64: "arm64",
-        }
-        return architectures[self.architecture]
-
-    @property
-    def debArchitecture(self):
-        # https://wiki.debian.org/SupportedArchitectures
-        architectures = {
-            CraftCompiler.Architecture.x86_32: "i386",
-            CraftCompiler.Architecture.x86_64: "amd64",
-            CraftCompiler.Architecture.arm32: "armhf",
-            CraftCompiler.Architecture.arm64: "arm64",
-        }
-        return architectures[self.architecture]
-
-    @property
-    def appImageArchitecture(self):
-        architectures = {
-            CraftCompiler.Architecture.x86_32: "i686",
-            CraftCompiler.Architecture.x86_64: "x86_64",
-            CraftCompiler.Architecture.arm32: "armhf",
-            CraftCompiler.Architecture.arm64: "aarch64",
-        }
-        return architectures[self.architecture]
+        return self.hostSignature.architecture
 
     @property
     def msvcToolset(self):
         return self._MSVCToolset
 
     @property
-    def bits(self) -> str:
-        if self.architecture in {
-            CraftCompiler.Architecture.x86_64,
-            CraftCompiler.Architecture.arm64,
-        }:
-            return "64"
-        if self.architecture in {
-            CraftCompiler.Architecture.x86_32,
-            CraftCompiler.Architecture.arm32,
-        }:
-            return "32"
-        raise Exception("Unsupported architecture")
-
-    @property
-    def isWindows(self) -> CraftBool:
-        return CraftBool(self.platform == CraftCompiler.Platforms.Windows)
-
-    @property
-    def isMacOS(self) -> CraftBool:
-        return CraftBool(self.platform == CraftCompiler.Platforms.MacOS)
-
-    @property
-    def isLinux(self) -> CraftBool:
-        return CraftBool(self.platform == CraftCompiler.Platforms.Linux)
-
-    @property
-    def isFreeBSD(self) -> CraftBool:
-        return CraftBool(self.platform == CraftCompiler.Platforms.FreeBSD)
-
-    @property
-    def isAndroid(self) -> CraftBool:
-        return CraftBool(self.platform == CraftCompiler.Platforms.Android)
-
-    @property
-    def isUnix(self) -> CraftBool:
-        return CraftBool(self.platform & CraftCompiler.Platforms.Unix)
-
-    @property
-    def executableSuffix(self):
-        return ".exe" if self.isWindows else ""
-
-    @property
     def symbolsSuffix(self):
-        if self.isMacOS:
+        if self.platform.isApple:
             return ".dSYM"
-        elif self.isMSVC():
+        elif self.compiler.isMSVC:
             return ".pdb"
         else:
             return ".debug"
-
-    def isNative(self) -> CraftBool:
-        return CraftBool(self.architecture == self.hostArchitecture and not self.isAndroid and CraftCore.settings.getboolean("General", "Native", True))
-
-    def isGCC(self) -> CraftBool:
-        return CraftBool(self.compiler == CraftCompiler.Compiler.GCC)
-
-    def isClang(self) -> CraftBool:
-        return CraftBool(self.compiler == CraftCompiler.Compiler.CLANG)
-
-    def isGCCLike(self) -> CraftBool:
-        return CraftBool(self.compiler & CraftCompiler.Compiler.GCCLike)
-
-    def isCl(self) -> CraftBool:
-        return CraftBool(self.compiler == CraftCompiler.Compiler.CL)
-
-    def isMinGW(self) -> CraftBool:
-        return CraftBool(self.isWindows and self.isGCC())
-
-    def isMinGW_W32(self) -> CraftBool:
-        return CraftBool(self.isMinGW() and self.architecture == CraftCompiler.Architecture.x86_32)
-
-    def isMinGW_W64(self) -> CraftBool:
-        return CraftBool(self.isMinGW() and self.architecture == CraftCompiler.Architecture.x86_64)
-
-    def isMSVC(self) -> CraftBool:
-        return CraftBool(self.compiler == CraftCompiler.Compiler.CL)
-
-    def isMSVC2019(self) -> CraftBool:
-        return CraftBool(self.signature.abi == CraftCompiler.Abi.msvc2019)
-
-    def isMSVC2022(self) -> CraftBool:
-        return CraftBool(self.signature.abi == CraftCompiler.Abi.msvc2022)
 
     def getGCCLikeVersion(self, compilerExecutable):
         _, result = CraftCore.cache.getCommandOutput(compilerExecutable, "--version")
@@ -353,15 +465,15 @@ class CraftCompiler(object):
         return result or "0"
 
     def getVersion(self):
-        if self.isGCCLike():
+        if self.compiler.isGCCLike:
             return self.getGCCLikeVersion(os.environ.get("CXX"))
-        elif self.isMSVC():
+        elif self.compiler.isMSVC:
             return self.getInternalVersion()
         else:
             return None
 
     def getInternalVersion(self):
-        if not self.isMSVC():
+        if not self.compiler.isMSVC:
             return self.getVersion()
         versions = {
             CraftCompiler.Abi.msvc2019: 16,
@@ -369,7 +481,7 @@ class CraftCompiler(object):
         }
         if self.signature.abi not in versions:
             CraftCore.log.critical(f"Unknown MSVC Compiler {self.signature.abi}")
-        return versions[self.signature.abi]
+        return versions[self.signature.abi.key]
 
     def getMsvcPlatformToolset(self):
         versions = {
@@ -378,30 +490,10 @@ class CraftCompiler(object):
         }
         if self.signature.abi not in versions:
             CraftCore.log.critical(f"Unknown MSVC Compiler {self.signature.abi}")
-        return versions[self.signature.abi]
+        return versions[self.signature.abi.key]
 
     def androidApiLevel(self):
         return self._apiLevel
-
-    @property
-    def androidArchitecture(self):
-        architectures = {
-            CraftCompiler.Architecture.x86_32: "x86",
-            CraftCompiler.Architecture.x86_64: "x86_64",
-            CraftCompiler.Architecture.arm32: "arm",
-            CraftCompiler.Architecture.arm64: "arm64",
-        }
-        return architectures[self.architecture]
-
-    @property
-    def androidAbi(self):
-        architectures = {
-            CraftCompiler.Architecture.x86_32: "x86",
-            CraftCompiler.Architecture.x86_64: "x86_64",
-            CraftCompiler.Architecture.arm32: "armeabi-v7a",
-            CraftCompiler.Architecture.arm64: "arm64-v8a",
-        }
-        return architectures[self.architecture]
 
     @property
     def macOSDeploymentTarget(self) -> CraftVersion:
@@ -411,8 +503,8 @@ class CraftCompiler(object):
 if __name__ == "__main__":
     print("Testing Compiler.py")
     print(f"Configured compiler (ABI): {CraftCore.compiler}")
-    print("Architecture: %s" % CraftCore.compiler.architecture)
-    print("HostArchitecture: %s" % CraftCore.compiler.hostArchitecture)
-    print("Native compiler: %s" % ("No", "Yes")[CraftCore.compiler.isNative()])
-    if CraftCore.compiler.isGCCLike():
+    print("Architecture: %s" % CraftCore.compiler.signature)
+    print("HostArchitecture: %s" % CraftCore.compiler.hostSignature)
+    print(f"Native compiler: {CraftCore.compiler.platform.isNative.asYesNo}")
+    if CraftCore.compiler.compiler.isGCCLike:
         print("Compiler Version: %s" % CraftCore.compiler.getGCCLikeVersion(CraftCore.compiler.compiler.name))

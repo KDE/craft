@@ -57,13 +57,13 @@ class TypePackager(PackagerBase):
             packager = CraftCore.settings.get("Packager", "PackageType", "")
 
         if not packager:
-            if CraftCore.compiler.isWindows:
+            if CraftCore.compiler.platform.isWindows:
                 packager = NullsoftInstallerPackager
-            elif CraftCore.compiler.isMacOS:
+            elif CraftCore.compiler.platform.isMacOS:
                 packager = MacDMGPackager
-            elif CraftCore.compiler.isLinux:
+            elif CraftCore.compiler.platform.isLinux:
                 packager = AppImagePackager
-            elif CraftCore.compiler.isAndroid:
+            elif CraftCore.compiler.platform.isAndroid:
                 packager = CMakeApkPackager
             else:
                 packager = SevenZipPackager

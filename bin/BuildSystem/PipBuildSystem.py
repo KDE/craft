@@ -24,8 +24,8 @@ class PipBuildSystem(BuildSystemBase):
         if not self._python:
             craftPython = CraftPackageObject.get("libs/python")
             if not craftPython.categoryInfo.isActive:
-                if CraftCore.compiler.isWindows:
-                    pythonExe = self.venvDir() / f"Scripts/python{CraftCore.compiler.executableSuffix}"
+                if CraftCore.compiler.platform.isWindows:
+                    pythonExe = self.venvDir() / f"Scripts/python{CraftCore.compiler.platform.executableSuffix}"
                 else:
                     pythonExe = self.venvDir() / "bin/python3"
                 if pythonExe.exists():
@@ -34,12 +34,12 @@ class PipBuildSystem(BuildSystemBase):
                     # don't cache the system python location
                     return sys.executable
             elif craftPython.isInstalled:
-                suffix = "_d" if CraftCore.compiler.isWindows and craftPython.instance.subinfo.options.dynamic.buildType == "Debug" else ""
-                python = CraftCore.standardDirs.craftRoot() / f"bin/python{suffix}{CraftCore.compiler.executableSuffix}"
+                suffix = "_d" if CraftCore.compiler.platform.isWindows and craftPython.instance.subinfo.options.dynamic.buildType == "Debug" else ""
+                python = CraftCore.standardDirs.craftRoot() / f"bin/python{suffix}{CraftCore.compiler.platform.executableSuffix}"
                 if python.exists():
                     self._python = python
                 else:
-                    python = CraftCore.standardDirs.craftRoot() / f"bin/python3{suffix}{CraftCore.compiler.executableSuffix}"
+                    python = CraftCore.standardDirs.craftRoot() / f"bin/python3{suffix}{CraftCore.compiler.platform.executableSuffix}"
                     if python.exists():
                         self._python = python
             if not self._python:
@@ -50,13 +50,13 @@ class PipBuildSystem(BuildSystemBase):
         return Path(CraftCore.standardDirs.etcDir()) / "virtualenv/3"
 
     def createMacOSPipShims(self, binaries: list[str]):
-        if not CraftCore.compiler.isMacOS:
+        if not CraftCore.compiler.platform.isMacOS:
             return True
 
         for binary in binaries:
             if not utils.createShim(
-                self.installDir() / f"bin/{binary}{CraftCore.compiler.executableSuffix}",
-                self.installDir() / f"lib/Python.framework/Versions/Current/bin/{binary}{CraftCore.compiler.executableSuffix}",
+                self.installDir() / f"bin/{binary}{CraftCore.compiler.platform.executableSuffix}",
+                self.installDir() / f"lib/Python.framework/Versions/Current/bin/{binary}{CraftCore.compiler.platform.executableSuffix}",
                 useAbsolutePath=False,
             ):
                 return False
@@ -81,7 +81,7 @@ class PipBuildSystem(BuildSystemBase):
     def install(self):
         env = {}
         bootstrap = False
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             tmpDir = CraftCore.standardDirs.junctionsDir() / "tmp"
             tmpDir.mkdir(parents=True, exist_ok=True)
             env.update(
@@ -92,8 +92,8 @@ class PipBuildSystem(BuildSystemBase):
             )
         if self.supportsCCACHE:
             cxx = CraftCore.standardDirs.craftRoot() / "dev-utils/ccache/bin" / Path(os.environ["CXX"]).name
-            if CraftCore.compiler.isWindows and not cxx.suffix:
-                cxx = Path(str(cxx) + CraftCore.compiler.executableSuffix)
+            if CraftCore.compiler.platform.isWindows and not cxx.suffix:
+                cxx = Path(str(cxx) + CraftCore.compiler.platform.executableSuffix)
             if cxx.exists():
                 env["CXX"] = cxx
                 env["CC"] = cxx.parent / Path(os.environ["CC"]).name

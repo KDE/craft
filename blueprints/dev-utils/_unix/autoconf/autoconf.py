@@ -8,11 +8,6 @@ from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
-    def registerOptions(self):
-        # We need this as a host tool. Craft at this point isn't set up to produce both
-        # host and target binaries, so on Android we have host tools in the docker image.
-        self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.NotAndroid
-
     def setTargets(self):
         for ver in ["2.69", "2.71"]:
             self.targets[ver] = f"https://ftp.gnu.org/gnu/autoconf/autoconf-{ver}.tar.xz"

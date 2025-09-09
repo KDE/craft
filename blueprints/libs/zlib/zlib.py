@@ -9,7 +9,7 @@ from Utils.Arguments import Arguments
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
+        self.parent.package.categoryInfo.platforms = ~CraftCore.compiler.Platforms.Android
 
     def setTargets(self):
         for ver in ["1.3", "1.3.1"]:
@@ -52,7 +52,7 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["virtual/base"] = None
 
 
-if CraftCore.compiler.isWindows:
+if CraftCore.compiler.platform.isWindows:
 
     class Package(CMakePackageBase):
         def __init__(self, **kwargs):

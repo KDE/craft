@@ -8,7 +8,7 @@ from Utils import CraftHash
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
+        self.parent.package.categoryInfo.platforms = ~CraftCore.compiler.Platforms.Android
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
@@ -38,8 +38,8 @@ class Package(AutoToolsPackageBase):
             f"--with-pkg-config-dir={CraftCore.standardDirs.craftRoot().as_posix()}/lib/pkgconfig/",
             f"--with-personality-dir={CraftCore.standardDirs.locations.data.as_posix()}/pkgconfig/personality.d/",
         ]
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             self.subinfo.options.configure.args += ["LIBS=-lAdvapi32"]
 
     def postInstall(self):
-        return utils.createShim(self.installDir() / "bin/pkg-config", self.installDir() / f"bin/pkgconf{CraftCore.compiler.executableSuffix}")
+        return utils.createShim(self.installDir() / "bin/pkg-config", self.installDir() / f"bin/pkgconf{CraftCore.compiler.platform.executableSuffix}")

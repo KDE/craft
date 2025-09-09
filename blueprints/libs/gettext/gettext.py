@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
     def registerOptions(self):
         # On Android we use libintl-lite instead
         # (however gettext added Adnroid support recently so maybe we should look into switching to it?)
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
+        self.parent.package.categoryInfo.platforms |= CraftCore.compiler.Platforms.Native
 
     def setTargets(self):
         for ver in ["0.21", "0.22.3"]:
@@ -26,7 +26,7 @@ class subinfo(info.infoclass):
             ),  # https://git.savannah.gnu.org/gitweb/?p=gettext.git;a=commitdiff;h=d1836dbbd6a90b4c0ab79bc5292c023f08b49511
         ]
 
-        if CraftCore.compiler.isMinGW():
+        if CraftCore.compiler.compiler.isMinGW:
             self.patchToApply["0.21"] += [
                 ("0011-fix-interference-between-libintl-boost-header-files.patch", 1)
             ]  # https://github.com/msys2/MINGW-packages/blob/master/mingw-w64-gettext/0011-fix-interference-between-libintl-boost-header-files.patch
@@ -41,7 +41,7 @@ class subinfo(info.infoclass):
             ("gettext-0.22.3-20231028.diff", 1),
         ]
 
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             # with msvc we need to link libxml2 not xml2
             self.patchToApply["0.22.3"] += [("msvc-fix-libxml2.diff", 1)]
 
@@ -68,7 +68,7 @@ class subinfo(info.infoclass):
         ../gnulib-lib/stdio.h:349:24: note: in expansion of macro 'error_at_line'
           349 |   _GL_EXTERN_C rettype func parameters_and_attributes
         """
-        if not CraftCore.compiler.isMinGW():
+        if not CraftCore.compiler.compiler.isMinGW:
             # https://src.fedoraproject.org/rpms/gettext/blob/6a2dc0e302225010471d92fc1abd9938b256855a/f/gettext-0.22-disable-libtextstyle.patch
             #
             # * Fri Apr 30 2021 Sundeep Anand <suanand@redhat.com> - 0.21-5
@@ -111,7 +111,7 @@ class Package(AutoToolsPackageBase):
             "gl_cv_libxml_use_included=no",
         ]
 
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             # workaround for "'C:C:/CraftRoot/msys/CraftRoot/build/_/527d4567/gettext-0.21/gettext-runtime/libasprintf/autosprintf.cc'"
             self.subinfo.options.useShadowBuild = False
             # self.subinfo.options.configure.autoreconf = False

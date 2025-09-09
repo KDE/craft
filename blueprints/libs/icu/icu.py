@@ -12,7 +12,7 @@ from Utils import CraftHash
 class subinfo(info.infoclass):
     def registerOptions(self):
         # TODO support for cross-compiling to Android not implemented here yet
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
+        self.parent.package.categoryInfo.platforms |= CraftCore.compiler.Platforms.Native
 
     def setTargets(self):
         for ver in ["71.1", "74.1", "74.2", "76.1"]:
@@ -45,9 +45,9 @@ class Package(AutoToolsPackageBase):
             "--enable-debug=no",
             "--enable-release=yes",
         ]
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             self.subinfo.options.configure.args += ["--with-data-packaging=dll"]
-            if CraftCore.compiler.isMSVC():
+            if CraftCore.compiler.compiler.isMSVC:
                 self.subinfo.options.configure.args += ["--enable-extras=no", "CPPFLAGS=/std:c++17"]
 
     def make(self):
@@ -64,7 +64,7 @@ class Package(AutoToolsPackageBase):
         with utils.ScopedEnv({"TARGET": None}):
             if not super().install():
                 return False
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             files = os.listdir(os.path.join(self.installDir(), "lib"))
             for dll in files:
                 if dll.endswith(".dll"):

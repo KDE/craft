@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
     def registerOptions(self):
         # On Android this links against libomp.so which is part of the toolchain but not properly deployed
         # resulting in APKs that don't start
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
+        self.parent.package.categoryInfo.platforms = ~CraftCore.compiler.Platforms.Android
 
     def setTargets(self):
         for ver in ["0.98.1"]:
@@ -30,5 +30,5 @@ class Package(AutoToolsPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.shell.useMSVCCompatEnv = True
-        if CraftCore.compiler.isWindows or CraftCore.compiler.isAndroid:
+        if CraftCore.compiler.platform.isWindows or CraftCore.compiler.platform.isAndroid:
             self.subinfo.options.configure.args += ["--disable-native"]

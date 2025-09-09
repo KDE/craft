@@ -3,14 +3,13 @@ import os
 
 import info
 import utils
-from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from Package.BinaryPackageBase import BinaryPackageBase
 
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.Windows
+        self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.Windows
 
     def setTargets(self):
         # not used  yet only for reference
@@ -22,14 +21,14 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = None
-        if CraftCore.compiler.isMinGW():
+        if CraftCore.compiler.compiler.isMinGW:
             self.buildDependencies["dev-utils/mingw-w64"] = None
 
 
 class Package(BinaryPackageBase):
     def __init__(self, **args):
         super().__init__(**args)
-        self.subinfo.options.package.disableBinaryCache = CraftCore.compiler.isMSVC()
+        self.subinfo.options.package.disableBinaryCache = CraftCore.compiler.compiler.isMSVC
 
     def fetch(self):
         return True
@@ -42,7 +41,7 @@ class Package(BinaryPackageBase):
         utils.createDir(destdir)
 
         files = []
-        if CraftCore.compiler.isMinGW():
+        if CraftCore.compiler.compiler.isMinGW:
             files = [
                 "libgomp-1.dll",
                 "libstdc++-6.dll",
@@ -50,13 +49,13 @@ class Package(BinaryPackageBase):
                 "libgcc_s_seh-1.dll",
             ]
             srcdir = os.path.join(self.rootdir, "mingw64", "bin")
-        elif CraftCore.compiler.isMSVC():
+        elif CraftCore.compiler.compiler.isMSVC:
             redistDir = None
             if self.buildType() != "Debug":
                 if CraftCore.compiler.getInternalVersion() >= 15:
-                    if CraftCore.compiler.isMSVC2022():
+                    if CraftCore.compiler.abi.isMSVC2022:
                         flavor = "2022"
-                    elif CraftCore.compiler.isMSVC2019():
+                    elif CraftCore.compiler.abi.isMSVC2019:
                         flavor = "2019"
                     else:
                         raise Exception("Unknown compiler")
@@ -68,7 +67,7 @@ class Package(BinaryPackageBase):
                             f"VCTOOLSREDISTDIR does not exist, and likely should point to '*\\Microsoft Visual Studio\\{flavor}\\Community\\VC\\Redist\\MSVC\\xx.xx.xxxxx'."
                         )
                 if redistDir:
-                    redistDir = os.path.join(redistDir, "x86" if CraftCore.compiler.architecture == CraftCompiler.Architecture.x86_32 else "x64")
+                    redistDir = os.path.join(redistDir, "x86" if CraftCore.compiler.architecture.isX86_32 else "x64")
                     files = glob.glob(
                         os.path.join(redistDir, "**/*.dll"),
                         recursive=True,

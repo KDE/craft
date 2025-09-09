@@ -51,7 +51,7 @@ class Package(CMakePackageBase):
             f"-DLIBXML2_WITH_ICU={self.subinfo.options.isActive('libs/icu').asOnOff}",
             f"-DLIBXML2_WITH_LZMA={self.subinfo.options.isActive('libs/liblzma').asOnOff}",
             # we use the system iconv on macOS
-            f"-DLIBXML2_WITH_ICONV={(self.subinfo.options.isActive('libs/iconv') or CraftCore.compiler.isMacOS).asOnOff}",
+            f"-DLIBXML2_WITH_ICONV={(self.subinfo.options.isActive('libs/iconv') or CraftCore.compiler.platform.isMacOS).asOnOff}",
         ]
-        if CraftCore.compiler.isAndroid:
+        if CraftCore.compiler.platform.isAndroid:
             self.subinfo.options.configure.args += ["-DLIBXML2_WITH_PROGRAMS=OFF", "-DLIBXML2_WITH_TESTS=OFF"]
