@@ -140,8 +140,8 @@ class UserOptions(object):
         _register("branch", str, persist=False)
         _register("revision", str, persist=False)
         _register("ignored", False, persist=False, compatible=True)
-        _register("buildTests", CraftCore.compiler.isNative(), persist=False, compatible=True)
-        _register("buildTools", CraftCore.compiler.isNative(), persist=False, compatible=True)
+        _register("buildTests", CraftCore.compiler.platform.isNative, persist=False, compatible=True)
+        _register("buildTools", CraftCore.compiler.platform.isNative, persist=False, compatible=True)
         _register("buildStatic", False, persist=False)
 
         _register(

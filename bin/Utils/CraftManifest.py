@@ -155,7 +155,7 @@ class CraftManifest(object):
         out.origin = manifest.origin
         out.date = manifest.date
         for k, v in manifest.packages.items():
-            signatue = CraftCompilerSignature.parseAbi(k)
+            signatue = CraftCompilerSignature.parseAbi(k, CraftCore.compiler.hostSignature)
             out.packages[str(signatue)] = {}
             for name, entry in v.items():
                 out.packages[str(signatue)][name] = e = CraftManifestEntry(name)

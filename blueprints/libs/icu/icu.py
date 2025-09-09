@@ -12,7 +12,7 @@ from Utils import CraftHash
 class subinfo(info.infoclass):
     def registerOptions(self):
         # TODO support for cross-compiling to Android not implemented here yet
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
+        self.parent.package.categoryInfo.platforms |= CraftCore.compiler.Platforms.Native
 
     def setTargets(self):
         self.description = "ICU -International Components for Unicode"
@@ -58,9 +58,9 @@ class Package(AutoToolsPackageBase):
             "--enable-debug=no",
             "--enable-release=yes",
         ]
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             self.subinfo.options.configure.args += ["--with-data-packaging=dll"]
-            if CraftCore.compiler.isMSVC():
+            if CraftCore.compiler.compiler.isMSVC:
                 self.subinfo.options.configure.args += ["--enable-extras=no", "CPPFLAGS=/std:c++17"]
 
     @property
@@ -70,7 +70,7 @@ class Package(AutoToolsPackageBase):
 
     def configure(self):
         env = {}
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             # Set to use "python" as the cmd to run Python
             # We need to do this because otherwise the build system
             # will look for "python3" first, which always exists on Windows,
@@ -95,7 +95,7 @@ class Package(AutoToolsPackageBase):
         with utils.ScopedEnv(self._env):
             if not super().install():
                 return False
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             files = os.listdir(os.path.join(self.installDir(), "lib"))
             for dll in files:
                 if dll.endswith(".dll"):

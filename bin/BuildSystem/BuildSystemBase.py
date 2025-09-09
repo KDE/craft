@@ -67,7 +67,7 @@ class BuildSystemBase(CraftBase):
         """constructor"""
         CraftBase.__init__(self, package)
         self.supportsNinja = False
-        self.supportsCCACHE = CraftCore.settings.getboolean("Compile", "UseCCache", False) and CraftCore.compiler.isGCCLike()
+        self.supportsCCACHE = CraftCore.settings.getboolean("Compile", "UseCCache", False) and CraftCore.compiler.compiler.isGCCLike
         self.supportsClang = True
         self.buildSystemType = typeName
 
@@ -88,12 +88,12 @@ class BuildSystemBase(CraftBase):
                 del os.environ["MAKE"]
 
         if OsUtils.isWin():
-            if CraftCore.compiler.isMSVC():
+            if CraftCore.compiler.compiler.isMSVC:
                 if self.subinfo.options.make.supportsMultijob and CraftCore.cache.findApplication("jom"):
                     return "jom"
                 else:
                     return "nmake"
-            elif CraftCore.compiler.isMinGW():
+            elif CraftCore.compiler.compiler.isMinGW:
                 return "mingw32-make"
             else:
                 CraftCore.log.critical(f"unknown {CraftCore.compiler} compiler")
@@ -121,7 +121,7 @@ class BuildSystemBase(CraftBase):
 
         if self.supportsCCACHE and CraftCore.cache.findApplication("ccache"):
             defines += self.ccacheOptions()
-        if CraftCore.compiler.isClang() and self.supportsClang:
+        if CraftCore.compiler.compiler.isClang and self.supportsClang:
             defines += self.clangOptions()
         return defines
 
@@ -242,7 +242,7 @@ class BuildSystemBase(CraftBase):
             symbolsPattern = re.compile(r".*{0}$".format(re.escape(CraftCore.compiler.symbolsSuffix)), re.IGNORECASE)
 
             def symFilter(x: os.DirEntry, root):
-                if CraftCore.compiler.isMacOS:
+                if CraftCore.compiler.platform.isMacOS:
                     if x.is_file():
                         return False
                 else:
@@ -257,7 +257,7 @@ class BuildSystemBase(CraftBase):
                         return False
                 if not utils.moveFile(f, dest):
                     return False
-            if CraftCore.compiler.isMSVC():
+            if CraftCore.compiler.compiler.isMSVC:
                 # static libs might also have pdbs
                 def staticLibsFilter(p: Path):
                     if p.suffix == ".lib":
@@ -294,7 +294,7 @@ class BuildSystemBase(CraftBase):
                         if not symFileDest.parent.exists() and not utils.createDir(symFileDest.parent):
                             return False
                         if not utils.strip(f, symFileDest):
-                            if CraftCore.compiler.isAndroid:
+                            if CraftCore.compiler.platform.isAndroid:
                                 CraftCore.log.warning(f"Failed to strip {f}. Is {f} a host tool?")
                                 return True
                             return False
@@ -406,12 +406,12 @@ class BuildSystemBase(CraftBase):
         # a post install routine to fix the prefix (make things relocatable)
         newPrefix = CraftCore.standardDirs.craftRoot().as_posix()
         oldPrefixes = [self.subinfo.buildPrefix]
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             oldPrefixes += [OsUtils.toMSysPath(self.subinfo.buildPrefix), str(Path(self.subinfo.buildPrefix))]
 
         def isPipScript(x):
             # handle special launcher exe that has a python script appended
-            return CraftCore.compiler.isWindows and (self.installDir() / "bin/Scripts") in Path(x).parents and utils.isBinary(x.path)
+            return CraftCore.compiler.platform.isWindows and (self.installDir() / "bin/Scripts") in Path(x).parents and utils.isBinary(x.path)
 
         files = utils.filterDirectoryContent(
             self.installDir(),
@@ -430,10 +430,10 @@ class BuildSystemBase(CraftBase):
             )
         )
         if self.installDir().is_dir():
-            if CraftCore.compiler.isMacOS:
+            if CraftCore.compiler.platform.isMacOS:
                 if not self.__patchRpathMac(binaryFiles, newPrefix):
                     return False
-            elif CraftCore.compiler.isLinux:
+            elif CraftCore.compiler.platform.isLinux:
                 if not self.__patchRpathLinux(binaryFiles, newPrefix):
                     return False
 
@@ -446,12 +446,12 @@ class BuildSystemBase(CraftBase):
                 return False
 
             # sign the binaries before we add them to the cache
-            if CraftCore.compiler.isWindows and CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
+            if CraftCore.compiler.platform.isWindows and CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
                 if not CodeSign.signWindows(binaryFiles, package=self):
                     return False
         else:
             # restoring from cache
-            if CraftCore.compiler.isMacOS:
+            if CraftCore.compiler.platform.isMacOS:
                 # resign files after they are modified
                 # we use a local certificate, for distribution the files are properly signed in the package step
                 if not utils.localSignMac(binaryFiles):
@@ -459,7 +459,7 @@ class BuildSystemBase(CraftBase):
 
             # sign the binaries if we can.
             # only needed if the cache was not signed
-            if CraftCore.compiler.isWindows and not CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
+            if CraftCore.compiler.platform.isWindows and not CraftCore.settings.getboolean("CodeSigning", "SignCache", False):
                 if not CodeSign.signWindows(binaryFiles, package=self):
                     return False
 

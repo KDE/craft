@@ -6,8 +6,7 @@ from Utils import CraftHash
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        if not CraftCore.compiler.isMinGW():
-            self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NoPlatform
+        self.parent.package.categoryInfo.compiler &= CraftCore.compiler.Compiler.MinGW
 
     def setTargets(self):
         for ver, rev, rt in [("13.2.0", "1", "11"), ("14.2.0", "1", "12"), ("14.2.0", "2", "12")]:

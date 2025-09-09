@@ -136,7 +136,7 @@ class PackageBase(CraftBase):
                         if not utils.createDir(localArchiveAbsPath.parent):
                             return False
                         fileName = fileObject.fileName
-                        if CraftCore.compiler.isWindows:
+                        if CraftCore.compiler.platform.isWindows:
                             fileName = fileName.replace("\\", "/")
                         fUrl = f"{url}/{fileName}"
                         # try it up to 3 times

@@ -9,7 +9,7 @@ cls
 $env:CraftRoot=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definition)
 
 &{
-[version]$minPythonVersion = '3.9'
+[version]$minPythonVersion = '3.11'
 
 function findPython([string] $name)
 {
@@ -67,8 +67,6 @@ if($settings["Paths"].Contains("Python") -and (Test-Path -path $settings["Paths"
 
 findPython("python3.12")
 findPython("python3.11")
-findPython("python3.10")
-findPython("python3.9")
 findPython("python3")
 findPython("python")
 findPython("py")
@@ -137,4 +135,3 @@ if($args.Length -ne 0)
     }
     cr
 }
-

@@ -5,7 +5,7 @@ from Package.BinaryPackageBase import BinaryPackageBase
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotFreeBSD & CraftCore.compiler.Platforms.NotAndroid
+        self.parent.package.categoryInfo.platforms &= ~CraftCore.compiler.Platforms.FreeBSD
 
     def setTargets(self):
         self.description = "7-Zip is a file archiver with a high compression ratio."
@@ -15,11 +15,11 @@ class subinfo(info.infoclass):
         for ver in ["24.09", "25.00", "25.01", "26.01"]:
             verNoDot = ver.replace(".", "")
             self.targetInstallPath[ver] = "dev-utils/7z"
-            if CraftCore.compiler.isWindows:
+            if CraftCore.compiler.platform.isWindows:
                 self.targets[ver] = f"https://files.kde.org/craft/3rdparty/7zip/7z{verNoDot}-extra.tar.xz"
                 self.targetInstSrc[ver] = f"7z{verNoDot}-extra"
                 self.targetDigestUrls[ver] = self.targets[ver] + ".sha256"
-            elif CraftCore.compiler.isLinux:
+            elif CraftCore.compiler.platform.isLinux:
                 arch = "x64"
                 if CraftCore.compiler.architecture & CraftCore.compiler.Architecture.arm:
                     arch = "arm64"
@@ -36,7 +36,7 @@ class Package(BinaryPackageBase):
 
     def binaryArchiveName(self, **kwargs):
         # never use 7z to compress this package
-        if CraftCore.compiler.isWindows:
+        if CraftCore.compiler.platform.isWindows:
             kwargs["fileType"] = ".zip"
         else:
             kwargs["fileType"] = ".tar.xz"

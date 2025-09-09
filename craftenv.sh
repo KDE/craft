@@ -12,12 +12,12 @@ if [[ -z "$craftRoot" ]];then
     exit 1
 fi
 
-# Helper: check if a Python binary is >= 3.9
+# Helper: check if a Python binary is >= 3.11
 check_python_version() {
     local py="$1"
     "$py" - <<'EOF' >/dev/null 2>&1
 import sys
-sys.exit(0 if sys.version_info >= (3, 9) else 1)
+sys.exit(0 if sys.version_info >= (3, 11) else 1)
 EOF
 }
 
@@ -26,7 +26,7 @@ if [ -n "$CRAFT_PYTHON_BIN" ]; then
     if check_python_version "$CRAFT_PYTHON_BIN"; then
         echo "Using user-provided CRAFT_PYTHON_BIN: $CRAFT_PYTHON_BIN"
     else
-        echo "User-provided Python ($CRAFT_PYTHON_BIN) is too old. Need >= 3.9"
+        echo "User-provided Python ($CRAFT_PYTHON_BIN) is too old. Need >= 3.11"
         exit 1
     fi
 else
@@ -39,7 +39,7 @@ else
     done
 
     if [ -z "$CRAFT_PYTHON_BIN" ]; then
-        echo "Failed to find Python >= 3.9"
+        echo "Failed to find Python >= 3.11"
         exit 1
     fi
 

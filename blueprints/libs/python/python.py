@@ -15,8 +15,8 @@ from Utils.Arguments import Arguments
 
 class subinfo(info.infoclass):
     def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
-        if CraftCore.compiler.isMinGW():
+        self.parent.package.categoryInfo.platforms |= CraftCore.compiler.Platforms.Native
+        if CraftCore.compiler.compiler.isMinGW:
             self.parent.package.categoryInfo.compiler = CraftCore.compiler.Compiler.NoCompiler
 
     def setTargets(self):
@@ -37,7 +37,7 @@ class subinfo(info.infoclass):
         self.patchToApply["3.12.13"] = [("0018-fix-sysconfig-include.patch", 1)]
         self.patchToApply["3.14.6"] = [("0018-fix-sysconfig-include-3.14.6.patch", 1)]
 
-        if CraftCore.compiler.isMSVC():
+        if CraftCore.compiler.compiler.isMSVC:
             self.patchToApply["3.11.7"] += [(".msvc/patches", 1)]
             self.patchToApply["3.11.11"] += [(".msvc/patches", 1)]
             self.patchToApply["3.12.13"] += [(".msvc/patches-3.12", 1)]
@@ -61,7 +61,7 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["libs/zlib"] = None
 
 
-if CraftCore.compiler.isMSVC():
+if CraftCore.compiler.compiler.isMSVC:
 
     class Package(MSBuildPackageBase):
         def __init__(self, **kwargs):
@@ -158,7 +158,7 @@ else:
                 # if needed we can still call python3 -m ensurepip
                 "--with-ensurepip=no",
             ]
-            if CraftCore.compiler.isMacOS:
+            if CraftCore.compiler.platform.isMacOS:
                 self.subinfo.options.configure.noLibDir = True
                 self.subinfo.options.configure.staticArgs = Arguments()
                 self.subinfo.options.configure.args += [f"--enable-framework={CraftCore.standardDirs.craftRoot()}/lib"]
@@ -168,9 +168,8 @@ else:
             self.subinfo.options.make.supportsMultijob = False
             if not super().install():
                 return False
-
             minorVersion = self.buildTarget.split(".")[1]
-            if CraftCore.compiler.isMacOS:
+            if CraftCore.compiler.platform.isMacOS:
                 if not utils.system(
                     ["install_name_tool", "-id", f"@rpath/Python.framework/Versions/3.{minorVersion}/Python", self.imageDir() / "lib/Python.framework/Python"]
                 ):
@@ -196,12 +195,12 @@ else:
 
             # Install versionless python bin too. This is a similar mechanism as "python-is-python3" on debian
             if not utils.createShim(
-                self.installDir() / f"bin/python{CraftCore.compiler.executableSuffix}",
-                self.installDir() / f"bin/python3{CraftCore.compiler.executableSuffix}",
+                self.installDir() / f"bin/python{CraftCore.compiler.platform.executableSuffix}",
+                self.installDir() / f"bin/python3{CraftCore.compiler.platform.executableSuffix}",
             ):
                 return False
 
-            if CraftCore.compiler.isLinux:
+            if CraftCore.compiler.platform.isLinux:
                 # create a versionless path that we can use eg. in CraftSetupHelper
                 return utils.createSymlink(
                     self.installDir() / f"lib/python3.{minorVersion}/site-packages", self.installDir() / "lib/python/site-packages", targetIsDirectory=True

@@ -7,11 +7,6 @@ from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
-    def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = (
-            CraftCore.compiler.Platforms.Windows | CraftCore.compiler.Platforms.MacOS | CraftCore.compiler.Platforms.Linux
-        )
-
     def setTargets(self):
         self.description = "CMake, the cross-platform, open-source build system."
         self.webpage = "http://www.cmake.org/"
@@ -19,17 +14,17 @@ class subinfo(info.infoclass):
 
         for ver in ["3.23.3", "3.26.3", "3.30.0", "3.31.9", "4.1.2", "4.1.4", "4.3.3"]:
             majorMinorStr = ".".join(ver.split(".")[0:2])
-            if CraftCore.compiler.isWindows:
+            if CraftCore.compiler.platform.isWindows:
                 self.targets[ver] = f"https://cmake.org/files/v{majorMinorStr}/cmake-{ver}-windows-x86_64.zip"
                 self.targetInstSrc[ver] = f"cmake-{ver}-windows-x86_64"
-            elif CraftCore.compiler.isMacOS:
+            elif CraftCore.compiler.platform.isMacOS:
                 self.targets[ver] = f"https://www.cmake.org/files/v{majorMinorStr}/cmake-{ver}-macos-universal.tar.gz"
                 self.targetInstSrc[ver] = f"cmake-{ver}-macos-universal"
-            elif CraftCore.compiler.isLinux:
-                if CraftCore.compiler.hostArchitecture == CraftCore.compiler.Architecture.x86_64:
+            elif CraftCore.compiler.platform.isLinux:
+                if CraftCore.compiler.hostArchitecture.isX86_64:
                     self.targets[ver] = f"https://cmake.org/files/v{majorMinorStr}/cmake-{ver}-linux-x86_64.tar.gz"
                     self.targetInstSrc[ver] = f"cmake-{ver}-linux-x86_64"
-                if CraftCore.compiler.hostArchitecture & CraftCore.compiler.Architecture.arm:
+                elif CraftCore.compiler.hostArchitecture.isArm64:
                     self.targets[ver] = f"https://cmake.org/files/v{majorMinorStr}/cmake-{ver}-linux-aarch64.tar.gz"
                     self.targetInstSrc[ver] = f"cmake-{ver}-linux-aarch64"
 

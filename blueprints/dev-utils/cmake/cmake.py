@@ -5,11 +5,6 @@ from Package.BinaryPackageBase import BinaryPackageBase
 
 
 class subinfo(info.infoclass):
-    def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = (
-            CraftCore.compiler.Platforms.Windows | CraftCore.compiler.Platforms.MacOS | CraftCore.compiler.Platforms.Linux
-        )
-
     def setTargets(self):
         self.targets["latest"] = ""
         self.description = "Craft integration package for cmake."
@@ -28,15 +23,15 @@ class Package(BinaryPackageBase):
         if not super().install():
             return False
         cmakePath = CraftCore.standardDirs.craftRoot() / "dev-utils/cmake-base"
-        if CraftCore.compiler.isMacOS:
+        if CraftCore.compiler.platform.isMacOS:
             cmakePath /= "CMake.app/Contents/bin"
         else:
             cmakePath /= "bin"
 
         for name in ["cmake", "cmake-gui", "cmcldeps", "cpack", "ctest"]:
             args = []
-            sourceBinary = cmakePath / f"{name}{CraftCore.compiler.executableSuffix}"
-            targetBinary = self.imageDir() / f"dev-utils/bin/{name}{CraftCore.compiler.executableSuffix}"
+            sourceBinary = cmakePath / f"{name}{CraftCore.compiler.platform.executableSuffix}"
+            targetBinary = self.imageDir() / f"dev-utils/bin/{name}{CraftCore.compiler.platform.executableSuffix}"
             if sourceBinary.exists():
                 if not utils.createShim(targetBinary, sourceBinary, useAbsolutePath=True, args=args):
                     return False

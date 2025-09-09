@@ -42,7 +42,7 @@ from Utils.StageLogger import StageLogger
 def signWindows(fileNames: Union[Path, str], package=None) -> bool:
     if not CraftCore.settings.getboolean("CodeSigning", "Enabled", False):
         return True
-    if not CraftCore.compiler.isWindows:
+    if not CraftCore.compiler.platform.isWindows:
         CraftCore.log.warning("Code signing is currently only supported on Windows")
         return True
 
