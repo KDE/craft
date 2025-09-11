@@ -192,7 +192,7 @@ class SetupHelper(object):
         os.environ[key] = val
 
     @staticmethod
-    def _callVCVER(version: int, args: Optional[list] = None, native: bool = True, prerelease: bool = False) -> str:
+    def _callVCVER(version: int, args: Optional[list] = None, prerelease: bool = False) -> str:
         if not args:
             args = []
         vswhere = os.path.join(CraftCore.standardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")
@@ -201,16 +201,6 @@ class SetupHelper(object):
             command += ["-prerelease"]
         if version:
             command += ["-version", f"[{version},{version+1})"]
-            if version < 15:
-                command.append("-legacy")
-            else:
-                if not args:
-                    if native:
-                        # this fails with express versions
-                        args = [
-                            "-requires",
-                            "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
-                        ]
         return SetupHelper._getOutput(command + args)[1]
 
     @staticmethod
@@ -218,19 +208,20 @@ class SetupHelper(object):
         version: int = 0,
         architecture=None,
         toolset=None,
-        native=True,
     ) -> str:
         if not architecture:
             architecture = CraftCore.compiler.Architecture.x86_64
-        if native:
+        if CraftCore.compiler.architecture.isNative:
             architectures = {
                 CraftCore.compiler.Architecture.x86_32: "amd64_x86",
                 CraftCore.compiler.Architecture.x86_64: "amd64",
+                CraftCore.compiler.Architecture.arm64: "arm64",
             }
         else:
             architectures = {
                 CraftCore.compiler.Architecture.x86_32: "x86",
                 CraftCore.compiler.Architecture.x86_64: "x86_amd64",
+                CraftCore.compiler.Architecture.arm64: "amd64_arm64",
             }
         args = architectures[architecture.key]
         path = ""
@@ -247,7 +238,7 @@ class SetupHelper(object):
                     component += f"v{CraftCore.compiler.getMsvcPlatformToolset()}.x86.x64"
             # todo directly get the correct version
             for v in [17, 16, 15]:
-                path = SetupHelper._callVCVER(v, args=["-products", "*", "-requires", component], native=native)
+                path = SetupHelper._callVCVER(v, args=["-products", "*", "-requires", component])
                 if path:
                     if not toolset:
                         toolset = str(CraftCore.compiler.getMsvcPlatformToolset() / 10)
@@ -257,9 +248,9 @@ class SetupHelper(object):
             args += f" -vcvars_ver={toolset}"
 
         if not path:
-            path = SetupHelper._callVCVER(version, native=native)
+            path = SetupHelper._callVCVER(version)
             if not path:
-                path = SetupHelper._callVCVER(version, native=native, prerelease=True)
+                path = SetupHelper._callVCVER(version, prerelease=True)
                 if path:
                     log("Found MSVS only in a prerelease version. I will use that.")
         if not path:
