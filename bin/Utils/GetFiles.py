@@ -59,14 +59,16 @@ def getFile(url, destdir, filename="", quiet=None) -> bool:
     absFilename = Path(destdir) / filename
     # try the other methods as fallback if we are bootstrapping
     bootStrapping = not (CraftCore.standardDirs.etcDir() / "cacert.pem").exists()
-    if not CraftCore.settings.getboolean("General", "NoWget"):
-        if CraftCore.cache.findApplication("wget"):
-            if wgetFile(url, destdir, filename, quiet):
-                return True
-            if not bootStrapping:
-                return False
 
-    if CraftCore.cache.findApplication("curl"):
+    wget = CraftCore.cache.findApplication("wget")
+    if wget and (not utils.isSystemTool(wget) or CraftCore.settings.getboolean("Tools", "UseSystemWget", True)):
+        if wgetFile(url, destdir, filename, quiet):
+            return True
+        if not bootStrapping:
+            return False
+
+    curl = CraftCore.cache.findApplication("curl")
+    if curl and (not utils.isSystemTool(curl) or CraftCore.settings.getboolean("Tools", "UseSystemCurl", True)):
         if curlFile(url, destdir, filename, quiet):
             return True
         if not bootStrapping:
