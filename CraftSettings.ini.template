@@ -271,6 +271,15 @@ MacDeveloperId = K Desktop Environment e.V. (5433B4KXM8)
 ## If the custom command is not empty it will be used instead of codesign
 #MacCustomSignCommand =
 
+[Tools]
+## Craft supports a range of tools, provided by your system, for some of them we have fallbacks.
+## If craft provides a tool, we usually prefer it over the version installed on your system.
+## Craft provided tools can be disabled with blueprint settings.
+## craft --unmerge wget && craft --set ignored=true wget
+## Whether to use system curl
+UseSystemCurl = True
+# Whether to use system Wget
+UseSystemWget = True
 
 [Version]
 ConfigVersion = 6
