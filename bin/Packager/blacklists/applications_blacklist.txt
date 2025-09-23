@@ -40,7 +40,6 @@ lib/gettext/.*
 lib/metatypes/.*
 
 # docbook stuff
-(bin/data|share)/kf5/kdoctools/.*
 (bin/data|share)/kf6/kdoctools/.*
 (bin/data|share)/xml/.*
 
