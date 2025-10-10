@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
         )
 
     def setTargets(self):
-        for ver in ["3.23.3", "3.26.3", "3.30.0", "3.31.9"]:
+        for ver in ["3.23.3", "3.26.3", "3.30.0", "3.31.9", "4.1.2"]:
             majorMinorStr = ".".join(ver.split(".")[0:2])
             if CraftCore.compiler.isWindows:
                 self.targets[ver] = f"https://cmake.org/files/v{majorMinorStr}/cmake-{ver}-windows-x86_64.zip"
@@ -40,7 +40,7 @@ class subinfo(info.infoclass):
 
         self.patchLevel["3.13.2"] = 1
 
-        self.defaultTarget = "3.31.9"
+        self.defaultTarget = "4.1.2"
 
 
 class Package(BinaryPackageBase):
