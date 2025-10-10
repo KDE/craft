@@ -2,7 +2,7 @@ diff -Nrub -x *~ -x *\.rej -x *\.orig -x *\.o -x *\.pyc -x CMakeLists.txt.user s
 --- sqlite-amalgamation-3500200.orig/CMakeLists.txt	1970-01-01 01:00:00
 +++ sqlite-amalgamation-3500200/CMakeLists.txt	2025-07-03 11:51:39
 @@ -0,0 +1,81 @@
-+cmake_minimum_required( VERSION 3.0)
++cmake_minimum_required( VERSION 3.5 )
 +
 +
 +file(STRINGS sqlite3.h SQLITE_VERSION_STRING REGEX "define SQLITE_VERSION.*")
