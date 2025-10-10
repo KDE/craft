@@ -138,7 +138,7 @@ diff -Nrub -x '*~' -x '*\.orig' -x'*\.o' bzip2-1.0.6.orig/CMakeLists.txt bzip2-1
 +++ bzip2-1.0.6/CMakeLists.txt	2015-12-07 19:22:47.818292000 +0100
 @@ -0,0 +1,88 @@
 +project(bzip2)
-+cmake_minimum_required(VERSION 2.6)
++cmake_minimum_required(VERSION 3.5)
 +
 +set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 +
