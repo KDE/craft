@@ -27,8 +27,8 @@ from Package.PipPackageBase import PipPackageBase
 class subinfo(info.infoclass):
     def setTargets(self):
         self.svnTargets["latest"] = ""
-        self.svnTargets["1.4.2"] = ""
-        self.defaultTarget = "1.4.2"
+        self.svnTargets["1.9.0"] = ""
+        self.defaultTarget = "1.9.0"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
