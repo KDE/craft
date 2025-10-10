@@ -1324,3 +1324,10 @@ def localSignMac(binaries):
             if not system(command, logCommand=False):
                 return False
     return True
+
+
+def isSystemTool(path : Path) -> bool:
+    # TODO: add host path to check CraftCore.standardDirs.hostRoot()
+    if not path:
+        return False
+    return CraftCore.standardDirs.craftRoot() not in path.parents
