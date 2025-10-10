@@ -15,7 +15,7 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
-        for ver in ["71.1", "74.1", "74.2", "76.1"]:
+        for ver in ["71.1", "74.1", "74.2", "76.1", "77.1"]:
             major, minor = ver.split(".")
             self.targets[ver] = f"https://github.com/unicode-org/icu/releases/download/release-{major}-{minor}/icu4c-{major}_{minor}-src.tgz"
             self.targetInstSrc[ver] = os.path.join("icu", "source")
@@ -27,7 +27,8 @@ class subinfo(info.infoclass):
         self.patchToApply["74.1"] = [("icu-71.1-20221112.diff", 1)]
         self.patchToApply["74.2"] = [("icu-71.1-20221112.diff", 1)]
         self.patchToApply["76.1"] = [("icu-71.1-20221112.diff", 1)]
-        self.defaultTarget = "76.1"
+        self.patchToApply["77.1"] = [("icu-71.1-20221112.diff", 1)]
+        self.defaultTarget = "77.1"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = None
