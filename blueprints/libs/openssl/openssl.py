@@ -38,7 +38,7 @@ from Utils.Arguments import Arguments
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        for ver in ["3.2.1", "3.3.1", "3.3.2", "3.4.0", "3.4.1", "3.5.1", "3.5.2", "3.5.3", "3.5.4"]:
+        for ver in ["3.2.1", "3.3.1", "3.3.2", "3.4.0", "3.4.1", "3.4.2", "3.4.3", "3.5.1", "3.5.2", "3.5.3", "3.5.4"]:
             self.targets[ver] = f"https://openssl.org/source/openssl-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"openssl-{ver}"
             self.targetDigestUrls[ver] = ([f"https://openssl.org/source/openssl-{ver}.tar.gz.sha256"], CraftHash.HashAlgorithm.SHA256)

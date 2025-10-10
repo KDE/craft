@@ -10,6 +10,9 @@ share/metainfo/.*\.xml
 # logging category definitions are for tools not available on Android
 share/qlogging-categories6/.*
 
+# KConfigXT metadata
+share/config.kcfg/.*\.kcfg
+
 # Android-specific development files
 share/ndk-modules/.*
 
