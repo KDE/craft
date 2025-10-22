@@ -60,6 +60,13 @@ def getFile(url, destdir, filename="", quiet=None) -> bool:
     # try the other methods as fallback if we are bootstrapping
     bootStrapping = not (CraftCore.standardDirs.etcDir() / "cacert.pem").exists()
 
+    wget2 = CraftCore.cache.findApplication("wget2")
+    if wget2 and (not utils.isSystemTool(wget2) or CraftCore.settings.getboolean("Tools", "UseSystemWget", True)):
+        if wget2File(wget2, url, destdir, filename, quiet):
+            return True
+        if not bootStrapping:
+            return False
+
     wget = CraftCore.cache.findApplication("wget")
     if wget and (not utils.isSystemTool(wget) or CraftCore.settings.getboolean("Tools", "UseSystemWget", True)):
         if wgetFile(url, destdir, filename, quiet):
@@ -176,6 +183,46 @@ def wgetFile(url, destdir, filename, quiet):
         elif CraftCore.cache.checkCommandOutputFor(wget, "--show-progress"):
             command += ["-q", "--show-progress"]
             CraftCore.log.info(f"wget {url}")
+            return utils.system(
+                command,
+                displayProgress=True,
+                logCommand=False,
+                stderr=subprocess.STDOUT,
+            )
+    return utils.system(command)
+
+
+def wget2File(wgetCommand, url, destdir, filename, quiet):
+    """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
+    command = [wgetCommand, "--continue", "--metalink=off"]
+    cert = os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem")
+    if os.path.exists(cert):
+        command += ["--ca-certificate", cert]
+    # the default of 20 might not be enough for sourceforge ...
+    # command += ["--max-redirect", "50"]
+    if CraftCore.settings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False):
+        command += ["--no-passive-ftp"]
+    if not filename:
+        command += ["--directory-prefix", destdir]
+    else:
+        command += ["--output-document", os.path.join(destdir, filename)]
+    command += [url]
+
+    if CraftCore.debug.verbose() < 1:
+        if quiet:
+            with io.StringIO() as tmp:
+                ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
+                if not utils.system(command, logCommand=ciMode, stdout=tmp, stderr=subprocess.STDOUT):
+                    CraftCore.log.warning(tmp.getvalue())
+                    return False
+                if ciMode:
+                    loc = re.findall(r"([^\s]+)", tmp.getvalue())
+                    if loc:
+                        CraftCore.log.info(f"Downloaded from: {loc[-1]}")
+                return True
+        else:
+            command += ["-q", "--progress=bar", "--force-progress"]
+            CraftCore.log.info(f"wget2 {url}")
             return utils.system(
                 command,
                 displayProgress=True,
