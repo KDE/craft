@@ -1,16 +1,16 @@
 import info
-import utils
 from CraftCore import CraftCore
 from Package.BinaryPackageBase import BinaryPackageBase
+from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        for ver in ["1.21.2-45"]:
-            self.targets[ver] = f"https://files.kde.org/craft/prebuilt/packages/wget-{ver}-windows-mingw_64-gcc.7z"
-            self.targetDigestUrls[ver] = f"https://files.kde.org/craft/prebuilt/packages/wget-{ver}-windows-mingw_64-gcc.7z.sha256"
-            self.targetInstallPath[ver] = "dev-utils/wget"
-        self.defaultTarget = "1.21.2-45"
+        for ver in ["2.1.0"]:
+            self.targets[ver] = f"https://github.com/rockdaboot/wget2/releases/download/v{ver}/wget2.exe"
+            self.targetInstallPath[ver] = "dev-utils/bin"
+        self.targetDigests["2.1.0"] = (["aad2b280c0f54741a1e5a4b7be99fc48cf39a7fc21827d5ec69860b9e02e9f28"], CraftHash.HashAlgorithm.SHA256)
+        self.defaultTarget = "2.1.0"
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/7zip"] = None
@@ -21,12 +21,6 @@ class Package(BinaryPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.subinfo.shelveAble = False
-
-    def postInstall(self):
-        return utils.createShim(
-            self.imageDir() / "dev-utils/bin/wget.exe",
-            self.imageDir() / "dev-utils/wget/bin/wget.exe",
-        )
 
     def postQmerge(self):
         CraftCore.cache.clear()
