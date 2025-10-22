@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
         self.targetDigests["1.0.8"] = (["ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269"], CraftHash.HashAlgorithm.SHA256)
         self.patchToApply["1.0.8"] = [(".files/fix-import-export-macros.patch", 1)]
         self.description = "shared libraries for handling bzip2 archives (runtime)"
+        self.patchLevel["1.0.8"] = 1
         self.defaultTarget = "1.0.8"
 
     def setDependencies(self):
@@ -47,7 +48,7 @@ class Package(CMakePackageBase):
         if not utils.configureFile(
             self.blueprintDir() / ".files/bzip2.pc.in",
             self.imageDir() / "lib/pkgconfig/bzip2.pc",
-            {"bzname": bzname, "BZIP2_PREFIX": self.installPrefix(), "VERSION": self.buildTarget},
+            {"bzname": bzname, "BZIP2_PREFIX": self.installPrefix().as_posix(), "VERSION": self.buildTarget},
         ):
             return False
         return True
