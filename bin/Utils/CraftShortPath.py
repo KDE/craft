@@ -85,7 +85,7 @@ class CraftShortPath(object):
         # ensure we end on /
         drive = Path(drive) / "/"
         with io.StringIO() as tmp:
-            if not utils.system(["subst"], stdout=tmp, logCommand=False):
+            if not utils.system(["subst"], stdout=tmp, logCommand=False, cwd=CraftCore.standardDirs.craftBin()):
                 CraftCore.debug.log.critical(f"Could not create shortpath {drive}, for {longPath}. Failed to list substituted paths.")
                 return longPath
             drives = dict(line.split(": =>") for line in filter(None, tmp.getvalue().strip().split("\r\n")))
@@ -93,10 +93,10 @@ class CraftShortPath(object):
             if drives[str(drive)] == longPath:
                 return drive
             else:
-                if not utils.system(["subst", "/D", drive.drive], stdout=subprocess.DEVNULL, logCommand=False):
+                if not utils.system(["subst", "/D", drive.drive], stdout=subprocess.DEVNULL, logCommand=False, cwd=CraftCore.standardDirs.craftBin()):
                     CraftCore.debug.log.critical(f"Could not create shortpath {drive}, for {longPath}. Failed to unset substituted path.")
                     return longPath
-        if not utils.system(["subst", drive.drive, longPath], stdout=subprocess.DEVNULL, logCommand=False):
+        if not utils.system(["subst", drive.drive, longPath], stdout=subprocess.DEVNULL, logCommand=False, cwd=CraftCore.standardDirs.craftBin()):
             CraftCore.debug.log.critical(f"Could not create shortpath {drive}, for {longPath}. Failed to substitute path.")
             return longPath
         return drive
