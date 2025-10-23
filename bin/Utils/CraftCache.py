@@ -103,7 +103,8 @@ class CraftCache(object):
         _cwd = os.getcwd()
         os.chdir(CraftCore.standardDirs.craftRoot())
         appLocation = shutil.which(str(app), path=path)
-        os.chdir(_cwd)
+        if os.listdir(_cwd):
+            os.chdir(_cwd)
 
         if appLocation:
             appLocation = Path(appLocation).resolve()
