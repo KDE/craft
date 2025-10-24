@@ -73,7 +73,7 @@ if CraftCore.compiler.isMSVC():
                 vars[f"{key}_RELEASE"] = CraftCore.standardDirs.craftRoot() / f"lib/{libName}.lib"
                 vars[f"{key}_DEBUG"] = CraftCore.standardDirs.craftRoot() / f"lib/{libNameDebug}.lib"
 
-            addLib("BZ2", "bzip2", "bzip2d")
+            addLib("BZ2", "bz2", "bz2d")
             addLib("CRYPTO", "libcrypto")
             addLib("EXPAT", "libexpat")
             addLib("FFI", "ffi")
