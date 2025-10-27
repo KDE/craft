@@ -261,6 +261,7 @@ def main(timer):
                 {"help": "Print the files installed by the package and exit"},
             ),
             ("clean-unused", {"help": "Clean unused files of all packages"}),
+            ("check-for-updates", {"help": "Check for updates from the package repository manager"})
         ],
         key=lambda x: x[0] if isinstance(x, tuple) else x,
     ):
