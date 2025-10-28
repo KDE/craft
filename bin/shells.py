@@ -271,6 +271,11 @@ def testColor():
     )
 
 
+def setConsoleTitle(title):
+    sys.stdout.buffer.write(b"\x1b]0;" + bytes(title, "UTF-8") + b"\x07")
+    sys.stdout.flush()
+
+
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         if sys.argv[1] == "color":

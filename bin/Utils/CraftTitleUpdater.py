@@ -1,7 +1,7 @@
 import threading
 import time
 
-import utils
+import shells
 from CraftCore import CraftCore
 from Package.VirtualPackageBase import VirtualPackageBase
 
@@ -21,7 +21,7 @@ class CraftTitleUpdater(object):
         return f"{self.title}{CraftTitleUpdater.br()}Duration: {self.timer}{dynamicPart}"
 
     def updateTitle(self):
-        utils.OsUtils.setConsoleTitle(str(self))
+        shells.setConsoleTitle(str(self))
 
     @staticmethod
     def br():

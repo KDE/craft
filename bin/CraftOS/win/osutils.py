@@ -98,10 +98,6 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
         return ctypes.windll.kernel32.SetFileAttributesW(str(path), FileAttributes.FILE_ATTRIBUTE_NORMAL) != 0
 
     @staticmethod
-    def setConsoleTitle(title):
-        return ctypes.windll.kernel32.SetConsoleTitleW(title) != 0
-
-    @staticmethod
     def supportsSymlinks():
         with tempfile.TemporaryDirectory() as tmp:
             testFileSource = Path(tmp) / "CRAFT_LINK_TEST_SOURCE"

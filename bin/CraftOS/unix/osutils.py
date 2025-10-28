@@ -1,7 +1,6 @@
 import fcntl
 import os
 import shutil
-import sys
 import time
 from pathlib import Path
 from typing import Optional
@@ -40,14 +39,6 @@ class OsUtils(CraftOS.OsUtilsBase.OsUtilsBase):
     @staticmethod
     def removeReadOnlyAttribute(path):
         return False
-
-    @staticmethod
-    def setConsoleTitle(title):
-        sys.stdout.buffer.write(b"\x1b]0;")
-        sys.stdout.buffer.write(bytes(title, "UTF-8"))
-        sys.stdout.buffer.write(b"\x07")
-        sys.stdout.flush()
-        return True
 
     @staticmethod
     def toNativePath(path: str) -> str:

@@ -31,10 +31,6 @@ class OsUtilsBase(OsDetection, metaclass=abc.ABCMeta):
         """Removes the readonly flag"""
         pass
 
-    def setConsoleTitle(title):
-        """Set the console title"""
-        return True
-
     @staticmethod
     def supportsSymlinks() -> bool:
         return True
