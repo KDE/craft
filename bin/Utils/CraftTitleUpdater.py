@@ -13,6 +13,7 @@ class CraftTitleUpdater(object):
         self.timer = None
         self.dynamicMessage = None
         self.dynamicStopMessage = None
+        self.progress = None
 
     def __str__(self):
         dynamicPart = ""
@@ -22,6 +23,8 @@ class CraftTitleUpdater(object):
 
     def updateTitle(self):
         shells.setConsoleTitle(str(self))
+        if CraftTitleUpdater.instance.progress:
+            shells.setConsoleProgress(CraftTitleUpdater.instance.progress())
 
     @staticmethod
     def br():
@@ -48,16 +51,19 @@ class CraftTitleUpdater(object):
 
     @staticmethod
     def usePackageProgressTitle(packages):
-        # filter out virtual packages
-        packages = [x for x in packages if not isinstance(x.instance, VirtualPackageBase)]
         initialSize = len(packages)
+
+        # the code here works as lists are passed by reference
+        def progress():
+            print(len(packages), initialSize)
+            return int((1 - len(packages) / initialSize) * 100)
 
         def title():
             if not packages:
                 CraftTitleUpdater.instance.dynamicMessage = None
                 return ""
-            progress = int((1 - len(packages) / initialSize) * 100)
-            return f"Progress: {progress}%{CraftTitleUpdater.br()}Remaining Packages: {[x.path for x in packages]}"
+
+            return f"Progress: {progress()}%{CraftTitleUpdater.br()}Remaining Packages: {[x.path for x in packages if not isinstance(x.instance, VirtualPackageBase)]}"
 
         def stopMessage():
             if not packages:
@@ -66,3 +72,4 @@ class CraftTitleUpdater(object):
 
         CraftTitleUpdater.instance.dynamicMessage = title
         CraftTitleUpdater.instance.dynamicStopMessage = stopMessage
+        CraftTitleUpdater.instance.progress = progress

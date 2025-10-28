@@ -276,6 +276,12 @@ def setConsoleTitle(title):
     sys.stdout.flush()
 
 
+def setConsoleProgress(progress):
+    assert 0 <= progress <= 100
+    sys.stdout.buffer.write(b"\x1b]9;4;1;" + bytes(str(progress), "UTF-8") + b"\x1b\\")
+    sys.stdout.flush()
+
+
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         if sys.argv[1] == "color":
