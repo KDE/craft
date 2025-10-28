@@ -416,6 +416,8 @@ def run(package: list[CraftPackageObject], action: str, args) -> bool:
         return installToDektop(directTargets)
     elif action == "print-files":
         return printFiles(directTargets)
+    elif action == "check-for-updates":
+        return checkForUpdates(directTargets)
     elif args.resolve_deps or action in ["all", "install-deps", "update"]:
         # work on the dependencies
         depPackage = CraftDependencyPackage(package)
@@ -554,4 +556,13 @@ def printFiles(packages):
             fileList.sort()
             for file in fileList:
                 CraftCore.log.info(file[0])
+    return True
+
+
+def checkForUpdates(packages):
+    for package in packages:
+        if package.instance.releaseMonitorUpdateAvailable:
+            CraftCore.log.info(f"{package}: New version available {package.instance.version} -> {package.instance.latestVersion}.")
+        else:
+            CraftCore.log.info(f"{package}: No update available.")
     return True

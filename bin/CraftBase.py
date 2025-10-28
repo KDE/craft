@@ -4,12 +4,15 @@
 import abc
 import datetime
 import functools
+import json
 import os
 from pathlib import Path
+from urllib.request import urlopen
 
 import info
 import utils
 from Blueprints.CraftPackageObject import CraftPackageObject
+from Blueprints.CraftVersion import CraftVersion
 from CraftCore import CraftCore
 from CraftDebug import deprecated
 from CraftStandardDirs import CraftStandardDirs
@@ -60,6 +63,8 @@ class CraftBase(object):
 
         self.buildSystemType = None
 
+        self._latestVersion = None
+
     def __str__(self):
         return self.package.__str__()
 
@@ -70,6 +75,30 @@ class CraftBase(object):
     @property
     def buildTests(self):
         return self.subinfo.options.dynamic.buildTests
+
+    @property
+    def latestVersion(self):
+        if self._latestVersion:
+            return self._latestVersion
+
+        if not self.subinfo.releaseManagerId:
+            CraftCore.log.warning("Release Manager ID is None.")
+            return None
+
+        with urlopen(f"https://release-monitoring.org/api/v2/versions/?project_id={self.subinfo.releaseManagerId}") as response:
+            if response.status != 200:
+                CraftCore.log.warning("Failed to fetch latest version.")
+                return None
+
+            data = json.loads(response.read().decode("utf-8"))
+            self._latestVersion = data["latest_version"]
+            return self._latestVersion
+
+    @property
+    def releaseMonitorUpdateAvailable(self):
+        if self.latestVersion:
+            return (CraftVersion(self.latestVersion) > CraftVersion(self.version))
+        return False
 
     def buildType(self):
         """return currently selected build type"""
