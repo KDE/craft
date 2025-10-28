@@ -108,7 +108,7 @@ def unpackFile(downloaddir, filename, workdir, keepSymlinksOnWindows=True, seven
 
 
 def un7zip(fileName, destdir, flag=None, keepSymlinksOnWindows=True, extraArgs=[]):
-    ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
+    ciMode = CraftCore.settings.ciMode
     createDir(destdir)
     kw = {}
     progressFlags = []
@@ -152,7 +152,7 @@ def un7zip(fileName, destdir, flag=None, keepSymlinksOnWindows=True, extraArgs=[
 
 def compress(archive: Path, source: str) -> bool:
     archive = Path(archive)
-    ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
+    ciMode = CraftCore.settings.ciMode
 
     def __7z(archive, source):
         app = __locate7z()
@@ -238,7 +238,7 @@ def systemWithoutShell(
     When the parameter "displayProgress" is True, stdout won't be
     logged to allow the display of progress bars."""
 
-    ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
+    ciMode = CraftCore.settings.ciMode
     needsAnsiFix = OsUtils.isWin() and CraftCore.settings.getboolean("General", "AllowAnsiColor", True)
     if outputOnFailure is None:
         outputOnFailure = StageLogger.isOutputOnFailure()
@@ -802,7 +802,7 @@ def notify(title, message, alertClass=None, log=True):
 
     if backends == ["None"]:
         return
-    if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) or backends == "":
+    if CraftCore.settings.ciMode or backends == "":
         return
     backends = Notifier.NotificationLoader.load(backends)
     for backend in backends.values():
@@ -1326,7 +1326,7 @@ def localSignMac(binaries):
     return True
 
 
-def isSystemTool(path : Path) -> bool:
+def isSystemTool(path: Path) -> bool:
     # TODO: add host path to check CraftCore.standardDirs.hostRoot()
     if not path:
         return False

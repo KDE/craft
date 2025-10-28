@@ -41,7 +41,7 @@ from shells import Powershell
 def getFile(url, destdir, filename="", quiet=None) -> bool:
     """download file from 'url' into 'destdir'"""
     if quiet is None:
-        quiet = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
+        quiet = CraftCore.settings.ciMode
     CraftCore.log.debug("getFile called. url: %s" % url)
     if url == "":
         CraftCore.log.error("fetch: no url given")
@@ -132,7 +132,7 @@ def curlFile(url, destdir, filename, quiet):
     if CraftCore.debug.verbose() < 1:
         if quiet:
             with io.StringIO() as tmp:
-                ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
+                ciMode = CraftCore.settings.ciMode
                 if ciMode:
                     command += ["-v"]
                 if not utils.system(command, logCommand=ciMode, stdout=tmp, stderr=subprocess.STDOUT):
@@ -171,7 +171,7 @@ def wgetFile(url, destdir, filename, quiet):
     if CraftCore.debug.verbose() < 1:
         if quiet:
             with io.StringIO() as tmp:
-                ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
+                ciMode = CraftCore.settings.ciMode
                 if not utils.system(command, logCommand=ciMode, stdout=tmp, stderr=subprocess.STDOUT):
                     CraftCore.log.warning(tmp.getvalue())
                     return False
@@ -211,7 +211,7 @@ def wget2File(wgetCommand, url, destdir, filename, quiet):
     if CraftCore.debug.verbose() < 1:
         if quiet:
             with io.StringIO() as tmp:
-                ciMode = CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)
+                ciMode = CraftCore.settings.ciMode
                 if not utils.system(command, logCommand=ciMode, stdout=tmp, stderr=subprocess.STDOUT):
                     CraftCore.log.warning(tmp.getvalue())
                     return False

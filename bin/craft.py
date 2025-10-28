@@ -211,7 +211,7 @@ def main(timer):
     parser.add_argument(
         "--ci-mode",
         action="store_true",
-        default=CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False),
+        default=CraftCore.settings.ciMode,
         dest="ciMode",
         help="Enables the ci mode",
     )
@@ -421,7 +421,7 @@ if __name__ == "__main__":
             CraftCore.log.error(e)
             blueprintSearch.printSearch(e.packageName)
         except BlueprintException as e:
-            if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) or CraftCore.debug.verbose() >= 2:
+            if CraftCore.settings.ciMode or CraftCore.debug.verbose() >= 2:
                 CraftCore.log.error(e, exc_info=e.exception or e)
             else:
                 CraftCore.log.error(e)

@@ -466,7 +466,7 @@ def run(package: list[CraftPackageObject], action: str, args) -> bool:
             if args.probe:
                 CraftCore.log.warning(f"pretending {info}: {info.version}")
             else:
-                if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+                if CraftCore.settings.ciMode:
                     CraftCore.debug.debug_line()
                     CraftCore.log.info(f"Status: {CraftTitleUpdater.instance}")
                 else:

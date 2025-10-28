@@ -90,7 +90,7 @@ class CraftConfig(object):
             self._warned.add((deprecatedSection, deprecatedKey))
             print(
                 f"Warning: {deprecatedSection}/{deprecatedKey} is deprecated and has been renamed to " f"{section}/{key}, please update your CraftSettings.ini",
-                file=sys.stderr if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) else sys.stdout,
+                file=sys.stderr if not CraftCore.settings.ciMode else sys.stdout,
             )
 
     def _readSettings(self):
@@ -207,3 +207,7 @@ class CraftConfig(object):
             for url in CraftCore.settings.getList("Packager", "RepositoryUrl")
         ]
         return out
+
+    @property
+    def ciMode(self):
+        return CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False)

@@ -70,7 +70,7 @@ class SetupHelper(object):
     def __init__(self, args=None):
         self.args = args
 
-        if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+        if CraftCore.settings.ciMode:
             CraftCore.settings.set("General", "AllowAnsiColor", "False")
 
         pristineEnvFile = CraftCore.standardDirs.etcDir() / "PristineCraftenv.json"
@@ -137,7 +137,7 @@ class SetupHelper(object):
             location = shutil.which(app)
             if location:
                 location = os.path.dirname(location)
-                if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+                if not CraftCore.settings.ciMode:
                     log(
                         f'Found "{app}" in your PATH: "{location}"\n'
                         f"This application is known to cause problems with your configuration of Craft.\n"
@@ -161,7 +161,7 @@ class SetupHelper(object):
         printRow("ABI", CraftCore.compiler)
         printRow("Download directory", CraftCore.standardDirs.downloadDir())
         printRow("Cache repository", ", ".join(CraftCore.settings.cacheRepositoryUrls()))
-        if not CraftCore.compiler.isAndroid and CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+        if not CraftCore.compiler.isAndroid and CraftCore.settings.ciMode:
             printRow("EnvironmentUpdated", SetupHelper._EnvironmentPopulated)
             for key in ["CC", "CXX"]:
                 printRow(key, f"{os.environ[key]!r} => {CraftCore.cache.findApplication(os.environ[key])}")
@@ -539,7 +539,7 @@ class SetupHelper(object):
         if CraftCore.settings.getboolean(
             "General",
             "AllowAnsiColor",
-            not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False),
+            not CraftCore.settings.ciMode,
         ):
             # different non standard env switches
             self.addEnvVar("CLICOLOR_FORCE", "1")

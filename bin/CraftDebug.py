@@ -120,7 +120,7 @@ class CraftDebug(object):
         if 0 <= self.verbose() < 2:
             print(
                 msg,
-                file=file if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) else sys.stdout,
+                file=file if not CraftCore.settings.ciMode else sys.stdout,
             )
             self.log.debug(msg, stack_info=stack_info)
         else:
@@ -133,7 +133,7 @@ class CraftDebug(object):
         if self.verbose() < 2:
             print(
                 msg,
-                file=file if not CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False) else sys.stdout,
+                file=file if not CraftCore.settings.ciMode else sys.stdout,
             )
             self.log.debug(msg)
         else:
