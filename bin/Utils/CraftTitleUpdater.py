@@ -55,7 +55,6 @@ class CraftTitleUpdater(object):
 
         # the code here works as lists are passed by reference
         def progress():
-            print(len(packages), initialSize)
             return int((1 - len(packages) / initialSize) * 100)
 
         def title():
