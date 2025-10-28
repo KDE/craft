@@ -3,6 +3,7 @@ import time
 
 import utils
 from CraftCore import CraftCore
+from Package.VirtualPackageBase import VirtualPackageBase
 
 
 class CraftTitleUpdater(object):
@@ -16,11 +17,15 @@ class CraftTitleUpdater(object):
     def __str__(self):
         dynamicPart = ""
         if self.dynamicMessage:
-            dynamicPart = f" {self.dynamicMessage()}"
-        return f"{self.title}: {self.timer}{dynamicPart}"
+            dynamicPart = f"{CraftTitleUpdater.br()}{self.dynamicMessage()}"
+        return f"{self.title}{CraftTitleUpdater.br()}Duration: {self.timer}{dynamicPart}"
 
     def updateTitle(self):
         utils.OsUtils.setConsoleTitle(str(self))
+
+    @staticmethod
+    def br():
+        return "\n\t" if CraftCore.settings.ciMode else " "
 
     def run(self):
         while self.doUpdateTitle:
@@ -30,7 +35,7 @@ class CraftTitleUpdater(object):
     def start(self, message, timer):
         self.title = message
         self.timer = timer
-        if CraftCore.settings.getboolean("ContinuousIntegration", "Enabled", False):
+        if CraftCore.settings.ciMode:
             return
         self.doUpdateTitle = True
         tittleThread = threading.Thread(target=self.run, daemon=True)
@@ -43,6 +48,8 @@ class CraftTitleUpdater(object):
 
     @staticmethod
     def usePackageProgressTitle(packages):
+        # filter out virtual packages
+        packages = [x for x in packages if not isinstance(x.instance, VirtualPackageBase)]
         initialSize = len(packages)
 
         def title():
@@ -50,7 +57,7 @@ class CraftTitleUpdater(object):
                 CraftTitleUpdater.instance.dynamicMessage = None
                 return ""
             progress = int((1 - len(packages) / initialSize) * 100)
-            return f"{progress}% {[x.path for x in packages]}"
+            return f"Progress: {progress}%{CraftTitleUpdater.br()}Remaining Packages: {[x.path for x in packages]}"
 
         def stopMessage():
             if not packages:
