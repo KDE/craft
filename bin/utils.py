@@ -118,12 +118,16 @@ def un7zip(fileName, destdir, flag=None, keepSymlinksOnWindows=True, extraArgs=[
         progressFlags = ["-bso2", "-bsp1"]
         kw["stderr"] = subprocess.PIPE
 
+    # allow up to 20 insane levels of symlinks
+    # https://sourceforge.net/p/sevenzip/bugs/2593/
+    allowSymlinks = "-snld20"
+
     if flag == ".7z":
         # Actually this is not needed for a normal archive.
         # But git is an exe file renamed to 7z and we need to specify the type.
         # Yes it is an ugly hack.
         type = ["-t7z"]
-    if re.match(r"(.*\.tar.*$|.*\.tgz$)", fileName):
+    if re.match(r"(.*\.tar.*$|.*\.tgz$)", fileName) and not fileName.endswith(".tar"):
         if progressFlags:
             if ciMode:
                 progressFlags = []
@@ -134,13 +138,13 @@ def un7zip(fileName, destdir, flag=None, keepSymlinksOnWindows=True, extraArgs=[
         if CraftCore.compiler.isWindows:
             if progressFlags:
                 progressFlags = ["-bsp0"]
-            command = [app, "x", "-si", f"-o{destdir}", "-ttar"] + extraArgs + progressFlags
+            command = [app, "x", "-si", f"-o{destdir}", "-ttar", allowSymlinks] + extraArgs + progressFlags
             kw["stdout"] = subprocess.DEVNULL
         else:
             tar = CraftCore.cache.findApplication("tar")
             command = [tar, "--directory", destdir, "-xf", "-"]
     else:
-        command = [app, "x", "-r", "-y", f"-o{destdir}", fileName] + type + extraArgs + progressFlags
+        command = [app, "x", "-r", "-y", allowSymlinks, f"-o{destdir}", fileName] + type + extraArgs + progressFlags
 
     # While 7zip supports symlinks cmake 3.8.0 does not support symlinks
     if not system(command, **kw):
