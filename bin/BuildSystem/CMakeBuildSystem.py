@@ -45,8 +45,8 @@ class CMakeBuildSystem(BuildSystemBase):
         craftRoot = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
         options = Arguments([defines])
         options += [
-            "-DBUILD_TESTING={testing}".format(testing="ON" if self.buildTests else "OFF"),
-            "-DBUILD_SHARED_LIBS={shared}".format(shared="OFF" if self.subinfo.options.buildStatic else "ON"),
+            f"-DBUILD_TESTING={self.buildTests.asOnOff}",
+            f"-DBUILD_SHARED_LIBS={self.subinfo.options.buildStatic.asOnOff}",
             f"-DCMAKE_INSTALL_PREFIX={craftRoot}",
             f"-DCMAKE_PREFIX_PATH={craftRoot}",
             f"-DCMAKE_REQUIRED_INCLUDES={craftRoot}/include",
