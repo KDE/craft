@@ -963,9 +963,48 @@ class ScopedEnv(object):
         self.reset()
 
 
-def configureFile(inFile: str, outFile: str, variables: dict) -> bool:
+def configureFile(inFile: str, outFile: str, variables: dict, atOnly: bool = False) -> bool:
+    """
+    Configures the contents of an input file by substituting placeholders with
+    corresponding values from a variable dictionary and writes the result to an
+    output file.
+
+    Summary:
+    This function modifies the contents of a given input file by replacing
+    placeholders, defined by specific patterns, with values from a provided dictionary.
+    The configuration pattern can be controlled by enabling or disabling the `atOnly`
+    flag. If the configuration process encounters a placeholder without a corresponding
+    value in the dictionary, an exception will be raised. The output file is generated
+    in the specified location.
+
+    Args:
+        inFile (str): Path to the input file whose contents will be configured.
+        outFile (str): Path to the output file where the configured content will be
+            written.
+        variables (dict): Dictionary containing keys that match placeholders in the
+            input file and their associated replacement values.
+        atOnly (bool): Determines which placeholder pattern to use. If set to True,
+            placeholders will be in the format `@PLACEHOLDER@`. Otherwise, they will be
+            in the format `@{PLACEHOLDER}`. Defaults to False.
+
+    Returns:
+        bool: True if the configuration process made changes to the input file and
+            wrote to the output file; False if no modifications were needed.
+
+    Raises:
+        Exception: Raised if a placeholder in the input file does not have a
+            corresponding key in the `variables` dictionary. The exception provides
+            details about which placeholder caused the issue and where it appeared in
+            the file.
+    """
     CraftCore.log.debug(f"configureFile {inFile} -> {outFile}\n{variables}")
-    configPatter = re.compile(r"@{([^{}]+)}")
+    if not atOnly:
+        configPatter = re.compile(r"@{([^{}]+)}")
+        replacePatter = "@{{{match}}}"
+    else:
+        # https://github.com/Kitware/CMake/blob/master/Source/cmMakefile.cxx#L2840
+        configPatter = re.compile(r"@([A-Za-z_0-9]*)@")
+        replacePatter = "@{match}@"
     with open(inFile, "rt", encoding="UTF-8") as f:
         script = f.read()
     matches = configPatter.findall(script)
@@ -976,14 +1015,15 @@ def configureFile(inFile: str, outFile: str, variables: dict) -> bool:
     while matches:
         for match in matches:
             val = variables.get(match, None)
+            replaceString = replacePatter.format(match=match)
             if val is None:
                 linenUmber = 0
                 for line in script.split("\n"):
                     if match in line:
                         break
                     linenUmber += 1
-                raise Exception(f"Failed to configure {inFile}: @{{{match}}} is not in variables\n" f"{linenUmber}:{line}")
-            script = script.replace(f"@{{{match}}}", str(val))
+                raise Exception(f"Failed to configure {inFile}: {replaceString} is not in variables\n" f"{linenUmber}:{line}")
+            script = script.replace(replaceString, str(val))
         matches = configPatter.findall(script)
 
     os.makedirs(os.path.dirname(outFile), exist_ok=True)
