@@ -23,8 +23,8 @@ ABI = windows-cl-msvc2019-x86_64
 #MSVCToolset=14.16
 
 ## Set the minimum supported MacOs version, this is also limited by Qt
-## https://github.com/qt/qtbase/blob/6.8/.cmake.conf#L54C5-L54C35
-#MacDeploymentTarget = 12
+## https://github.com/qt/qtbase/blob/b598087455b2113c63fe74079082b0f8022f2d0d/.cmake.conf#L54
+#MacDeploymentTarget = 13
 
 ## Minimum supported Android API level (default: 21)
 AndroidAPI = 21
