@@ -46,7 +46,7 @@ class CMakeBuildSystem(BuildSystemBase):
         options = Arguments([defines])
         options += [
             f"-DBUILD_TESTING={self.buildTests.asOnOff}",
-            f"-DBUILD_SHARED_LIBS={self.subinfo.options.buildStatic.asOnOff}",
+            f"-DBUILD_SHARED_LIBS={self.subinfo.options.buildStatic.inverted.asOnOff}",
             f"-DCMAKE_INSTALL_PREFIX={craftRoot}",
             f"-DCMAKE_PREFIX_PATH={craftRoot}",
             f"-DCMAKE_REQUIRED_INCLUDES={craftRoot}/include",
