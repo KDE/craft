@@ -4,10 +4,9 @@
 import abc
 import datetime
 import functools
-import json
 import os
-import urllib.request
 from pathlib import Path
+from typing import Optional
 
 import info
 import utils
@@ -77,43 +76,15 @@ class CraftBase(object):
         return self.subinfo.options.dynamic.buildTests
 
     @property
-    def latestVersion(self):
-        if self._latestVersion:
-            return self._latestVersion
-
-        if not self.subinfo.releaseManagerId:
-            CraftCore.log.warning("Release Manager ID is None.")
-            return None
-
-        request = urllib.request.Request(
-            f"https://release-monitoring.org/api/v2/versions/?project_id={self.subinfo.releaseManagerId}",
-            method="GET",
-            headers={
-                "user-agent": "kde-craft-update-checker/1.0 (+https://invent.kde.org/packaging/craft)",
-                "accept": "*/*",
-            },
-        )
-        CraftCore.log.debug(f"Fetching latest version from {request.full_url} {request.headers}")
-        with urllib.request.urlopen(request) as response:
-            if response.status != 200:
-                CraftCore.log.warning("Failed to fetch latest version.")
-                return None
-
-            body = response.read()
-            CraftCore.log.debug(f"Latest version data:{body}")
-            try:
-                data = json.loads(body.decode("utf-8"))
-            except:
-                CraftCore.log.warning("Failed to parse latest version data.")
-                return None
-            CraftCore.log.debug(f"Latest version: {data['latest_version']}")
-            self._latestVersion = data["latest_version"]
-            return self._latestVersion
+    def latestVersion(self) -> Optional[CraftVersion]:
+        if not self._latestVersion:
+            self._latestVersion = CraftCore.cache.checkReleaseMonitoringForLatestVersion(self.package)
+        return self._latestVersion
 
     @property
-    def releaseMonitorUpdateAvailable(self):
+    def releaseMonitorUpdateAvailable(self) -> bool:
         if self.latestVersion:
-            return CraftVersion(self.latestVersion) > CraftVersion(self.version)
+            return self.latestVersion > CraftVersion(self.version)
         return False
 
     def buildType(self):

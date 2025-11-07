@@ -10,12 +10,15 @@ import time
 import urllib.error
 import urllib.request
 from pathlib import Path
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from Blueprints.CraftVersion import CraftVersion
 from CraftCore import AutoImport, CraftCore
 from CraftStandardDirs import CraftStandardDirs
 from Utils import GetFiles
+
+if TYPE_CHECKING:
+    from Blueprints.CraftPackageObject import CraftPackageObject
 
 
 class CraftCache(object):
@@ -38,6 +41,8 @@ class CraftCache(object):
         self._jsonCache = {}
         # defined in blueprintSearch
         self.availablePackages = None
+
+        self._releaseManagerLatestVersions = {}
 
         # non persistent cache
         self._nonPersistentCache = CraftCache.NonPersistentCache()
@@ -222,3 +227,35 @@ class CraftCache(object):
             except Exception as e:
                 CraftCore.log.warning(f"Nightly builds unavailable for {url}: {e}")
         return self._nightlyVersions.get(url, [])
+
+    def checkReleaseMonitoringForLatestVersion(self, package: "CraftPackageObject") -> Optional[CraftVersion]:
+        if package in self._releaseManagerLatestVersions:
+            return self._releaseManagerLatestVersions[package.path]
+
+        if not package.instance.subinfo.releaseManagerId:
+            CraftCore.log.warning("Release Manager ID is None.")
+            return None
+
+        request = urllib.request.Request(
+            f"https://release-monitoring.org/api/v2/versions/?project_id={package.instance.subinfo.releaseManagerId}",
+            method="GET",
+            headers={
+                "user-agent": "kde-craft-update-checker/1.0 (+https://invent.kde.org/packaging/craft)",
+                "accept": "*/*",
+            },
+        )
+        CraftCore.log.debug(f"Fetching latest version from {request.full_url} {request.headers}")
+        with urllib.request.urlopen(request) as response:
+            if response.status != 200:
+                raise Exception("Failed to fetch latest version.")
+
+            body = response.read()
+            CraftCore.log.debug(f"Latest version data:{body}")
+            try:
+                data = json.loads(body.decode("utf-8"))
+            except:
+                raise Exception(f"Failed to parse latest version data: {body}")
+            CraftCore.log.debug(f"Latest version: {data['latest_version']}")
+            latestVersion = CraftVersion(data["latest_version"])
+            self._releaseManagerLatestVersions[package.path] = latestVersion
+            return latestVersion
