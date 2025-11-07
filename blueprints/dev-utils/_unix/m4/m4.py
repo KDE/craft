@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
-        for ver in ["1.4.18", "1.4.19"]:
+        for ver in ["1.4.18", "1.4.19", "1.4.20"]:
             self.targets[ver] = f"https://ftp.gnu.org/gnu/m4/m4-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"m4-{ver}"
 
@@ -23,8 +23,13 @@ class subinfo(info.infoclass):
             ["63aede5c6d33b6d9b13511cd0be2cac046f2e70fd0a07aa9573a04a82783af96"],
             CraftHash.HashAlgorithm.SHA256,
         )
+        self.targetDigests["1.4.20"] = (
+            ["e236ea3a1ccf5f6c270b1c4bb60726f371fa49459a8eaaebc90b216b328daf2b"],
+            CraftHash.HashAlgorithm.SHA256,
+        )
         self.description = "GNU M4 is an implementation of the traditional Unix macro processor."
-        self.defaultTarget = "1.4.19"
+        self.releaseManagerId = 1871
+        self.defaultTarget = "1.4.20"
 
         self.patchToApply["1.4.18"] = [
             ("m4-1.4.18-20190506.diff", 1),
