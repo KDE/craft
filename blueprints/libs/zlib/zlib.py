@@ -46,7 +46,7 @@ class subinfo(info.infoclass):
 
         self.description = "The zlib compression and decompression library"
         self.webpage = "https://www.zlib.net"
-        self.releaseManagerId = "5303"
+        self.releaseManagerId = 5303
         self.defaultTarget = "1.3.1"
 
     def setDependencies(self):
