@@ -40,6 +40,7 @@ class Package(AutoToolsPackageBase):
         super().__init__(**kwargs)
         self.shell.useMSVCCompatEnv = True
         self.subinfo.options.configure.autoreconf = False
+        self.subinfo.options.make.supportsMultijob = not CraftCore.compiler.isMSVC()
         self.subinfo.options.configure.args += [
             "--disable-samples",
             "--disable-tests",
