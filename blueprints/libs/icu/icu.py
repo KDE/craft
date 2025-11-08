@@ -58,18 +58,23 @@ class Package(AutoToolsPackageBase):
             if CraftCore.compiler.isMSVC():
                 self.subinfo.options.configure.args += ["--enable-extras=no", "CPPFLAGS=/std:c++17"]
 
+    @property
+    def _env(self):
+        # icu make files pick up random env vars
+        return {"TARGET": None, "TEST": None}
+
     def make(self):
         utils.createDir(Path(self.buildDir()) / "data/out/tmp/")
         f = open(Path(self.buildDir()) / "data/out/tmp/dirs.timestamp", "w")
         f.write("timestamp")
         f.close()
         # ensure TARGET is not set, else the build system will try to build its content and fail
-        with utils.ScopedEnv({"TARGET": None}):
+        with utils.ScopedEnv(self._env):
             return super().make()
 
     def install(self):
         # ensure TARGET is not set, else the build system will try to build its content and fail
-        with utils.ScopedEnv({"TARGET": None}):
+        with utils.ScopedEnv(self._env):
             if not super().install():
                 return False
         if CraftCore.compiler.isMSVC():
