@@ -373,7 +373,11 @@ class UserOptions(object):
                 package,
             )
         if not self.__isUserSet(key):
-            return self.setOption(key, default, persist=False)
+            if not self.setOption(key, default, persist=False):
+                return False
+            # remove from cache
+            if key in self._cachedFromParent:
+                del self._cachedFromParent[key]
         return True
 
     def __getattribute__(self, name):
