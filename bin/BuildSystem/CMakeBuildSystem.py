@@ -131,6 +131,7 @@ class CMakeBuildSystem(BuildSystemBase):
                 f"-DECM_ADDITIONAL_FIND_ROOT_PATH='{additionalFindRoots}'",
                 f"-DANDROID_APK_OUTPUT_DIR={self.packageDestinationDir()}",
                 f"-DANDROID_FASTLANE_METADATA_OUTPUT_DIR={self.packageDestinationDir()}",
+                f"-DCMAKE_ANDROID_API={CraftCore.compiler.androidApiLevel()}",
             ]
             # should we detect the apk targets
             if hasattr(self, "androidApkDirs"):
