@@ -1,3 +1,5 @@
+
+# Determine the script root
 craftRoot="${BASH_SOURCE[0]}"
 if [[ -z "$craftRoot" ]];then
     craftRoot="$0"
@@ -10,34 +12,53 @@ if [[ -z "$craftRoot" ]];then
     exit 1
 fi
 
+# Helper: check if a Python binary is >= 3.9
+check_python_version() {
+    local py="$1"
+    "$py" - <<'EOF' >/dev/null 2>&1
+import sys
+sys.exit(0 if sys.version_info >= (3, 9) else 1)
+EOF
+}
+
+# Python detection
 if [ -n "$CRAFT_PYTHON_BIN" ]; then
-    echo "Using user-provided CRAFT_PYTHON_BIN: $CRAFT_PYTHON_BIN";
+    if check_python_version "$CRAFT_PYTHON_BIN"; then
+        echo "Using user-provided CRAFT_PYTHON_BIN: $CRAFT_PYTHON_BIN"
+    else
+        echo "User-provided Python ($CRAFT_PYTHON_BIN) is too old. Need >= 3.9"
+        exit 1
+    fi
 else
-    # could not find python 3.9, try python3
-    if ! command -v python3 >/dev/null; then
-        echo "Failed to python Python 3.9+"
+    # Preferred Python versions, newest first
+    for py in 3 3.14 3.13 3.12 3.11 3.10 3.9; do
+        python_cmd="python$py"
+        if command -v "$python_cmd" >/dev/null 2>&1; then
+            if check_python_version "$python_cmd"; then
+                CRAFT_PYTHON_BIN="$(command -v "$python_cmd")"
+                break
+            fi
+        fi
+    done
+
+    if [ -z "$CRAFT_PYTHON_BIN" ]; then
+        echo "Failed to find Python >= 3.9"
         exit 1
     fi
-    # check if python3 is at least version 3.9:
-    python_version=$(python3 --version)
-    # sort -V knows how to compare version numbers
-    # Note: this is just a sanity check. craft.py should check sys.version
-    comparison=$(printf '%s\nPython 3.9.0\n' "$python_version" | sort -V)
-    if [ "$(echo "${comparison}" | head -n1)" != "Python 3.9.0" ]; then
-        echo "Found Python3 version ${python_version} is too old. Need at least 3.9"
-        exit 1
-    fi
-    CRAFT_PYTHON_BIN=$(command -v python3)
+
+    echo "Using Python: $("$CRAFT_PYTHON_BIN" --version)"
 fi
+
 export CRAFT_PYTHON_BIN
 
+# Determine craftRoot directory if it's a file
 if [[ ! -d "$craftRoot" ]]; then
     craftRoot=$(${CRAFT_PYTHON_BIN} -c "import os; import sys; print(os.path.dirname(os.path.abspath(sys.argv[1])));" "$craftRoot")
 fi
 
 export craftRoot
 
-
+# Load environment variables from CraftSetupHelper.py
 while read -r -d '' env_var; do
     # environment variable keys may not contain =, therefore parsing is relatively easy
     key="$(cut -d= -f1 <<<"$env_var")"
@@ -45,11 +66,12 @@ while read -r -d '' env_var; do
     export "$key"="$value"
 done < <("${CRAFT_PYTHON_BIN}" "$craftRoot/bin/CraftSetupHelper.py" --setup --format null)
 
+# Prefix prompt if interactive
 if [[ -n "$PS1" ]]; then
     export PS1="CRAFT: $PS1"
 fi
 
-
+# Helper functions for craft
 craft() {
     local python="$KDEROOT/dev-utils/bin/python3"
     if [[ ! -f "$python" ]]; then
