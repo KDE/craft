@@ -105,10 +105,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
                 includesArgs = Arguments()
                 if self.subinfo.options.configure.useDefaultAutoreconfIncludes:
                     includes = []
-                    dataDirs = [CraftCore.standardDirs.craftRoot() / "dev-utils/cmake/share"]
-                    if CraftCore.compiler.isWindows:
-                        # on Windows data location lies outside of the autotools prefix (msys)
-                        dataDirs.append(CraftCore.standardDirs.locations.data)
+                    dataDirs = [CraftCore.standardDirs.craftRoot() / "dev-utils/cmake/share", CraftCore.standardDirs.locations.data]
                     for i in dataDirs:
                         aclocalDir = i / "aclocal"
                         if aclocalDir.is_dir():
