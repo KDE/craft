@@ -458,6 +458,8 @@ class SetupHelper(object):
         PKG_CONFIG_PATH = [key for key in PKG_CONFIG_PATH if not (CraftCore.compiler.isMacOS and key.startswith("/opt/homebrew"))]
         self.prependEnvVar("PKG_CONFIG_PATH", os.path.pathsep.join(PKG_CONFIG_PATH))
 
+        self.prependEnvVar("ACLOCAL_PATH", CraftCore.standardDirs.craftRoot() /"share/aclocal")
+
         self.prependEnvVar(
             "QT_PLUGIN_PATH",
             [
