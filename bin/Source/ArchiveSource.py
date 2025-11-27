@@ -275,14 +275,7 @@ class ArchiveSource(SourceBase):
             tmpSourceDir = tmpdir / srcSubDir
             with io.BytesIO() as out:
                 ignores = []
-                for x in [
-                    "*~",
-                    r"*\.rej",
-                    r"*\.orig",
-                    r"*\.o",
-                    r"*\.pyc",
-                    "CMakeLists.txt.user",
-                ]:
+                for x in ["*~", r"*\.rej", r"*\.orig", r"*\.o", r"*\.pyc", "CMakeLists.txt.user", ".idea", ".clang-format"]:
                     ignores += ["-x", x]
 
                 # TODO: actually we should not accept code 2
