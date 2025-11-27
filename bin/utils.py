@@ -144,7 +144,7 @@ def un7zip(fileName, destdir, flag=None, keepSymlinksOnWindows=True, extraArgs=[
             tar = CraftCore.cache.findApplication("tar")
             command = [tar, "--directory", destdir, "-xf", "-"]
     else:
-        command = [app, "x", "-r", "-y", allowSymlinks, f"-o{destdir}", fileName] + type + extraArgs + progressFlags
+        command = [app, "x", "-r", "-y", f"-o{destdir}", fileName] + type + extraArgs + progressFlags
 
     # While 7zip supports symlinks cmake 3.8.0 does not support symlinks
     if not system(command, **kw):
