@@ -99,6 +99,7 @@ class BashShell(object):
                     path = f"{self.toNativePath(os.path.dirname(shutil.which('cl')))}:{path}"
                 self._environment["PATH"] = f"{path}:{convertPath(os.environ['PATH'])}"
                 self._environment["PKG_CONFIG_PATH"] = convertPath(os.environ["PKG_CONFIG_PATH"])
+                self._environment["ACLOCAL_PATH"] = convertPath(os.environ["ACLOCAL_PATH"])
 
                 if "make" in self._environment:
                     del self._environment["make"]
