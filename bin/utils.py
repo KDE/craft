@@ -52,7 +52,7 @@ from Utils.StageLogger import StageLogger
 
 def __locate7z():
     app = CraftCore.cache.findApplication("7za")
-    if app and isSystemTool(app) or CraftCore.settings.getboolean("Tools", "UseSystem7zip", True):
+    if app and (isSystemTool(app) or CraftCore.settings.getboolean("Tools", "UseSystem7zip", True)):
         return app
     appPath = CraftCore.standardDirs.craftRoot() / "dev-utils/7z" / ("7za.exe" if CraftCore.compiler.isWindows else "7zz")
     if appPath.exists():
