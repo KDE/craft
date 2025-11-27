@@ -280,6 +280,8 @@ MacDeveloperId = K Desktop Environment e.V. (5433B4KXM8)
 UseSystemCurl = True
 # Whether to use system Wget
 UseSystemWget = True
+# Whether to use system 7zip
+UseSystem7zip = True
 
 [Version]
 ConfigVersion = 6
