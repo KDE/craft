@@ -60,7 +60,7 @@ def getFile(url, destdir, filename="", quiet=None) -> bool:
     # try the other methods as fallback if we are bootstrapping
     bootStrapping = not (CraftCore.standardDirs.etcDir() / "cacert.pem").exists()
 
-    wget = CraftCore.cache.findApplication("wget")
+    wget = CraftCore.cache.findApplication("wget_no")
     if wget and (not utils.isSystemTool(wget) or CraftCore.settings.getboolean("Tools", "UseSystemWget", True)):
         if wgetFile(url, destdir, filename, quiet):
             return True

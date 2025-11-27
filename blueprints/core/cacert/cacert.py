@@ -17,10 +17,6 @@ class subinfo(info.infoclass):
             ["e7d3215c9e1273056e7beea4f84d2c7b22b22ff0b15c5c88ce2e3f857e6a45ea"],
             CraftHash.HashAlgorithm.SHA256,
         )
-        self.targetDigests["2025-09-09"] = (
-            ["f976dfe287484e786c899e2f009efc2ba290eb1cdb204a537ca89aa5a16700a7"],
-            CraftHash.HashAlgorithm.SHA256,
-        )
         self.webpage = "https://curl.haxx.se/docs/caextract.html"
         self.defaultTarget = "2025-09-09"
 
