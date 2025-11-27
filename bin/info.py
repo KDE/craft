@@ -81,7 +81,8 @@ class infoclass(object):
         self.svnServer = None  # this will result in the use of the default server (either anonsvn.kde.org or svn.kde.org)
         self._defaultTarget = None
 
-        self.releaseManagerId = None
+        # https://release-monitoring.org/project/{self.releaseManagerId}/
+        self.releaseManagerId = None  # type: Optional[int]
 
         self.registerOptions()
 
