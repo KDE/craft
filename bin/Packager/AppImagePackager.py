@@ -107,11 +107,12 @@ class AppImagePackager(CollectionPackagerBase):
                 hook.writelines([f"{i}\nexport {i.split('=')[0]}\n" for i in defines["runenv"]])
         if not utils.createDir(self.packageDestinationDir()):
             return False
-        dir = f"{archiveDir}/usr/share/applications/"
-        name = f"{defines.get('desktopFile', defines['appname'])}.desktop"
-        desktopFiles = glob.glob(f"{dir}*{name}")
-        if len(desktopFiles) != 1:
-            CraftCore.log.error(f"No .desktop file named “{dir}*{name}” was found.")
+        aDir = f"{archiveDir}/usr/share/applications/"
+        base = defines.get("desktopFile", defines["appname"])
+        ext = '.desktop'
+        desktopFiles = utils.findFile(aDir, base, ext)
+        if not desktopFiles:
+            CraftCore.log.error(f"No '{ext}' file matching '*{base}*' found in '{aDir}'.")
             return False
 
         env = {
