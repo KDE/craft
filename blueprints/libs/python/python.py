@@ -31,6 +31,7 @@ class subinfo(info.infoclass):
             self.patchToApply["3.11.11"] += [(".msvc/patches", 1)]
 
         self.patchLevel["3.11.7"] = 3
+        self.patchLevel["3.11.11"] = 1
 
         self.description = "Python is a high-level, general-purpose programming language"
         self.defaultTarget = "3.11.11"
@@ -147,7 +148,7 @@ else:
             if CraftCore.compiler.isMacOS:
                 self.subinfo.options.configure.noLibDir = True
                 self.subinfo.options.configure.staticArgs = Arguments()
-                self.subinfo.options.configure.args += [f"--enable-framework={CraftCore.standardDirs.craftRoot()}/lib", "--with-universal-archs=x86_64;arm64"]
+                self.subinfo.options.configure.args += [f"--enable-framework={CraftCore.standardDirs.craftRoot()}/lib"]
                 self.subinfo.options.install.args += [f"PYTHONAPPSDIR={CraftCore.standardDirs.craftRoot()}"]
 
         def install(self):
