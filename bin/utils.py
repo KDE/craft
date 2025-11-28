@@ -1182,34 +1182,6 @@ def filterDirectoryContent(
                     raise Exception(f"Unhandled case: {filePath}")
 
 
-def findFile(dir, base, ext=".desktop"):
-    """
-    Search for files in `dir` with a given base name and extension.
-    `base` should be the raw name (with or without extension).
-    """
-
-    if not os.path.isdir(dir):
-        return []
-
-    # Remove extension from base if it already has it
-    if base.endswith(ext):
-        base = base[: -len(ext)]
-
-    # Try exact match first
-    exactPath = os.path.join(dir, f"{base}{ext}")
-    if os.path.isfile(exactPath):
-        return [exactPath]
-
-    # Fallback: match any file with the extension that contains base
-    result = [
-        os.path.join(dir, f)
-        for f in os.listdir(dir)
-        if f.endswith(ext) and base in f
-    ]
-
-    return result
-
-
 def makeWritable(targetPath: Path, log: bool = True) -> list[bool, int]:
     """Make a file writable if needed. Returns if the mode was changed and the curent mode of the file"""
     targetPath = Path(targetPath)
