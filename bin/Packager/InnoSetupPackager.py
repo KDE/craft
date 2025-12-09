@@ -97,8 +97,8 @@ class InnoSetupPackager(PortablePackager):
             return False
         return True
 
-    def _createShortcut(self, name, target, icon="", parameter="", description="", workingDirectory=None) -> str:
-        return f"""Name: "{{group}}\\{name}" ; Filename: "{{app}}\\{OsUtils.toNativePath(target)}" ; WorkingDir: "{workingDirectory}" ; Parameters: "{parameter}" ; IconFileName: "{icon}" ; Comment : "{description}"\n"""
+    def _createShortcut(self, name, target, icon="", parameter="", description="", workingDirectory="") -> str:
+        return f"""Name: "{{group}}\\{name}" ; Filename: "{{app}}\\{OsUtils.toNativePath(target)}" ; WorkingDir: "{workingDirectory}" ; Parameters: "{parameter}" ; IconFileName: "{icon}" ; Comment: "{description}"\n"""
 
     def generateInnoInstaller(self, defines):
         """runs ISCC to generate the installer itself"""
