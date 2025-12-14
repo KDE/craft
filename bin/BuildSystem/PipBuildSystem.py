@@ -80,7 +80,16 @@ class PipBuildSystem(BuildSystemBase):
 
     def install(self):
         env = {}
-        bootstrap = False
+        env["CC"] = os.environ["CC"]
+        env["CXX"] = os.environ["CXX"]
+        if self.supportsCCACHE:
+            cxx = CraftCore.standardDirs.craftRoot() / "dev-utils/ccache/bin" / Path(env["CXX"]).name
+            if CraftCore.compiler.isWindows and not cxx.suffix:
+                cxx = Path(str(cxx) + CraftCore.compiler.executableSuffix)
+            if cxx.exists():
+                env["CXX"] = cxx
+                env["CC"] = cxx.parent / Path(env["CC"]).name
+
         if CraftCore.compiler.isMSVC():
             tmpDir = CraftCore.standardDirs.junctionsDir() / "tmp"
             tmpDir.mkdir(parents=True, exist_ok=True)
@@ -90,13 +99,10 @@ class PipBuildSystem(BuildSystemBase):
                     "TMPDIR": tmpDir,
                 }
             )
-        if self.supportsCCACHE:
-            cxx = CraftCore.standardDirs.craftRoot() / "dev-utils/ccache/bin" / Path(os.environ["CXX"]).name
-            if CraftCore.compiler.isWindows and not cxx.suffix:
-                cxx = Path(str(cxx) + CraftCore.compiler.executableSuffix)
-            if cxx.exists():
-                env["CXX"] = cxx
-                env["CC"] = cxx.parent / Path(os.environ["CC"]).name
+        elif CraftCore.compiler.isMacOS and not CraftCore.compiler.isNative():
+            arch = CraftCore.compiler.architecture.name.lower()
+            env["CC"] = f"{env['CC']} -arch {arch}"
+            env["CXX"] = f"{env['CXX']} -arch {arch}"
 
         with ScopedEnv(env):
             usesCraftPython = CraftPackageObject.get("libs/python").categoryInfo.isActive
