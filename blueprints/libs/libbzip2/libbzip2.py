@@ -43,8 +43,10 @@ class Package(CMakePackageBase):
             return False
 
         bzname = "bz2"
+        if self.buildType() == "Debug" and CraftCore.compiler.isMSVC():
+            bzname = "libbz2d"
         if self.buildType() == "Debug":
-            bzname = "libbz2"
+            bzname = "bz2d"
         if not utils.configureFile(
             self.blueprintDir() / ".files/bzip2.pc.in",
             self.imageDir() / "lib/pkgconfig/bzip2.pc",
