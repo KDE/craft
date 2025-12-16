@@ -568,8 +568,6 @@ class SetupHelper(object):
                 self.addEnvVar("TERM", "xterm-256color")  # pretend to be a common smart terminal
 
     def printEnv(self, format: str):
-        self.setupEnvironment()
-
         if format in ("null", "text"):
             envToDump = {}
 
