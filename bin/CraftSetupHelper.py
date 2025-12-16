@@ -275,12 +275,12 @@ class SetupHelper(object):
         path = os.path.join(path, "vcvarsall.bat")
         if not os.path.isfile(path):
             log(
-                f"Failed to setup msvc compiler.\n" f"{path} does not exist.",
+                f"Failed to setup msvc compiler.\n{path} does not exist.",
                 critical=True,
             )
         status, result = SetupHelper._getOutput(f'"{path}" {args} > NUL && "{sys.executable}" "{Path(__file__).parent}/dumpenv.py"', shell=True)
         if status != 0:
-            log(f"Failed to setup msvc compiler.\n" f"Command: {result} ", critical=True)
+            log(f"Failed to setup msvc compiler.\nExitcode: {result} ", critical=True)
         return CaseInsensitiveDict(json.loads(result))
 
     def getEnv(self):
@@ -416,8 +416,18 @@ class SetupHelper(object):
         # don't propagate a possibly set mkspec from the outside
         self.removeEnvVar("QMAKESPEC")
 
+        sourceCommand = CraftCore.settings.get("Environment", "SourceCommand", False)
+        if sourceCommand:
+            status, result = SetupHelper._getOutput(f'{sourceCommand} && "{sys.executable}" "{Path(__file__).parent}/dumpenv.py"', shell=True)
+            if status != 0:
+                log(f'Failed to setup "SourceCommand" {sourceCommand!r}. exit code: {result} ', critical=True)
+                return
+            os.environ.update(json.loads(result))
+
         for var, value in CraftCore.settings.getSection("Environment"):  # set and override existing values
             # the ini is case insensitive so sections are lowercase....
+            if var.upper() == "SOURCECOMMAND":
+                continue
             self.addEnvVar(var.upper(), value)
         os.environ.update(self.getEnv())
 
@@ -458,7 +468,7 @@ class SetupHelper(object):
         PKG_CONFIG_PATH = [key for key in PKG_CONFIG_PATH if not (CraftCore.compiler.isMacOS and key.startswith("/opt/homebrew"))]
         self.prependEnvVar("PKG_CONFIG_PATH", os.path.pathsep.join(PKG_CONFIG_PATH))
 
-        self.prependEnvVar("ACLOCAL_PATH", CraftCore.standardDirs.craftRoot() /"share/aclocal")
+        self.prependEnvVar("ACLOCAL_PATH", CraftCore.standardDirs.craftRoot() / "share/aclocal")
 
         self.prependEnvVar(
             "QT_PLUGIN_PATH",

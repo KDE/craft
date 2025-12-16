@@ -208,6 +208,9 @@ MeasureTime = False
 LogDeprecated = True
 
 [Environment]
+## Set the source command for the build environment.
+## This is useful for example to enable gcc-toolset-14 on fedora.
+#SourceCommand = source /opt/rh/gcc-toolset-14/enable
 ## All values defined here will be populated to the environment
 #GIT_COMMITTER_EMAIL = foo@bar.com
 
