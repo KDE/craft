@@ -525,8 +525,21 @@ class SetupHelper(object):
             [CraftCore.standardDirs.craftRoot() / "dev-utils/bin", CraftCore.standardDirs.craftRoot() / "bin", CraftCore.standardDirs.craftRoot() / "libexec"],
         )
 
-        if CraftCore.compiler.isClang() and not CraftCore.compiler.isAndroid:
-            if OsUtils.isUnix() and CraftCore.settings.getboolean("General", "UseSystemClang", True):
+        if CraftCore.compiler.isClang():
+            if CraftCore.compiler.isAndroid:
+                if CraftCore.compiler.architecture == CraftCore.compiler.Architecture.arm64:
+                    compiler = "aarch64-linux-android"
+                elif CraftCore.compiler.architecture == CraftCore.compiler.Architecture.arm32:
+                    compiler = "armv7a-linux-androideabi"
+                elif CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_32:
+                    compiler = "i686-linux-android"
+                else:
+                    compiler = f"{CraftCore.compiler.androidArchitecture}-linux-android"
+                ndk_path = os.path.join(os.environ["ANDROID_NDK"], "toolchains/llvm/prebuilt", os.environ.get("ANDROID_NDK_HOST", "linux-x86_64"), "bin")
+
+                self.addEnvVar("CC", f"{ndk_path}/{compiler}{CraftCore.compiler.androidApiLevel()}-clang")
+                self.addEnvVar("CXX", f"{ndk_path}/{compiler}{CraftCore.compiler.androidApiLevel()}-clang++")
+            elif OsUtils.isUnix() and CraftCore.settings.getboolean("General", "UseSystemClang", True):
                 self.addEnvVar("CC", "/usr/bin/clang")
                 self.addEnvVar("CXX", "/usr/bin/clang++")
             else:
