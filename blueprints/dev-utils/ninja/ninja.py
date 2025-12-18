@@ -12,12 +12,13 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
         # don't build and install gmock
         self.options.dynamic.setDefault("buildTests", False)
+        self.options.dynamic.setDefault("buildType", "Release")
 
     def setTargets(self):
         """ """
-        self.svnTargets["master"] = "https://github.com/martine/ninja.git"
+        self.svnTargets["master"] = "https://github.com/ninja-build/ninja.git"
 
-        for ver in ["1.10.0", "1.10.2", "1.11.0", "1.11.1", "1.12.0", "1.12.1", "1.13.0", "1.13.1"]:
+        for ver in ["1.10.0", "1.10.2", "1.11.0", "1.11.1", "1.12.0", "1.12.1", "1.13.0", "1.13.1", "1.13.2"]:
             self.targets[ver] = f"https://github.com/ninja-build/ninja/archive/v{ver}.tar.gz"
             self.archiveNames[ver] = f"ninja-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"ninja-{ver}"
@@ -43,13 +44,17 @@ class subinfo(info.infoclass):
         )
         self.targetDigests["1.13.0"] = (["f08641d00099a9e40d44ec0146f841c472ae58b7e6dd517bee3945cfd923cedf"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["1.13.1"] = (["f0055ad0369bf2e372955ba55128d000cfcc21777057806015b45e4accbebf23"], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigests["1.13.2"] = (["974d6b2f4eeefa25625d34da3cb36bdcebe7fbce40f4c16ac0835fd1c0cbae17"], CraftHash.HashAlgorithm.SHA256)
 
         self.patchToApply["1.10.0"] = [("34d1bf2f1dcc138f7cb3a54daf771931cd799785.patch", 1)]
         self.patchLevel["1.10.0"] = 1
         self.patchLevel["1.11.1"] = 3
         self.patchLevel["1.12.1"] = 1
 
-        self.defaultTarget = "1.13.1"
+        self.releaseManagerId = 2089
+        self.webpage = "https://ninja-build.org/"
+
+        self.defaultTarget = "1.13.2"
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/mingw-w64"] = None
