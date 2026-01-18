@@ -333,6 +333,9 @@ class MacDylibBundler(object):
             if not self._updateLibraryReferences(fileToFix, changedRefs):
                 return False
 
+        # Sign again since install_name_tool invalidates the signature
+        utils.localSignMac([fileToFix])
+
         return True
 
     def areLibraryDepsOkay(self, fullPath: Path):
