@@ -34,9 +34,6 @@ class subinfo(info.infoclass):
             self.buildDependencies["dev-utils/automake"] = None
             self.buildDependencies["dev-utils/libtool"] = None
 
-        if CraftCore.compiler.isMacOS:
-            self.buildDependencies["dev-utils/create-dmg"] = None
-
         if CraftCore.compiler.isMSVC() or CraftCore.settings.get("Compile", "MakeProgram", "") == "jom":
             self.buildDependencies["dev-utils/jom"] = None
         if CraftCore.settings.getboolean("Compile", "UseNinja", False):
@@ -48,6 +45,9 @@ class subinfo(info.infoclass):
 
         # install the shim to the system python
         self.buildDependencies["dev-utils/system-python3"] = None
+
+        if CraftCore.compiler.isMacOS:
+            self.buildDependencies["python-modules/dmgbuild"] = None
 
         if CraftCore.compiler.isWindows:
             self.buildDependencies["dev-utils/msys"] = None
