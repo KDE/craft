@@ -45,6 +45,11 @@ class subinfo(info.infoclass):
 
         self.patchLevel["3.3.1"] = 1
 
+        self.patchToApply["3.5.5"] = [
+            ("29826.patch", 1),  # see https://github.com/openssl/openssl/pull/29826
+        ]
+        self.patchLevel["3.5.5"] = 1
+
         self.description = "The OpenSSL runtime environment"
         self.webpage = "https://openssl.org"
 
