@@ -7,17 +7,18 @@ from Utils import CraftHash
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        for ver in ["3.3", "3.4.6", "3.4.7"]:
+        for ver in ["3.3", "3.4.6", "3.4.7", "3.5.2"]:
             self.targets[ver] = f"https://github.com/libffi/libffi/releases/download/v{ver}/libffi-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"libffi-{ver}"
         self.targetDigests["3.3"] = (["72fba7922703ddfa7a028d513ac15a85c8d54c8d67f55fa5a4802885dc652056"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["3.4.6"] = (["b0dea9df23c863a7a50e825440f3ebffabd65df1497108e5d437747843895a4e"], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigests["3.5.2"] = (["f3a3082a23b37c293a4fcd1053147b371f2ff91fa7ea1b2a52e335676bac82dc"], CraftHash.HashAlgorithm.SHA256)
         self.patchToApply["3.3"] = [("libffi-3.3-20210126.diff", 1)]
         self.patchLevel["3.3"] = 2
 
         self.webpage = "https://github.com/libffi/libffi/"
         self.description = "A portable foreign-function interface library."
-        self.defaultTarget = "3.4.7"
+        self.defaultTarget = "3.5.2"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = None
