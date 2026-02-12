@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["libs/python"] = None
         self.buildDependencies["dev-utils/system-python3"] = None
         self.buildDependencies["python-modules/flit-core"] = None
+        self.buildDependencies["python-modules/setuptools"] = None
 
 
 class Package(PipPackageBase):
