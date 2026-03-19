@@ -519,6 +519,9 @@ class OptionsConfigure(OptionsBase):
         # whether to not pass --cache-file configure
         self.noCacheFile = False
 
+        # whether to not pass platform settings (--host, --build, --target) to configure
+        self.noPlatform = False
+
 
 # options for the make action
 class OptionsMake(OptionsBase):
