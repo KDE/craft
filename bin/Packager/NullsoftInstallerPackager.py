@@ -130,7 +130,7 @@ class NullsoftInstallerPackager(PortablePackager):
     ) -> str:
         if workingDirectory is None:
             workingDirectory = "%USERPROFILE%"
-        out = 'SetOutPath "{workingDirectory}"\n'
+        out = f'SetOutPath "{workingDirectory}"\n'
         if appId:
             out += f'!insertmacro SnoreShortcut "$SMPROGRAMS\\{name}.lnk" "$INSTDIR\\{OsUtils.toNativePath(target)}" "{appId}"\n'
         else:
