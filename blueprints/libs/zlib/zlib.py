@@ -13,7 +13,7 @@ class subinfo(info.infoclass):
 
     def setTargets(self):
         for ver in ["1.3", "1.3.1", "1.3.2"]:
-            self.targets[ver] = f"https://www.zlib.net/zlib-{ver}.tar.xz"
+            self.targets[ver] = f"https://github.com/madler/zlib/releases/download/v{ver}/zlib-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"zlib-{ver}"
         self.patchToApply["1.3"] = [
             ("zlib-1.2.12-20220404.diff", 1),
