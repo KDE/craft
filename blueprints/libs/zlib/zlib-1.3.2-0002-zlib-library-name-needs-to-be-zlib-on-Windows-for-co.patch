@@ -1,0 +1,49 @@
+From 4ab200ab3536847d38361eb3a22a71ab99598d9e Mon Sep 17 00:00:00 2001
+From: Matthieu Gallien <matthieu.gallien@nextcloud.com>
+Date: Fri, 24 Apr 2026 17:25:49 +0200
+Subject: [PATCH 2/4] zlib library name needs to be zlib on Windows for
+ compatibility
+
+Signed-off-by: Matthieu Gallien <matthieu.gallien@nextcloud.com>
+---
+ CMakeLists.txt  | 8 +++++++-
+ zlib.pc.cmakein | 2 +-
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index e103c40..ca1c464 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -179,11 +179,17 @@ if(ZLIB_BUILD_SHARED)
+                                               VERSION ${INSTALL_VERSION})
+     endif(NOT CYGWIN)
+ 
++    if(WIN32)
++        set(ZLIB_NAME zlib)
++    else()
++        set(ZLIB_NAME z)
++    endif()
++
+     set_target_properties(
+         zlib
+         PROPERTIES DEFINE_SYMBOL ZLIB_DLL
+                    EXPORT_NAME ZLIB
+-                   OUTPUT_NAME z)
++                   OUTPUT_NAME ${ZLIB_NAME})
+     if(UNIX
+         AND NOT APPLE
+         AND NOT (CMAKE_SYSTEM_NAME STREQUAL AIX)
+diff --git a/zlib.pc.cmakein b/zlib.pc.cmakein
+index a392727..514f08b 100644
+--- a/zlib.pc.cmakein
++++ b/zlib.pc.cmakein
+@@ -10,5 +10,5 @@ Version: @zlib_VERSION@
+ License: Zlib
+ 
+ Requires:
+-Libs: -L${libdir} -L${sharedlibdir} -lz
++Libs: -L${libdir} -L${sharedlibdir} -l@ZLIB_NAME@
+ Cflags: -I${includedir}
+-- 
+2.53.0
+
