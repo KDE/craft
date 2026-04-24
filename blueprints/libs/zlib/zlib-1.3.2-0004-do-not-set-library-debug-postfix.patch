@@ -1,0 +1,25 @@
+From 95232d43208cb5235ac15d65eff38e7216c04e6a Mon Sep 17 00:00:00 2001
+From: Matthieu Gallien <matthieu.gallien@nextcloud.com>
+Date: Fri, 24 Apr 2026 17:36:48 +0200
+Subject: [PATCH 4/4] do not set library debug postfix
+
+Signed-off-by: Matthieu Gallien <matthieu.gallien@nextcloud.com>
+---
+ CMakeLists.txt | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index aa10727..6270f5a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -151,7 +151,6 @@ set(ZLIB_SRCS
+ 
+ if(WIN32)
+     set(zlib_static_suffix "s")
+-    set(CMAKE_DEBUG_POSTFIX "d")
+ endif(WIN32)
+ 
+ if(ZLIB_BUILD_SHARED)
+-- 
+2.53.0
+

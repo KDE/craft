@@ -1,0 +1,28 @@
+From e88605970290dde6a46af5a8353693c67b904a8c Mon Sep 17 00:00:00 2001
+From: Matthieu Gallien <matthieu.gallien@nextcloud.com>
+Date: Fri, 24 Apr 2026 17:20:47 +0200
+Subject: [PATCH 1/4] don't conditonlessly define Z_HAVE_UNISTD_H
+
+Signed-off-by: Matthieu Gallien <matthieu.gallien@nextcloud.com>
+---
+ zconf.h.in | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/zconf.h.in b/zconf.h.in
+index 828ca61..d4c2b01 100644
+--- a/zconf.h.in
++++ b/zconf.h.in
+@@ -443,10 +443,6 @@ typedef uLong FAR uLongf;
+    typedef unsigned long z_crc_t;
+ #endif
+ 
+-#if HAVE_UNISTD_H-0     /* may be set to #if 1 by ./configure */
+-#  define Z_HAVE_UNISTD_H
+-#endif
+-
+ #if HAVE_STDARG_H-0     /* may be set to #if 1 by ./configure */
+ #  define Z_HAVE_STDARG_H
+ #endif
+-- 
+2.53.0
+
