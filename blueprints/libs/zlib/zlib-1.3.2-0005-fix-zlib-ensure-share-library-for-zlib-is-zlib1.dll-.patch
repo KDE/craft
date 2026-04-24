@@ -1,0 +1,27 @@
+From 245fa2dd984273b779d876136ff61e4016ad3edc Mon Sep 17 00:00:00 2001
+From: Matthieu Gallien <matthieu.gallien@nextcloud.com>
+Date: Mon, 15 Jun 2026 15:10:32 +0200
+Subject: [PATCH 5/5] fix(zlib): ensure share library for zlib is zlib1.dll on
+ WIN32
+
+Signed-off-by: Matthieu Gallien <matthieu.gallien@nextcloud.com>
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 6270f5a..9c8da44 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -179,7 +179,7 @@ if(ZLIB_BUILD_SHARED)
+     endif(NOT CYGWIN)
+ 
+     if(WIN32)
+-        set(ZLIB_NAME zlib)
++        set(ZLIB_NAME zlib1)
+     else()
+         set(ZLIB_NAME z)
+     endif()
+-- 
+2.53.0
+
