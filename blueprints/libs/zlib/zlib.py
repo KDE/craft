@@ -38,6 +38,26 @@ class subinfo(info.infoclass):
             # this allows using zlib in prebuilt libraries like gpg
             ("zlib-1.3.1-20240818.diff", 1),
         ]
+        self.patchToApply["1.3.2"] = [
+            ("zlib-1.2.12-20220404.diff", 1),
+            (
+                # don't conditonlessly define Z_HAVE_UNISTD_H
+                "zlib-1.2.12-20220503.diff",
+                1,
+            ),
+            # use the same dll name with mingw and msvc
+            # this allows using zlib in prebuilt libraries like gpg
+            ("zlib-1.3.1-20240818.diff", 1),
+        ]
+
+
+        self.patchToApply["1.3.2"] = [
+            ("zlib-1.3.2-0001-don-t-conditonlessly-define-Z_HAVE_UNISTD_H.patch", 1),
+            ("zlib-1.3.2-0002-zlib-library-name-needs-to-be-zlib-on-Windows-for-co.patch", 1),
+            ("zlib-1.3.2-0003-special-handling-of-lib-prefix-for-mingw.patch", 1),
+            ("zlib-1.3.2-0004-do-not-set-library-debug-postfix.patch", 1),
+            ("zlib-1.3.2-0005-fix-zlib-ensure-share-library-for-zlib-is-zlib1.dll-.patch", 1),
+        ]
 
         self.patchToApply["1.3.2"] = [
             ("zlib-1.3.2-0001-don-t-conditonlessly-define-Z_HAVE_UNISTD_H.patch", 1),
@@ -59,7 +79,10 @@ class subinfo(info.infoclass):
             CraftHash.HashAlgorithm.SHA256,
         )
 
-        self.defaultTarget = "1.3.1"
+        self.description = "The zlib compression and decompression library"
+        self.webpage = "https://www.zlib.net"
+        self.releaseManagerId = 5303
+        self.defaultTarget = "1.3.2"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
