@@ -156,6 +156,7 @@ class CraftCompiler(object):
         msvc2017 = auto()
         msvc2019 = auto()
         msvc2022 = auto()
+        msvc2026 = auto()
 
         @classmethod
         def fromString(cls, name):
@@ -345,6 +346,9 @@ class CraftCompiler(object):
     def isMSVC2022(self) -> CraftBool:
         return CraftBool(self.signature.abi == CraftCompiler.Abi.msvc2022)
 
+    def isMSVC2026(self) -> CraftBool:
+        return CraftBool(self.signature.abi == CraftCompiler.Abi.msvc2026)
+
     def getGCCLikeVersion(self, compilerExecutable):
         _, result = CraftCore.cache.getCommandOutput(compilerExecutable, "--version")
         if result:
@@ -366,6 +370,7 @@ class CraftCompiler(object):
         versions = {
             CraftCompiler.Abi.msvc2019: 16,
             CraftCompiler.Abi.msvc2022: 17,
+            CraftCompiler.Abi.msvc2022: 18,
         }
         if self.signature.abi not in versions:
             CraftCore.log.critical(f"Unknown MSVC Compiler {self.signature.abi}")
@@ -375,6 +380,8 @@ class CraftCompiler(object):
         versions = {
             CraftCompiler.Abi.msvc2019: 142,
             CraftCompiler.Abi.msvc2022: 143,
+            # Microsoft skipped v144, see https://stackoverflow.com/a/72951716
+            CraftCompiler.Abi.msvc2026: 145,
         }
         if self.signature.abi not in versions:
             CraftCore.log.critical(f"Unknown MSVC Compiler {self.signature.abi}")
