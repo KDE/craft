@@ -190,5 +190,6 @@ class AutoToolsBuildSystem(BuildSystemBase):
                 f"--{self.subinfo.options.dynamic.buildStatic.asEnableDisable}-static",
                 f"--{self.subinfo.options.dynamic.buildStatic.inverted.asEnableDisable}-shared",
             ]
-        options += self.platform
+        if not bool(self.subinfo.options.configure.noPlatform):
+            options += self.platform
         return options

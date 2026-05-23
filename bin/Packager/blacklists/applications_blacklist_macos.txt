@@ -34,3 +34,4 @@ libexec/qt-internal-configure-examples
 libexec/sanitizer-testrunner.py
 libexec/qt-cmake-private
 libexec/qt-android-runner.py
+libexec/qt_cyclonedx_generator.py

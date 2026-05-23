@@ -344,9 +344,10 @@ class SetupHelper(object):
     def _setupMac(self):
         # self.prependEnvVar("DYLD_LIBRARY_PATH", os.path.join(CraftCore.standardDirs.craftRoot(), "lib"))
         # we will later replace the hard coded path in BuildSystemBase.internalPostInstall
+        # `-headerpad_max_install_names` ensures that the rpath can be set to paths of any length
         self.prependEnvVar(
             "LDFLAGS",
-            [f"-Wl,-rpath,{CraftCore.standardDirs.craftRoot() / 'lib'}", f"-L{CraftCore.standardDirs.craftRoot() / 'lib'}"],
+            [f"-Wl,-rpath,{CraftCore.standardDirs.craftRoot() / 'lib'}", f"-L{CraftCore.standardDirs.craftRoot() / 'lib'}", "-Wl,-headerpad_max_install_names"],
             sep=" ",
         )
         if CraftCore.compiler.macOSDeploymentTarget < 12:
