@@ -20,10 +20,11 @@ class subinfo(info.infoclass):
             self.parent.package.categoryInfo.compiler = CraftCore.compiler.Compiler.NoCompiler
 
     def setTargets(self):
-        for ver in ["3.11.7", "3.11.11"]:
+        for ver in ["3.11.7", "3.11.11", "3.14.5"]:
             self.targets[ver] = f"https://www.python.org/ftp/python/{ver}/Python-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"Python-{ver}"
         self.targetDigests["3.11.7"] = (["18e1aa7e66ff3a58423d59ed22815a6954e53342122c45df20c96877c062b9b7"], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigests["3.14.5"] = (["7e32597b99e5d9a39abed35de4693fa169df3e5850d4c334337ffd6a19a36db6"], CraftHash.HashAlgorithm.SHA256)
         self.patchToApply["3.11.7"] = [("0018-fix-sysconfig-include.patch", 1)]
         self.patchToApply["3.11.11"] = [("0018-fix-sysconfig-include.patch", 1)]
         if CraftCore.compiler.isMSVC():
