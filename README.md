@@ -5,7 +5,6 @@
 [Setting up Craft](https://community.kde.org/Craft) (includes installation instructions)
 
 ## Projects using Craft
-* [KDE BinaryFactory: Binaries for KDE applications](https://binary-factory.kde.org/)
 * [ownCloud](https://github.com/owncloud/client)
     * ```craft --add-blueprint-repository https://github.com/owncloud/craft-blueprints-owncloud.git```
     * ```craft owncloud-client```
