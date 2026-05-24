@@ -370,7 +370,7 @@ class CraftCompiler(object):
         versions = {
             CraftCompiler.Abi.msvc2019: 16,
             CraftCompiler.Abi.msvc2022: 17,
-            CraftCompiler.Abi.msvc2022: 18,
+            CraftCompiler.Abi.msvc2026: 18,
         }
         if self.signature.abi not in versions:
             CraftCore.log.critical(f"Unknown MSVC Compiler {self.signature.abi}")

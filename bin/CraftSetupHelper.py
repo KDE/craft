@@ -242,12 +242,9 @@ class SetupHelper(object):
                 component = "Microsoft.VisualStudio.Component.VC.14.29.16.11.x86.x64"
             else:
                 component = "Microsoft.VisualStudio.Component.VC."
-                if version == 14:
-                    component += str(CraftCore.compiler.getMsvcPlatformToolset())
-                else:
-                    component += f"v{CraftCore.compiler.getMsvcPlatformToolset()}.x86.x64"
+                component += f"v{CraftCore.compiler.getMsvcPlatformToolset()}.x86.x64"
             # todo directly get the correct version
-            for v in [17, 16, 15]:
+            for v in [18, 17, 16]:
                 path = SetupHelper._callVCVER(v, args=["-products", "*", "-requires", component], native=native)
                 if path:
                     if not toolset:
