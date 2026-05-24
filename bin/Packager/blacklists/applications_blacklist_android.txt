@@ -18,6 +18,8 @@ share/ndk-modules/.*
 
 # data files not relevant on Android
 share/licenses/SDL2/.*
+share/qt6/json_schema/.*
+share/qt6/wayland/.*
 share/zsh/.*
 
 # languages not existing on Android (as in: not selectable in the system settings)
