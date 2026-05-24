@@ -143,7 +143,7 @@ class PipBuildSystem(BuildSystemBase):
                 # Installing with wildcards (pip install dir/*) does not work on Windows,
                 # hence we use the --find-links approach which might be a bit cleaner anyway.
                 # See https://stackoverflow.com/questions/48183160/how-to-pip-install-whl-on-windows-using-a-wildcard
-                command += ["--no-index", "--find-links", self.buildDir(), self.pipPackageName]
+                command += ["--no-cache-dir", "--no-build-isolation", "--no-deps", "--no-index", "--find-links", self.buildDir(), self.pipPackageName]
             else:
                 if self.buildTarget in {"master", "latest"}:
                     command += [self.pipPackageName]
