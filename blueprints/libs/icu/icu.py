@@ -74,8 +74,7 @@ class Package(AutoToolsPackageBase):
             # and on the KDE build machines we have only "python" installed via choco.
             env = {"PYTHON": "python"}
         with utils.ScopedEnv(_env):
-            return super().configure():
-                return False
+            return super().configure()
 
     def make(self):
         utils.createDir(Path(self.buildDir()) / "data/out/tmp/")
