@@ -73,7 +73,7 @@ class Package(AutoToolsPackageBase):
             # Our own python3 from libs/python is build after icu during bootstraping
             # and on the KDE build machines we have only "python" installed via choco.
             env = {"PYTHON": "python"}
-        with utils.ScopedEnv(_env):
+        with utils.ScopedEnv(env):
             return super().configure()
 
     def make(self):
