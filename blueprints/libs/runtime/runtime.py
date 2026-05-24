@@ -61,7 +61,7 @@ class Package(BinaryPackageBase):
                     elif CraftCore.compiler.isMSVC2019():
                         flavor = "2019"
                     else:
-                        raise Exception("Unknown compiler")
+                        raise Exception(f"Unknown compiler {CraftCore.compiler.signature.abi}")
                     if "VCTOOLSREDISTDIR" in os.environ:
                         redistDir = os.environ["VCTOOLSREDISTDIR"]
                     else:
