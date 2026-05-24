@@ -56,7 +56,7 @@ class Package(BinaryPackageBase):
                 if CraftCore.compiler.getInternalVersion() >= 15:
                     if CraftCore.compiler.isMSVC2026():
                         flavor = "2026"
-                    if CraftCore.compiler.isMSVC2022():
+                    elif CraftCore.compiler.isMSVC2022():
                         flavor = "2022"
                     elif CraftCore.compiler.isMSVC2019():
                         flavor = "2019"
