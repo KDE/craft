@@ -63,6 +63,20 @@ class Package(AutoToolsPackageBase):
         # icu make files pick up random env vars
         return {"TARGET": None, "TEST": None}
 
+    def configure(self):
+        env = {}
+        if CraftCore.compiler.isWindows:
+            # Set to use "python" as the cmd to run Python
+            # We need to do this because otherwise the build system
+            # will look for "python3" first, which always exists on Windows,
+            # but as app execution alias to install Python from the store.
+            # Our own python3 from libs/python is build after icu during bootstraping
+            # and on the KDE build machines we have only "python" installed via choco.
+            env = {"PYTHON": "python"}
+        with utils.ScopedEnv(_env):
+            return super().configure():
+                return False
+
     def make(self):
         utils.createDir(Path(self.buildDir()) / "data/out/tmp/")
         f = open(Path(self.buildDir()) / "data/out/tmp/dirs.timestamp", "w")
