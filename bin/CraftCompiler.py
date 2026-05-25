@@ -387,6 +387,16 @@ class CraftCompiler(object):
             CraftCore.log.critical(f"Unknown MSVC Compiler {self.signature.abi}")
         return versions[self.signature.abi]
 
+    def getMsvcYear(self):
+        years = {
+            CraftCompiler.Abi.msvc2019: 2019,
+            CraftCompiler.Abi.msvc2022: 2022,
+            CraftCompiler.Abi.msvc2026: 2026,
+        }
+        if self.signature.abi not in versions:
+            CraftCore.log.critical(f"Unknown MSVC Compiler {self.signature.abi}")
+        return years[self.signature.abi]
+
     def androidApiLevel(self):
         return self._apiLevel
 
