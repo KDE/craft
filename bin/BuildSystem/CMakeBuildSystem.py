@@ -101,7 +101,9 @@ class CMakeBuildSystem(BuildSystemBase):
                     "/opt/nativetooling6/lib/x86_64-linux-gnu/cmake/",
                 )
                 qtToolchainPath = os.path.join(OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot()), "lib/cmake/Qt6/qt.toolchain.cmake")
-                if os.path.exists(qtToolchainPath):
+                # Exclude qtbase here so we don't try to build it with its own toolchain file in subsequent builds,
+                # that wont work, instead we want to use the same setup as in its initial build in a clean environment.
+                if os.path.exists(qtToolchainPath) and not self.package == "libs/qt6/qtbase":
                     options += [
                         f"-DCMAKE_TOOLCHAIN_FILE={qtToolchainPath}",
                         f"-DQT_CHAINLOAD_TOOLCHAIN_FILE={ecmToolchain}",
