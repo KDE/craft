@@ -60,10 +60,6 @@ class CMakeBuildSystem(BuildSystemBase):
         # if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative():
         #    options += " -DCMAKE_TOOLCHAIN_FILE=%s" % os.path.join(CraftStandardDirs.craftRoot(), "craft", "bin", "toolchains", "Toolchain-cross-mingw32-linux-%s.cmake" % CraftCore.compiler.architecture)
 
-        if CraftCore.settings.getboolean("CMake", "KDE_L10N_AUTO_TRANSLATIONS", False):
-            options.append("-DKDE_L10N_AUTO_TRANSLATIONS=ON")
-            options.append("-DKDE_L10N_SYNC_TRANSLATIONS=ON")
-
         if CraftCore.compiler.isWindows:
             # people use InstallRequiredSystemLibraries.cmake wrong and unconditionally install the
             # msvc crt...
