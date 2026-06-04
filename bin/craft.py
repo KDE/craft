@@ -392,7 +392,7 @@ def main(timer):
         elif action == "clean-unused":
             CraftCommands.cleanBuildFiles(
                 cleanArchives=True,
-                cleanImages=False,
+                cleanOutdatedImages=True,
                 cleanInstalledImages=False,
                 cleanBuildDir=True,
                 packages=blueprintSearch.packages(),

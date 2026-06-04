@@ -489,8 +489,9 @@ def run(package: list[CraftPackageObject], action: str, args) -> bool:
     return True
 
 
-def cleanBuildFiles(cleanArchives, cleanImages, cleanInstalledImages, cleanBuildDir, packages):
+def cleanBuildFiles(cleanArchives, cleanOutdatedImages, cleanInstalledImages, cleanBuildDir, packages):
     cleanupDirs = []
+    removeDirs = []
     for p in packages:
         package = CraftPackageObject.get(p.path)
         if not package or package.isCategory():
@@ -505,12 +506,16 @@ def cleanBuildFiles(cleanArchives, cleanImages, cleanInstalledImages, cleanBuild
             imageGlob = str(instance.imageDir())
 
         # image directories
-        if cleanImages:
+        if cleanOutdatedImages or cleanInstalledImages:
             for dir in glob.glob(imageGlob):
-                if package.isInstalled and not cleanInstalledImages:
-                    if Path(dir) in [instance.imageDir(), instance.symbolsImageDir()]:
+                if not cleanInstalledImages:
+                    if version and f"-{version}" in dir:
                         continue
+                    elif package.isInstalled:
+                        if Path(dir) in [instance.imageDir(), instance.symbolsImageDir()]:
+                            continue
                 cleanupDirs.append(dir)
+                removeDirs.append(dir)
 
         # archive directory
         if cleanArchives and os.path.exists(instance.archiveDir()):
@@ -524,6 +529,8 @@ def cleanBuildFiles(cleanArchives, cleanImages, cleanInstalledImages, cleanBuild
         if os.path.isdir(dir):
             CraftCore.log.info(f"Cleaning: {Path(dir).resolve()}")
             utils.cleanDirectory(dir)
+            if dir in removeDirs:
+                OsUtils.rmDir(dir)
 
 
 def upgrade(packages, args) -> bool:
