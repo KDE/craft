@@ -60,10 +60,6 @@ class CMakeBuildSystem(BuildSystemBase):
         # if CraftCore.compiler.isGCC() and not CraftCore.compiler.isNative():
         #    options += " -DCMAKE_TOOLCHAIN_FILE=%s" % os.path.join(CraftStandardDirs.craftRoot(), "craft", "bin", "toolchains", "Toolchain-cross-mingw32-linux-%s.cmake" % CraftCore.compiler.architecture)
 
-        if CraftCore.settings.getboolean("CMake", "KDE_L10N_AUTO_TRANSLATIONS", False):
-            options.append("-DKDE_L10N_AUTO_TRANSLATIONS=ON")
-            options.append("-DKDE_L10N_SYNC_TRANSLATIONS=ON")
-
         if CraftCore.compiler.isWindows:
             # people use InstallRequiredSystemLibraries.cmake wrong and unconditionally install the
             # msvc crt...
@@ -105,7 +101,9 @@ class CMakeBuildSystem(BuildSystemBase):
                     "/opt/nativetooling6/lib/x86_64-linux-gnu/cmake/",
                 )
                 qtToolchainPath = os.path.join(OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot()), "lib/cmake/Qt6/qt.toolchain.cmake")
-                if os.path.exists(qtToolchainPath):
+                # Exclude qtbase here so we don't try to build it with its own toolchain file in subsequent builds,
+                # that wont work, instead we want to use the same setup as in its initial build in a clean environment.
+                if os.path.exists(qtToolchainPath) and not self.package == "libs/qt6/qtbase":
                     options += [
                         f"-DCMAKE_TOOLCHAIN_FILE={qtToolchainPath}",
                         f"-DQT_CHAINLOAD_TOOLCHAIN_FILE={ecmToolchain}",
