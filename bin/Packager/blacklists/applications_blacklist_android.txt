@@ -5,7 +5,6 @@ qml/QtQuick/Controls/Universal/.*
 
 # application data not used on Android
 share/applications/.*\.desktop
-share/metainfo/.*\.xml
 
 # logging category definitions are for tools not available on Android
 share/qlogging-categories6/.*
