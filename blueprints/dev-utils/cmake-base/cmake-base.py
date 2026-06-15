@@ -13,6 +13,10 @@ class subinfo(info.infoclass):
         )
 
     def setTargets(self):
+        self.description = "CMake, the cross-platform, open-source build system."
+        self.webpage = "http://www.cmake.org/"
+        self.releaseManagerId = 306
+
         for ver in ["3.23.3", "3.26.3", "3.30.0", "3.31.9", "4.1.2", "4.1.4"]:
             majorMinorStr = ".".join(ver.split(".")[0:2])
             if CraftCore.compiler.isWindows:
@@ -34,9 +38,6 @@ class subinfo(info.infoclass):
                 f"https://cmake.org/files/v{majorMinorStr}/cmake-{ver}-SHA-256.txt",
                 CraftHash.HashAlgorithm.SHA256,
             )
-
-        self.description = "CMake, the cross-platform, open-source build system."
-        self.webpage = "http://www.cmake.org/"
 
         self.patchLevel["3.13.2"] = 1
 

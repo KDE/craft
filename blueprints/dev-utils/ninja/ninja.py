@@ -16,6 +16,10 @@ class subinfo(info.infoclass):
 
     def setTargets(self):
         """ """
+        self.description = "Ninja is a small build system with a focus on speed."
+        self.webpage = "https://ninja-build.org/"
+        self.releaseManagerId = 2089
+
         self.svnTargets["master"] = "https://github.com/ninja-build/ninja.git"
 
         for ver in ["1.10.0", "1.10.2", "1.11.0", "1.11.1", "1.12.0", "1.12.1", "1.13.0", "1.13.1", "1.13.2"]:
@@ -50,9 +54,6 @@ class subinfo(info.infoclass):
         self.patchLevel["1.10.0"] = 1
         self.patchLevel["1.11.1"] = 3
         self.patchLevel["1.12.1"] = 1
-
-        self.releaseManagerId = 2089
-        self.webpage = "https://ninja-build.org/"
 
         self.defaultTarget = "1.13.2"
 
