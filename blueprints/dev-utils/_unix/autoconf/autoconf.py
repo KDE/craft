@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
         self.webpage = "http://www.gnu.org/software/autoconf/"
         self.releaseManagerId = 141
 
-        for ver in ["2.69", "2.71"]:
+        for ver in ["2.69", "2.71", "2.73"]:
             self.targets[ver] = f"https://ftp.gnu.org/gnu/autoconf/autoconf-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"autoconf-{ver}"
 
@@ -30,8 +30,12 @@ class subinfo(info.infoclass):
             ["f14c83cfebcc9427f2c3cea7258bd90df972d92eb26752da4ddad81c87a0faa4"],
             CraftHash.HashAlgorithm.SHA256,
         )
+        self.targetDigests["2.73"] = (
+            ["9fd672b1c8425fac2fa67fa0477b990987268b90ff36d5f016dae57be0d6b52e"],
+            CraftHash.HashAlgorithm.SHA256,
+        )
         self.patchLevel["2.71"] = 2
-        self.defaultTarget = "2.71"
+        self.defaultTarget = "2.73"
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/perl"] = None
