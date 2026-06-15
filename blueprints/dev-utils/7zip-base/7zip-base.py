@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.webpage = "http://www.7-zip.org/"
         self.releaseManagerId = 372314
 
-        for ver in ["24.09", "25.00", "25.01"]:
+        for ver in ["24.09", "25.00", "25.01", "26.01"]:
             verNoDot = ver.replace(".", "")
             self.targetInstallPath[ver] = "dev-utils/7z"
             if CraftCore.compiler.isWindows:
