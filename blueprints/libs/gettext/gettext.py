@@ -15,25 +15,11 @@ class subinfo(info.infoclass):
         self.description = "GNU internationalization (i18n)"
         self.releaseManagerId = 898
 
-        for ver in ["0.21", "0.22.3"]:
-            self.targets[ver] = f"https://ftpmirror.gnu.org/pub/gnu/gettext/gettext-{ver}.tar.gz"
+        for ver in ["0.22.3", "1.0"]:
+            self.targets[ver] = f"https://ftpmirror.gnu.org/gettext/gettext-{ver}.tar.gz"
             self.targetInstSrc[ver] = "gettext-%s" % ver
-        self.targetDigests["0.21"] = (["c77d0da3102aec9c07f43671e60611ebff89a996ef159497ce8e59d075786b12"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["0.22.3"] = (["839a260b2314ba66274dae7d245ec19fce190a3aa67869bf31354cb558df42c7"], CraftHash.HashAlgorithm.SHA256)
-
-        self.patchToApply["0.21"] = [
-            ("gettext-0.21-add-missing-ruby.diff", 1),
-            (
-                "d1836dbbd6a90b4c0ab79bc5292c023f08b49511.patch",
-                1,
-            ),  # https://git.savannah.gnu.org/gitweb/?p=gettext.git;a=commitdiff;h=d1836dbbd6a90b4c0ab79bc5292c023f08b49511
-        ]
-
-        if CraftCore.compiler.isMinGW():
-            self.patchToApply["0.21"] += [
-                ("0011-fix-interference-between-libintl-boost-header-files.patch", 1)
-            ]  # https://github.com/msys2/MINGW-packages/blob/master/mingw-w64-gettext/0011-fix-interference-between-libintl-boost-header-files.patch
-            self.patchLevel["0.21"] = 2
+        self.targetDigests["1.0"] = (["85d99b79c981a404874c02e0342176cf75c7698e2b51fe41031cf6526d974f1a"], CraftHash.HashAlgorithm.SHA256)
 
         self.patchToApply["0.22.3"] = [
             # https://github.com/msys2/MINGW-packages/blob/24837a628f692a9133705ec36590d71630f89876/mingw-w64-gettext/0021-replace-fsync.patch
@@ -82,7 +68,9 @@ class subinfo(info.infoclass):
             self.patchToApply["0.22.3"] += [("gettext-0.22-disable-libtextstyle.patch", 1)]
         self.patchLevel["0.22.3"] = 3
 
-        self.defaultTarget = "0.22.3"
+        self.patchToApply["1.0"] = [("gettext-1.0-fix-syntax-progreloc.diff", 1)]
+
+        self.defaultTarget = "1.0"
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/automake"] = None
@@ -108,7 +96,7 @@ class Package(AutoToolsPackageBase):
             "--with-included-regex",
             "--with-gettext-tools",
             "--enable-relocatable",
-            # preven use of buildin libxml2
+            # prevent use of buildin libxml2
             "gl_cv_libxml_force_included=no",
             "gl_cv_libxml_use_included=no",
         ]
@@ -142,7 +130,7 @@ class Package(AutoToolsPackageBase):
             [
                 self.installDir() / "bin/autopoint",
                 self.installDir() / "bin/gettextize",
-                self.installDir() / "lib/gettext/user-email",
+                self.installDir() / "libexec/gettext/user-email",
             ],
             self.subinfo.buildPrefix,
             CraftCore.standardDirs.craftRoot(),
