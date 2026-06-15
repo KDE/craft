@@ -15,20 +15,16 @@ class subinfo(info.infoclass):
         self.webpage = "https://www.gnu.org/software/libtool/ "
         self.releaseManagerId = 1741
 
-        for ver in ["2.4.6", "2.4.7"]:
-            self.targets[ver] = f"https://files.kde.org/craft/sources/dev-utils/libtool/libtool-{ver}.tar.xz"
+        for ver in ["2.5.4"]:
+            # self.targets[ver] = f"https://files.kde.org/craft/sources/dev-utils/libtool/libtool-{ver}.tar.xz"
+            self.targets[ver] = f"https://ftpmirror.gnu.org/libtool/libtool-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"libtool-{ver}"
 
-        self.targetDigests["2.4.6"] = (
-            ["7c87a8c2c8c0fc9cd5019e402bed4292462d00a718a7cd5f11218153bf28b26f"],
-            CraftHash.HashAlgorithm.SHA256,
-        )
         self.targetDigests["2.4.7"] = (
-            ["4f7f217f057ce655ff22559ad221a0fd8ef84ad1fc5fcb6990cecc333aa1635d"],
+            ["da8ebb2ce4dcf46b90098daf962cffa68f4b4f62ea60f798d0ef12929ede6adf"],
             CraftHash.HashAlgorithm.SHA256,
         )
-        self.patchLevel["2.4.6"] = 2
-        self.defaultTarget = "2.4.7"
+        self.defaultTarget = "2.5.4"
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/automake"] = None
