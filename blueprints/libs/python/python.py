@@ -43,7 +43,7 @@ class subinfo(info.infoclass):
         self.patchLevel["3.11.7"] = 3
         self.patchLevel["3.11.11"] = 1
 
-        self.defaultTarget = "3.15.6"
+        self.defaultTarget = "3.14.6"
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/automake"] = None
