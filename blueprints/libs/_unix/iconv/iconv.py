@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
 
     def setTargets(self):
         for ver in ["1.15", "1.18"]:
-            self.targets[ver] = "https://ftpmirror.gnu.org/pub/gnu/libiconv/libiconv-%s.tar.gz" % ver
+            self.targets[ver] = "https://ftpmirror.gnu.org/libiconv/libiconv-%s.tar.gz" % ver
             self.targetInstSrc[ver] = "libiconv-%s" % ver
         self.targetDigests["1.15"] = (["ccf536620a45458d26ba83887a983b96827001e92a13847b45e4925cc8913178"], CraftHash.HashAlgorithm.SHA256)
 
