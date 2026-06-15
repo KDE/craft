@@ -20,22 +20,27 @@ class subinfo(info.infoclass):
             self.parent.package.categoryInfo.compiler = CraftCore.compiler.Compiler.NoCompiler
 
     def setTargets(self):
-        for ver in ["3.11.7", "3.11.11", "3.14.5"]:
+        for ver in ["3.11.7", "3.11.11", "3.14.6"]:
             self.targets[ver] = f"https://www.python.org/ftp/python/{ver}/Python-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"Python-{ver}"
+
         self.targetDigests["3.11.7"] = (["18e1aa7e66ff3a58423d59ed22815a6954e53342122c45df20c96877c062b9b7"], CraftHash.HashAlgorithm.SHA256)
-        self.targetDigests["3.14.5"] = (["7e32597b99e5d9a39abed35de4693fa169df3e5850d4c334337ffd6a19a36db6"], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigests["3.14.6"] = (["143b1dddefaec3bd2e21e3b839b34a2b7fb9842272883c576420d605e9f30c63"], CraftHash.HashAlgorithm.SHA256)
+
         self.patchToApply["3.11.7"] = [("0018-fix-sysconfig-include.patch", 1)]
         self.patchToApply["3.11.11"] = [("0018-fix-sysconfig-include.patch", 1)]
+        self.patchToApply["3.14.6"] = [("0018-fix-sysconfig-include-3.14.6.patch", 1)]
+
         if CraftCore.compiler.isMSVC():
             self.patchToApply["3.11.7"] += [(".msvc/patches", 1)]
             self.patchToApply["3.11.11"] += [(".msvc/patches", 1)]
+            self.patchToApply["3.14.6"] += [(".msvc/patches/0004-devendor-external-dependencies.patch", 1), (".msvc/patches/0005-dont-copy-vcruntime.patch", 1)]
 
         self.patchLevel["3.11.7"] = 3
         self.patchLevel["3.11.11"] = 1
 
         self.description = "Python is a high-level, general-purpose programming language"
-        self.defaultTarget = "3.11.11"
+        self.defaultTarget = "3.15.6"
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/automake"] = None
