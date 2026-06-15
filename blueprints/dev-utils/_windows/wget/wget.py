@@ -6,6 +6,9 @@ from Utils import CraftHash
 
 class subinfo(info.infoclass):
     def setTargets(self):
+        self.webpage = "https://gitlab.com/gnuwget/wget2"
+        self.releaseManagerId = 234933
+
         for ver in ["2.1.0", "2.2.1"]:
             # TODO: as the artifact  is not versioned, updates will complain about the checksum
             self.targets[ver] = f"https://github.com/rockdaboot/wget2/releases/download/v{ver}/wget2.exe"

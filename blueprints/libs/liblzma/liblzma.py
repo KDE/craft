@@ -36,14 +36,19 @@ from Utils import CraftHash
 
 class subinfo(info.infoclass):
     def setTargets(self):
+        # It is called liblzma, but in reality we are shiping xz utils, because:
+        # Users of LZMA Utils should move to XZ Utils. XZ Utils support the legacy .lzma format used by LZMA Utils,
+        # and can also emulate the command line tools of LZMA Utils.
+        self.description = "free general-purpose data compression software with high compression ratio"
+        self.webpage = "https://tukaani.org/xz"
+        self.releaseManagerId = 5277
+
         for ver in ["5.2.3"]:
             self.targets[ver] = f"http://tukaani.org/xz/xz-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"xz-{ver}"
 
         self.targetDigests["5.2.3"] = (["7876096b053ad598c31f6df35f7de5cd9ff2ba3162e5a5554e4fc198447e0347"], CraftHash.HashAlgorithm.SHA256)
 
-        self.description = "free general-purpose data compression software with high compression ratio"
-        self.webpage = "https://tukaani.org/xz"
         self.defaultTarget = ver
 
     def setDependencies(self):

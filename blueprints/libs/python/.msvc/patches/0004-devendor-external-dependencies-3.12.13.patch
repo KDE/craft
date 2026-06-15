@@ -1,0 +1,22 @@
+This is a addition to 0004-devendor-external-dependencies.patch with changes that are not needed after 3.12.13 anymore
+
+From: Adam Johnson <AdamJohnso@gmail.com>
+Subject: [PATCH 3/6] devendor external dependencies
+---
+
+diff --git a/PCbuild/_ssl.vcxproj b/PCbuild/_ssl.vcxproj
+index 4907f49b66..4dffa202b7 100644
+--- a/PCbuild/_ssl.vcxproj
++++ b/PCbuild/_ssl.vcxproj
+@@ -99,7 +99,7 @@
+   </ItemDefinitionGroup>
+   <ItemGroup>
+     <ClCompile Include="..\Modules\_ssl.c" />
+-    <ClCompile Include="$(opensslIncludeDir)\applink.c">
++    <ClCompile Condition="false" Include="$(opensslIncludeDir)\applink.c">
+       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;$(PreprocessorDefinitions)</PreprocessorDefinitions>
+     </ClCompile>
+   </ItemGroup>
+-- 
+2.28.0.windows.1
+

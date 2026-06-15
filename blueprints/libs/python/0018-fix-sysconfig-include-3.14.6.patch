@@ -1,0 +1,17 @@
+# https://github.com/microsoft/vcpkg/blob/5f8c424e267b7360d451df406eeefb3767985b17/ports/python3/0018-fix-sysconfig-include.patch
+diff --git a/Lib/sysconfig.py b/Lib/sysconfig.py
+index ebe371182..e351df7da 100644
+
+--- a/Lib/sysconfig/__init__.py        2026-06-15 11:33:31.707493296 +0200
++++ b/Lib/sysconfig/__init__.py        2026-06-15 11:34:02.866584133 +0200
+@@ -53,8 +53,8 @@
+         'platstdlib': '{base}/Lib',
+         'purelib': '{base}/Lib/site-packages',
+         'platlib': '{base}/Lib/site-packages',
+-        'include': '{installed_base}/Include',
+-        'platinclude': '{installed_base}/Include',
++        'include': '{installed_base}/../../include/python{py_version_short}{abiflags}',
++        'platinclude': '{installed_base}/../../include/python{py_version_short}{abiflags}',
+         'scripts': '{base}/Scripts',
+         'data': '{base}',
+         },

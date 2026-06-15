@@ -9,6 +9,10 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
+        self.description = "This is NASM - the famous Netwide Assembler"
+        self.webpage = "https://www.nasm.us/"
+        self.releaseManagerId = 2048
+
         for ver in ["2.16.03"]:
             if CraftCore.compiler.isMSVC():
                 self.targets[ver] = f"https://files.kde.org/craft/3rdparty/nasm/{ver}/nasm-{ver}-win64.zip"
@@ -22,8 +26,7 @@ class subinfo(info.infoclass):
                 self.targetInstallPath[ver] = "dev-utils/bin"
             else:
                 self.targetInstallPath[ver] = "dev-utils"
-        self.description = "This is NASM - the famous Netwide Assembler"
-        self.webpage = "https://www.nasm.us/"
+
         self.defaultTarget = "2.16.03"
 
     def setDependencies(self):

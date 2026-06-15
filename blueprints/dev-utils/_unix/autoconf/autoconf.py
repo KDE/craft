@@ -14,6 +14,10 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
+        self.description = "Autoconf is an extensible package of M4 macros that produce shell scripts to automatically configure software source code packages."
+        self.webpage = "http://www.gnu.org/software/autoconf/"
+        self.releaseManagerId = 141
+
         for ver in ["2.69", "2.71"]:
             self.targets[ver] = f"https://ftp.gnu.org/gnu/autoconf/autoconf-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"autoconf-{ver}"
@@ -27,7 +31,6 @@ class subinfo(info.infoclass):
             CraftHash.HashAlgorithm.SHA256,
         )
         self.patchLevel["2.71"] = 2
-        self.description = "Autoconf is an extensible package of M4 macros that produce shell scripts to automatically configure software source code packages."
         self.defaultTarget = "2.71"
 
     def setDependencies(self):

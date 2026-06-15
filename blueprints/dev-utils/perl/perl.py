@@ -19,6 +19,14 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
+        self.description = (
+            "Perl 5 is a highly capable, feature-rich programming language with over 30 years of "
+            "development. Perl 5 runs on over 100 platforms from portables to mainframes and is "
+            "suitable for both rapid prototyping and large scale development projects."
+        )
+        self.webpage = "https://www.perl.org/"
+        self.releaseManagerId = 13599
+
         for ver in ["5.36.0", "5.38.2", "5.39.8", "5.40.1"]:
             self.targets[ver] = f"https://www.cpan.org/src/5.0/perl-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"perl-{ver}"
@@ -38,11 +46,6 @@ class subinfo(info.infoclass):
         self.targetDigests["5.38.2"] = (["a0a31534451eb7b83c7d6594a497543a54d488bc90ca00f5e34762577f40655e"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["5.39.8"] = (["25f8b4db7a7d91c051b1c2594ed83c291c74c1012da559a8d580755b598bb7e3"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["5.40.1"] = (["02f8c45bb379ed0c3de7514fad48c714fd46be8f0b536bfd5320050165a1ee26"], CraftHash.HashAlgorithm.SHA256)
-        self.description = (
-            "Perl 5 is a highly capable, feature-rich programming language with over 30 years of "
-            "development. Perl 5 runs on over 100 platforms from portables to mainframes and is "
-            "suitable for both rapid prototyping and large scale development projects."
-        )
         self.patchLevel["5.38.2"] = 4
         self.defaultTarget = "5.40.1"
 

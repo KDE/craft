@@ -7,11 +7,13 @@ from Utils import CraftHash
 
 class subinfo(info.infoclass):
     def setTargets(self):
+        self.description = "shared libraries for handling bzip2 archives (runtime)"
+        self.releaseManagerId = 237
+
         self.targets["1.0.8"] = "https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz"
         self.targetInstSrc["1.0.8"] = "bzip2-1.0.8"
         self.targetDigests["1.0.8"] = (["ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269"], CraftHash.HashAlgorithm.SHA256)
         self.patchToApply["1.0.8"] = [(".files/fix-import-export-macros.patch", 1)]
-        self.description = "shared libraries for handling bzip2 archives (runtime)"
         self.patchLevel["1.0.8"] = 1
         self.defaultTarget = "1.0.8"
 

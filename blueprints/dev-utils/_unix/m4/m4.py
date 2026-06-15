@@ -11,6 +11,10 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
+        self.description = "GNU M4 is an implementation of the traditional Unix macro processor."
+        self.webpage = "https://www.gnu.org/software/m4/"
+        self.releaseManagerId = 1871
+
         for ver in ["1.4.18", "1.4.19", "1.4.20"]:
             self.targets[ver] = f"https://ftp.gnu.org/gnu/m4/m4-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"m4-{ver}"

@@ -6,6 +6,9 @@ from Utils import CraftHash
 
 class subinfo(info.infoclass):
     def setTargets(self):
+        self.description = "XML C parser and toolkit (runtime and applications)"
+        self.releaseManagerId = 1783
+
         for ver in ["2.10.3", "2.12.7", "2.14.4", "2.14.5"]:
             self.targets[ver] = f"https://download.gnome.org/sources/libxml2/{'.'.join(ver.split('.')[:-1])}/libxml2-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"libxml2-{ver}"
@@ -32,7 +35,6 @@ class subinfo(info.infoclass):
 
         self.svnTargets["master"] = "https://gitlab.gnome.org/GNOME/libxml2.git"
 
-        self.description = "XML C parser and toolkit (runtime and applications)"
         self.defaultTarget = "2.14.5"
 
     def setDependencies(self):

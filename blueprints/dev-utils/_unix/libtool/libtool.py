@@ -11,6 +11,10 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
+        self.description = "GNU libtool is a generic library support script."
+        self.webpage = "https://www.gnu.org/software/libtool/ "
+        self.releaseManagerId = 1741
+
         for ver in ["2.4.6", "2.4.7"]:
             self.targets[ver] = f"https://files.kde.org/craft/sources/dev-utils/libtool/libtool-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"libtool-{ver}"
@@ -23,7 +27,6 @@ class subinfo(info.infoclass):
             ["4f7f217f057ce655ff22559ad221a0fd8ef84ad1fc5fcb6990cecc333aa1635d"],
             CraftHash.HashAlgorithm.SHA256,
         )
-        self.description = "GNU libtool is a generic library support script."
         self.patchLevel["2.4.6"] = 2
         self.defaultTarget = "2.4.7"
 

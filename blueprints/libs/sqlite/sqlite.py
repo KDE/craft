@@ -30,6 +30,10 @@ from Utils import CraftHash
 
 class subinfo(info.infoclass):
     def setTargets(self):
+        self.description = "a library providing a self-contained, serverless, zero-configuration, transactional SQL database engine"
+        self.webpage = "https://sqlite.org"
+        self.releaseManagerId = 4877
+
         self.targets["3.39.2"] = "https://sqlite.org/2022/sqlite-amalgamation-3390200.zip"
         self.targetInstSrc["3.39.2"] = "sqlite-amalgamation-3390200"
         self.targetDigests["3.39.2"] = (["87775784f8b22d0d0f1d7811870d39feaa7896319c7c20b849a4181c5a50609b"], CraftHash.HashAlgorithm.SHA256)
@@ -55,7 +59,6 @@ class subinfo(info.infoclass):
         self.targetDigests["3.50.4"] = (["1d3049dd0f830a025a53105fc79fd2ab9431aea99e137809d064d8ee8356b032"], CraftHash.HashAlgorithm.SHA256)
         self.patchToApply["3.50.4"] = [(".3.50", 1)]
 
-        self.description = "a library providing a self-contained, serverless, zero-configuration, transactional SQL database engine"
         self.defaultTarget = "3.50.4"
 
     def setDependencies(self):

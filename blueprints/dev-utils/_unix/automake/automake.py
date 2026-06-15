@@ -11,6 +11,10 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
+        self.description = "Automake is a tool for automatically generating Makefile.in files compliant with the GNU Coding Standards."
+        self.webpage = "http://www.gnu.org/software/automake/"
+        self.releaseManagerId = 144
+
         for ver in ["1.16.1", "1.16.3", "1.16.5"]:
             self.targets[ver] = f"https://ftp.gnu.org/gnu/automake/automake-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"automake-{ver}"
@@ -28,7 +32,6 @@ class subinfo(info.infoclass):
             CraftHash.HashAlgorithm.SHA256,
         )
         self.patchLevel["1.16.3"] = 1
-        self.description = "Automake is a tool for automatically generating Makefile.in files compliant with the GNU Coding Standards."
         self.defaultTarget = "1.16.5"
 
     def setDependencies(self):
