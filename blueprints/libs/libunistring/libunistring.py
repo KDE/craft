@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.releaseManagerId = 1747
 
         for ver in ["0.9.10", "1.2", "1.3", "1.4.1"]:
-            self.targets[ver] = f"https://ftp.gnu.org/gnu/libunistring/libunistring-{ver}.tar.xz"
+            self.targets[ver] = f"https://ftpmirror.gnu.org/gnu/libunistring/libunistring-{ver}.tar.xz"
             self.archiveNames[ver] = f"libunistring-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"libunistring-{ver}"
         self.targetDigests["0.9.10"] = (["eb8fb2c3e4b6e2d336608377050892b54c3c983b646c561836550863003c05d7"], CraftHash.HashAlgorithm.SHA256)

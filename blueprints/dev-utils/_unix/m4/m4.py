@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.releaseManagerId = 1871
 
         for ver in ["1.4.19", "1.4.20", "1.4.21"]:
-            self.targets[ver] = f"https://ftp.gnu.org/gnu/m4/m4-{ver}.tar.xz"
+            self.targets[ver] = f"https://ftpmirror.gnu.org/gnu/m4/m4-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"m4-{ver}"
 
         self.targetDigests["1.4.19"] = (

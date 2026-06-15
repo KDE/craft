@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.releaseManagerId = 144
 
         for ver in ["1.16.1", "1.16.3", "1.16.5", "1.18.1"]:
-            self.targets[ver] = f"https://ftp.gnu.org/gnu/automake/automake-{ver}.tar.xz"
+            self.targets[ver] = f"https://ftpmirror.gnu.org/gnu/automake/automake-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"automake-{ver}"
 
         self.targetDigests["1.16.1"] = (

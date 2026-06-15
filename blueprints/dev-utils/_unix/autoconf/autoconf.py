@@ -19,7 +19,7 @@ class subinfo(info.infoclass):
         self.releaseManagerId = 141
 
         for ver in ["2.69", "2.71", "2.73"]:
-            self.targets[ver] = f"https://ftp.gnu.org/gnu/autoconf/autoconf-{ver}.tar.xz"
+            self.targets[ver] = f"https://ftpmirror.gnu.org/gnu/autoconf/autoconf-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"autoconf-{ver}"
 
         self.targetDigests["2.69"] = (

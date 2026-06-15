@@ -16,7 +16,7 @@ class subinfo(info.infoclass):
         self.releaseManagerId = 898
 
         for ver in ["0.21", "0.22.3"]:
-            self.targets[ver] = f"https://ftp.gnu.org/pub/gnu/gettext/gettext-{ver}.tar.gz"
+            self.targets[ver] = f"https://ftpmirror.gnu.org/pub/gnu/gettext/gettext-{ver}.tar.gz"
             self.targetInstSrc[ver] = "gettext-%s" % ver
         self.targetDigests["0.21"] = (["c77d0da3102aec9c07f43671e60611ebff89a996ef159497ce8e59d075786b12"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["0.22.3"] = (["839a260b2314ba66274dae7d245ec19fce190a3aa67869bf31354cb558df42c7"], CraftHash.HashAlgorithm.SHA256)
