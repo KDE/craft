@@ -23,7 +23,7 @@ class subinfo(info.infoclass):
             major, minor = ver.split(".")
             self.targets[ver] = f"https://github.com/unicode-org/icu/releases/download/release-{major}-{minor}/icu4c-{major}_{minor}-src.tgz"
             self.targetInstSrc[ver] = os.path.join("icu", "source")
-        for ver in ["78.1"]:
+        for ver in ["78.1", "78.3"]:
             self.targets[ver] = f"https://github.com/unicode-org/icu/releases/download/release-{ver}/icu4c-{ver}-sources.tgz"
             self.targetInstSrc[ver] = os.path.join("icu", "source")
         self.targetDigests["71.1"] = (["67a7e6e51f61faf1306b6935333e13b2c48abd8da6d2f46ce6adca24b1e21ebf"], CraftHash.HashAlgorithm.SHA256)
@@ -31,14 +31,16 @@ class subinfo(info.infoclass):
         self.targetDigests["74.2"] = (["68db082212a96d6f53e35d60f47d38b962e9f9d207a74cfac78029ae8ff5e08c"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["76.1"] = (["dfacb46bfe4747410472ce3e1144bf28a102feeaa4e3875bac9b4c6cf30f4f3e"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["78.1"] = (["6217f58ca39b23127605cfc6c7e0d3475fe4b0d63157011383d716cb41617886"], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigests["78.3"] = (["3a2e7a47604ba702f345878308e6fefeca612ee895cf4a5f222e7955fabfe0c0"], CraftHash.HashAlgorithm.SHA256)
         self.patchToApply["71.1"] = [("icu-71.1-20221112.diff", 1)]
         self.patchToApply["74.1"] = [("icu-71.1-20221112.diff", 1)]
         self.patchToApply["74.2"] = [("icu-71.1-20221112.diff", 1)]
         self.patchToApply["76.1"] = [("icu-71.1-20221112.diff", 1)]
         self.patchToApply["77.1"] = [("icu-71.1-20221112.diff", 1)]
         self.patchToApply["78.1"] = [("icu-71.1-20221112.diff", 1)]
+        self.patchToApply["78.3"] = [("icu-71.1-20221112.diff", 1)]
 
-        self.defaultTarget = "78.1"
+        self.defaultTarget = "78.3"
 
     def setDependencies(self):
         self.buildDependencies["virtual/base"] = None
