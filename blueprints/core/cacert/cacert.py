@@ -10,7 +10,11 @@ class subinfo(info.infoclass):
             self.targets[ver] = f"https://files.kde.org/craft/curl.haxx.se/cacert-{ver}.zip"
             self.targetInstallPath[ver] = "etc"
         self.targetDigests["2025-09-09"] = (
-            ["d1cdec8c94242b239123d2071fe5c1bf3d02b3c8c0c11ab7a994d9ae6281ff8e"],
+            ["f976dfe287484e786c899e2f009efc2ba290eb1cdb204a537ca89aa5a16700a7"],
+            CraftHash.HashAlgorithm.SHA256,
+        )
+        self.targetDigests["2026-05-14"] = (
+            ["b326c0143180f53da60034d229c741915aafda6bd5a5afdd253cc1f29a12993f"],
             CraftHash.HashAlgorithm.SHA256,
         )
         self.webpage = "https://curl.haxx.se/docs/caextract.html"
