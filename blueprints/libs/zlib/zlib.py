@@ -12,6 +12,10 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
+        self.description = "The zlib compression and decompression library"
+        self.webpage = "https://www.zlib.net"
+        self.releaseManagerId = 5303
+
         for ver in ["1.3", "1.3.1", "1.3.2"]:
             self.targets[ver] = f"https://github.com/madler/zlib/releases/download/v{ver}/zlib-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"zlib-{ver}"
@@ -48,9 +52,6 @@ class subinfo(info.infoclass):
             CraftHash.HashAlgorithm.SHA256,
         )
 
-        self.description = "The zlib compression and decompression library"
-        self.webpage = "https://www.zlib.net"
-        self.releaseManagerId = 5303
         self.defaultTarget = "1.3.1"
 
     def setDependencies(self):

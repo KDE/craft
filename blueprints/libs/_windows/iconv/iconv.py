@@ -17,6 +17,8 @@ class subinfo(info.infoclass):
         self.targetDigests["0.0.10"] = (["58493387c7c9c70d61e711ec2feec5db0a59d164556642d2b427dde4ef756bc1"], CraftHash.HashAlgorithm.SHA256)
 
         self.description = "a character set conversion library binary compatible with GNU iconv"
+        self.releaseManagerId = 10085
+
         self.defaultTarget = "0.0.10"
 
     def setDependencies(self):

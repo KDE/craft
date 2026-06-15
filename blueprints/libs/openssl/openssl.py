@@ -38,7 +38,31 @@ from Utils.Arguments import Arguments
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        for ver in ["3.2.1", "3.3.1", "3.3.2", "3.4.0", "3.4.1", "3.4.2", "3.4.3", "3.5.1", "3.5.2", "3.5.3", "3.5.4", "3.5.5", "3.5.6", "3.5.7", "3.6.1", "3.6.2", "3.6.3", "4.0.0", "4.0.1"]:
+        self.description = "The OpenSSL runtime environment"
+        self.webpage = "https://openssl.org"
+        self.releaseManagerId = 2566
+
+        for ver in [
+            "3.2.1",
+            "3.3.1",
+            "3.3.2",
+            "3.4.0",
+            "3.4.1",
+            "3.4.2",
+            "3.4.3",
+            "3.5.1",
+            "3.5.2",
+            "3.5.3",
+            "3.5.4",
+            "3.5.5",
+            "3.5.6",
+            "3.5.7",
+            "3.6.1",
+            "3.6.2",
+            "3.6.3",
+            "4.0.0",
+            "4.0.1",
+        ]:
             self.targets[ver] = f"https://openssl.org/source/openssl-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"openssl-{ver}"
             self.targetDigestUrls[ver] = ([f"https://openssl.org/source/openssl-{ver}.tar.gz.sha256"], CraftHash.HashAlgorithm.SHA256)
@@ -49,9 +73,6 @@ class subinfo(info.infoclass):
             ("29826.patch", 1),  # see https://github.com/openssl/openssl/pull/29826
         ]
         self.patchLevel["3.5.5"] = 1
-
-        self.description = "The OpenSSL runtime environment"
-        self.webpage = "https://openssl.org"
 
         # set the default config for openssl 1.1
         if self.options.buildStatic:

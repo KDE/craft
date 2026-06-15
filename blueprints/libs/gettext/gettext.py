@@ -12,6 +12,9 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
+        self.description = "GNU internationalization (i18n)"
+        self.releaseManagerId = 898
+
         for ver in ["0.21", "0.22.3"]:
             self.targets[ver] = f"https://ftp.gnu.org/pub/gnu/gettext/gettext-{ver}.tar.gz"
             self.targetInstSrc[ver] = "gettext-%s" % ver
@@ -79,7 +82,6 @@ class subinfo(info.infoclass):
             self.patchToApply["0.22.3"] += [("gettext-0.22-disable-libtextstyle.patch", 1)]
         self.patchLevel["0.22.3"] = 3
 
-        self.description = "GNU internationalization (i18n)"
         self.defaultTarget = "0.22.3"
 
     def setDependencies(self):

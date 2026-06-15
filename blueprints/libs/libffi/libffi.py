@@ -7,6 +7,10 @@ from Utils import CraftHash
 
 class subinfo(info.infoclass):
     def setTargets(self):
+        self.webpage = "https://github.com/libffi/libffi/"
+        self.description = "A portable foreign-function interface library."
+        self.releaseManagerId = 1611
+
         for ver in ["3.3", "3.4.6", "3.4.7", "3.5.2"]:
             self.targets[ver] = f"https://github.com/libffi/libffi/releases/download/v{ver}/libffi-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"libffi-{ver}"
@@ -16,8 +20,6 @@ class subinfo(info.infoclass):
         self.patchToApply["3.3"] = [("libffi-3.3-20210126.diff", 1)]
         self.patchLevel["3.3"] = 2
 
-        self.webpage = "https://github.com/libffi/libffi/"
-        self.description = "A portable foreign-function interface library."
         self.defaultTarget = "3.5.2"
 
     def setDependencies(self):

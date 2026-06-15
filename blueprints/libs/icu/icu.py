@@ -15,6 +15,10 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.NotAndroid
 
     def setTargets(self):
+        self.description = "ICU -International Components for Unicode"
+        self.webpage = "https://icu.unicode.org/"
+        self.releaseManagerId = 16134
+
         for ver in ["71.1", "74.1", "74.2", "76.1", "77.1"]:
             major, minor = ver.split(".")
             self.targets[ver] = f"https://github.com/unicode-org/icu/releases/download/release-{major}-{minor}/icu4c-{major}_{minor}-src.tgz"
@@ -33,8 +37,7 @@ class subinfo(info.infoclass):
         self.patchToApply["76.1"] = [("icu-71.1-20221112.diff", 1)]
         self.patchToApply["77.1"] = [("icu-71.1-20221112.diff", 1)]
         self.patchToApply["78.1"] = [("icu-71.1-20221112.diff", 1)]
-        self.releaseManagerId = 16134
-        self.webpage = "https://icu.unicode.org/"
+
         self.defaultTarget = "78.1"
 
     def setDependencies(self):

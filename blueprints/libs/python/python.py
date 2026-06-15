@@ -20,6 +20,10 @@ class subinfo(info.infoclass):
             self.parent.package.categoryInfo.compiler = CraftCore.compiler.Compiler.NoCompiler
 
     def setTargets(self):
+        self.description = "Python is a high-level, general-purpose programming language"
+        self.webpage = "https://www.python.org"
+        self.releaseManagerId = 13254
+
         for ver in ["3.11.7", "3.11.11", "3.14.6"]:
             self.targets[ver] = f"https://www.python.org/ftp/python/{ver}/Python-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"Python-{ver}"
@@ -39,7 +43,6 @@ class subinfo(info.infoclass):
         self.patchLevel["3.11.7"] = 3
         self.patchLevel["3.11.11"] = 1
 
-        self.description = "Python is a high-level, general-purpose programming language"
         self.defaultTarget = "3.15.6"
 
     def setDependencies(self):

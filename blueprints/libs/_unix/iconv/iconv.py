@@ -16,6 +16,8 @@ class subinfo(info.infoclass):
         self.targetDigests["1.15"] = (["ccf536620a45458d26ba83887a983b96827001e92a13847b45e4925cc8913178"], CraftHash.HashAlgorithm.SHA256)
 
         self.description = "GNU internationalization (i18n)"
+        self.releaseManagerId = 10656
+
         self.defaultTarget = "1.18"
 
     def setDependencies(self):

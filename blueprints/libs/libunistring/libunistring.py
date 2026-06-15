@@ -8,6 +8,9 @@ from Utils import CraftHash
 
 class subinfo(info.infoclass):
     def setTargets(self):
+        self.webpage = "https://www.gnu.org/software/libunistring/"
+        self.releaseManagerId = 1747
+
         for ver in ["0.9.10", "1.2", "1.3", "1.4.1"]:
             self.targets[ver] = f"https://ftp.gnu.org/gnu/libunistring/libunistring-{ver}.tar.xz"
             self.archiveNames[ver] = f"libunistring-{ver}.tar.xz"
@@ -18,8 +21,6 @@ class subinfo(info.infoclass):
         self.targetDigests["1.4.1"] = (["67d88430892527861903788868c77802a217b0959990f7449f2976126a307763"], CraftHash.HashAlgorithm.SHA256)
 
         self.defaultTarget = "1.4.1"
-
-        self.webpage = "https://www.gnu.org/software/libunistring/"
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/automake"] = None
