@@ -161,6 +161,8 @@ class MesonBuildSystem(BuildSystemBase):
                         CraftCore.debug.debug_line()
                         CraftCore.log.info(log.read())
                         CraftCore.debug.debug_line()
+                else:
+                    CraftCore.log.info(f"Craft tried to capture Meson log file at {logFile}, but did not find it.")
                 return False
             return True
 
