@@ -69,6 +69,7 @@ class subinfo(info.infoclass):
         self.patchLevel["0.22.3"] = 3
 
         self.patchToApply["1.0"] = [("gettext-1.0-fix-syntax-progreloc.diff", 1)]
+        self.patchLevel["1.0"] = 1
 
         self.defaultTarget = "1.0"
 
@@ -91,6 +92,9 @@ class Package(AutoToolsPackageBase):
             "--disable-native-java",
             "--enable-nls",
             "--enable-c++",
+            "--with-included-libintl",
+            # --with-included-gettext is the deprecated version of --with-included-libintl
+            # TODO: remove once we remove version 0.22.3 support
             "--with-included-gettext",
             "--with-included-glib",
             "--with-included-regex",
