@@ -29,10 +29,12 @@ class subinfo(info.infoclass):
             # define unsetenv for msvc
             ("gettext-0.22.3-20231028.diff", 1),
         ]
+        self.patchToApply["1.0"] = []
 
         if CraftCore.compiler.isMSVC():
             # with msvc we need to link libxml2 not xml2
             self.patchToApply["0.22.3"] += [("msvc-fix-libxml2.diff", 1)]
+            self.patchToApply["1.0"] += [("msvc-fix-libxml2.diff", 1)]
 
         # the following patch is required to build on msvc but breaks mingw with:
         """
@@ -68,7 +70,7 @@ class subinfo(info.infoclass):
             self.patchToApply["0.22.3"] += [("gettext-0.22-disable-libtextstyle.patch", 1)]
         self.patchLevel["0.22.3"] = 3
 
-        self.patchToApply["1.0"] = [("gettext-1.0-fix-syntax-progreloc.diff", 1)]
+        self.patchToApply["1.0"] += [("gettext-1.0-fix-syntax-progreloc.diff", 1)]
         self.patchLevel["1.0"] = 1
 
         self.defaultTarget = "1.0"
