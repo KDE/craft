@@ -38,10 +38,10 @@ class MesonBuildSystem(BuildSystemBase):
         BuildSystemBase.__init__(self, **kwargs, typeName="meson")
 
     @property
-    def __meson(self):
-        return CraftCore.cache.findApplication("meson")
+    def _meson(self):
+        return [CraftCore.cache.findApplication("meson")]
 
-    def __env(self):
+    def _env(self):
         env = {
             "LDFLAGS": self.subinfo.options.configure.ldflags + " " + os.environ.get("LDFLAGS", ""),
             "CFLAGS": self.subinfo.options.configure.cflags + " " + os.environ.get("CFLAGS", ""),
@@ -151,9 +151,9 @@ class MesonBuildSystem(BuildSystemBase):
         return args
 
     def configure(self, defines=""):
-        with utils.ScopedEnv(self.__env()):
+        with utils.ScopedEnv(self._env()):
             extra_options = self.craftCrossFile()
-            if not utils.system(Arguments([self.__meson, "setup", extra_options, self.configureOptions(defines)])):
+            if not utils.system(Arguments(self._meson + ["setup", extra_options, self.configureOptions(defines)])):
                 logFile = self.buildDir() / "meson-logs/meson-log.txt"
                 if logFile.exists():
                     with logFile.open("rt", encoding="UTF-8") as log:
@@ -167,12 +167,12 @@ class MesonBuildSystem(BuildSystemBase):
             return True
 
     def make(self):
-        with utils.ScopedEnv(self.__env()):
+        with utils.ScopedEnv(self._env()):
             # cwd should not be the build dir as it might confuse the dependencie resolution
             return utils.system(
                 Arguments(
-                    [
-                        self.__meson,
+                    self._meson
+                    + [
                         "compile",
                         "-C",
                         self.buildDir(),
@@ -186,14 +186,14 @@ class MesonBuildSystem(BuildSystemBase):
         """install the target"""
         if not BuildSystemBase.install(self):
             return False
-        env = self.__env()
+        env = self._env()
         env["DESTDIR"] = self.installDir()
         with utils.ScopedEnv(env):
-            return utils.system([self.__meson, "install"], cwd=self.buildDir()) and self._fixInstallPrefix()
+            return utils.system(self._meson + ["install"], cwd=self.buildDir()) and self._fixInstallPrefix()
 
     def unittest(self):
         """running make tests"""
-        return utils.system([self.__meson, "test"], cwd=self.buildDir())
+        return utils.system(self._meson + ["test"], cwd=self.buildDir())
 
     def makeOptions(self, args):
         defines = Arguments()
