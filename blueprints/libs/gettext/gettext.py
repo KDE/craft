@@ -107,6 +107,9 @@ class Package(AutoToolsPackageBase):
             "gl_cv_libxml_use_included=no",
         ]
 
+        if CraftCore.compiler.isMacOS:
+            self.subinfo.options.configure.args += ["am_cv_func_iconv_works=yes"]  # https://savannah.gnu.org/bugs/index.php?66541
+
         if CraftCore.compiler.isMSVC():
             # workaround for "'C:C:/CraftRoot/msys/CraftRoot/build/_/527d4567/gettext-0.21/gettext-runtime/libasprintf/autosprintf.cc'"
             self.subinfo.options.useShadowBuild = False
