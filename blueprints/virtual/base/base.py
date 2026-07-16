@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         # The order is important
         self.buildDependencies["core/cacert"] = None
+        self.runtimeDependencies["libs/system-libxcrypt"] = None
 
         self.buildDependencies["dev-utils/7zip-base"] = None
 
