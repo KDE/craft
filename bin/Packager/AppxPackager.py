@@ -281,9 +281,7 @@ class AppxPackager(CollectionPackagerBase):
         createStorePackage = bool(publisherId)
         createSideloadAppX = CraftCore.settings.getboolean("CodeSigning", "Enabled", False)
         utils.cleanDirectory(self.artifactsDir())
-        if not self.internalCreatePackage(
-            defines, createSymbolsPackage=createSideloadAppX and CraftCore.settings.getboolean("Packager", "PackageDebugSymbols", False)
-        ):
+        if not self.internalCreatePackage(defines, createSymbolsPackage=createSideloadAppX):
             return False
 
         if not self.__prepareIcons(defines):
