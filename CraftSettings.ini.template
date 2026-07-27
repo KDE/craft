@@ -151,6 +151,10 @@ EnableDailyUpdates = True
 ## Todo: rename
 #7ZipArchiveType = 7z
 
+## The package type for the appx-Packager
+## Possible values are: appx, msix
+#AppxPackageType = appx
+
 # id assigned to you by the Windows Store
 #AppxPublisherId = CN=98B52D9A-DF7C-493E-BADC-37004A92EFC8
 
