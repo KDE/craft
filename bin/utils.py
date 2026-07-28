@@ -311,7 +311,7 @@ def systemWithoutShell(
         if secret:
             _debugCommand = redact(_debugCommand, secret)
             _logCommand = redact(_logCommand, secret)
-        if logCommand and not StageLogger.isOutputOnFailure():
+        if logCommand and not outputOnFailure:
             CraftCore.debug.print(f"executing command: {_logCommand}")
         StageLogger.logLine(f"executing command: {_debugCommand}")
         CraftCore.log.debug(_debugCommand)
@@ -366,11 +366,15 @@ def systemWithoutShell(
         StageLogger.logLine(resultMessage)
         if not outputOnFailure:
             CraftCore.log.info(resultMessage)
+        else:
+            StageLogger.dump()
         return True
     resultMessage = f"Command {redact(cmd, secret)} failed with exit code {proc.returncode}"
     StageLogger.logLine(resultMessage)
     if not outputOnFailure:
         CraftCore.log.info(resultMessage)
+    else:
+        StageLogger.dump()
     return False
 
 

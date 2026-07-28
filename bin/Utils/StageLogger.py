@@ -39,7 +39,7 @@ class StageLogger(object):
             self.__open("wt+")
         self.__logFile.write(s)
 
-    def dump(self):
+    def _dump(self):
         if self.__logFile:
             pos = self.__logFile.tell()
             self.__logFile.seek(0)
@@ -86,6 +86,11 @@ class StageLogger(object):
     @staticmethod
     def logLine(s: str):
         StageLogger.log(f"{s}\n{'=' * CraftCore.debug.lineWidth}\n")
+
+    @staticmethod
+    def dump():
+        if StageLogger.ActiveLogs:
+            StageLogger.ActiveLogs[-1]._dump()
 
     @staticmethod
     def isOutputOnFailure():

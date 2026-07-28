@@ -120,7 +120,7 @@ def handlePackage(package, buildAction, directTargets):
                     log.persistBufferOnClose = True
                 if not doExec(package, action):
                     if StageLogger.isOutputOnFailure():
-                        log.dump()
+                        StageLogger.dump()
                     # report failure in timer.hook
                     status = "failed"
                     return False
