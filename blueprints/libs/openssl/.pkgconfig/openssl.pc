@@ -1,4 +1,4 @@
-prefix==@{CRAFT_ROOT}
+prefix=@{CRAFT_ROOT}
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
