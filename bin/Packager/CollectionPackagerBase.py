@@ -322,7 +322,7 @@ class CollectionPackagerBase(PackagerBase):
             if dbgName.exists():
                 dbgName.unlink()
             if not self._createArchive(
-                dbgName,
+                dbgName.name,
                 self.archiveDebugDir(),
                 self.packageDestinationDir(),
                 fileType=FileType.Debug,

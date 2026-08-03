@@ -137,6 +137,7 @@ class PackagerBase(CraftBase):
         createDigests=True,
         fileType: FileType = FileType.Binary,
     ) -> bool:
+        assert not Path(archiveName).is_absolute()
         archiveName = Path(destDir) / archiveName
 
         if not utils.compress(archiveName, sourceDir):
