@@ -48,6 +48,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = f"xz-{ver}"
 
         self.targetDigests["5.2.3"] = (["7876096b053ad598c31f6df35f7de5cd9ff2ba3162e5a5554e4fc198447e0347"], CraftHash.HashAlgorithm.SHA256)
+        self.patchLevel["5.2.3"] = 1
 
         self.defaultTarget = ver
 
@@ -74,6 +75,16 @@ class PackageMSBuild(MSBuildPackageBase):
         for h in header:
             h = Path(h)
             utils.copyFile(h, includeDir / h.relative_to(headerDir), linkOnly=False)
+
+        # The MSBuild solution installs no pkg-config file, but consumers
+        # resolve liblzma via pkg-config (e.g. libtiff >= 4.5 emits
+        # "Requires.private: liblzma" in libtiff-4.pc), which breaks
+        # pkg_check_modules() for everything depending on libtiff.
+        utils.configureFile(
+            self.blueprintDir() / ".files/liblzma.pc.in",
+            self.installDir() / "lib/pkgconfig/liblzma.pc",
+            {"LZMA_PREFIX": self.installPrefix().as_posix(), "VERSION": self.buildTarget},
+        )
         return True
 
 
