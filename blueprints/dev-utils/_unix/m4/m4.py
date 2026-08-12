@@ -33,7 +33,7 @@ class subinfo(info.infoclass):
         )
         self.description = "GNU M4 is an implementation of the traditional Unix macro processor."
         self.releaseManagerId = 1871
-        self.defaultTarget = "1.4.21"
+        self.defaultTarget = "1.4.20"
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/7zip"] = None
