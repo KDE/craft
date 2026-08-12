@@ -26,8 +26,8 @@ ABI = windows-cl-msvc2019-x86_64
 ## https://github.com/qt/qtbase/blob/b598087455b2113c63fe74079082b0f8022f2d0d/.cmake.conf#L54
 #MacDeploymentTarget = 13
 
-## Minimum supported Android API level (default: 21)
-AndroidAPI = 21
+## Minimum supported Android API level (default: 28)
+AndroidAPI = 28
 ## KDE Frameworks version (for selecting the host tooling)
 KFHostToolingVersion = 5
 ## Path in which the host tooling is installed for Android builds
@@ -150,6 +150,10 @@ EnableDailyUpdates = True
 ## Possible values are: zip, 7z
 ## Todo: rename
 #7ZipArchiveType = 7z
+
+## The package type for the appx-Packager
+## Possible values are: appx, msix
+#AppxPackageType = appx
 
 # id assigned to you by the Windows Store
 #AppxPublisherId = CN=98B52D9A-DF7C-493E-BADC-37004A92EFC8

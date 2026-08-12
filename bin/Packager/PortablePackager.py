@@ -1,6 +1,8 @@
 #
 # copyright (c) 2011 Hannah von Reth <vonreth@kde.org>
 #
+from pathlib import Path
+
 from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftBase import InitGuard
 
@@ -24,7 +26,7 @@ class PortablePackager(CollectionPackagerBase, SevenZipPackager):
     def createPortablePackage(self, defines) -> bool:
         """create portable 7z package with digest files located in the manifest subdir"""
         return self._createArchive(
-            defines["setupname"],
+            Path(defines["setupname"]).name,
             defines.get("srcdir", self.archiveDir()),
             self.packageDestinationDir(),
         )

@@ -1,0 +1,11 @@
+prefix=@{LZMA_PREFIX}
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: liblzma
+Description: General purpose data compression library
+URL: https://tukaani.org/xz/
+Version: @{VERSION}
+Cflags: -I${includedir}
+Libs: -L${libdir} -lliblzma

@@ -21,7 +21,7 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
-
+import io
 import os
 import re
 import secrets
@@ -162,10 +162,38 @@ class _MacSignScope(LockFile, utils.ScopedEnv):
                 "MacKeychainPath",
                 os.path.expanduser("~/Library/Keychains/login.keychain"),
             )
+        self._defaultKeychains = None
 
     @property
     def _useCertFile(self):
         return self.certFileApplication or self.certFilesInstaller
+
+    def _setDefaultKeyChains(self):
+        """
+        Set the default keychains to include the login keychain.
+        """
+        with io.StringIO() as out:
+            if not utils.system(
+                ["security", "list-keychains", "-d", "user"],
+                stdout=out,
+            ):
+                CraftCore.log.error("Failed to get default keychain.")
+                return False
+            self._defaultKeychains = [shlex.split(line.strip())[0] for line in out.getvalue().strip().split("\n")]
+        if not self._defaultKeychains:
+            CraftCore.log.error("No default keychains found.")
+            return False
+        if self.loginKeychain in self._defaultKeychains:
+            CraftCore.log.error("Keychain is already in default keychains.")
+            self._defaultKeychains = None
+            return True
+        if not utils.system(
+            ["security", "list-keychains", "-d", "user", "-s"] + self._defaultKeychains + [self.loginKeychain],
+            stdout=subprocess.DEVNULL,
+        ):
+            CraftCore.log.error("Failed to add keychain to default keychains.")
+            return False
+        return True
 
     def __unlock(self):
         if self._useCertFile:
@@ -176,12 +204,7 @@ class _MacSignScope(LockFile, utils.ScopedEnv):
                 secret=[password],
             ):
                 return False
-            # FIXME: Retain original list: security list-keychains -d user -s "${KEYCHAIN}" $(security list-keychains -d user | sed s/\"//g)
-            if not utils.system(
-                ["security", "list-keychains", "-d", "user", "-s", self.loginKeychain],
-                stdout=subprocess.DEVNULL,
-                secret=[password],
-            ):
+            if not self._setDefaultKeyChains():
                 return False
 
             def importCert(cert, pwKey):
@@ -235,6 +258,8 @@ class _MacSignScope(LockFile, utils.ScopedEnv):
                     message="Enter the password for your signing keychain",
                     key="MAC_KEYCHAIN_PASSWORD",
                 )
+                if not self._setDefaultKeyChains():
+                    return False
                 if not utils.system(
                     ["security", "unlock-keychain", "-p", password, self.loginKeychain],
                     stdout=subprocess.DEVNULL,
@@ -242,7 +267,6 @@ class _MacSignScope(LockFile, utils.ScopedEnv):
                 ):
                     CraftCore.log.error("Failed to unlock keychain.")
                     return False
-
         return True
 
     def __enter__(self):
@@ -256,6 +280,12 @@ class _MacSignScope(LockFile, utils.ScopedEnv):
     def __exit__(self, exc_type, exc_value, trback):
         if self._useCertFile:
             utils.system(["security", "delete-keychain", self.loginKeychain])
+        if self._defaultKeychains:
+            if not utils.system(
+                ["security", "list-keychains", "-d", "user", "-s"] + self._defaultKeychains,
+                stdout=subprocess.DEVNULL,
+            ):
+                raise Exception("Failed to reset default keychain.")
         utils.ScopedEnv.__exit__(self, exc_type, exc_value, trback)
         LockFile.__exit__(self, exc_type, exc_value, trback)
 

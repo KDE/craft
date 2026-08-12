@@ -189,7 +189,7 @@ class CraftCompiler(object):
         if self.isMSVC():
             self._MSVCToolset = CraftCore.settings.get("General", "MSVCToolset", "")
         if self.isAndroid:
-            self._apiLevel = CraftCore.settings.get("General", "AndroidAPI", 21)
+            self._apiLevel = CraftCore.settings.get("General", "AndroidAPI", 28)
 
     def __str__(self):
         return str(self.signature)

@@ -69,6 +69,12 @@ class CraftBootstrap(object):
         return CraftBootstrap.isUnix() and platform.system() == "Darwin"
 
     @staticmethod
+    def defaultMacArchitecture():
+        if "RELEASE_ARM64" in platform.uname().version:
+            return "arm64"
+        return {"arm64": "arm64", "x86_64": "x86_64", "amd64": "x86_64"}.get(platform.machine().lower(), "x86_64")
+
+    @staticmethod
     def isAndroid():
         return "ANDROID_SDK_ROOT" in os.environ
 
@@ -231,7 +237,7 @@ def getABI(args):
             arch = CraftBootstrap.promptForChoice(
                 "Select target architecture",
                 ["x86_64", "arm64"],
-                "x86_64",
+                CraftBootstrap.defaultMacArchitecture(),
                 returnDefaultWithoutPrompt=args.use_defaults,
             )
         else:
