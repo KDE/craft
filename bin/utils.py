@@ -167,7 +167,7 @@ def compress(archive: Path, source: str) -> bool:
         if not ciMode and CraftCore.cache.checkCommandOutputFor(app, "-bs"):
             flags += ["-bso2", "-bsp1"]
             kw["stderr"] = subprocess.PIPE
-        if str(archive).endswith(".tar.7z"):
+        if ".tar" in archive.suffixes:
             tar = CraftCore.cache.findApplication("tar")
             kw["pipeProcess"] = subprocess.Popen(
                 [
@@ -192,7 +192,7 @@ def compress(archive: Path, source: str) -> bool:
             command += [os.path.join(source, "*")]
         return system(command, displayProgress=True, **kw)
 
-    def __xz(archive, source):
+    def __tar(archive, source):
         command = ["tar", "-cJf", archive, "-C"]
         if os.path.isfile(source):
             command += [source]
@@ -207,8 +207,8 @@ def compress(archive: Path, source: str) -> bool:
     if not __locate7z() and archive.suffix == ".zip":
         return shutil.make_archive(archive.with_suffix(""), "zip", source)
 
-    if CraftCore.compiler.isUnix and archive.suffixes[-2:] == [".tar", ".xz"]:
-        return __xz(archive, source)
+    if CraftCore.compiler.isUnix and archive.suffix == [".tar"]:
+        return __tar(archive, source)
     else:
         return __7z(archive, source)
 
