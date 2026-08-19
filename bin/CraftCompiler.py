@@ -422,7 +422,7 @@ class CraftCompiler(object):
 
     @property
     def macOSDeploymentTarget(self) -> CraftVersion:
-        return CraftVersion(CraftCore.settings.get("General", "MacDeploymentTarget", "13"))
+        return CraftVersion(CraftCore.settings.get("General", "MacDeploymentTarget", "13.3"))
 
 
 if __name__ == "__main__":
