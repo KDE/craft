@@ -76,7 +76,7 @@ class CraftBootstrap(object):
 
     @staticmethod
     def isAndroid():
-        return "ANDROID_SDK_ROOT" in os.environ
+        return "ANDROID_SDK_ROOT" in os.environ and "ANDROID_NDK" in os.environ
 
     @staticmethod
     def isLinux():
