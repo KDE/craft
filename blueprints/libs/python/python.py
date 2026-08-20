@@ -24,26 +24,29 @@ class subinfo(info.infoclass):
         self.webpage = "https://www.python.org"
         self.releaseManagerId = 13254
 
-        for ver in ["3.11.7", "3.11.11", "3.14.6"]:
+        for ver in ["3.11.7", "3.11.11", "3.12.13", "3.14.6"]:
             self.targets[ver] = f"https://www.python.org/ftp/python/{ver}/Python-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"Python-{ver}"
 
         self.targetDigests["3.11.7"] = (["18e1aa7e66ff3a58423d59ed22815a6954e53342122c45df20c96877c062b9b7"], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigests["3.12.13"] = (["c08bc65a81971c1dd5783182826503369466c7e67374d1646519adf05207b684"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["3.14.6"] = (["143b1dddefaec3bd2e21e3b839b34a2b7fb9842272883c576420d605e9f30c63"], CraftHash.HashAlgorithm.SHA256)
 
         self.patchToApply["3.11.7"] = [("0018-fix-sysconfig-include.patch", 1)]
         self.patchToApply["3.11.11"] = [("0018-fix-sysconfig-include.patch", 1)]
+        self.patchToApply["3.12.13"] = [("0018-fix-sysconfig-include.patch", 1)]
         self.patchToApply["3.14.6"] = [("0018-fix-sysconfig-include-3.14.6.patch", 1)]
 
         if CraftCore.compiler.isMSVC():
             self.patchToApply["3.11.7"] += [(".msvc/patches", 1)]
             self.patchToApply["3.11.11"] += [(".msvc/patches", 1)]
+            self.patchToApply["3.12.13"] += [(".msvc/patches-3.12", 1)]
             self.patchToApply["3.14.6"] += [(".msvc/patches/0004-devendor-external-dependencies.patch", 1), (".msvc/patches/0005-dont-copy-vcruntime.patch", 1)]
 
         self.patchLevel["3.11.7"] = 3
         self.patchLevel["3.11.11"] = 1
 
-        self.defaultTarget = "3.14.6"
+        self.defaultTarget = "3.12.13"
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/automake"] = None
@@ -55,6 +58,7 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["libs/sqlite"] = None
         self.runtimeDependencies["libs/libffi"] = None
         self.runtimeDependencies["libs/liblzma"] = None
+        self.runtimeDependencies["libs/zlib"] = None
 
 
 if CraftCore.compiler.isMSVC():
