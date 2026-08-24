@@ -79,6 +79,7 @@ class NullsoftInstallerPackager(PortablePackager):
         super().__init__(**kwargs)
         self.nsisExe = None
         self._isInstalled = False
+        self.scriptname = Path(__file__).parent / "Nsis/NullsoftInstaller.nsi"
 
     def setDefaults(self, defines) -> dict:
         defines = super().setDefaults(defines)
@@ -98,9 +99,6 @@ class NullsoftInstallerPackager(PortablePackager):
         defines.setdefault("sections_page", "")
         defines.setdefault("preInstallHook", "")
         defines.setdefault("SnoreToastExe", "$INSTDIR\\bin\\SnoreToast.exe")
-
-        if not self.scriptname:
-            self.scriptname = os.path.join(os.path.dirname(__file__), "Nsis", "NullsoftInstaller.nsi")
         return defines
 
     def isNsisInstalled(self):
