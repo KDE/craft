@@ -21,7 +21,7 @@ class PortablePackager(_packagerBase, SevenZipPackager):  # type: ignore[valid-t
     LocalSignSh = textwrap.dedent(
         """\
         #!/bin/sh
-        codesign -s - -f --deep --preserve-metadata=identifier,entitlements {setupname}
+        codesign -s - -f --deep --preserve-metadata=identifier,entitlements '{setupname}'
         """
     )
 
