@@ -255,15 +255,19 @@ class AppxPackager(CollectionPackagerBase):
             if data:
                 publisher += [f"{field}={data}"]
 
-        publisher = []
-        appendToPublisherString(publisher, "CN", "CommonName")
-        appendToPublisherString(publisher, "OU", "OrganizationalUnit")
-        appendToPublisherString(publisher, "O", "Organization")
-        appendToPublisherString(publisher, "STREET", "Street")
-        appendToPublisherString(publisher, "L", "Locality")
-        appendToPublisherString(publisher, "S", "State")
-        appendToPublisherString(publisher, "PostalCode", "PostalCode")
-        appendToPublisherString(publisher, "C", "Country")
+        dn = CraftCore.settings.get("CodeSigning", "DistinguishedName", "")
+        if dn:
+            publisher = [dn]
+        else:
+            publisher = []
+            appendToPublisherString(publisher, "CN", "CommonName")
+            appendToPublisherString(publisher, "OU", "OrganizationalUnit")
+            appendToPublisherString(publisher, "O", "Organization")
+            appendToPublisherString(publisher, "STREET", "Street")
+            appendToPublisherString(publisher, "L", "Locality")
+            appendToPublisherString(publisher, "S", "State")
+            appendToPublisherString(publisher, "PostalCode", "PostalCode")
+            appendToPublisherString(publisher, "C", "Country")
         defines["publisher"] = ", ".join(publisher)
         setupName = os.path.join(
             self.packageDestinationDir(),
