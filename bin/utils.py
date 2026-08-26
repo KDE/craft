@@ -162,7 +162,7 @@ def compress(archive: Path, source: str) -> bool:
         app = __locate7z()
         kw = {}
         flags = []
-        if archive.suffix in {".appxsym", ".appxupload"}:
+        if archive.suffix in {".appxsym", ".appxupload", ".msixupload", ".msixsym"}:
             flags.append("-tzip")
         if not ciMode and CraftCore.cache.checkCommandOutputFor(app, "-bs"):
             flags += ["-bso2", "-bsp1"]
