@@ -249,14 +249,16 @@ SignCache = ${CodeSigning:Enabled}
 ##   "mysigntool.exe --files-from files.txt --sign"
 #WindowsCustomSignCommand =
 #Certificate = C:\CraftRoot\mycert.pfx
-## Attributes of the certificate's DN (aka Subject)
-CommonName = K Desktop Environment e. V.
-Organization = K Desktop Environment e. V.
+## The certificate's DN (aka Subject)
+DistinguishedName = SERIALNUMBER=VR 31685,1.3.6.1.4.1.311.60.2.1.3=DE,2.5.4.15=Private Organization,C=DE,S=Berlin,O=K Desktop Environment e.V.,CN=K Desktop Environment e.V.
+## Attributes of the certificate's DN (aka Subject); if DistinguishedName is not set then the DN will be composed from the attributes
+CommonName = K Desktop Environment e.V.
+#Organization =
 #OrganizationUnit =
 #Street =
 #Locality =
-Country = DE
-State = Berlin
+#Country =
+#State =
 #PostalCode =
 ## Mac code signing
 ###################
