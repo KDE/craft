@@ -301,7 +301,8 @@ class AppxPackager(CollectionPackagerBase):
                 and self.symbolsImageDir().exists()
                 and any(self.symbolsImageDir().iterdir())
             ):
-                appxSym = Path(defines["setupname"]).with_suffix(f".{self._packageType}sym")
+                # the windows store does not accept .msixsym files
+                appxSym = Path(defines["setupname"]).with_suffix(".appxsym")
                 artifacts += [appxSym]
                 if appxSym.exists():
                     appxSym.unlink()

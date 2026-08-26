@@ -10,7 +10,8 @@
     <Logo>@{logo}</Logo>
   </Properties>
   <Dependencies>
-    <TargetDeviceFamily  Name="Windows.Desktop" MinVersion="10.0.14316.0" MaxVersionTested="10.0.14316.0" />
+    <!-- https://en.wikipedia.org/wiki/Windows_10_version_history  Qt requires 1809 which maps to 17763 -->
+    <TargetDeviceFamily  Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.17763.0" />
   </Dependencies>
   @{capabilities}
   @{desktop_extensions}
