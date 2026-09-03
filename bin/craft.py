@@ -43,6 +43,7 @@ from CraftOS.osutils import OsUtils
 from options import UserOptions
 from Utils import CraftTimer
 from Utils.CraftTitleUpdater import CraftTitleUpdater
+from Utils.StageLogger import StageLogger
 
 
 class ActionHandler:
@@ -225,6 +226,15 @@ def main(timer):
     )
 
     parser.add_argument(
+        "--output-on-failure-line-limit",
+        action="store",
+        type=int,
+        default=StageLogger.outputOnFailureLineLimit(),
+        dest="outputOnFailureLineLimit",
+        help="Only display the last N lines of the output of a failed step, 0 disables the limit",
+    )
+
+    parser.add_argument(
         "--add-blueprint-repository",
         action="store",
         help="Installs a blueprint repository",
@@ -322,6 +332,7 @@ def main(timer):
     CraftCore.settings.set("ContinuousIntegration", "SourceDir", args.srcDir)
     CraftCore.settings.set("ContinuousIntegration", "Enabled", args.ciMode)
     CraftCore.settings.set("ContinuousIntegration", "OutputOnFailure", args.outputOnFailure)
+    CraftCore.settings.set("ContinuousIntegration", "OutputOnFailureLineLimit", args.outputOnFailureLineLimit)
 
     CraftTitleUpdater.instance.start(f"({CraftCore.standardDirs.craftRoot()}) craft " + " ".join(sys.argv[1:]), timer)
     CraftSetupHelper.SetupHelper.printBanner()
