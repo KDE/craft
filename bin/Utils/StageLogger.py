@@ -43,7 +43,14 @@ class StageLogger(object):
         if self.__logFile:
             pos = self.__logFile.tell()
             self.__logFile.seek(0)
-            for line in self.__logFile.readlines():
+            lines = self.__logFile.readlines()
+            maxLines = StageLogger.outputOnFailureLineLimit()
+            if maxLines and len(lines) > maxLines:
+                # the log file itself is kept complete and is usually archived by the ci
+                hint = f", the full log is at {self._logPath}" if not self.buffered or self.persistBufferOnClose else ""
+                CraftCore.log.info(f"Showing the last {maxLines} of {len(lines)} lines{hint}")
+                lines = lines[-maxLines:]
+            for line in lines:
                 # linebased printing as workaround for gitlab logs dropping logs
                 CraftCore.log.info(line.strip())
             assert self.__logFile.tell() == pos
@@ -86,6 +93,10 @@ class StageLogger(object):
     @staticmethod
     def logLine(s: str):
         StageLogger.log(f"{s}\n{'=' * CraftCore.debug.lineWidth}\n")
+
+    @staticmethod
+    def outputOnFailureLineLimit() -> int:
+        return int(CraftCore.settings.get("ContinuousIntegration", "OutputOnFailureLineLimit", 1000))
 
     @staticmethod
     def isOutputOnFailure():
