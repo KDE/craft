@@ -1,4 +1,4 @@
-From a6c75885e7f45041394dfc206bf649ed2c17cfec Mon Sep 17 00:00:00 2001
+From 9790344426a16526a0469c40638009dd9a9230ca Mon Sep 17 00:00:00 2001
 From: Matthieu Gallien <matthieu.gallien@nextcloud.com>
 Date: Fri, 24 Apr 2026 17:30:23 +0200
 Subject: [PATCH 3/4] special handling of lib prefix for mingw
@@ -9,10 +9,10 @@ Signed-off-by: Matthieu Gallien <matthieu.gallien@nextcloud.com>
  1 file changed, 8 insertions(+)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index ca1c464..aa10727 100644
+index afae772..2e24dcd 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -204,6 +204,10 @@ if(ZLIB_BUILD_SHARED)
+@@ -205,6 +205,10 @@ if(ZLIB_BUILD_SHARED)
          AND NOT APPLE
          AND NOT (CMAKE_SYSTEM_NAME STREQUAL AIX)
          AND NOT (CMAKE_SYSTEM_NAME STREQUAL SunOS))
@@ -23,7 +23,7 @@ index ca1c464..aa10727 100644
  endif(ZLIB_BUILD_SHARED)
  
  if(ZLIB_BUILD_STATIC)
-@@ -226,6 +230,10 @@ if(ZLIB_BUILD_STATIC)
+@@ -227,6 +231,10 @@ if(ZLIB_BUILD_STATIC)
      set_target_properties(
          zlibstatic PROPERTIES EXPORT_NAME ZLIBSTATIC OUTPUT_NAME
                                                       z${zlib_static_suffix})
@@ -35,5 +35,5 @@ index ca1c464..aa10727 100644
  
  if(ZLIB_INSTALL)
 -- 
-2.53.0
+2.55.0
 
