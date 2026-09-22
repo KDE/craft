@@ -42,16 +42,21 @@ class StageLogger(object):
     def dump(self):
         if self.__logFile:
             pos = self.__logFile.tell()
-            self.__logFile.seek(0)
-            lines = self.__logFile.readlines()
-            maxLines = StageLogger.outputOnFailureLineLimit()
-            if maxLines and len(lines) > maxLines:
+            maxData = StageLogger.outputOnFailureLimit()
+            if maxData and pos > maxData:
                 # the log file itself is kept complete and is usually archived by the ci
+                self.__logFile.seek(pos - maxData)
+
+                # the first line might be truncated, skip it
+                discarded = self.__logFile.readline()
+
                 hint = f", the full log is at {self._logPath}" if not self.buffered or self.persistBufferOnClose else ""
-                CraftCore.log.info(f"Showing the last {maxLines} of {len(lines)} lines{hint}")
-                lines = lines[-maxLines:]
-            for line in lines:
-                # linebased printing as workaround for gitlab logs dropping logs
+                CraftCore.log.info(f"Showing the last {maxData-len(discarded)}b of {pos}b {hint}")
+            else:
+                self.__logFile.seek(0)
+
+            for line in self.__logFile:
+                # truncate the stage log as CI's might drop the essential part of the log if its too big
                 CraftCore.log.info(line.strip())
             assert self.__logFile.tell() == pos
             self.__logFile.seek(pos)
@@ -95,8 +100,9 @@ class StageLogger(object):
         StageLogger.log(f"{s}\n{'=' * CraftCore.debug.lineWidth}\n")
 
     @staticmethod
-    def outputOnFailureLineLimit() -> int:
-        return int(CraftCore.settings.get("ContinuousIntegration", "OutputOnFailureLineLimit", 1000))
+    def outputOnFailureLimit() -> int:
+        # 1MB
+        return int(CraftCore.settings.get("ContinuousIntegration", "OutputOnFailureLimit", 1000000))
 
     @staticmethod
     def isOutputOnFailure():
