@@ -134,8 +134,6 @@ class PackageAutoTools(AutoToolsPackageBase):
                 f"prefix={self.installPrefix()}",
                 "-D",
                 "mksymlinks",
-                "-D",
-                "userelocatableinc",
                 "-U",
                 "default_inc_excludes_dot",
                 "-D",
