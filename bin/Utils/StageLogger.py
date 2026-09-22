@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2023 Hannah von Reth <vonreth@kde.org>
 
 import io
+import sys
 import tempfile
 from contextlib import nullcontext
 
@@ -57,7 +58,7 @@ class StageLogger(object):
 
             for line in self.__logFile:
                 # truncate the stage log as CI's might drop the essential part of the log if its too big
-                CraftCore.log.info(line.strip())
+                sys.stdout.write(line)
             assert self.__logFile.tell() == pos
             self.__logFile.seek(pos)
 

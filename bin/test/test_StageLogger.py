@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # SPDX-License-Identifier: BSD-2-Clause
 # SPDX-FileCopyrightText: 2026 Linus Jahn <lnj@kaidan.im>
-
+import contextlib
+import io
 import unittest
 
 import CraftTestBase
@@ -15,9 +16,9 @@ class StageLoggerTest(CraftTestBase.CraftTestBase):
         with StageLogger("test/dump") as log:
             for i in range(lineCount):
                 StageLogger.log(f"line {i:03}\n")
-            with self.assertLogs(CraftCore.log, level="INFO") as logs:
+            with io.StringIO() as buf, contextlib.redirect_stdout(buf):
                 log.dump()
-        return [record.getMessage() for record in logs.records]
+                return [line for line in buf.getvalue().split("\n") if line]
 
     def test_dumpBelowLimit(self):
         # 100 lines * 9 bytes = 900 bytes. Limit 1000.
@@ -25,14 +26,14 @@ class StageLoggerTest(CraftTestBase.CraftTestBase):
         self.assertEqual(lines, [f"line {i:03}" for i in range(100)])
 
     def test_dumpTruncatesToLastBytes(self):
-        lines = self.dumpBytes(100, 100)
-        self.assertIn("Showing the last 99b of 900b", lines[0])
-        outputLines = [line for line in lines[1:] if line]
-        self.assertEqual(outputLines, [f"line {i:03}" for i in range(89, 100)])
+        with self.assertLogs(CraftCore.log, level="INFO") as logs:
+            outputLines = self.dumpBytes(100, 100)
+            self.assertIn("Showing the last 99b of 900b", logs.records[0].getMessage())
+            self.assertEqual(outputLines, [f"line {i:03}" for i in range(89, 100)])
 
     def test_dumpLimitCanBeDisabled(self):
-        lines = self.dumpBytes(100, 0)
-        self.assertEqual(lines, [f"line {i:03}" for i in range(100)])
+        outputLines = self.dumpBytes(100, 0)
+        self.assertEqual(outputLines, [f"line {i:03}" for i in range(100)])
 
 
 if __name__ == "__main__":
