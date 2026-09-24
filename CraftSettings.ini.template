@@ -164,6 +164,8 @@ EnableDailyUpdates = True
 ### NullsoftInstallerPackager: A nsis based installer including all dependencies
 ### AppxPackager: Windows UWP style package including all dependencies
 ### CreateArchivePackager: An image including all dependencies
+### AppImagePackager: An AppImage package using linuxdeploy including all dependencies
+### FlatpakPackager: A Flatpak bundle using linuxdeploy including all dependencies
 #PackageType = SevenZipPackager
 
 ## Package the Source files too.

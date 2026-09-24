@@ -33,6 +33,7 @@ from Packager.AppImagePackager import AppImagePackager
 from Packager.AppxPackager import AppxPackager  # noqa: F401
 from Packager.CMakeApkPackager import CMakeApkPackager
 from Packager.CreateArchivePackager import CreateArchivePackager  # noqa: F401
+from Packager.FlatpakPackager import FlatpakPackager  # noqa: F401
 from Packager.InnoSetupPackager import InnoSetupPackager  # noqa: F401
 from Packager.MacDMGPackager import MacDMGPackager
 from Packager.MacPkgPackager import MacPkgPackager  # noqa: F401
