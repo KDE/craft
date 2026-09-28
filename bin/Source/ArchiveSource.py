@@ -198,7 +198,7 @@ class ArchiveSource(SourceBase):
             if not filename:
                 continue
             ext = Path(filename).suffix
-            if not ext or ext in {".exe", ".bat", ".msi", ".AppImage"}:
+            if not ext or ext in {".exe", ".bat", ".msi", ".AppImage", ".jar"}:
                 filePath = os.path.abspath(os.path.join(self.__downloadDir, filename))
                 if self.subinfo.options.unpack.runInstaller:
                     if ext == ".exe":

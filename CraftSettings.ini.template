@@ -24,7 +24,7 @@ ABI = windows-cl-msvc2019-x86_64
 
 ## Set the minimum supported MacOs version, this is also limited by Qt
 ## https://github.com/qt/qtbase/blob/b598087455b2113c63fe74079082b0f8022f2d0d/.cmake.conf#L54
-#MacDeploymentTarget = 13
+#MacDeploymentTarget = 13.3
 
 ## Minimum supported Android API level (default: 28)
 AndroidAPI = 28
@@ -227,6 +227,11 @@ Enabled = False
 ## Hide the output by default and only display it if an error occurred
 OutputOnFailure = False
 
+## Only display the last N bytes  of the output of a failed step, 0 disables the limit
+## The log file itself always stays complete
+## Default is 1MB
+OutputOnFailureLimit = 1000000
+
 ## Delete the build folder after the install
 ClearBuildFolder = False
 
@@ -249,14 +254,16 @@ SignCache = ${CodeSigning:Enabled}
 ##   "mysigntool.exe --files-from files.txt --sign"
 #WindowsCustomSignCommand =
 #Certificate = C:\CraftRoot\mycert.pfx
-## Attributes of the certificate's DN (aka Subject)
-CommonName = K Desktop Environment e. V.
-Organization = K Desktop Environment e. V.
+## The certificate's DN (aka Subject)
+DistinguishedName = SERIALNUMBER=VR 31685,1.3.6.1.4.1.311.60.2.1.3=DE,2.5.4.15=Private Organization,C=DE,S=Berlin,O=K Desktop Environment e.V.,CN=K Desktop Environment e.V.
+## Attributes of the certificate's DN (aka Subject); if DistinguishedName is not set then the DN will be composed from the attributes
+CommonName = K Desktop Environment e.V.
+#Organization =
 #OrganizationUnit =
 #Street =
 #Locality =
-Country = DE
-State = Berlin
+#Country =
+#State =
 #PostalCode =
 ## Mac code signing
 ###################

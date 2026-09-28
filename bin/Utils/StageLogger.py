@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2023 Hannah von Reth <vonreth@kde.org>
 
 import io
+import sys
 import tempfile
 from contextlib import nullcontext
 
@@ -42,10 +43,22 @@ class StageLogger(object):
     def dump(self):
         if self.__logFile:
             pos = self.__logFile.tell()
-            self.__logFile.seek(0)
-            for line in self.__logFile.readlines():
-                # linebased printing as workaround for gitlab logs dropping logs
-                CraftCore.log.info(line.strip())
+            maxData = StageLogger.outputOnFailureLimit()
+            if maxData and pos > maxData:
+                # the log file itself is kept complete and is usually archived by the ci
+                self.__logFile.seek(pos - maxData)
+
+                # the first line might be truncated, skip it
+                discarded = self.__logFile.readline()
+
+                hint = f", the full log is at {self._logPath}" if not self.buffered or self.persistBufferOnClose else ""
+                CraftCore.log.info(f"Showing the last {maxData-len(discarded)}b of {pos}b {hint}")
+            else:
+                self.__logFile.seek(0)
+
+            for line in self.__logFile:
+                # truncate the stage log as CI's might drop the essential part of the log if its too big
+                sys.stdout.write(line)
             assert self.__logFile.tell() == pos
             self.__logFile.seek(pos)
 
@@ -86,6 +99,11 @@ class StageLogger(object):
     @staticmethod
     def logLine(s: str):
         StageLogger.log(f"{s}\n{'=' * CraftCore.debug.lineWidth}\n")
+
+    @staticmethod
+    def outputOnFailureLimit() -> int:
+        # 1MB
+        return int(CraftCore.settings.get("ContinuousIntegration", "OutputOnFailureLimit", 1000000))
 
     @staticmethod
     def isOutputOnFailure():
