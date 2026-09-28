@@ -11,7 +11,7 @@ class subinfo(info.infoclass):
         self.webpage = "https://www.gnu.org/software/libunistring/"
         self.releaseManagerId = 1747
 
-        for ver in ["0.9.10", "1.2", "1.3", "1.4.1"]:
+        for ver in ["0.9.10", "1.2", "1.3", "1.4.1", "1.4.2"]:
             self.targets[ver] = f"https://ftpmirror.gnu.org/gnu/libunistring/libunistring-{ver}.tar.xz"
             self.archiveNames[ver] = f"libunistring-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"libunistring-{ver}"
@@ -19,8 +19,9 @@ class subinfo(info.infoclass):
         self.targetDigests["1.2"] = (["632bd65ed74a881ca8a0309a1001c428bd1cbd5cd7ddbf8cedcd2e65f4dcdc44"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["1.3"] = (["f245786c831d25150f3dfb4317cda1acc5e3f79a5da4ad073ddca58886569527"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["1.4.1"] = (["67d88430892527861903788868c77802a217b0959990f7449f2976126a307763"], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigests["1.4.2"] = (["5b46e74377ed7409c5b75e7a96f95377b095623b689d8522620927964a41499c"], CraftHash.HashAlgorithm.SHA256)
 
-        self.defaultTarget = "1.4.1"
+        self.defaultTarget = "1.4.2"
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/automake"] = None
