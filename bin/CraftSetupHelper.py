@@ -92,17 +92,22 @@ class SetupHelper(object):
             self.setupEnvironment()
 
     @staticmethod
-    def _getOutput(command, shell=False):
+    def _getOutput(command, shell=False, mergeStderr=True):
         CraftCore.log.debug(f"SetupHelper._getOutput: {command}")
         p = subprocess.run(
             command,
             stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
+            stderr=subprocess.STDOUT if mergeStderr else subprocess.PIPE,
             shell=shell,
             universal_newlines=True,
             errors="backslashreplace",
         )
         out = p.stdout.strip()
+        if not mergeStderr and p.stderr:
+            # keep stderr out of output that gets parsed, e.g. the json printed by dumpenv.py
+            CraftCore.log.debug(f"SetupHelper._getOutput: stderr {p.stderr.strip()}")
+            if p.returncode != 0:
+                out = f"{out}\n{p.stderr.strip()}".strip()
         CraftCore.log.debug(f"SetupHelper._getOutput: return {p.returncode} {out}")
         return p.returncode, out
 
@@ -275,7 +280,9 @@ class SetupHelper(object):
                 f"Failed to setup msvc compiler.\n{path} does not exist.",
                 critical=True,
             )
-        status, result = SetupHelper._getOutput(f'"{path}" {args} > NUL && "{sys.executable}" "{Path(__file__).parent}/dumpenv.py"', shell=True)
+        status, result = SetupHelper._getOutput(
+            f'"{path}" {args} > NUL && "{sys.executable}" "{Path(__file__).parent}/dumpenv.py"', shell=True, mergeStderr=False
+        )
         if status != 0:
             log(f"Failed to setup msvc compiler.\nExitcode: {result} ", critical=True)
         return CaseInsensitiveDict(json.loads(result))
@@ -416,7 +423,9 @@ class SetupHelper(object):
 
         sourceCommand = CraftCore.settings.get("Environment", "SourceCommand", False)
         if sourceCommand:
-            status, result = SetupHelper._getOutput(f'{sourceCommand} && "{sys.executable}" "{Path(__file__).parent}/dumpenv.py"', shell=True)
+            status, result = SetupHelper._getOutput(
+                f'{sourceCommand} && "{sys.executable}" "{Path(__file__).parent}/dumpenv.py"', shell=True, mergeStderr=False
+            )
             if status != 0:
                 log(f'Failed to setup "SourceCommand" {sourceCommand!r}. exit code: {result} ', critical=True)
                 return
