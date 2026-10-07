@@ -115,7 +115,6 @@ class PipBuildSystem(BuildSystemBase):
                 bootstrap = False
                 command += ["-m", "pip"]
             command += ["install", "--upgrade", "--no-input", "--verbose"]
-            command += self.subinfo.options.configure.args
 
             if usesCraftPython:
                 # we can only cache stuff if we actually do something
@@ -135,9 +134,11 @@ class PipBuildSystem(BuildSystemBase):
                         f"--config-settings=--global-option=--include-dirs={CraftCore.standardDirs.craftRoot()}/include",
                         f"--config-settings=--global-option=--library-dirs={CraftCore.standardDirs.craftRoot()}/lib",
                     ]
+                command += self.subinfo.options.configure.args
                 command += ["--root", self.installDir()]
             elif not self.allowNotVenv:
                 command += ["--require-virtualenv"]
+                command += self.subinfo.options.configure.args
 
             if not self._isPipTarget and not bootstrap:
                 # Installing with wildcards (pip install dir/*) does not work on Windows,
