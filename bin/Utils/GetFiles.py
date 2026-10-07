@@ -194,7 +194,7 @@ def wgetFile(url, destdir, filename, quiet):
 
 def wget2File(wgetCommand, url, destdir, filename, quiet):
     """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
-    command = [wgetCommand, "--continue", "--metalink=off"]
+    command = [wgetCommand, "--continue", "--metalink=off", "--connect-timeout=5"]
     cert = os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem")
     if os.path.exists(cert):
         command += ["--ca-certificate", cert]
