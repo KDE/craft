@@ -293,5 +293,8 @@ UseSystemWget = True
 # Whether to use system 7zip
 UseSystem7zip = True
 
+## Timeout for the connection to a mirror in seconds, tool defaults tend to be up to 5min
+#DownloadConnecTimeout = 5
+
 [Version]
 ConfigVersion = 6

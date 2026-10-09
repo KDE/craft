@@ -120,6 +120,8 @@ def curlFile(url, destdir, filename, quiet):
     """download file with curl from 'url' into 'destdir', if filename is given to the file specified"""
     curl = CraftCore.cache.findApplication("curl")
     command = [curl, "-C", "-", "--retry", "10", "-L", "--ssl-reqd", "--fail"]
+    if timeout := CraftCore.settings.getInt("Tools", "DownloadConnecTimeout", 0):
+        command += ["--connect-timeout", timeout]
     cert = os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem")
     if os.path.exists(cert):
         command += ["--cacert", cert]
@@ -154,7 +156,9 @@ def curlFile(url, destdir, filename, quiet):
 def wgetFile(url, destdir, filename, quiet):
     """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
     wget = CraftCore.cache.findApplication("wget")
-    command = [wget, "-c", "-t", "10"]
+    command = [wget, "--continue", "--tries", "10"]
+    if timeout := CraftCore.settings.getInt("Tools", "DownloadConnecTimeout", 0):
+        command += [f"--connect-timeout={timeout}"]
     cert = os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem")
     if os.path.exists(cert):
         command += ["--ca-certificate", cert]
@@ -195,11 +199,13 @@ def wgetFile(url, destdir, filename, quiet):
 def wget2File(wgetCommand, url, destdir, filename, quiet):
     """download file with wget from 'url' into 'destdir', if filename is given to the file specified"""
     command = [wgetCommand, "--continue", "--metalink=off"]
+    if timeout := CraftCore.settings.getInt("Tools", "DownloadConnecTimeout", 0):
+        command += [f"--connect-timeout={timeout}"]
+    # the default of 20 might not be enough for sourceforge ...
+    # command += ["--max-redirect", "50"]
     cert = os.path.join(CraftCore.standardDirs.etcDir(), "cacert.pem")
     if os.path.exists(cert):
         command += ["--ca-certificate", cert]
-    # the default of 20 might not be enough for sourceforge ...
-    # command += ["--max-redirect", "50"]
     if CraftCore.settings.getboolean("General", "EMERGE_NO_PASSIVE_FTP", False):
         command += ["--no-passive-ftp"]
     if not filename:

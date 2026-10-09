@@ -174,6 +174,10 @@ class CraftConfig(object):
         val = self.get(group, key, str(default))
         return self._config._convert_to_boolean(val)
 
+    def getInt(self, group, key, default=0):
+        val = self.get(group, key, str(default))
+        return int(val)
+
     def set(self, group, key, value):
         if value is None:
             return
