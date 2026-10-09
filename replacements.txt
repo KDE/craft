@@ -1,3 +1,5 @@
+/categoryInfo\.platforms = ($/{N;N;s/categoryInfo\.platforms = (\n\s*CraftCore\.compiler\.Compiler\.NoCompiler if CraftCore\.compiler\.\(isMinGW()\|compiler\.isMinGW\) else CraftCore\.compiler\.\(Platforms\.All\|CompilerFilter()\)\n\s*)/categoryInfo.compiler \&= ~CraftCore.compiler.Compiler.MinGW/}
+s/categoryInfo\.platforms = CraftCore\.compiler\.Compiler\.NoCompiler if CraftCore\.compiler\.\(isMinGW()\|compiler\.isMinGW\) else CraftCore\.compiler\.\(Platforms\.All\|Compiler\.All\|CompilerFilter()\)$/categoryInfo.compiler \&= ~CraftCore.compiler.Compiler.MinGW/
 s/CraftCore.compiler.isMacOS/CraftCore.compiler.platform.isMacOS/g
 s/CraftCore.compiler.isWindows/CraftCore.compiler.platform.isWindows/g
 s/CraftCore.compiler.isLinux/CraftCore.compiler.platform.isLinux/g
@@ -13,6 +15,8 @@ s/CraftCore.compiler.isNative()/CraftCore.compiler.platform.isNative/g
 s/CraftCore.compiler.androidAbi/CraftCore.compiler.architecture.androidAbi/g
 s/CraftCore.compiler.bits/CraftCore.compiler.architecture.bits/g
 s/CraftCore.compiler.architecture.name.lower()/CraftCore.compiler.architecture.key.name.lower()/g
+s/CraftCore.compiler.appImageArchitecture/CraftCore.compiler.architecture.appImageArchitecture/g
+s/CraftCore.compiler.compiler.isMinGW/CraftCore.compiler.compiler.isMinGW/g
 
 
 s/CraftCore.compiler.executableSuffix/CraftCore.compiler.platform.executableSuffix/g
@@ -20,3 +24,6 @@ s/CraftCore.compiler.Platforms.NotAndroid/~CraftCore.compiler.Platforms.Android/
 s/CraftCore.compiler.Platforms.NotWindows/~CraftCore.compiler.Platforms.Windows/g
 s/CraftCore.compiler.Platforms.NotMacOS/~CraftCore.compiler.Platforms.MacOS/g
 s/CraftCore.compiler.Platforms.All$/CraftCore.compiler.CompilerFilter()/g
+
+# info.ini: NotX became ~X, All is the default
+/^\s*\(platforms\|compiler\|architecture\)\s*=/I{s/\bnot\(linux\|macos\|freebsd\|windows\|unix\|android\)\b/~\1/Ig;/[=;]\s*all\s*\(;\|$\)/Id}

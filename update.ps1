@@ -1,4 +1,4 @@
-$files = git ls-files --full-name *.py *.ini
+$files = git ls-files --full-name '*.py' '*.ini'
 
 function update-sed {
     param (
