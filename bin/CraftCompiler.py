@@ -45,7 +45,7 @@ class CraftCompilerSignature(object):
     ) -> None:
         self.platform = platform
         self.compiler = compiler
-        self.abi = CraftCompiler.Abi.fromString(abiString) if abiString else None
+        self.abi = CraftCompiler.Abi.fromString(abiString) if abiString else CraftCompiler.Abi.Other
         self.architecture = architecture
         self._sourceString = sourceString
 
@@ -70,7 +70,7 @@ class CraftCompilerSignature(object):
         sig = [self.platform.key.name.lower()]
         if self.compiler:
             sig += [self.compiler.key.name.lower()]
-        if self.abi:
+        if self.abi != CraftCompiler.Abi.Other:
             sig += [self.abi.key.name.lower()]
 
         sig += [self.architecture.key.name.lower()]
@@ -119,7 +119,137 @@ class CraftCompilerSignature(object):
         return CraftCompilerSignature(platform, compiler, abi, arch, host=host, sourceString=s)
 
 
+class CompilerFilter(object):
+    """
+    A requirement on CraftCompiler.CompilerFlags, used by the categoryInfo of a blueprint.
+
+    A single flag matches if any of its keys and all of its modifiers are set,
+    Linux|Native matches a native Linux, Native matches any native platform.
+    Filters and flags can be combined with &, | and ~:
+        categoryInfo.platforms &= ~CraftCore.compiler.Platforms.Android
+        categoryInfo.platforms &= CraftCore.compiler.Platforms.Native
+
+    The default filter matches everything.
+    """
+
+    @staticmethod
+    def wrap(value) -> "CompilerFilter":
+        if isinstance(value, CompilerFilter):
+            return value
+        return _FlagFilter(value)
+
+    @staticmethod
+    def parse(flagType: type, values: list[str]) -> "CompilerFilter":
+        """
+        Parse the values of an info.ini, e.g. platforms = Linux;Windows;Native
+        - Linux, x86_64: matches if any of them matches
+        - Native, bits64: a flag without key, required for every match
+        - ~Android, ~Native: does not match if any of the exclusions matches
+        """
+        include = None
+        result = CompilerFilter()
+        for v in values:
+            if v.startswith("~"):
+                result &= ~CompilerFilter.wrap(flagType.fromString(v[1:]))
+            else:
+                flag = flagType.fromString(v)
+                if flag and not flag.key:
+                    result &= flag
+                else:
+                    include = CompilerFilter.wrap(flag) if include is None else include | flag
+        if include is not None:
+            result = include & result
+        return result
+
+    def matches(self, target: "CraftCompiler.CompilerFlags") -> CraftBool:
+        return CraftBool(self._match(target))
+
+    def _match(self, target: "CraftCompiler.CompilerFlags") -> bool:
+        return True
+
+    def __and__(self, other) -> "CompilerFilter":
+        other = CompilerFilter.wrap(other)
+        if type(self) is CompilerFilter:
+            return other
+        if type(other) is CompilerFilter:
+            return self
+        return _AndFilter(self, other)
+
+    def __rand__(self, other) -> "CompilerFilter":
+        return CompilerFilter.wrap(other) & self
+
+    def __or__(self, other) -> "CompilerFilter":
+        other = CompilerFilter.wrap(other)
+        if type(self) is CompilerFilter or type(other) is CompilerFilter:
+            return CompilerFilter()
+        return _OrFilter(self, other)
+
+    def __ror__(self, other) -> "CompilerFilter":
+        return CompilerFilter.wrap(other) | self
+
+    def __invert__(self) -> "CompilerFilter":
+        return _NotFilter(self)
+
+    def __str__(self):
+        return "All"
+
+    def __repr__(self):
+        return f"CompilerFilter({self})"
+
+
+class _FlagFilter(CompilerFilter):
+    def __init__(self, flag: "CraftCompiler.CompilerFlags"):
+        self.flag = flag
+
+    def _match(self, target: "CraftCompiler.CompilerFlags") -> bool:
+        # NoPlatform, NoCompiler etc. match nothing
+        return bool(self.flag) and target.matchTerm(self.flag)
+
+    def __str__(self):
+        return self.flag.name or str(int(self.flag))
+
+
+class _NotFilter(CompilerFilter):
+    def __init__(self, child: CompilerFilter):
+        self.child = child
+
+    def _match(self, target: "CraftCompiler.CompilerFlags") -> bool:
+        return not self.child._match(target)
+
+    def __invert__(self) -> CompilerFilter:
+        return self.child
+
+    def __str__(self):
+        return f"~{self.child}"
+
+
+class _AndFilter(CompilerFilter):
+    def __init__(self, left: CompilerFilter, right: CompilerFilter):
+        self.left = left
+        self.right = right
+
+    def _match(self, target: "CraftCompiler.CompilerFlags") -> bool:
+        return self.left._match(target) and self.right._match(target)
+
+    def __str__(self):
+        return f"({self.left} & {self.right})"
+
+
+class _OrFilter(CompilerFilter):
+    def __init__(self, left: CompilerFilter, right: CompilerFilter):
+        self.left = left
+        self.right = right
+
+    def _match(self, target: "CraftCompiler.CompilerFlags") -> bool:
+        return self.left._match(target) or self.right._match(target)
+
+    def __str__(self):
+        return f"({self.left} | {self.right})"
+
+
 class CraftCompiler(object):
+    CompilerFilter = CompilerFilter
+
     class CompilerFlags(IntFlag):
         __str__ = Enum.__str__
 
@@ -137,34 +267,50 @@ class CraftCompiler(object):
             mask = ~(~0 << 16)
             return self & mask
 
-        def matchKeys(self, other) -> CraftBool:
-            # first check the key, then the modifiers
-            return CraftBool(self.key & other.key and self & other)
+        @property
+        def modifier(self):
+            """
+            The modifiers, flags that indicate additional conditions like Native
+            """
+            return self & ~int(self.key)
 
-        @classmethod
-        def All(cls):
-            return cls(0xFFFFFFFF)
+        def __invert__(self) -> "CompilerFilter":
+            """
+            ~Platforms.Android: a filter that matches everything but Android
+            """
+            return ~CompilerFilter.wrap(self)
+
+        def matchTerm(self, term: "CraftCompiler.CompilerFlags") -> bool:
+            """
+            Match self against a single requirement.
+            Any of the keys of term must be set, all of the modifiers of term must be set.
+            A term without a key only checks the modifiers.
+            """
+            if term.key and not (self.key & term.key):
+                return False
+            return (self.modifier & term.modifier) == term.modifier
 
     @unique
     class Architecture(CompilerFlags):
         NoArchitecture = 0
-
-        bits64 = 0x1 << 0
-        bits32 = 0x1 << 1
-
         # Values
-        x86 = 0x1 << 2
-        x86_32 = bits32 | x86
-        x86_64 = bits64 | x86
-        arm = 0x1 << 3
-        arm32 = bits32 | arm
-        arm64 = bits64 | arm
-        arm64e = 0x1 << 4 | arm64  # Apple
+        x86 = 0x1 << 1
+        arm = 0x1 << 2
 
         # Modifiers, flags that indicate additional conditions
 
         # Native: Whether the Architecture is cross compiled
         Native = 0x1 << 17
+
+        bits64 = 0x1 << 18
+        bits32 = 0x1 << 19
+
+        # actual values
+        x86_32 = bits32 | x86
+        x86_64 = bits64 | x86
+        arm32 = bits32 | arm
+        arm64 = bits64 | arm
+        arm64e = 0x1 << 4 | arm64  # Apple
 
         @property
         def isX86(self) -> CraftBool:
@@ -172,11 +318,11 @@ class CraftCompiler(object):
 
         @property
         def isX86_32(self) -> CraftBool:
-            return CraftBool(self.value & CraftCompiler.Architecture.x86_32 & ~CraftCompiler.Architecture.x86)
+            return CraftBool(self.isX86 and self.is32bit)
 
         @property
         def isX86_64(self) -> CraftBool:
-            return CraftBool(self.value & CraftCompiler.Architecture.x86_64 & ~CraftCompiler.Architecture.x86)
+            return CraftBool(self.isX86 and self.is64bit)
 
         @property
         def isArm(self) -> CraftBool:
@@ -184,15 +330,16 @@ class CraftCompiler(object):
 
         @property
         def isArm32(self) -> CraftBool:
-            return CraftBool(self.value & CraftCompiler.Architecture.arm32 & ~CraftCompiler.Architecture.arm)
+            return CraftBool(self.isArm and self.is32bit)
 
         @property
         def isArm64(self) -> CraftBool:
-            return CraftBool(self.value & CraftCompiler.Architecture.arm64 & ~CraftCompiler.Architecture.arm64)
+            return CraftBool(self.isArm and self.is64bit)
 
         @property
         def isArm64e(self) -> CraftBool:
-            return CraftBool(self.value & CraftCompiler.Architecture.arm64e & ~CraftCompiler.Architecture.arm64)
+            arm64e = CraftCompiler.Architecture.arm64e.key
+            return CraftBool(self.key & arm64e == arm64e)
 
         @property
         def is32bit(self) -> CraftBool:
@@ -244,7 +391,7 @@ class CraftCompiler(object):
                 CraftCompiler.Architecture.arm32: "armhf",
                 CraftCompiler.Architecture.arm64: "aarch64",
             }
-            return architectures[self.key]
+            return architectures.get(self.key, None)
 
         @property
         def androidArchitecture(self):
@@ -254,7 +401,7 @@ class CraftCompiler(object):
                 CraftCompiler.Architecture.arm32: "arm",
                 CraftCompiler.Architecture.arm64: "arm64",
             }
-            return architectures[self.key]
+            return architectures.get(self.key, None)
 
         @property
         def androidAbi(self):
@@ -264,7 +411,7 @@ class CraftCompiler(object):
                 CraftCompiler.Architecture.arm32: "armeabi-v7a",
                 CraftCompiler.Architecture.arm64: "arm64-v8a",
             }
-            return architectures[self.key]
+            return architectures.get(self.key, None)
 
     @unique
     class Platforms(CompilerFlags):
@@ -332,7 +479,7 @@ class CraftCompiler(object):
 
     @unique
     class Abi(CompilerFlags):
-        Error = auto()
+        Other = auto()
         msvc2019 = auto()
         msvc2022 = auto()
         msvc2026 = auto()
@@ -387,6 +534,11 @@ class CraftCompiler(object):
         @property
         def isMSVC(self):
             return CraftBool(self.value & CraftCompiler.Compiler.CL)
+
+    # EnumType replaces __invert__ of every Flag class with Flag.__invert__, restore ours
+    for _flags in (Architecture, Platforms, Abi, Compiler):
+        _flags.__invert__ = CompilerFlags.__invert__
+    del _flags
 
     def __init__(self):
         self.hostSignature = self._detectHost()

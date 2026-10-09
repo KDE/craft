@@ -77,17 +77,17 @@ class CraftDependencyPackage(CraftPackageObject):
                     if isinstance(requiredVersion, tuple):
                         requiredVersion, type = requiredVersion
                         if type == DependencyRequirementType.Required and not self.isIgnored():
-                            if not bool(package.categoryInfo.compiler & CraftCore.compiler.compiler):
+                            if not package.categoryInfo.compiler.matches(CraftCore.compiler.compiler):
                                 raise BlueprintException(
                                     f"{self} requries {package}, but it is not supported on {CraftCore.compiler.compiler}",
                                     self,
                                 )
-                            if not bool(package.categoryInfo.platforms & CraftCore.compiler.platform):
+                            if not package.categoryInfo.platforms.matches(CraftCore.compiler.platform):
                                 raise BlueprintException(
                                     f"{self} requries {package}, but it is not supported on {CraftCore.compiler.platform}",
                                     self,
                                 )
-                            if not bool(package.categoryInfo.architecture & CraftCore.compiler.architecture):
+                            if not package.categoryInfo.architecture.matches(CraftCore.compiler.architecture):
                                 raise BlueprintException(
                                     f"{self} requries {package}, but it is not supported on {CraftCore.compiler.architecture}",
                                     self,

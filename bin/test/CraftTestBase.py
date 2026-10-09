@@ -54,4 +54,4 @@ class CraftTestBase(unittest.TestCase):
         del CraftCore.installdb
         del UserOptions.UserOptionsSingleton._instance
         UserOptions.UserOptionsSingleton._instance = None
-        del self.kdeRoot
+        self.kdeRoot.cleanup()

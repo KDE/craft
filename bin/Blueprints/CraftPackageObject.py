@@ -44,9 +44,9 @@ class CategoryPackageObject(object):
         self.webpage = ""
         self.displayName = ""
         self.tags = ""
-        self.platforms = CraftCore.compiler.Platforms.All()
-        self.compiler = CraftCore.compiler.Compiler.All()
-        self.architecture = CraftCore.compiler.Architecture.All()
+        self.platforms = CraftCore.compiler.CompilerFilter()
+        self.compiler = CraftCore.compiler.CompilerFilter()
+        self.architecture = CraftCore.compiler.CompilerFilter()
         self.pathOverride = None
         self.valid = False
         self.patchLevel = 0
@@ -72,39 +72,51 @@ class CategoryPackageObject(object):
             self.runtimeDependencies = CraftCore.settings._parseList(general.get("runtimeDependencies", ""))
             self.buildDependencies = CraftCore.settings._parseList(general.get("buildDependencies", ""))
 
-            def readCompileFlags(key: str, default: CraftCore.compiler.CompilerFlags):
-                values = set(CraftCore.settings._parseList(general.get(key, "")))
-                if not values:
-                    return default
-                value = type(default)(0)
-                for v in values:
-                    old = value
-                    if v.startswith("~"):
-                        # invert the value
-                        value |= ~default.fromString(v[1:])
-                    else:
-                        value |= default.fromString(v)
+            def readCompileFlags(key: str, flagType: type) -> CraftCore.compiler.CompilerFilter:
+                values = list(dict.fromkeys(CraftCore.settings._parseList(general.get(key, ""))))
+                return CraftCore.compiler.CompilerFilter.parse(flagType, values)
 
-                    if old == value:
-                        CraftCore.log.warning(f"{self.localPath}: The value {v!r} for {default.__class__.__name__} has no effect, values are:{values!r}")
-                return value
-
-            self.platforms = readCompileFlags("platforms", self.platforms)
-            self.compiler = readCompileFlags("compiler", self.compiler)
-            self.architecture = readCompileFlags("architecture", self.architecture)
+            self.platforms = readCompileFlags("platforms", CraftCore.compiler.Platforms)
+            self.compiler = readCompileFlags("compiler", CraftCore.compiler.Compiler)
+            self.architecture = readCompileFlags("architecture", CraftCore.compiler.Architecture)
 
             self.pathOverride = general.get("pathOverride", None)
             self.forceOverride = general.get("forceOverride", False)
 
+    # blueprints may assign plain flags, e.g. categoryInfo.compiler = Compiler.GCCLike
+    @property
+    def platforms(self) -> CraftCore.compiler.CompilerFilter:
+        return self._platforms
+
+    @platforms.setter
+    def platforms(self, value):
+        self._platforms = CraftCore.compiler.CompilerFilter.wrap(value)
+
+    @property
+    def compiler(self) -> CraftCore.compiler.CompilerFilter:
+        return self._compiler
+
+    @compiler.setter
+    def compiler(self, value):
+        self._compiler = CraftCore.compiler.CompilerFilter.wrap(value)
+
+    @property
+    def architecture(self) -> CraftCore.compiler.CompilerFilter:
+        return self._architecture
+
+    @architecture.setter
+    def architecture(self, value):
+        self._architecture = CraftCore.compiler.CompilerFilter.wrap(value)
+
     @property
     def isActive(self) -> CraftBool:
-        if not CraftCore.compiler.platform.matchKeys(self.platforms):
+        if not self.platforms.matches(CraftCore.compiler.platform):
             CraftCore.log.debug(f"{self.localPath}, is not supported on {CraftCore.compiler.platform!r}, supported platforms {self.platforms!r}")
             return CraftBool(False)
-        if not CraftCore.compiler.compiler.matchKeys(self.compiler):
+        if not self.compiler.matches(CraftCore.compiler.compiler):
             CraftCore.log.debug(f"{self.localPath}, is not supported on {CraftCore.compiler.compiler!r}, supported compiler {self.compiler!r}")
             return CraftBool(False)
-        if not CraftCore.compiler.architecture.matchKeys(self.architecture):
+        if not self.architecture.matches(CraftCore.compiler.architecture):
             CraftCore.log.debug(f"{self.localPath}, is not supported on {CraftCore.compiler.architecture!r}, supported architecture {self.architecture!r}")
             return CraftBool(False)
         return CraftBool(True)
