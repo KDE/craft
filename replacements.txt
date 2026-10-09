@@ -7,6 +7,7 @@ s/CraftCore.compiler.isFreeBSD/CraftCore.compiler.platform.isFreeBSD/g
 s/CraftCore.compiler.isGCCLike()/CraftCore.compiler.compiler.isGCCLike/g
 s/CraftCore.compiler.isClang()/CraftCore.compiler.compiler.isClang/g
 s/CraftCore.compiler.isMSVC()/CraftCore.compiler.compiler.isMSVC/g
+s/CraftCore.compiler.isMSVC2026()/CraftCore.compiler.abi.isMSVC2026/g
 s/CraftCore.compiler.isMinGW()/CraftCore.compiler.compiler.isMinGW/g
 s/CraftCore.compiler.isNative()/CraftCore.compiler.platform.isNative/g
 s/CraftCore.compiler.androidAbi/CraftCore.compiler.architecture.androidAbi/g
@@ -18,4 +19,4 @@ s/CraftCore.compiler.executableSuffix/CraftCore.compiler.platform.executableSuff
 s/CraftCore.compiler.Platforms.NotAndroid/~CraftCore.compiler.Platforms.Android/g
 s/CraftCore.compiler.Platforms.NotWindows/~CraftCore.compiler.Platforms.Windows/g
 s/CraftCore.compiler.Platforms.NotMacOS/~CraftCore.compiler.Platforms.MacOS/g
-s/CraftCore.compiler.Platforms.All$/CraftCore.compiler.Platforms.All()/g
+s/CraftCore.compiler.Platforms.All$/CraftCore.compiler.CompilerFilter()/g
