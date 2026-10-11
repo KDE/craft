@@ -75,7 +75,7 @@ class GitSource(VersionSystemSourceBase):
 
     def __updateSubmodeule(self):
         if self.subinfo.options.fetch.checkoutSubmodules:
-            return self.__git("submodule", ["update", "--init", "--recursive"])
+            return self.__git("submodule", ["update", "--init", "--recursive", "--force"])
         return True
 
     def __getCurrentRevision(self):
