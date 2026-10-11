@@ -77,9 +77,7 @@ class InnoSetupPackager(PortablePackager):
         defines.setdefault("srcdir", self.archiveDir())  # deprecated
         defines.setdefault("registry_keys", [])
         defines.setdefault("file_types", [])  # extension -> label pair would be better, but trying to be compatible with existing AppxPackager
-
-        if not self.scriptname:
-            self.scriptname = os.path.join(os.path.dirname(__file__), "InnoSetupTemplate.iss")
+        defines.setdefault("scriptname", Path(__file__).parent / "InnoSetupTemplate.iss")
         return defines
 
     def isInnoInstalled(self):
@@ -166,7 +164,7 @@ class InnoSetupPackager(PortablePackager):
         cmdDefines.append(f"""/O{os.path.dirname(defines["setupname"])}""")
         cmdDefines.append(f"""/F{str(Path(os.path.basename(defines["setupname"])).with_suffix(""))}""")
         configuredScrip = os.path.join(self.workDir(), f"{self.package.name}.iss")
-        utils.configureFile(self.scriptname, configuredScrip, defines)
+        utils.configureFile(defines["scriptname"], configuredScrip, defines)
 
         if not utils.systemWithoutShell(
             [self.innoExe, verboseString] + cmdDefines + [configuredScrip],
