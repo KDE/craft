@@ -251,8 +251,9 @@ SignCache = ${CodeSigning:Enabled}
 ##   "mysigntool.exe --files-from files.txt --sign"
 #WindowsCustomSignCommand =
 #Certificate = C:\CraftRoot\mycert.pfx
-## The certificate's DN (aka Subject)
-DistinguishedName = SERIALNUMBER=VR 31685,1.3.6.1.4.1.311.60.2.1.3=DE,2.5.4.15=Private Organization,C=DE,S=Berlin,O=K Desktop Environment e.V.,CN=K Desktop Environment e.V.
+## The certificate's DN (aka Subject) as displayed by Windows, e.g. (Get-PfxCertificate mycert.pfx).Subject
+## It is used as publisher of appx packages and must match the certificate exactly
+DistinguishedName = CN=K Desktop Environment e.V., O=K Desktop Environment e.V., S=Berlin, C=DE, OID.2.5.4.15=Private Organization, OID.1.3.6.1.4.1.311.60.2.1.3=DE, SERIALNUMBER=VR 31685
 ## Attributes of the certificate's DN (aka Subject); if DistinguishedName is not set then the DN will be composed from the attributes
 CommonName = K Desktop Environment e.V.
 #Organization =
