@@ -322,13 +322,10 @@ class CraftCompiler(object):
         x86 = 0x1 << 1
         arm = 0x1 << 2
 
-        # Modifiers, flags that indicate additional conditions
-
-        # Native: Whether the Architecture is cross compiled
-        Native = 0x1 << 17
-
-        bits64 = 0x1 << 18
-        bits32 = 0x1 << 19
+        # not keys on their own more like attributes,
+        # they are stored below the modifier range as they are part of the keys like x86_32
+        bits64 = 0x1 << 14
+        bits32 = 0x1 << 16
 
         # actual values
         x86_32 = bits32 | x86
@@ -336,6 +333,10 @@ class CraftCompiler(object):
         arm32 = bits32 | arm
         arm64 = bits64 | arm
         arm64e = 0x1 << 4 | arm64  # Apple
+
+        # Modifiers, flags that indicate additional conditions
+        # Native: Whether the Architecture is cross compiled
+        Native = 0x1 << 17
 
         @property
         def isX86(self) -> CraftBool:
