@@ -62,9 +62,9 @@ class PackageMSVC(MakeFilePackageBase):
         root = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
         config = {
             "CCTYPE": "MSVC141" if CraftCore.compiler.compiler.isMSVC else "GCC",
-            "CRAFT_DESTDIR": self.installDir(), # legacy < 5.44
+            "CRAFT_DESTDIR": self.installDir(),  # legacy < 5.44
             "INST_TOP": self.installDir(),
-            "CRAFT_WIN64": "define" if CraftCompiler.Architecture.is64bit else "undef", # legacy < 5.44
+            "CRAFT_WIN64": "define" if CraftCompiler.Architecture.is64bit else "undef",  # legacy < 5.44
             "WIN64": "define" if CraftCompiler.Architecture.is64bit else "undef",
             "USE_64_BIT_INT": "define" if CraftCompiler.Architecture.is64bit else "undef",
             "PLMAKE": "nmake" if CraftCore.compiler.compiler.isMSVC else "mingw32-make",
