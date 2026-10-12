@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2026 Hannah von Reth <vonreth@kde.org>
 
 import os
+import sys
 import tempfile
 from pathlib import Path
 
@@ -61,7 +62,7 @@ class Package(MesonPackageBase):
             # help it find the system python
             if not self.tmpPython:
                 self.tmpPython = tempfile.TemporaryDirectory()
-                if not utils.createShim(Path(self.tmpPython.name) / f"python3{CraftCore.compiler.platform.executableSuffix}", os.environ["CRAFT_PYTHON"]):
+                if not utils.createShim(Path(self.tmpPython.name) / f"python3{CraftCore.compiler.platform.executableSuffix}", sys.executable):
                     raise Exception("Failed to create shim")
             env["PATH"] = os.pathsep.join([os.environ["PATH"]] + [self.tmpPython.name])
         return env
