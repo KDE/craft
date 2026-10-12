@@ -165,9 +165,14 @@ class CompilerFilter(object):
         return CraftBool(self._match(target))
 
     def _match(self, target: "CraftCompiler.CompilerFlags") -> bool:
+        # the base implementation of CompilerFilter will always match everything. So we return True
         return True
 
     def __and__(self, other) -> "CompilerFilter":
+        """
+        Combine two filters using the logical AND operator.
+        A basic CompilerFilter will always match everything. So we return True
+        """
         other = CompilerFilter.wrap(other)
         if type(self) is CompilerFilter:
             return other
@@ -179,6 +184,10 @@ class CompilerFilter(object):
         return CompilerFilter.wrap(other) & self
 
     def __or__(self, other) -> "CompilerFilter":
+        """
+        Combine two filters using the logical OR operator.
+        A basic CompilerFilter will always match everything. So we return True
+        """
         other = CompilerFilter.wrap(other)
         if type(self) is CompilerFilter or type(other) is CompilerFilter:
             return CompilerFilter()
@@ -198,6 +207,10 @@ class CompilerFilter(object):
 
 
 class _FlagFilter(CompilerFilter):
+    """
+    A filter that matches a specific flag.
+    """
+
     def __init__(self, flag: "CraftCompiler.CompilerFlags"):
         self.flag = flag
 
@@ -210,6 +223,10 @@ class _FlagFilter(CompilerFilter):
 
 
 class _NotFilter(CompilerFilter):
+    """
+    A filter that negates the result of another filter.
+    """
+
     def __init__(self, child: CompilerFilter):
         self.child = child
 
@@ -224,6 +241,10 @@ class _NotFilter(CompilerFilter):
 
 
 class _AndFilter(CompilerFilter):
+    """
+    A filter that matches if both child filters match.
+    """
+
     def __init__(self, left: CompilerFilter, right: CompilerFilter):
         self.left = left
         self.right = right
@@ -236,6 +257,10 @@ class _AndFilter(CompilerFilter):
 
 
 class _OrFilter(CompilerFilter):
+    """
+    A filter that matches if either child filter matches.
+    """
+
     def __init__(self, left: CompilerFilter, right: CompilerFilter):
         self.left = left
         self.right = right
