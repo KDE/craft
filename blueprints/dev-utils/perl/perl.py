@@ -27,7 +27,7 @@ class subinfo(info.infoclass):
         self.webpage = "https://www.perl.org/"
         self.releaseManagerId = 13599
 
-        for ver in ["5.36.0", "5.38.2", "5.39.8", "5.40.1"]:
+        for ver in ["5.36.0", "5.38.2", "5.39.8", "5.40.1", "5.44.0"]:
             self.targets[ver] = f"https://www.cpan.org/src/5.0/perl-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"perl-{ver}"
 
@@ -47,7 +47,7 @@ class subinfo(info.infoclass):
         self.targetDigests["5.39.8"] = (["25f8b4db7a7d91c051b1c2594ed83c291c74c1012da559a8d580755b598bb7e3"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["5.40.1"] = (["02f8c45bb379ed0c3de7514fad48c714fd46be8f0b536bfd5320050165a1ee26"], CraftHash.HashAlgorithm.SHA256)
         self.patchLevel["5.38.2"] = 4
-        self.defaultTarget = "5.40.1"
+        self.defaultTarget = "5.44.0"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
@@ -62,8 +62,10 @@ class PackageMSVC(MakeFilePackageBase):
         root = OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())
         config = {
             "CCTYPE": "MSVC141" if CraftCore.compiler.compiler.isMSVC else "GCC",
-            "CRAFT_DESTDIR": self.installDir(),
-            "CRAFT_WIN64": "define" if CraftCompiler.Architecture.is64bit else "undef",
+            "CRAFT_DESTDIR": self.installDir(), # legacy < 5.44
+            "INST_TOP": self.installDir(),
+            "CRAFT_WIN64": "define" if CraftCompiler.Architecture.is64bit else "undef", # legacy < 5.44
+            "WIN64": "define" if CraftCompiler.Architecture.is64bit else "undef",
             "USE_64_BIT_INT": "define" if CraftCompiler.Architecture.is64bit else "undef",
             "PLMAKE": "nmake" if CraftCore.compiler.compiler.isMSVC else "mingw32-make",
         }
@@ -78,7 +80,6 @@ class PackageMSVC(MakeFilePackageBase):
         elif CraftCore.compiler.compiler.isMSVC:
             config["ARCHITECTURE"] = "ARM64" if CraftCore.compiler.architecture.isArm64 else "AMD64"
             config["PROCESSOR_ARCHITECTURE"] = config["ARCHITECTURE"]
-
 
         self.subinfo.options.make.args += ["{0}={1}".format(x, y) for x, y in config.items()]
         self.subinfo.options.install.args += self.subinfo.options.make.args + ["installbare"]
