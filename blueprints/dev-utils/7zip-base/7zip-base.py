@@ -12,7 +12,7 @@ class subinfo(info.infoclass):
         self.webpage = "http://www.7-zip.org/"
         self.releaseManagerId = 372314
 
-        for ver in ["24.09", "25.00", "25.01", "26.01"]:
+        for ver in ["24.09", "25.00", "25.01", "26.01", "26.04"]:
             verNoDot = ver.replace(".", "")
             self.targetInstallPath[ver] = "dev-utils/7z"
             if CraftCore.compiler.platform.isWindows:
@@ -27,7 +27,7 @@ class subinfo(info.infoclass):
             else:
                 self.targets[ver] = f"https://7-zip.org/a/7z{verNoDot}-mac.tar.xz"
 
-        self.defaultTarget = "25.01"
+        self.defaultTarget = "26.04"
 
 
 class Package(BinaryPackageBase):
