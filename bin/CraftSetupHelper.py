@@ -197,11 +197,13 @@ class SetupHelper(object):
         os.environ[key] = val
 
     @staticmethod
-    def _callVCVER(version: int, args: Optional[list] = None, prerelease: bool = False) -> str:
+    def _callVCVER(version: int, args: Optional[list] = None, prerelease: bool = False, latest: bool = True) -> str:
         if not args:
             args = []
         vswhere = os.path.join(CraftCore.standardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")
-        command = [vswhere, "-property", "installationPath", "-nologo", "-latest", "-products", "*"]
+        command = [vswhere, "-property", "installationPath", "-nologo", "-products", "*"]
+        if latest:
+            command += ["-latest"]
         if prerelease:
             command += ["-prerelease"]
         if version:
@@ -232,18 +234,18 @@ class SetupHelper(object):
         path = ""
         # we prefer newer compiler that provide legacy toolchains
         if version:
-            if version == 16:
-                # todo find a more generic id
-                component = "Microsoft.VisualStudio.Component.VC.14.29.16.11.x86.x64"
-            else:
-                component = "Microsoft.VisualStudio.Component.VC."
-                component += f"v{CraftCore.compiler.getMsvcPlatformToolset()}.x86.x64"
-            # todo directly get the correct version
+            # the component ids of legacy toolsets differ between VS versions, so look for the toolset itself
+            # the file contains the full toolset version, e.g. 14.44.35207
+            toolsetFile = f"Microsoft.VCToolsVersion.v{CraftCore.compiler.getMsvcPlatformToolset()}.default.txt"
             for v in [18, 17, 16]:
-                path = SetupHelper._callVCVER(v, args=["-products", "*", "-requires", component])
+                for candidate in SetupHelper._callVCVER(v, latest=False).splitlines():
+                    versionFile = Path(candidate) / "VC/Auxiliary/Build" / toolsetFile
+                    if versionFile.is_file():
+                        path = candidate
+                        if not toolset:
+                            toolset = versionFile.read_text().strip()
+                        break
                 if path:
-                    if not toolset:
-                        toolset = str(CraftCore.compiler.getMsvcPlatformToolset() / 10)
                     break
 
         if toolset:
