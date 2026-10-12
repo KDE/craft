@@ -110,7 +110,6 @@ class PackageCMake(CMakePackageBase):
         super().__init__(**kwargs)
         self.staticBuild = False
         self.supportsNinja = False
-        self.subinfo.options.make.supportsMultijob = False
         self.subinfo.options.install.args += ["install_sw", f"DESTDIR={self.installDir()}"]
 
         self.env = {}
@@ -146,6 +145,7 @@ class PackageCMake(CMakePackageBase):
             return super().make()
 
     def install(self):
+        self.subinfo.options.make.supportsMultijob = False
         if not super().install():
             return False
         for f in self.blueprintDir().glob(".pkgconfig/*.pc"):
