@@ -135,7 +135,7 @@ class PackageCMake(CMakePackageBase):
             args += [
                 "-FS",
                 f"-I{OsUtils.toUnixPath(os.path.join(CraftStandardDirs.craftRoot(), 'include'))}",
-                "VC-WIN64A" if CraftCore.compiler.architecture.isX86_64 else "VC-WIN32",
+                "VC-WIN64A" if CraftCore.compiler.architecture.isX86_64 else "VC-WIN64-ARM",
             ]
         with utils.ScopedEnv(self.env):
             return utils.system(args)
