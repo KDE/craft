@@ -5,6 +5,7 @@ from pathlib import Path
 import info
 import utils
 from BuildSystem.BuildSystemBase import BuildSystemBase
+from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from Package.AutoToolsPackageBase import AutoToolsPackageBase
@@ -62,7 +63,8 @@ class PackageMSVC(MakeFilePackageBase):
         config = {
             "CCTYPE": "MSVC141" if CraftCore.compiler.compiler.isMSVC else "GCC",
             "CRAFT_DESTDIR": self.installDir(),
-            "CRAFT_WIN64": "" if CraftCore.compiler.architecture.isX86_64 else "undef",
+            "CRAFT_WIN64": "define" if CraftCompiler.Architecture.is64bit else "undef",
+            "USE_64_BIT_INT": "define" if CraftCompiler.Architecture.is64bit else "undef",
             "PLMAKE": "nmake" if CraftCore.compiler.compiler.isMSVC else "mingw32-make",
         }
 
@@ -71,11 +73,12 @@ class PackageMSVC(MakeFilePackageBase):
             config["SHELL"] = os.environ["COMSPEC"]
             config["CRAFT_CFLAGS"] = f"{os.environ.get('CFLAGS', '')} -I'{root}/include' -L'{root}/lib' -Wno-error=implicit-function-declaration"
             config["USE_MINGW_ANSI_STDIO"] = "define"
-            config["USE_64_BIT_INT"] = "define"
             config["CCTYPE"] = "GCC"
             self.subinfo.options.make.args += [f"-j{CraftCore.settings.get('Compile', 'Jobs', multiprocessing.cpu_count())}"]
-        elif CraftCore.compiler.architecture.isX86_32:
-            config["PROCESSOR_ARCHITECTURE"] = f"x{CraftCore.compiler.architecture.bits}"
+        elif CraftCore.compiler.compiler.isMSVC:
+            config["ARCHITECTURE"] = "ARM64" if CraftCore.compiler.architecture.isArm64 else "AMD64"
+            config["PROCESSOR_ARCHITECTURE"] = config["ARCHITECTURE"]
+
 
         self.subinfo.options.make.args += ["{0}={1}".format(x, y) for x, y in config.items()]
         self.subinfo.options.install.args += self.subinfo.options.make.args + ["installbare"]
