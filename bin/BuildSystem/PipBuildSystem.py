@@ -100,7 +100,7 @@ class PipBuildSystem(BuildSystemBase):
                 }
             )
         elif CraftCore.compiler.platform.isMacOS and not CraftCore.compiler.platform.isNative:
-            arch = CraftCore.compiler.architecture.key.name.lower()
+            arch = CraftCore.compiler.architecture.type.name.lower()
             env["CC"] = f"{env['CC']} -arch {arch}"
             env["CXX"] = f"{env['CXX']} -arch {arch}"
 

@@ -60,7 +60,7 @@ class BashShell(object):
                 ldflags = f" -isysroot {sdkPath} {deploymentFlag} {ldflags}"
 
                 if not CraftCore.compiler.architecture.isNative:
-                    arch = CraftCore.compiler.architecture.key.name.lower()
+                    arch = CraftCore.compiler.architecture.type.name.lower()
                     self._environment["CC"] = f"{os.environ['CC']} -arch {arch}"
                     self._environment["CXX"] = f"{os.environ['CXX']} -arch {arch}"
 

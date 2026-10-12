@@ -353,7 +353,11 @@ class SetupHelper(object):
                     subprocess.check_call(
                         """echo "int main() {}" | /usr/bin/clang "-Wl,-ld_classic" -x c++ - -o /dev/null""", shell=True, stderr=subprocess.DEVNULL
                     )
-                    self.var = self.prependEnvVar("LDFLAGS", ["-Wl,-ld_classic"], sep=" ", )
+                    self.var = self.prependEnvVar(
+                        "LDFLAGS",
+                        ["-Wl,-ld_classic"],
+                        sep=" ",
+                    )
                 except:
                     pass
             self.addEnvVar(
@@ -529,11 +533,11 @@ class SetupHelper(object):
 
         if CraftCore.compiler.compiler.isClang:
             if CraftCore.compiler.platform.isAndroid:
-                if CraftCore.compiler.architecture == CraftCore.compiler.Architecture.arm64:
+                if CraftCore.compiler.architecture & CraftCore.compiler.Architecture.arm64:
                     compiler = "aarch64-linux-android"
-                elif CraftCore.compiler.architecture == CraftCore.compiler.Architecture.arm32:
+                elif CraftCore.compiler.architecture & CraftCore.compiler.Architecture.arm32:
                     compiler = "armv7a-linux-androideabi"
-                elif CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_32:
+                elif CraftCore.compiler.architecture & CraftCore.compiler.Architecture.x86_32:
                     compiler = "i686-linux-android"
                 else:
                     compiler = f"{CraftCore.compiler.androidArchitecture}-linux-android"

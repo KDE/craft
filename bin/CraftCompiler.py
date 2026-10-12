@@ -153,7 +153,7 @@ class CompilerFilter(object):
                 result &= ~CompilerFilter.wrap(flagType.fromString(v[1:]))
             else:
                 flag = flagType.fromString(v)
-                if flag and not flag.key:
+                if flag and not flag.type:
                     result &= flag
                 else:
                     include = CompilerFilter.wrap(flag) if include is None else include | flag
@@ -272,8 +272,14 @@ class _OrFilter(CompilerFilter):
         return f"({self.left} | {self.right})"
 
 
+@unique
+class CommonFlags(IntFlag):
+    Native = 0x1 << 25
+
+
 class CraftCompiler(object):
     CompilerFilter = CompilerFilter
+    CommonFlags = CommonFlags
 
     class CompilerFlags(IntFlag):
         __str__ = Enum.__str__
@@ -285,19 +291,30 @@ class CraftCompiler(object):
             return cls.__sting_map[name.lower()]
 
         @property
+        def type(self):
+            """
+            Raw base type without modifiers
+            The first 16 bits
+            """
+            mask = ~(~0 << 16)
+            return self & mask
+
+        @property
         def key(self):
             """
             Raw value without modifiers, to be used as key in dict's etc
+            The first 24 bits
             """
-            mask = ~(~0 << 16)
+            mask = ~(~0 << 24)
             return self & mask
 
         @property
         def modifier(self):
             """
             The modifiers, flags that indicate additional conditions like Native
+            The bits after the first 16 bits
             """
-            return self & ~int(self.key)
+            return self & ~int(self.type)
 
         def __invert__(self) -> "CompilerFilter":
             """
@@ -311,7 +328,7 @@ class CraftCompiler(object):
             Any of the keys of term must be set, all of the modifiers of term must be set.
             A term without a key only checks the modifiers.
             """
-            if term.key and not (self.key & term.key):
+            if term.type and not (self.type & term.type):
                 return False
             return (self.modifier & term.modifier) == term.modifier
 
@@ -322,20 +339,19 @@ class CraftCompiler(object):
         x86 = 0x1 << 1
         arm = 0x1 << 2
 
-        # Modifiers, flags that indicate additional conditions
-
-        # Native: Whether the Architecture is cross compiled
-        Native = 0x1 << 17
-
-        bits64 = 0x1 << 18
-        bits32 = 0x1 << 19
+        bits64 = 0x1 << 17
+        bits32 = 0x1 << 18
 
         # actual values
         x86_32 = bits32 | x86
         x86_64 = bits64 | x86
         arm32 = bits32 | arm
         arm64 = bits64 | arm
-        arm64e = 0x1 << 4 | arm64  # Apple
+        arm64e = 0x1 << 3 | arm64  # Apple
+
+        # Modifiers, flags that indicate additional conditions
+        # Native: Whether the Architecture is cross compiled
+        Native = CommonFlags.Native
 
         @property
         def isX86(self) -> CraftBool:
@@ -363,8 +379,8 @@ class CraftCompiler(object):
 
         @property
         def isArm64e(self) -> CraftBool:
-            arm64e = CraftCompiler.Architecture.arm64e.key
-            return CraftBool(self.key & arm64e == arm64e)
+            arm64e = CraftCompiler.Architecture.arm64e.type
+            return CraftBool(self.type & arm64e == arm64e)
 
         @property
         def is32bit(self) -> CraftBool:
@@ -416,7 +432,7 @@ class CraftCompiler(object):
                 CraftCompiler.Architecture.arm32: "armhf",
                 CraftCompiler.Architecture.arm64: "aarch64",
             }
-            return architectures.get(self.key, None)
+            return architectures[self.key]
 
         @property
         def androidArchitecture(self):
@@ -426,7 +442,7 @@ class CraftCompiler(object):
                 CraftCompiler.Architecture.arm32: "arm",
                 CraftCompiler.Architecture.arm64: "arm64",
             }
-            return architectures.get(self.key, None)
+            return architectures[self.key]
 
         @property
         def androidAbi(self):
@@ -436,7 +452,7 @@ class CraftCompiler(object):
                 CraftCompiler.Architecture.arm32: "armeabi-v7a",
                 CraftCompiler.Architecture.arm64: "arm64-v8a",
             }
-            return architectures.get(self.key, None)
+            return architectures[self.key]
 
     @unique
     class Platforms(CompilerFlags):
@@ -456,7 +472,7 @@ class CraftCompiler(object):
         # Modifiers, flags that indicate additional conditions
 
         # Native: Whether the Platform is cross compiled
-        Native = 0x1 << 17
+        Native = CommonFlags.Native
 
         @property
         def isWindows(self) -> CraftBool:
@@ -533,8 +549,8 @@ class CraftCompiler(object):
         # Modifiers, flags that indicate additional conditions
 
         # Native: Whether the Compiler is cross compiling
-        Native = 0x1 << 17
-        MinGW = 0x1 << 18
+        Native = CommonFlags.Native
+        MinGW = 0x1 << 17
 
         @property
         def isGCC(self) -> CraftBool:

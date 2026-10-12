@@ -54,8 +54,8 @@ class AutoToolsBuildSystem(BuildSystemBase):
                 targetPlatform = "darwin" if CraftCore.compiler.platform.isMacOS else "ios"
                 self.platform = Arguments(
                     [
-                        f"--host={CraftCore.compiler.architecture.key.name.lower()}-apple-darwin{os.uname().release}",
-                        f"--target={CraftCore.compiler.architecture.key.name.lower()}-apple-{targetPlatform}",
+                        f"--host={CraftCore.compiler.architecture.type.name.lower()}-apple-darwin{os.uname().release}",
+                        f"--target={CraftCore.compiler.architecture.type.name.lower()}-apple-{targetPlatform}",
                     ]
                 )
 

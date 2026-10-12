@@ -77,5 +77,5 @@ class Package(CMakePackageBase):
             CraftCore.standardDirs.craftRoot() / "dev-utils/bin/ninja",
             "arch",
             useAbsolutePath=True,
-            args=["-arch", CraftCore.compiler.hostArchitecture.key.name.lower(), str(CraftCore.standardDirs.craftRoot() / "dev-utils/ninja/bin/ninja")],
+            args=["-arch", CraftCore.compiler.hostArchitecture.type.name.lower(), str(CraftCore.standardDirs.craftRoot() / "dev-utils/ninja/bin/ninja")],
         )
