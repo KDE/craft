@@ -28,10 +28,11 @@ class AutoToolsBuildSystem(BuildSystemBase):
         ):
             self.platform = Arguments(["--host=i686-pc-linux-gnu"])
         elif CraftCore.compiler.platform.isWindows:
+            arch = "aarch64" if CraftCore.compiler.architecture.isArm64 else "x86_64"
             self.platform = Arguments(
                 [
-                    f"--host={CraftCore.compiler.architecture.type.name.lower()}-w64-mingw32",
-                    f"--target={CraftCore.compiler.architecture.type.name.lower()}-w64-mingw32",
+                    f"--host={arch}-w64-mingw32",
+                    f"--target={arch}-w64-mingw32",
                 ]
             )
         elif CraftCore.compiler.platform.isAndroid:
@@ -44,8 +45,8 @@ class AutoToolsBuildSystem(BuildSystemBase):
                 targetPlatform = "darwin" if CraftCore.compiler.platform.isMacOS else "ios"
                 self.platform = Arguments(
                     [
-                        f"--host={CraftCore.compiler.architecture.type.name.lower()}-apple-darwin{os.uname().release}",
-                        f"--target={CraftCore.compiler.architecture.type.name.lower()}-apple-{targetPlatform}",
+                        f"--host={CraftCore.compiler.architecture.key.name.lower()}-apple-darwin{os.uname().release}",
+                        f"--target={CraftCore.compiler.architecture.key.name.lower()}-apple-{targetPlatform}",
                     ]
                 )
 
