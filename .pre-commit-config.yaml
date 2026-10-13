@@ -17,3 +17,6 @@ repos:
     rev: 6.1.0
     hooks:
       - id: flake8
+        additional_dependencies: [
+            git+https://invent.kde.org/sdk/flake8-kde-craft-blueprints.git
+        ]
