@@ -40,7 +40,9 @@ class Package(BinaryPackageBase):
         # on Windows, we expect the file to be called 7za, the same applies to craft itself.
         # on Unix most apps expect 7zz, create both for compatibility
         for alias in ["7za", "7zz"]:
-            if not utils.createShim(self.imageDir() / f"dev-utils/bin/{alias}{CraftCore.compiler.platform.executableSuffix}", appPath, useAbsolutePath=True, args=args):
+            if not utils.createShim(
+                self.imageDir() / f"dev-utils/bin/{alias}{CraftCore.compiler.platform.executableSuffix}", appPath, useAbsolutePath=True, args=args
+            ):
                 return False
         return True
 

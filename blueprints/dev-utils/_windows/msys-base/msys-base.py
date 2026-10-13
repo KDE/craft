@@ -70,11 +70,10 @@ class subinfo(info.infoclass):
                 ".",
                 "pacman",
                 Arguments(
-                    [
-                        "-S"
-                    ]
-                    + basePackages +
-                    [   "--noconfirm",
+                    ["-S"]
+                    + basePackages
+                    + [
+                        "--noconfirm",
                         overwrite,
                         "--needed",
                     ]

@@ -44,7 +44,9 @@ class Package(MesonPackageBase):
         env = self._env()
         env["CFLAGS"] += " -DBOOTSTRAP_NO_SAMU "
         with utils.ScopedEnv(env):
-            return utils.system([f"{self.sourceDir()}/bootstrap{'.sh' if CraftCore.compiler.platform.isUnix else '.bat'}", self.buildDir()], cwd=self.sourceDir()) and utils.system(
+            return utils.system(
+                [f"{self.sourceDir()}/bootstrap{'.sh' if CraftCore.compiler.platform.isUnix else '.bat'}", self.buildDir()], cwd=self.sourceDir()
+            ) and utils.system(
                 [
                     f"{self.buildDir()}/muon-bootstrap",
                     "setup",

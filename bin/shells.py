@@ -11,7 +11,6 @@ from pathlib import Path
 
 import utils
 from Blueprints.CraftVersion import CraftVersion
-from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from Utils.Arguments import Arguments
@@ -112,9 +111,13 @@ class BashShell(object):
                     del self._environment["make"]
                 # MSYSTEM is used by uname
                 if CraftCore.compiler.compiler.isMinGW:
-                    self._environment["MSYSTEM"] = f"MINGW{CraftCore.compiler.architecture.bits}_CRAFT" if not CraftCore.compiler.architecture.isArm64 else "MINGW_CLANG64_CRAFT"
+                    self._environment["MSYSTEM"] = (
+                        f"MINGW{CraftCore.compiler.architecture.bits}_CRAFT" if not CraftCore.compiler.architecture.isArm64 else "MINGW_CLANG64_CRAFT"
+                    )
                 elif CraftCore.compiler.compiler.isMSVC:
-                    self._environment["MSYSTEM"] = f"MSYS{CraftCore.compiler.architecture.bits}_CRAFT" if not CraftCore.compiler.architecture.isArm64 else "MSYS_CLANG64"
+                    self._environment["MSYSTEM"] = (
+                        f"MSYS{CraftCore.compiler.architecture.bits}_CRAFT" if not CraftCore.compiler.architecture.isArm64 else "MSYS_CLANG64"
+                    )
 
                 if self.useMSVCCompatEnv and CraftCore.compiler.compiler.isMSVC:
                     automake = []
@@ -147,9 +150,7 @@ class BashShell(object):
                     )
                     if CraftCore.compiler.architecture.isX86:
                         windresArg += f" --target={'pe-i386' if CraftCore.compiler.architecture.is32bit else 'pe-x86-64'}"
-                    self._environment[
-                        "WINDRES"
-                    ] = f"windres --preprocessor=cl {windresArg}"
+                    self._environment["WINDRES"] = f"windres --preprocessor=cl {windresArg}"
                     self._environment["RC"] = f"{self._environment['WINDRES']} -O COFF"
 
                     self._environment["STRIP"] = ":"
