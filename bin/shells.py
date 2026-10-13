@@ -11,6 +11,7 @@ from pathlib import Path
 
 import utils
 from Blueprints.CraftVersion import CraftVersion
+from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from Utils.Arguments import Arguments
@@ -101,6 +102,8 @@ class BashShell(object):
                         path = f"{self.toNativePath(os.path.dirname(gcc))}:{path}"
                 elif CraftCore.compiler.compiler.isMSVC:
                     path = f"{self.toNativePath(os.path.dirname(shutil.which('cl')))}:{path}"
+                    if CraftCore.compiler.architecture.isArm64:
+                        path = f"/opt/aarch64-w64-mingw32/bin:{path}"
                 self._environment["PATH"] = f"{path}:{convertPath(os.environ['PATH'])}"
                 self._environment["PKG_CONFIG_PATH"] = convertPath(os.environ["PKG_CONFIG_PATH"])
                 self._environment["ACLOCAL_PATH"] = convertPath(os.environ["ACLOCAL_PATH"])
@@ -109,9 +112,9 @@ class BashShell(object):
                     del self._environment["make"]
                 # MSYSTEM is used by uname
                 if CraftCore.compiler.compiler.isMinGW:
-                    self._environment["MSYSTEM"] = f"MINGW{CraftCore.compiler.architecture.bits}_CRAFT"
+                    self._environment["MSYSTEM"] = f"MINGW{CraftCore.compiler.architecture.bits}_CRAFT" if not CraftCore.compiler.architecture.isArm64 else "MINGW_CLANG64_CRAFT"
                 elif CraftCore.compiler.compiler.isMSVC:
-                    self._environment["MSYSTEM"] = f"MSYS{CraftCore.compiler.architecture.bits}_CRAFT"
+                    self._environment["MSYSTEM"] = f"MSYS{CraftCore.compiler.architecture.bits}_CRAFT" if not CraftCore.compiler.architecture.isArm64 else "MSYS_CLANG64"
 
                 if self.useMSVCCompatEnv and CraftCore.compiler.compiler.isMSVC:
                     automake = []
@@ -142,9 +145,11 @@ class BashShell(object):
                             "-DWINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP",
                         ]
                     )
+                    if CraftCore.compiler.architecture.isX86:
+                        windresArg += f" --target={'pe-i386' if CraftCore.compiler.architecture.is32bit else 'pe-x86-64'}"
                     self._environment[
                         "WINDRES"
-                    ] = f"windres --target={'pe-i386' if CraftCore.compiler.architecture == CraftCore.compiler.Architecture.x86_32 else 'pe-x86-64'} --preprocessor=cl {windresArg}"
+                    ] = f"windres --preprocessor=cl {windresArg}"
                     self._environment["RC"] = f"{self._environment['WINDRES']} -O COFF"
 
                     self._environment["STRIP"] = ":"

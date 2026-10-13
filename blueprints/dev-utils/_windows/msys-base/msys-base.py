@@ -62,20 +62,19 @@ class subinfo(info.infoclass):
         except Exception as e:
             CraftCore.log.error(e, exc_info=e)
             return False
+        basePackages = ["base-devel", "msys/binutils", "msys/autoconf-archive", "msys/autotools", "msys/intltool", "msys/gettext-devel"]
+        if CraftCore.compiler.architecture.isArm64:
+            basePackages.append("msys/mingw-w64-cross-clang")
         if not (
             shell.execute(
                 ".",
                 "pacman",
                 Arguments(
                     [
-                        "-S",
-                        "base-devel",
-                        "msys/binutils",
-                        "msys/autoconf-archive",
-                        "msys/autotools",
-                        "msys/intltool",
-                        "msys/gettext-devel",
-                        "--noconfirm",
+                        "-S"
+                    ]
+                    + basePackages +
+                    [   "--noconfirm",
                         overwrite,
                         "--needed",
                     ]
