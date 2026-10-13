@@ -64,6 +64,7 @@ class subinfo(info.infoclass):
             "4.0.0",
             "4.0.1",
             "4.0.2",
+            "4.0.3",
         ]:
             self.targets[ver] = f"https://openssl.org/source/openssl-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"openssl-{ver}"
@@ -95,7 +96,7 @@ class subinfo(info.infoclass):
             f"--openssldir={OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}/etc/ssl",
         ]
 
-        self.defaultTarget = "3.6.4"
+        self.defaultTarget = "4.0.3"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
