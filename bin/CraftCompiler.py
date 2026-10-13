@@ -569,7 +569,7 @@ class CraftCompiler(object):
 
         @property
         def isMinGW(self):
-            return CraftBool(self.value & CraftCompiler.Compiler.MinGW)
+            return CraftBool((self.value & CraftCompiler.Compiler.MinGW) == CraftCompiler.Compiler.MinGW)
 
         @property
         def isMSVC(self):
