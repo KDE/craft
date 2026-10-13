@@ -51,7 +51,7 @@ class CraftCompilerSignature(object):
 
         if self.compiler and self.compiler.isGCC and self.platform.isWindows:
             # I'm pretty sure there is a more elegant solution
-            self.compiler |= CraftCompiler.Compiler.MinGW
+            self.compiler = CraftCompiler.Compiler.MinGW
 
         if not host or self.architecture.key == host.architecture.key:
             self.architecture |= CraftCompiler.Architecture.Native
@@ -547,10 +547,9 @@ class CraftCompiler(object):
 
         GCCLike = CLANG | GCC
         # Modifiers, flags that indicate additional conditions
-
+        MinGW = GCC | 0x1 << 17
         # Native: Whether the Compiler is cross compiling
         Native = CommonFlags.Native
-        MinGW = 0x1 << 17
 
         @property
         def isGCC(self) -> CraftBool:
