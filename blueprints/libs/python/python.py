@@ -113,18 +113,19 @@ if CraftCore.compiler.compiler.isMSVC:
             self.cleanImage()
             verMinor = self.subinfo.buildTarget.split(".")[1]
             debugSuffix = "_d" if self.buildType() == "Debug" else ""
+            arch = "amd64" if  CraftCore.compiler.architecture.isX86_64 else "arm64"
             for p in ["python", "pythonw", "venvlauncher", "venvwlauncher"]:
-                if not utils.copyFile(self.sourceDir() / f"PCbuild/amd64/{p}{debugSuffix}.exe", self.imageDir() / f"bin/{p}{debugSuffix}.exe"):
+                if not utils.copyFile(self.sourceDir() / f"PCbuild/{arch}/{p}{debugSuffix}.exe", self.imageDir() / f"bin/{p}{debugSuffix}.exe"):
                     return False
                 if self.buildType() == "Debug":
                     if not utils.createShim(self.imageDir() / f"bin/{p}.exe", self.imageDir() / f"bin/{p}{debugSuffix}.exe"):
                         return False
-            if not self._globCopy(self.sourceDir() / "PCbuild/amd64/", self.imageDir() / "bin", ["*.dll"]):
+            if not self._globCopy(self.sourceDir() / f"PCbuild/{arch}", self.imageDir() / "bin", ["*.dll"]):
                 return False
             for p in ["python3", f"python3{verMinor}"]:
-                if not utils.copyFile(self.sourceDir() / f"PCbuild/amd64/{p}{debugSuffix}.lib", self.imageDir() / f"lib/{p}.lib"):
+                if not utils.copyFile(self.sourceDir() / f"PCbuild/{arch}/{p}{debugSuffix}.lib", self.imageDir() / f"lib/{p}.lib"):
                     return False
-            if not self._globCopy(self.sourceDir() / "PCbuild/amd64/", self.imageDir() / "bin/DLLs", ["*.pyd"]):
+            if not self._globCopy(self.sourceDir() / f"PCbuild/{arch}", self.imageDir() / "bin/DLLs", ["*.pyd"]):
                 return False
             if not utils.copyDir(self.sourceDir() / "Include/", self.imageDir() / f"include/python3.{verMinor}"):
                 return False
