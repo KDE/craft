@@ -79,7 +79,7 @@ def unpackFile(downloaddir, filename, workdir, keepSymlinksOnWindows=True, seven
     if not filename:
         return True
 
-    (shortname, ext) = os.path.splitext(filename)
+    shortname, ext = os.path.splitext(filename)
     if ext == "":
         CraftCore.log.warning(f"unpackFile called on invalid file extension {filename}")
         return True
@@ -1086,8 +1086,8 @@ def isExecuatable(fileName: Path, includeShellScripts=False):
 
 def isBinary(fileName: str) -> bool:
     # https://en.wikipedia.org/wiki/List_of_file_signatures
-    MACH_O_64 = b"\xCF\xFA\xED\xFE"
-    ELF = b"\x7F\x45\x4C\x46"
+    MACH_O_64 = b"\xcf\xfa\xed\xfe"
+    ELF = b"\x7f\x45\x4c\x46"
 
     fileName = Path(fileName)
     suffix = fileName.suffix.lower()

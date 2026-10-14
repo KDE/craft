@@ -73,7 +73,7 @@ class VersionSystemSourceBase(SourceBase):
         CraftCore.debug.trace("VersionSystemSourceBase repositoryUrl")
         if self.subinfo.hasSvnTarget():
             u1 = self.getUrl(index)
-            (u, _) = self.splitUrl(u1)
+            u, _ = self.splitUrl(u1)
             # check relative kde url
             # @todo this is svn specific - move to SvnSource
             if u.find("://") == -1 and utils.getVCSType(u) == "svn":
@@ -93,7 +93,7 @@ class VersionSystemSourceBase(SourceBase):
         CraftCore.debug.trace("VersionSystemSourceBase repositoryUrlOptions")
         if self.subinfo.hasSvnTarget():
             u = self.getUrl(index)
-            (dummy, option) = self.splitUrl(u)
+            dummy, option = self.splitUrl(u)
             return option
         return None
 

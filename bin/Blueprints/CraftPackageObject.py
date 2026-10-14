@@ -147,7 +147,7 @@ class CraftPackageObject(object):
         self.children = {}
         self.source = None
         self._pattern = None
-        self.categoryInfo = None  # type:CategoryPackageObject
+        self.categoryInfo = None  # type: CategoryPackageObject
         self._version = None
         self._instance = None
         self.__path = None

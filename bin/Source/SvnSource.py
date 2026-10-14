@@ -25,7 +25,7 @@ class SvnSource(VersionSystemSourceBase):
         CraftCore.debug.trace("SvnSource.checkoutDir")
         if self.subinfo.hasSvnTarget():
             u = self.getUrl(index)
-            (url, _) = self.splitUrl(u)
+            url, _ = self.splitUrl(u)
             url = url.replace("[svn]", "")
 
             if url.find("://") == -1:
@@ -123,11 +123,11 @@ class SvnSource(VersionSystemSourceBase):
         by searching the predefined root subdirectories 'trunk', 'branches'
         and 'tags' which will probably fit for most servers
         """
-        (urlBase, urlPath) = self.__splitPath(url)
+        urlBase, urlPath = self.__splitPath(url)
         if urlPath is None:
             return self.__checkout(url, sourcedir, recursive)
 
-        (srcBase, srcPath) = self.__splitPath(sourcedir)
+        srcBase, srcPath = self.__splitPath(sourcedir)
         if srcPath is None:
             return self.__checkout(url, sourcedir, recursive)
 

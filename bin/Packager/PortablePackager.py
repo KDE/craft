@@ -18,12 +18,10 @@ _packagerBase = MacBasePackager if CraftCore.compiler.platform.isMacOS else Coll
 class PortablePackager(_packagerBase, SevenZipPackager):  # type: ignore[valid-type]
     """Packager for portal 7zip archives"""
 
-    LocalSignSh = textwrap.dedent(
-        """\
+    LocalSignSh = textwrap.dedent("""\
         #!/bin/sh
         codesign -s - -f --deep --preserve-metadata=identifier,entitlements '{setupname}'
-        """
-    )
+        """)
 
     @InitGuard.init_once
     def __init__(self, **kwargs):

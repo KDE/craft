@@ -34,6 +34,7 @@ Main entry point for the craft test suite.
 
 Just run this file as a python script to execute all tests
 """
+
 import sys
 
 # enable warnings

@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
 """
-    provides shells
+provides shells
 """
+
 import os
 import platform
 import shutil

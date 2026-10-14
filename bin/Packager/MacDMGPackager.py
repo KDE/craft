@@ -37,8 +37,7 @@ class MacDMGPackager(MacBasePackager):
 
         dmgSettings = self.workDir() / f"{self.package.name}-dmgbuild.py"
         with dmgSettings.open("w", encoding="UTF-8") as tmp:
-            tmp.write(
-                f"""
+            tmp.write(f"""
 # https://dmgbuild.readthedocs.io/en/latest/example.html
 import os
 import plistlib
@@ -78,8 +77,7 @@ icon_size = 128
 
 
 format = "ULMO"
-"""
-            )
+""")
 
         if not utils.system(
             [

@@ -133,15 +133,13 @@ class MesonBuildSystem(BuildSystemBase):
         elif CraftCore.compiler.platform.isMacOS:
             # based on https://github.com/mesonbuild/meson-python/blob/main/mesonpy/__init__.py#L687
             arch = CraftCore.compiler.architecture.type.name.lower()
-            config = textwrap.dedent(
-                f"""
+            config = textwrap.dedent(f"""
                         [binaries]
                         c = ['cc', '-arch', {arch!r}]
                         cpp = ['c++', '-arch', {arch!r}]
                         objc = ['cc', '-arch', {arch!r}]
                         objcpp = ['c++', '-arch', {arch!r}]
-                    """
-            )
+                    """)
             args = ["--native-file", craftCrossFilePath]
         if config:
             with craftCrossFilePath.open("wt", encoding="UTF-8") as f:

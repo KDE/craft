@@ -181,10 +181,8 @@ class InstallDB(object):
         cursor.execute(cmd, tuple(params))
         installedPackage = cursor.fetchall()
         if installedPackage:
-            InstallDB.log(
-                f"""The package {package} has been installed with
-                            version '{version}'."""
-            )
+            InstallDB.log(f"""The package {package} has been installed with
+                            version '{version}'.""")
         else:
             InstallDB.log(f"""Couldn't find a trace that the package {package} has been installed with version '{version}'""")
         cursor.close()
@@ -262,14 +260,10 @@ class InstallDB(object):
             cursor = self.connection.cursor()
 
             # first, create the required tables
-            cursor.execute(
-                """CREATE TABLE packageList (packageId INTEGER PRIMARY KEY AUTOINCREMENT,
-                               prefix TEXT, packagePath TEXT, version TEXT, revision TEXT, cacheVersion TEXT)"""
-            )
-            cursor.execute(
-                """CREATE TABLE fileList (fileId INTEGER PRIMARY KEY AUTOINCREMENT,
-                               packageId INTEGER, filename TEXT, fileHash TEXT)"""
-            )
+            cursor.execute("""CREATE TABLE packageList (packageId INTEGER PRIMARY KEY AUTOINCREMENT,
+                               prefix TEXT, packagePath TEXT, version TEXT, revision TEXT, cacheVersion TEXT)""")
+            cursor.execute("""CREATE TABLE fileList (fileId INTEGER PRIMARY KEY AUTOINCREMENT,
+                               packageId INTEGER, filename TEXT, fileHash TEXT)""")
             cursor.execute(f"""PRAGMA user_version={InstallDB.SCHEMA_VERSION};""")
             self.connection.commit()
         else:
