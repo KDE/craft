@@ -29,7 +29,7 @@ class subinfo(info.infoclass):
             self.targetInstSrc[ver] = f"muon-v{ver}"
         self.targetDigests["0.6.0"] = (["90a8428bc2178c59b9f7ddd1cb1cc6355f4df0c3ac023f7eefd159ae4f054024"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["0.7.0"] = (["573a3137e2a478e84e71dbbaf874623f7bc9848cf3367c948016ed284e8d637c"], CraftHash.HashAlgorithm.SHA256)
-        if CraftCore.compiler.architecture.isArm64:
+        if CraftCore.compiler.architecture.isArm64 and CraftCore.compiler.platform.isWindows:
             self.patchToApply["0.7.0"] = [("muon-arm64.patch", 1)]
 
         self.defaultTarget = "0.7.0"
@@ -64,7 +64,9 @@ class Package(MesonPackageBase):
                     "-Dsamurai=disabled",
                     "-Dlibarchive=disabled",
                     "-Dmeson-docs=disabled",
+                    "-Ddocs=disabled",
                     "-Dman-pages=disabled",
+                    "-Dtracy=disabled",
                     f"-Dprefix={self.installPrefix()}",
                     self.buildDir(),
                 ],
