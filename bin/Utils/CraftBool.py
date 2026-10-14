@@ -19,19 +19,19 @@ class CraftBool(object):
 
     @property
     def asOnOff(self):
-        return "ON" if self.value else "OFF"
+        return "ON" if self.value else "OFF"  # noqa: KCR100
 
     @property
     def asYesNo(self):
-        return "yes" if self.value else "no"
+        return "yes" if self.value else "no"  # noqa: KCR100
 
     @property
     def asEnableDisable(self):
-        return "enable" if self.value else "disable"
+        return "enable" if self.value else "disable"  # noqa: KCR100
 
     @property
     def asEnabledDisabled(self):
-        return "enabled" if self.value else "disabled"
+        return "enabled" if self.value else "disabled"  # noqa: KCR100
 
     @property
     def inverted(self) -> "CraftBool":

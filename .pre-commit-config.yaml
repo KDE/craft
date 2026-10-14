@@ -3,17 +3,20 @@
 
 repos:
   - repo: https://github.com/ambv/black
-    rev: 23.10.0
+    rev: 26.10.1
     hooks:
     - id: black
 
   - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
+    rev: 9.0.2
     hooks:
       - id: isort
         args: ["--profile", "black", "--filter-files"]
 
   - repo: https://github.com/pycqa/flake8
-    rev: 6.1.0
+    rev: 7.4.1
     hooks:
       - id: flake8
+        additional_dependencies: [
+            git+https://invent.kde.org/sdk/flake8-kde-craft-blueprints.git
+        ]
