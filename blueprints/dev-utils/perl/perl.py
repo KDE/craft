@@ -153,12 +153,12 @@ class PackageAutoTools(AutoToolsPackageBase):
             ldflags += " -m32"
             self.subinfo.options.configure.args += ["-Alddlflags=-m32 -shared", "-Uuse64bitint -Uuse64bitall"]
         if CraftCore.compiler.platform.isMacOS and not CraftCore.compiler.architecture.isNative:
-            cflags = f"-arch {CraftCore.compiler.architecture.type.name.lower()} {cflags}"
-            ldflags = f"-arch {CraftCore.compiler.architecture.type.name.lower()} {ldflags}"
+            cflags = f"-arch {CraftCore.compiler.architecture.key.name.lower()} {cflags}"
+            ldflags = f"-arch {CraftCore.compiler.architecture.key.name.lower()} {ldflags}"
             self.subinfo.options.configure.args += [
-                f"-Dcc={os.environ['CC']} -arch {CraftCore.compiler.architecture.type.name.lower()}",
-                f"-Dcxx={os.environ['CXX']} -arch {CraftCore.compiler.architecture.type.name.lower()}",
-                f"-Dld={os.environ['CC']} -arch {CraftCore.compiler.architecture.type.name.lower()}",
+                f"-Dcc={os.environ['CC']} -arch {CraftCore.compiler.architecture.key.name.lower()}",
+                f"-Dcxx={os.environ['CXX']} -arch {CraftCore.compiler.architecture.key.name.lower()}",
+                f"-Dld={os.environ['CC']} -arch {CraftCore.compiler.architecture.key.name.lower()}",
             ]
         # TODO: fix use
         # if CraftCore.compiler.platform.isMacOS:

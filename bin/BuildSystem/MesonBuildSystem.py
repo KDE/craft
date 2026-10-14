@@ -132,7 +132,7 @@ class MesonBuildSystem(BuildSystemBase):
             args = ["--cross-file", craftCrossFilePath]
         elif CraftCore.compiler.platform.isMacOS:
             # based on https://github.com/mesonbuild/meson-python/blob/main/mesonpy/__init__.py#L687
-            arch = CraftCore.compiler.architecture.type.name.lower()
+            arch = CraftCore.compiler.architecture.key.name.lower()
             config = textwrap.dedent(f"""
                         [binaries]
                         c = ['cc', '-arch', {arch!r}]
