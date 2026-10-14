@@ -106,8 +106,10 @@ class Package(AutoToolsPackageBase):
             "gl_cv_libxml_force_included=no",
             "gl_cv_libxml_use_included=no",
         ]
+        if CraftCore.compiler.compiler.isGCCLike:
+            self.subinfo.options.configure.ldflags = " -liconv -lxml2"
 
-        if CraftCore.compiler.compiler.isMSVC:
+        if CraftCore.compiler.compiler.isMSVC or CraftCore.compiler.platform.isMacOS:
             self.subinfo.options.configure.args += ["am_cv_func_iconv_works=yes"]  # https://savannah.gnu.org/bugs/index.php?66541
 
         if CraftCore.compiler.compiler.isMSVC:
