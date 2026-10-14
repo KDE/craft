@@ -327,7 +327,12 @@ def systemWithoutShell(
             kw["stderr"] = subprocess.STDOUT
         kw["stdout"] = subprocess.PIPE
 
-        proc = subprocess.Popen(cmd, **kw)
+        try:
+            proc = subprocess.Popen(cmd, **kw)
+        except Exception as e:
+            CraftCore.log.error(f"Failed to execute command: {cmd}")
+            CraftCore.log.error(f"Error: {e}")
+            return False
         if pipeProcess:
             pipeProcess.stdout.close()
         for line in proc.stdout:
