@@ -1,0 +1,14 @@
+diff -Nrub -x '*~' -x '*.rej' -x '*.orig' -x '*.o' -x '*.pyc' -x CMakeLists.txt.user -x .idea -x .clang-format muon-v0.7.0.orig/src/script/runtime/toolchains.meson muon-v0.7.0/src/script/runtime/toolchains.meson
+--- muon-v0.7.0.orig/src/script/runtime/toolchains.meson	2026-10-04 12:36:27.000000000 +0200
++++ muon-v0.7.0/src/script/runtime/toolchains.meson	2026-10-14 14:40:38.825036500 +0200
+@@ -277,8 +277,8 @@
+     exe: 'link',
+     handlers: {
+         'always': func(c compiler) -> list[str]
+-            m = c.machine().address_bits() == 64 ? '64' : '86'
+-            return ['/NOLOGO', f'/MACHINE:X@m@']
++            m = c.machine().address_bits() == 64 ? 'arm64' : '86'
++            return ['/NOLOGO', f'/MACHINE:@m@']
+         endfunc,
+         'check_ignored_option': func(_c compiler, s str) -> bool
+             # Check for link command line warning LNK4044: unrecognized option

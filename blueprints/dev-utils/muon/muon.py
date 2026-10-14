@@ -24,12 +24,15 @@ class subinfo(info.infoclass):
         self.webpage = "https://muon.build/"
         self.releaseManagerId = 375420
 
-        for ver in ["0.6.0"]:
+        for ver in ["0.6.0", "0.7.0"]:
             self.targets[ver] = f"https://muon.build/releases/v{ver}/muon-v{ver}.tar.gz"
-            self.targetDigests[ver] = (["90a8428bc2178c59b9f7ddd1cb1cc6355f4df0c3ac023f7eefd159ae4f054024"], CraftHash.HashAlgorithm.SHA256)
             self.targetInstSrc[ver] = f"muon-v{ver}"
+        self.targetDigests["0.6.0"] = (["90a8428bc2178c59b9f7ddd1cb1cc6355f4df0c3ac023f7eefd159ae4f054024"], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigests["0.7.0"] = (["573a3137e2a478e84e71dbbaf874623f7bc9848cf3367c948016ed284e8d637c"], CraftHash.HashAlgorithm.SHA256)
+        if CraftCore.compiler.architecture.isArm64:
+            self.patchToApply["0.7.0"] = [("muon-arm64.patch", 1)]
 
-        self.defaultTarget = "0.6.0"
+        self.defaultTarget = "0.7.0"
 
 
 class Package(MesonPackageBase):
