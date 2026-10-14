@@ -48,7 +48,7 @@ class Package(MesonPackageBase):
                 [f"{self.sourceDir()}/bootstrap{'.sh' if CraftCore.compiler.platform.isUnix else '.bat'}", self.buildDir()], cwd=self.sourceDir()
             ) and utils.system(
                 [
-                    f"{self.buildDir()}/muon-bootstrap",
+                    f"{self.buildDir()}/muon-bootstrap{CraftCore.compiler.platform.executableSuffix}",
                     "setup",
                     "-Dlibcurl=disabled",
                     "-Dlibpkgconf=disabled",
