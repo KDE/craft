@@ -67,7 +67,7 @@ class CMakeBuildSystem(BuildSystemBase):
         if CraftCore.compiler.platform.isWindows:
             # people use InstallRequiredSystemLibraries.cmake wrong and unconditionally install the
             # msvc crt...
-            options.append("-DCMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP=ON")
+            options += ["-DCMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP=ON", f"-DCMAKE_SYSTEM_PROCESSOR={CraftCore.compiler.architecture.key.name}"]
         elif CraftCore.compiler.platform.isMacOS:
             options += [
                 f"-DKDE_INSTALL_BUNDLEDIR={OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}/Applications/KDE",
