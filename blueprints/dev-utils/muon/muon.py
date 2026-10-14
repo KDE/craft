@@ -4,6 +4,7 @@
 from pathlib import Path
 
 import info
+import shells
 import utils
 from CraftCore import CraftCore
 from Package.MesonPackageBase import MesonPackageBase
@@ -44,9 +45,14 @@ class Package(MesonPackageBase):
         env = self._env()
         env["CFLAGS"] += " -DBOOTSTRAP_NO_SAMU "
         with utils.ScopedEnv(env):
+            if CraftCore.compiler.compiler.isMSVC:
+                if not utils.system([f"{self.sourceDir()}/bootstrap.bat", self.buildDir()], cwd=self.sourceDir()):
+                    return False
+            else:
+                bash = shells.BashShell()
+                if not bash.execute(self.sourceDir(), f"{self.sourceDir()}/bootstrap.sh", bash.toNativePath(self.buildDir())):
+                    return False
             return utils.system(
-                [f"{self.sourceDir()}/bootstrap{'.sh' if CraftCore.compiler.platform.isUnix else '.bat'}", self.buildDir()], cwd=self.sourceDir()
-            ) and utils.system(
                 [
                     f"{self.buildDir()}/muon-bootstrap{CraftCore.compiler.platform.executableSuffix}",
                     "setup",
