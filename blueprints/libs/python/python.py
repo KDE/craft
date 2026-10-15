@@ -113,7 +113,7 @@ if CraftCore.compiler.compiler.isMSVC:
             self.cleanImage()
             verMinor = self.subinfo.buildTarget.split(".")[1]
             debugSuffix = "_d" if self.buildType() == "Debug" else ""
-            arch = "amd64" if  CraftCore.compiler.architecture.isX86_64 else "arm64"
+            arch = "amd64" if CraftCore.compiler.architecture.isX86_64 else "arm64"
             for p in ["python", "pythonw", "venvlauncher", "venvwlauncher"]:
                 if not utils.copyFile(self.sourceDir() / f"PCbuild/{arch}/{p}{debugSuffix}.exe", self.imageDir() / f"bin/{p}{debugSuffix}.exe"):
                     return False
