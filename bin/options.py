@@ -532,7 +532,7 @@ class OptionsMake(OptionsBase):
         # options for the make tool
         self.args = Arguments()
         self.supportsMultijob = True
-        self.parallelMakeJobs = CraftCore.settings.get("Compile", "Jobs", multiprocessing.cpu_count())
+        self.parallelMakeJobs = int(CraftCore.settings.get("Compile", "Jobs", multiprocessing.cpu_count()))
 
     @property
     @deprecated("options.make.args")
