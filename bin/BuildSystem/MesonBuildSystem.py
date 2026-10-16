@@ -21,7 +21,6 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-import multiprocessing
 import os
 import textwrap
 
@@ -200,7 +199,7 @@ class MesonBuildSystem(BuildSystemBase):
             if ("Compile", "Jobs") in CraftCore.settings:
                 defines += [
                     "-j",
-                    str(CraftCore.settings.get("Compile", "Jobs", multiprocessing.cpu_count())),
+                    self.subinfo.options.make.parallelMakeJobs,
                 ]
         if args:
             defines.append(args)

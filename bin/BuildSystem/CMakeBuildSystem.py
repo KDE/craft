@@ -5,7 +5,6 @@
 
 """@package provides cmake build system"""
 
-import multiprocessing
 import os
 from pathlib import Path
 
@@ -206,7 +205,7 @@ class CMakeBuildSystem(BuildSystemBase):
                 "--timeout",
                 "300",
                 "-j",
-                str(CraftCore.settings.get("Compile", "Jobs", multiprocessing.cpu_count())),
+                self.subinfo.options.make.parallelMakeJobs,
             ]
             if CraftCore.debug.verbose() == 1:
                 command += ["-V"]

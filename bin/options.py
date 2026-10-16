@@ -8,6 +8,7 @@
 import atexit
 import collections
 import configparser
+import multiprocessing
 import os
 import re
 import zlib
@@ -531,6 +532,7 @@ class OptionsMake(OptionsBase):
         # options for the make tool
         self.args = Arguments()
         self.supportsMultijob = True
+        self.parallelMakeJobs = CraftCore.settings.get("Compile", "Jobs", multiprocessing.cpu_count())
 
     @property
     @deprecated("options.make.args")

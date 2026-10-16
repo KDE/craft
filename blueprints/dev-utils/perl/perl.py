@@ -1,4 +1,3 @@
-import multiprocessing
 import os
 from pathlib import Path
 
@@ -76,7 +75,7 @@ class PackageMSVC(MakeFilePackageBase):
             config["CRAFT_CFLAGS"] = f"{os.environ.get('CFLAGS', '')} -I'{root}/include' -L'{root}/lib' -Wno-error=implicit-function-declaration"
             config["USE_MINGW_ANSI_STDIO"] = "define"
             config["CCTYPE"] = "GCC"
-            self.subinfo.options.make.args += [f"-j{CraftCore.settings.get('Compile', 'Jobs', multiprocessing.cpu_count())}"]
+            self.subinfo.options.make.args += [f"-j{self.subinfo.options.make.parallelMakeJobs}"]
         elif CraftCore.compiler.compiler.isMSVC:
             config["ARCHITECTURE"] = "ARM64" if CraftCore.compiler.architecture.isArm64 else "AMD64"
             config["PROCESSOR_ARCHITECTURE"] = config["ARCHITECTURE"]

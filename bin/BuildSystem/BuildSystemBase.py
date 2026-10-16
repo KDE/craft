@@ -25,7 +25,6 @@
 
 
 import io
-import multiprocessing
 import os
 import re
 import subprocess
@@ -142,7 +141,7 @@ class BuildSystemBase(CraftBase):
             if makeProgram not in {"ninja", "jom"} or ("Compile", "Jobs") in CraftCore.settings:
                 defines += [
                     "-j",
-                    str(CraftCore.settings.get("Compile", "Jobs", multiprocessing.cpu_count())),
+                    self.subinfo.options.make.parallelMakeJobs,
                 ]
 
         if args:
