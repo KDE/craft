@@ -41,14 +41,14 @@ class AutoToolsBuildSystem(BuildSystemBase):
             else:
                 self.platform = Arguments([f"--host={CraftCore.compiler.architecture.androidArchitecture}-linux-android"])
         elif CraftCore.compiler.hostPlatform.isApple:
-            if not CraftCore.compiler.platform.isNative or not CraftCore.compiler.architecture.isNative:
-                targetPlatform = "darwin" if CraftCore.compiler.platform.isMacOS else "ios"
-                self.platform = Arguments(
-                    [
-                        f"--host={CraftCore.compiler.architecture.key.name.lower()}-apple-darwin{os.uname().release}",
-                        f"--target={CraftCore.compiler.architecture.key.name.lower()}-apple-{targetPlatform}",
-                    ]
-                )
+            targetPlatform = "darwin" if CraftCore.compiler.platform.isMacOS else "ios"
+            version = os.uname().release if CraftCore.compiler.platform.isMacOS else ""
+            self.platform = Arguments(
+                [
+                    f"--host={CraftCore.compiler.architecture.key.name.lower()}-apple-{targetPlatform}{version}",
+                    f"--target={CraftCore.compiler.architecture.key.name.lower()}-apple-{targetPlatform}{version}",
+                ]
+            )
 
     @property
     def makeProgram(self):
