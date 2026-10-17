@@ -45,6 +45,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
             version = os.uname().release if CraftCore.compiler.platform.isMacOS else ""
             self.platform = Arguments(
                 [
+                    f"--build={CraftCore.compiler.hostArchitecture.key.name.lower()}-apple-{targetPlatform}{os.uname().release}",
                     f"--host={CraftCore.compiler.architecture.key.name.lower()}-apple-{targetPlatform}{version}",
                     f"--target={CraftCore.compiler.architecture.key.name.lower()}-apple-{targetPlatform}{version}",
                 ]
