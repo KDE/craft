@@ -35,7 +35,7 @@ class Package(BinaryPackageBase):
         else:
             appPath /= "7zz"
         if CraftCore.compiler.platform.isMacOS and not CraftCore.compiler.architecture.isNative:
-            args = ["-arch", CraftCore.compiler.hostArchitecture.name.lower(), str(appPath)]
+            args = ["-arch", CraftCore.compiler.hostArchitecture.key.name.lower(), str(appPath)]
             appPath = "arch"
         # on Windows, we expect the file to be called 7za, the same applies to craft itself.
         # on Unix most apps expect 7zz, create both for compatibility
