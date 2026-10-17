@@ -533,11 +533,11 @@ class SetupHelper(object):
 
         if CraftCore.compiler.compiler.isClang:
             if CraftCore.compiler.platform.isAndroid:
-                if CraftCore.compiler.architecture & CraftCore.compiler.Architecture.arm64:
+                if CraftCore.compiler.architecture.isArm64:
                     compiler = "aarch64-linux-android"
-                elif CraftCore.compiler.architecture & CraftCore.compiler.Architecture.arm32:
+                elif CraftCore.compiler.architecture.isArm32:
                     compiler = "armv7a-linux-androideabi"
-                elif CraftCore.compiler.architecture & CraftCore.compiler.Architecture.x86_32:
+                elif CraftCore.compiler.architecture.isX86_32:
                     compiler = "i686-linux-android"
                 else:
                     compiler = f"{CraftCore.compiler.androidArchitecture}-linux-android"
