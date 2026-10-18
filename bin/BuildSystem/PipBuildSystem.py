@@ -99,7 +99,7 @@ class PipBuildSystem(BuildSystemBase):
                     "TMPDIR": tmpDir,
                 }
             )
-        elif CraftCore.compiler.platform.isMacOS and not CraftCore.compiler.platform.isNative:
+        elif CraftCore.compiler.platform.isMacOS and not CraftCore.compiler.architecture.isNative:
             arch = CraftCore.compiler.architecture.key.name.lower()
             env["CC"] = f"{env['CC']} -arch {arch}"
             env["CXX"] = f"{env['CXX']} -arch {arch}"
