@@ -74,9 +74,21 @@ class TestCategoryPackageObjectIsActive(CraftTestBase.CraftTestBase):
 
     def test_architecture(self):
         self._setTarget("macos-clang-arm64")
+        self.assertTrue(CraftCore.compiler.architecture.isNative)
         self.assertTrue(self._category("arm64", architecture="arm64").isActive)
+        self.assertTrue(self._category("native", architecture="Native").isActive)
+        self.assertTrue(self._category("native", platform="Native").isActive)
         self.assertFalse(self._category("x86_64", architecture="x86_64").isActive)
         self.assertFalse(self._category("notArm64", architecture="~arm64").isActive)
+
+    def test_architectureMacX86CrossRosetta(self):
+        self._setTarget("macos-clang-x86_64", "macos-clang-arm64")
+        self.assertFalse(CraftCore.compiler.architecture.isNative)
+        self.assertFalse(self._category("arm64", architecture="arm64").isActive)
+        self.assertFalse(self._category("native", architecture="Native").isActive)
+        self.assertTrue(self._category("native", platform="Native").isActive)
+        self.assertTrue(self._category("x86_64", architecture="x86_64").isActive)
+        self.assertTrue(self._category("notArm64", architecture="~arm64").isActive)
 
     def test_combined(self):
         self._setTarget("windows-cl-msvc2022-arm64")
