@@ -255,7 +255,9 @@ class ArchiveSource(SourceBase):
                 CraftCore.log.debug(f"unpacking this file: {filename}")
                 if not utils.unpackFile(self.__downloadDir, filename, tmpdir):
                     return False
-
+                if self.subinfo.options.unpack.renameSourceDir:
+                    if not utils.moveFile(tmpdir / super().sourceDir().name, tmpdir / "src"):
+                        return False
             patches = self.subinfo.patchesToApply()
             if not isinstance(patches, list):
                 patches = [patches]
