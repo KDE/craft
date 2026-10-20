@@ -24,7 +24,7 @@ class subinfo(info.infoclass):
 class Package(CMakePackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.subinfo.options.configure.args += ["-DBZIP2_SKIP_TOOLS=OFF"]
+        self.subinfo.options.configure.args += [f"-DBZIP2_SKIP_TOOLS={self.subinfo.options.dynamic.buildTools.inverted.asOnOff}"]
 
     def unpack(self):
         if not super().unpack():
@@ -35,14 +35,15 @@ class Package(CMakePackageBase):
         if not super().install():
             return False
 
-        # Install bunzip2 symlink to bzip2, the behavior is altered in bzip2.c code by checking the program name.
-        # See https://gitlab.com/bzip2/bzip2/-/blob/master/CMakeLists.txt?ref_type=heads#L378
-        # We do it here be cause it is easier than to hack our CMake patch further.
-        # CMake support has been added upstream and hopefully we can drop it all together ones version 1.1 is out
-        linkSource = self.imageDir() / "bin" / f"bzip2{CraftCore.compiler.platform.executableSuffix}"
-        linkTarget = self.imageDir() / "bin" / f"bunzip2{CraftCore.compiler.platform.executableSuffix}"
-        if not utils.createShim(linkTarget, linkSource, keepArgv0=True):
-            return False
+        if self.subinfo.options.dynamic.buildTools:
+            # Install bunzip2 symlink to bzip2, the behavior is altered in bzip2.c code by checking the program name.
+            # See https://gitlab.com/bzip2/bzip2/-/blob/master/CMakeLists.txt?ref_type=heads#L378
+            # We do it here be cause it is easier than to hack our CMake patch further.
+            # CMake support has been added upstream and hopefully we can drop it all together ones version 1.1 is out
+            linkSource = self.imageDir() / "bin" / f"bzip2{CraftCore.compiler.platform.executableSuffix}"
+            linkTarget = self.imageDir() / "bin" / f"bunzip2{CraftCore.compiler.platform.executableSuffix}"
+            if not utils.createShim(linkTarget, linkSource, keepArgv0=True):
+                return False
         bzname = "bz2"
         if self.buildType() == "Debug" and CraftCore.compiler.compiler.isMSVC:
             bzname = "libbz2d"
