@@ -73,12 +73,12 @@ class BuildSystemBase(CraftBase):
     @property
     def makeProgram(self) -> Optional[str]:
         if self.subinfo.options.make.supportsMultijob:
-            if self.supportsNinja and CraftCore.settings.getboolean("Compile", "UseNinja", False) and CraftCore.cache.findApplication("ninja"):
-                return CraftCore.cache.findApplication("ninja")
+            if self.supportsNinja and CraftCore.settings.getboolean("Compile", "UseNinja", False) and (ninja := CraftCore.cache.findApplication("ninja")):
+                return ninja
             if ("Compile", "MakeProgram") in CraftCore.settings:
                 makeProgram = CraftCore.settings.get("Compile", "MakeProgram")
                 CraftCore.log.debug(f"set custom make program: {makeProgram}")
-                if makeProgram := CraftCore.cache.findApplication(makeProgram):
+                if makeProgram := CraftCore.cache.findApplication(makeProgram, forceCache=True):
                     return makeProgram
                 else:
                     CraftCore.log.warning(f"Failed to find {CraftCore.settings.get('Compile', 'MakeProgram')}")
@@ -91,15 +91,15 @@ class BuildSystemBase(CraftBase):
                 if self.subinfo.options.make.supportsMultijob and CraftCore.cache.findApplication("jom"):
                     return CraftCore.cache.findApplication("jom")
                 else:
-                    return CraftCore.cache.findApplication("nmake")
+                    return CraftCore.cache.findApplication("nmake", forceCache=True)
             elif CraftCore.compiler.compiler.isMinGW:
                 return CraftCore.cache.findApplication("mingw32-make")
             else:
                 CraftCore.log.critical(f"unknown {CraftCore.compiler} compiler")
         elif OsUtils.isFreeBSD():
-            return CraftCore.cache.findApplication("gmake")
+            return CraftCore.cache.findApplication("gmake", forceCache=True)
         elif OsUtils.isUnix():
-            return CraftCore.cache.findApplication("make")
+            return CraftCore.cache.findApplication("make", forceCache=True)
         return None
 
     def configureSourceDir(self):
