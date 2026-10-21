@@ -171,7 +171,7 @@ class BashShell(object):
             if CraftCore.compiler.platform.isAndroid:
                 toolchainPath = os.path.join(
                     CraftCore.standardDirs.tmpDir(),
-                    f"android-{CraftCore.compiler.architecture}-toolchain",
+                    f"android-{CraftCore.compiler.architecture.key.name}-toolchain",
                 )
                 utils.system(
                     [
