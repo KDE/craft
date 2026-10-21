@@ -540,7 +540,7 @@ class SetupHelper(object):
                 elif CraftCore.compiler.architecture.isX86_32:
                     compiler = "i686-linux-android"
                 else:
-                    compiler = f"{CraftCore.compiler.androidArchitecture}-linux-android"
+                    compiler = f"{CraftCore.compiler.architecture.androidArchitecture}-linux-android"
                 ndk_path = os.path.join(os.environ["ANDROID_NDK"], "toolchains/llvm/prebuilt", os.environ.get("ANDROID_NDK_HOST", "linux-x86_64"), "bin")
 
                 self.addEnvVar("CC", f"{ndk_path}/{compiler}{CraftCore.compiler.androidApiLevel()}-clang")
