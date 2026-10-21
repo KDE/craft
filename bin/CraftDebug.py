@@ -143,6 +143,8 @@ class CraftDebug(object):
         if CraftCore.settings.getboolean("CraftDebug", "LogEnvironment", True):
             if not env:
                 env = os.environ
+            else:
+                env = {k: str(v) for k, v in env.items()}
             out = {}
             for key, value in env.items():
                 if key.startswith("CRAFT_SECRET_"):
