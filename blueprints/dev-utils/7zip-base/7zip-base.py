@@ -1,6 +1,7 @@
 import info
 from CraftCore import CraftCore
 from Package.BinaryPackageBase import BinaryPackageBase
+from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
@@ -12,13 +13,14 @@ class subinfo(info.infoclass):
         self.webpage = "http://www.7-zip.org/"
         self.releaseManagerId = 372314
 
-        for ver in ["24.09", "25.00", "25.01", "26.01", "26.04"]:
+        for ver in ["26.05"]:
             verNoDot = ver.replace(".", "")
             self.targetInstallPath[ver] = "dev-utils/7z"
             if CraftCore.compiler.platform.isWindows:
-                self.targets[ver] = f"https://files.kde.org/craft/3rdparty/7zip/7z{verNoDot}-extra.tar.xz"
-                self.targetInstSrc[ver] = f"7z{verNoDot}-extra"
-                self.targetDigestUrls[ver] = self.targets[ver] + ".sha256"
+                self.targets[ver] = (
+                    f"https://github.com/TheOneRing/7zipzip/releases/download/{ver}/7zip-extra-{ver}-{CraftCore.compiler.architecture.key.name.lower()}.zip"
+                )
+                self.targetDigestUrls[ver] = (f"https://github.com/TheOneRing/7zipzip/releases/download/{ver}/SHA256.txt", CraftHash.HashAlgorithm.SHA256)
             elif CraftCore.compiler.platform.isLinux:
                 arch = "x64"
                 if CraftCore.compiler.architecture & CraftCore.compiler.Architecture.arm:
@@ -27,7 +29,7 @@ class subinfo(info.infoclass):
             else:
                 self.targets[ver] = f"https://7-zip.org/a/7z{verNoDot}-mac.tar.xz"
 
-        self.defaultTarget = "26.04"
+        self.defaultTarget = "26.05"
 
 
 class Package(BinaryPackageBase):
@@ -36,9 +38,5 @@ class Package(BinaryPackageBase):
 
     def binaryArchiveName(self, **kwargs):
         # never use 7z to compress this package
-        if CraftCore.compiler.platform.isWindows:
-            kwargs["fileType"] = ".zip"
-        else:
-            kwargs["fileType"] = ".tar.xz"
-
+        kwargs["fileType"] = ".tar.xz"
         return super().binaryArchiveName(**kwargs)

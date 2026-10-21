@@ -145,7 +145,7 @@ class NullsoftInstallerPackager(PortablePackager):
 
     def _prepare7Z(self, tmpDir: str):
         sevenZPath = CraftPackageObject.get("7zip-base").instance.imageDir() / "dev-utils/7z"
-        sevenZPath /= "x64/7za.exe" if CraftCore.compiler.architecture.isX86_64 else "7za.exe"
+        sevenZPath /= "7za.exe"
         sevenZDest = Path(tmpDir) / "7za.exe"
         if not sevenZPath.exists():
             CraftCore.log.warning("Failed to find 7z")

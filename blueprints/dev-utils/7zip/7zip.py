@@ -28,10 +28,7 @@ class Package(BinaryPackageBase):
         args = []
         appPath = CraftCore.standardDirs.craftRoot() / "dev-utils/7z"
         if CraftCore.compiler.platform.isWindows:
-            if CraftCore.compiler.hostArchitecture.isArm64:
-                appPath /= "arm64/7za.exe"
-            else:
-                appPath /= "x64/7za.exe"
+            appPath /= "7za.exe"
         else:
             appPath /= "7zz"
         if CraftCore.compiler.platform.isMacOS and not CraftCore.compiler.architecture.isNative:
