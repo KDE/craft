@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
             self.targetInstallPath[ver] = "dev-utils/7z"
             if CraftCore.compiler.platform.isWindows:
                 self.targets[ver] = (
-                    f"https://github.com/TheOneRing/7zipzip/releases/download/{ver}/7zip-extra-{ver}-{CraftCore.compiler.architecture.key.name.lower()}.zip"
+                    f"https://github.com/TheOneRing/7zipzip/releases/download/{ver}/7zip-extra-{ver}-{CraftCore.compiler.architecture.androidArchitecture}.zip"
                 )
                 self.targetDigestUrls[ver] = (f"https://github.com/TheOneRing/7zipzip/releases/download/{ver}/SHA256.txt", CraftHash.HashAlgorithm.SHA256)
             elif CraftCore.compiler.platform.isLinux:
