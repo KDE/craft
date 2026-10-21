@@ -27,7 +27,7 @@ class CMakeBuildSystem(BuildSystemBase):
 
     def __makeFileGenerator(self):
         """return cmake related make file generator"""
-        if self.makeProgram == "ninja":
+        if self.makeProgram == CraftCore.cache.findApplication("ninja"):
             return "Ninja"
         if OsUtils.isWin():
             if CraftCore.compiler.compiler.isMSVC:

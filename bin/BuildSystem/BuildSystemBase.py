@@ -74,11 +74,11 @@ class BuildSystemBase(CraftBase):
     def makeProgram(self) -> Optional[str]:
         if self.subinfo.options.make.supportsMultijob:
             if self.supportsNinja and CraftCore.settings.getboolean("Compile", "UseNinja", False) and CraftCore.cache.findApplication("ninja"):
-                return "ninja"
+                return CraftCore.cache.findApplication("ninja")
             if ("Compile", "MakeProgram") in CraftCore.settings:
                 makeProgram = CraftCore.settings.get("Compile", "MakeProgram")
                 CraftCore.log.debug(f"set custom make program: {makeProgram}")
-                if CraftCore.cache.findApplication(makeProgram):
+                if makeProgram := CraftCore.cache.findApplication(makeProgram):
                     return makeProgram
                 else:
                     CraftCore.log.warning(f"Failed to find {CraftCore.settings.get('Compile', 'MakeProgram')}")
@@ -89,17 +89,17 @@ class BuildSystemBase(CraftBase):
         if OsUtils.isWin():
             if CraftCore.compiler.compiler.isMSVC:
                 if self.subinfo.options.make.supportsMultijob and CraftCore.cache.findApplication("jom"):
-                    return "jom"
+                    return CraftCore.cache.findApplication("jom")
                 else:
-                    return "nmake"
+                    return CraftCore.cache.findApplication("nmake")
             elif CraftCore.compiler.compiler.isMinGW:
-                return "mingw32-make"
+                return CraftCore.cache.findApplication("mingw32-make")
             else:
                 CraftCore.log.critical(f"unknown {CraftCore.compiler} compiler")
         elif OsUtils.isFreeBSD():
-            return "gmake"
+            return CraftCore.cache.findApplication("gmake")
         elif OsUtils.isUnix():
-            return "make"
+            return CraftCore.cache.findApplication("make")
         return None
 
     def configureSourceDir(self):
@@ -130,15 +130,18 @@ class BuildSystemBase(CraftBase):
         if self.subinfo.options.make.ignoreErrors:
             defines.append("-i")
         makeProgram = self.makeProgram
-        if makeProgram == "ninja":
+        if makeProgram == CraftCore.cache.findApplication("ninja"):
             if CraftCore.debug.verbose() > 0:
                 defines.append("-v")
         else:
             if CraftCore.debug.verbose() > 0:
                 defines += ["VERBOSE=1", "V=1"]
 
-        if self.subinfo.options.make.supportsMultijob and makeProgram != "nmake":
-            if makeProgram not in {"ninja", "jom"} or ("Compile", "Jobs") in CraftCore.settings:
+        if self.subinfo.options.make.supportsMultijob and makeProgram != CraftCore.cache.findApplication("nmake"):
+            if (
+                makeProgram not in {CraftCore.cache.findApplication("ninja"), CraftCore.cache.findApplication("jom")}
+                or ("Compile", "Jobs") in CraftCore.settings
+            ):
                 defines += [
                     "-j",
                     self.subinfo.options.make.parallelMakeJobs,

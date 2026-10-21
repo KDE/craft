@@ -55,7 +55,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
     @property
     def makeProgram(self):
         if CraftCore.compiler.platform.isWindows:
-            return "make"
+            return CraftCore.cache.findApplication("make", CraftCore.standardDirs.msysDir() / "usr/bin")
         else:
             return super().makeProgram
 
@@ -76,7 +76,7 @@ class AutoToolsBuildSystem(BuildSystemBase):
         self.shell.environment["CFLAGS"] = self.subinfo.options.configure.cflags + " " + self.shell.environment["CFLAGS"]
         self.shell.environment["CXXFLAGS"] = self.subinfo.options.configure.cxxflags + " " + self.shell.environment["CXXFLAGS"]
         self.shell.environment["LDFLAGS"] = self.subinfo.options.configure.ldflags + " " + self.shell.environment["LDFLAGS"]
-        self.shell.environment["MAKE"] = self.makeProgram
+        self.shell.environment["MAKE"] = self.shell.toNativePath(self.makeProgram)
 
         env = {"CLICOLOR_FORCE": None}
         if self.supportsCCACHE:
