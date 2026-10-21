@@ -21,6 +21,10 @@ class subinfo(info.infoclass):
         self.targetDigests["1.4.1"] = (["67d88430892527861903788868c77802a217b0959990f7449f2976126a307763"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["1.4.2"] = (["5b46e74377ed7409c5b75e7a96f95377b095623b689d8522620927964a41499c"], CraftHash.HashAlgorithm.SHA256)
 
+        self.patchToApply["1.4.2"] = [
+            (".1.4.2", 1)
+        ]  # https://github.com/microsoft/vcpkg/blob/a2f9862da6d88040a8537fb9b8cb24deaa9a196b/ports/libunistring/parallelize-symbol-collection.patch
+
         self.defaultTarget = "1.4.2"
 
     def setDependencies(self):
