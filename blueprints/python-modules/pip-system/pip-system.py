@@ -8,6 +8,7 @@ from Package.PipPackageBase import PipPackageBase
 
 class subinfo(info.infoclass):
     def registerOptions(self):
+        self.parent.package.categoryInfo.compiler = CraftCore.compiler.Compiler.NotUnix
         useCraftPython = self.options.isActive("libs/python")
         if useCraftPython:
             self.parent.package.categoryInfo.compiler = CraftCore.compiler.Compiler.NoCompiler
