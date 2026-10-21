@@ -25,9 +25,9 @@ class subinfo(info.infoclass):
                 arch = "x64"
                 if CraftCore.compiler.architecture & CraftCore.compiler.Architecture.arm:
                     arch = "arm64"
-                self.targets[ver] = f"https://www.7-zip.org/a/7z{verNoDot}-linux-{arch}.tar.xz"
+                self.targets[ver] = f"https://github.com/ip7z/7zip/releases/download/{ver}/7z{verNoDot}-linux-{arch}.tar.xz"
             else:
-                self.targets[ver] = f"https://7-zip.org/a/7z{verNoDot}-mac.tar.xz"
+                self.targets[ver] = f"https://github.com/ip7z/7zip/releases/download/{ver}/7z{verNoDot}-mac.tar.xz"
 
         self.defaultTarget = "26.05"
 
