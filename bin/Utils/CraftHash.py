@@ -38,25 +38,12 @@ class HashAlgorithm(Enum):
         return None
 
 
-def digestString(string: str, algorithm=HashAlgorithm.SHA256) -> str:
-    hash = getattr(hashlib, algorithm.name.lower())()
-    hash.update(bytes(string, "UTF-8"))
-    return hash.hexdigest()
-
-
 def digestFile(filepath, algorithm=HashAlgorithm.SHA256):
     """digests a file"""
-    blockSize = 65536
-    hash = getattr(hashlib, algorithm.name.lower())()
     if os.path.islink(filepath):
-        hash.update(os.readlink(filepath).encode("utf-8"))
-    else:
-        with open(filepath, "rb") as hashFile:
-            buffer = hashFile.read(blockSize)
-            while len(buffer) > 0:
-                hash.update(buffer)
-                buffer = hashFile.read(blockSize)
-    return hash.hexdigest()
+        return hashlib.new(algorithm.name.lower(), os.readlink(filepath).encode("utf-8")).hexdigest()
+    with open(filepath, "rb") as hashFile:
+        return hashlib.file_digest(hashFile, algorithm.name.lower()).hexdigest()
 
 
 def checkFilesDigests(downloaddir, filenames, digests=None, digestAlgorithm=HashAlgorithm.SHA1):
