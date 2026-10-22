@@ -1,31 +1,40 @@
+import re
+
 import info
 import utils
+from CraftCore import CraftCore
 from Package.BinaryPackageBase import BinaryPackageBase
 from Utils import CraftHash
 
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        for ver in ["2025-09-09", "2026-05-14"]:
-            self.targets[ver] = f"https://files.kde.org/craft/curl.haxx.se/cacert-{ver}.zip"
-            self.targetInstallPath[ver] = "etc"
-        self.targetDigests["2025-09-09"] = (
-            ["f976dfe287484e786c899e2f009efc2ba290eb1cdb204a537ca89aa5a16700a7"],
+        self.webpage = "https://curl.se/docs/caextract.html"
+
+        pattern = re.compile(r'/ca/cacert-(\d{4}-\d{2}-\d{2})\.pem"')
+        versions = CraftCore.cache.getNightlyVersionsFromUrl(self.webpage, pattern)
+        # fall back to a known good version if the page can't be reached, e.g. when offline
+        ver = max(versions) if versions else "2026-05-14"
+
+        self.targets[ver] = f"https://curl.se/ca/cacert-{ver}.pem"
+        self.targetInstallPath[ver] = "etc"
+        self.targetDigestUrls[ver] = (
+            f"https://curl.se/ca/cacert-{ver}.pem.sha256",
             CraftHash.HashAlgorithm.SHA256,
         )
-        self.targetDigests["2026-05-14"] = (
-            ["b326c0143180f53da60034d229c741915aafda6bd5a5afdd253cc1f29a12993f"],
-            CraftHash.HashAlgorithm.SHA256,
-        )
-        self.webpage = "https://curl.haxx.se/docs/caextract.html"
-        self.defaultTarget = "2026-05-14"
+        self.defaultTarget = ver
 
 
 class Package(BinaryPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.subinfo.options.package.disableBinaryCache = True
 
     def fetch(self):
         with utils.ScopedEnv({"SSL_CERT_FILE": None, "REQUESTS_CA_BUNDLE": None}):
             return super().fetch()
+
+    def unpack(self):
+        return self.checkDigest()
+
+    def install(self):
+        return utils.copyFile(self.localFilePath()[0], self.installDir() / "cacert.pem")
