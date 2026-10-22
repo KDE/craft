@@ -20,7 +20,7 @@ class subinfo(info.infoclass):
         self.buildDependencies["dev-utils/kshimgen"] = None
         self.buildDependencies["dev-utils/7zip"] = None
         self.buildDependencies["dev-utils/cmake"] = None
-        self.buildDependencies["dev-utils/wget"] = None
+        self.buildDependencies["dev-utils/curl"] = None
 
         if CraftCore.compiler.platform.isLinux:
             self.buildDependencies["dev-utils/patchelf"] = None

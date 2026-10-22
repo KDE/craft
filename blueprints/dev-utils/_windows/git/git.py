@@ -52,7 +52,7 @@ class subinfo(info.infoclass):
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/7zip"] = None
-        self.buildDependencies["dev-utils/wget"] = None
+        self.buildDependencies["dev-utils/curl"] = None
         self.buildDependencies["dev-utils/kshimgen"] = None
 
     def locateGit(self) -> Path:
