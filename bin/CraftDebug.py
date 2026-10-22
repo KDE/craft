@@ -19,6 +19,19 @@ except:
     _SUPPORTS_COLORED_LOGS = False
 
 
+class _StageLogHandler(logging.Handler):
+    """Forward log records to the active stage log"""
+
+    def emit(self, record):
+        try:
+            # imported lazily to avoid a circular import with CraftCore
+            from Utils.StageLogger import StageLogger
+
+            StageLogger.logLine(self.format(record))
+        except Exception:
+            self.handleError(record)
+
+
 class CraftDebug(object):
     # compress the logs
     @staticmethod
@@ -75,6 +88,10 @@ class CraftDebug(object):
         self._handler.setLevel(logging.INFO)
         if self._fileHandler:
             self._fileHandler.setLevel(logging.DEBUG)
+
+        self._stageLogHandler = _StageLogHandler(logging.ERROR)
+        self._stageLogHandler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
+        self._log.addHandler(self._stageLogHandler)
 
         self.log.debug("#" * self.lineWidth)
         self.log.debug("New log started: %s" % " ".join(sys.argv))
