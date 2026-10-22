@@ -454,6 +454,16 @@ class CraftCompiler(object):
             }
             return architectures[self.key]
 
+        @property
+        def autotoolsArchitecture(self):
+            architectures = {
+                CraftCompiler.Architecture.x86_32: "i686",
+                CraftCompiler.Architecture.x86_64: "x86_64",
+                CraftCompiler.Architecture.arm32: "arm",
+                CraftCompiler.Architecture.arm64: "aarch64",
+            }
+            return architectures[self.key]
+
     @unique
     class Platforms(CompilerFlags):
         NoPlatform = 0

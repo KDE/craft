@@ -28,11 +28,10 @@ class AutoToolsBuildSystem(BuildSystemBase):
         ):
             self.platform = Arguments(["--host=i686-pc-linux-gnu"])
         elif CraftCore.compiler.platform.isWindows:
-            arch = "aarch64" if CraftCore.compiler.architecture.isArm64 else "x86_64"
             self.platform = Arguments(
                 [
-                    f"--host={arch}-w64-mingw32",
-                    f"--target={arch}-w64-mingw32",
+                    f"--host={CraftCore.compiler.architecture.autotoolsArchitecture}-w64-mingw32",
+                    f"--target={CraftCore.compiler.architecture.autotoolsArchitecture}-w64-mingw32",
                 ]
             )
         elif CraftCore.compiler.platform.isAndroid:
@@ -46,9 +45,9 @@ class AutoToolsBuildSystem(BuildSystemBase):
             host = CraftCore.compiler.architecture if CraftCore.compiler.platform.isMacOS else CraftCore.compiler.hostArchitecture
             self.platform = Arguments(
                 [
-                    f"--build={host.key.name.lower()}-apple-{targetPlatform}{os.uname().release}",
-                    f"--host={CraftCore.compiler.architecture.key.name.lower()}-apple-{targetPlatform}{version}",
-                    f"--target={CraftCore.compiler.architecture.key.name.lower()}-apple-{targetPlatform}{version}",
+                    f"--build={host.autotoolsArchitecture}-apple-{targetPlatform}{os.uname().release}",
+                    f"--host={CraftCore.compiler.architecture.autotoolsArchitecture}-apple-{targetPlatform}{version}",
+                    f"--target={CraftCore.compiler.architecture.autotoolsArchitecture}-apple-{targetPlatform}{version}",
                 ]
             )
 
