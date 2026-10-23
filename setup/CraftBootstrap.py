@@ -214,8 +214,7 @@ def getABI(args):
             [
                 ("Mingw-w64", (None, "gcc")),
                 ("Microsoft Visual Studio 2022", ("msvc2022", "cl")),
-                # TODO: we don't suggest MSVC 2026 yet because it is neither ready nor tested
-                # ("Microsoft Visual Studio 2026", ("msvc2026", "cl")),
+                ("Microsoft Visual Studio 2026", ("msvc2026", "cl")),
             ],
             ("msvc2022", "cl"),
             returnDefaultWithoutPrompt=args.use_defaults,
