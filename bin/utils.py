@@ -204,8 +204,13 @@ def compress(archive: Path, source: str) -> bool:
     if os.path.isfile(archive):
         deleteFile(archive)
 
-    if not __locate7z() and archive.suffix == ".zip":
-        return shutil.make_archive(archive.with_suffix(""), "zip", source)
+    if not __locate7z():
+        archiveName = str(archive)
+        for ext, format in {".zip": "zip", ".tar.xz": "xztar"}.items():
+            if archiveName.endswith(ext):
+                shutil.make_archive(archiveName[: -len(ext)], format, source)
+                return True
+        raise Exception(f"Unsupported archive type: {archiveName}")
 
     if CraftCore.compiler.hostPlatform.isUnix and archive.suffixes[-2:] == [".tar"]:
         return __tar(archive, source)
