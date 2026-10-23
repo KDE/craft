@@ -8,15 +8,14 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.webpage = "https://curl.se/docs/caextract.html"
 
-        for ver in ["2026-05-14"]:
+        for ver in ["2026-10-20"]:
             self.targets[ver] = f"https://curl.se/ca/cacert-{ver}.pem"
             self.targetInstallPath[ver] = "etc"
             self.targetDigestUrls[ver] = (
                 f"https://curl.se/ca/cacert-{ver}.pem.sha256",
                 CraftHash.HashAlgorithm.SHA256,
             )
-        self.patchLevel["2026-05-14"] = 1
-        self.defaultTarget = "2026-05-14"
+        self.defaultTarget = "2026-10-20"
 
 
 class Package(BinaryPackageBase):
