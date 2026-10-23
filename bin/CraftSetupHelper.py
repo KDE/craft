@@ -83,7 +83,10 @@ class SetupHelper(object):
         elif SetupHelper.NeedsSetup:
             pristineEnvFile.parent.mkdir(parents=True, exist_ok=True)
             with pristineEnvFile.open("wt", encoding="utf-8") as out:
-                json.dump(dict(os.environ), out, indent=4, sort_keys=True)
+                env = CaseInsensitiveDict(os.environ)
+                if "CRAFTROOT" in env:
+                    del env["CRAFTROOT"]
+                json.dump(dict(env), out, indent=4, sort_keys=True)
 
         if SetupHelper.NeedsSetup:
             SetupHelper.NeedsSetup = False
@@ -197,13 +200,11 @@ class SetupHelper(object):
         os.environ[key] = val
 
     @staticmethod
-    def _callVCVER(version: int, args: Optional[list] = None, prerelease: bool = False, latest: bool = True) -> str:
+    def _callVCVER(version: int, args: Optional[list] = None, prerelease: bool = False) -> str:
         if not args:
             args = []
         vswhere = os.path.join(CraftCore.standardDirs.craftBin(), "3rdparty", "vswhere", "vswhere.exe")
-        command = [vswhere, "-property", "installationPath", "-nologo", "-products", "*"]
-        if latest:
-            command += ["-latest"]
+        command = [vswhere, "-property", "installationPath", "-nologo", "-latest", "-products", "*"]
         if prerelease:
             command += ["-prerelease"]
         if version:
@@ -234,16 +235,32 @@ class SetupHelper(object):
         path = ""
         # we prefer newer compiler that provide legacy toolchains
         if version:
-            # the component ids of legacy toolsets differ between VS versions, so look for the toolset itself
-            # the file contains the full toolset version, e.g. 14.44.35207
-            toolsetFile = f"Microsoft.VCToolsVersion.v{CraftCore.compiler.getMsvcPlatformToolset()}.default.txt"
+            if version == 16:
+                # todo find a more generic id
+                components = [(142, "Microsoft.VisualStudio.Component.VC.14.29.16.11.x86.x64")]
+            else:
+                requestedToolset = CraftCore.compiler.getMsvcPlatformToolset()
+                toolsets = [requestedToolset]
+                if requestedToolset == 145:
+                    toolsets.insert(0, 144)
+                components = [
+                    (
+                        toolset,
+                        (
+                            "Microsoft.VisualStudio.Component.VC.14.44.17.14.x86.x64"
+                            if toolset == 144
+                            else f"Microsoft.VisualStudio.Component.VC.v{toolset}.x86.x64"
+                        ),
+                    )
+                    for toolset in toolsets
+                ]
+            # todo directly get the correct version
             for v in [18, 17, 16]:
-                for candidate in SetupHelper._callVCVER(v, latest=False).splitlines():
-                    versionFile = Path(candidate) / "VC/Auxiliary/Build" / toolsetFile
-                    if versionFile.is_file():
-                        path = candidate
+                for componentToolset, component in components:
+                    path = SetupHelper._callVCVER(v, args=["-products", "*", "-requires", component])
+                    if path:
                         if not toolset:
-                            toolset = versionFile.read_text().strip()
+                            toolset = str(componentToolset / 10)
                         break
                 if path:
                     break
@@ -519,13 +536,15 @@ class SetupHelper(object):
             )
 
         # make sure that craftroot bin is the first to look for dlls etc
-        if not CraftCore.compiler.platform.isNative:
+        if not CraftCore.compiler.platform.isNative or not CraftCore.compiler.architecture.isNative:
             self.prependEnvVar(
                 "PATH",
                 [
                     CraftCore.standardDirs.craftHostRoot() / "dev-utils/bin",
                     CraftCore.standardDirs.craftHostRoot() / "bin",
                     CraftCore.standardDirs.craftHostRoot() / "libexec",
+                    # shims?
+                    CraftCore.standardDirs.craftHostRoot() / "bin/Scripts",
                 ],
             )
         self.prependEnvVar(

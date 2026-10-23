@@ -53,11 +53,19 @@ class CraftStandardDirs(object):
 
     @staticmethod
     def craftHostRoot() -> Path:
-        # TODO: fix
-        return CraftCore.standardDirs.craftRoot()
-        if CraftCore.compiler.platform.isNative:
+        if not CraftCore.compiler.isCrossCompiling:
             return CraftCore.standardDirs.craftRoot()
         return Path(CraftCore.settings.get("Paths", "HostRoot"))
+
+    @staticmethod
+    def hostPaths() -> list[Path]:
+        if CraftCore.compiler.isCrossCompiling:
+            return [
+                CraftCore.standardDirs.craftHostRoot() / "dev-utils/bin",
+                CraftCore.standardDirs.craftHostRoot() / "bin",
+                CraftCore.standardDirs.craftHostRoot() / "libexec",
+            ]
+        return []
 
     @staticmethod
     def etcDir() -> Path:
