@@ -85,6 +85,20 @@ def handlePackage(package, buildAction, directTargets):
         CraftCore.debug.debug_line()
         CraftCore.debug.step(f"Handling package: {package}, action: {buildAction}")
 
+        if not CraftCore.compiler.platform.isNative:
+            CraftCore.debug.debug_line()
+            CraftCore.debug.step(f"Handling package: {package}, action: {buildAction} on non-native platform")
+            # todo: at least cache the host env....
+            if not utils.copyFile(
+                CraftCore.standardDirs.etcDir() / "PristineCraftenv.json", CraftCore.standardDirs.craftHostRoot() / "etc/PristineCraftenv.json"
+            ):
+                return False
+            call_env = os.environ.copy()
+            call_env["CRAFT_FORCE_RESET"] = "1"
+            if not utils.systemWithoutShell([sys.executable, CraftCore.standardDirs.craftHostRoot() / "craft/bin/craft.py", package], env=call_env):
+                return False
+            CraftCore.debug.debug_line()
+
         if buildAction in ["all", "update"]:
             if CraftCore.settings.getboolean("Packager", "UseCache", "False"):
                 if doExec(package, "fetch-binary"):
