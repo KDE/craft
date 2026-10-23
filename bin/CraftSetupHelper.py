@@ -83,7 +83,10 @@ class SetupHelper(object):
         elif SetupHelper.NeedsSetup:
             pristineEnvFile.parent.mkdir(parents=True, exist_ok=True)
             with pristineEnvFile.open("wt", encoding="utf-8") as out:
-                json.dump(dict(os.environ), out, indent=4, sort_keys=True)
+                env = CaseInsensitiveDict(os.environ)
+                if "CRAFTROOT" in env:
+                    del env["CRAFTROOT"]
+                json.dump(dict(env), out, indent=4, sort_keys=True)
 
         if SetupHelper.NeedsSetup:
             SetupHelper.NeedsSetup = False
@@ -512,26 +515,20 @@ class SetupHelper(object):
             ],
         )
 
-        if CraftCore.compiler.platform.isWindows:
-            self.prependEnvVar(
-                "PATH",
-                CraftCore.standardDirs.craftRoot() / "bin/Scripts",
-            )
-
         # make sure that craftroot bin is the first to look for dlls etc
-        if not CraftCore.compiler.platform.isNative:
-            self.prependEnvVar(
-                "PATH",
-                [
-                    CraftCore.standardDirs.craftHostRoot() / "dev-utils/bin",
-                    CraftCore.standardDirs.craftHostRoot() / "bin",
-                    CraftCore.standardDirs.craftHostRoot() / "libexec",
-                ],
-            )
         self.prependEnvVar(
             "PATH",
-            [CraftCore.standardDirs.craftRoot() / "dev-utils/bin", CraftCore.standardDirs.craftRoot() / "bin", CraftCore.standardDirs.craftRoot() / "libexec"],
+            [
+                CraftCore.standardDirs.craftHostRoot() / "dev-utils/bin",
+                CraftCore.standardDirs.craftHostRoot() / "bin",
+                CraftCore.standardDirs.craftHostRoot() / "libexec",
+            ],
         )
+        if CraftCore.compiler.hostPlatform.isWindows:
+            self.prependEnvVar(
+                "PATH",
+                CraftCore.standardDirs.craftHostRoot() / "bin/Scripts",
+            )
 
         if CraftCore.compiler.compiler.isClang:
             if CraftCore.compiler.platform.isAndroid:
