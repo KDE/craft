@@ -113,7 +113,7 @@ class CraftCache(object):
 
         if appLocation:
             appLocation = Path(appLocation).resolve()
-            if forceCache or CraftCore.standardDirs.craftRoot() in appLocation.parents:
+            if forceCache or CraftCore.standardDirs.craftHostRoot() in appLocation.parents:
                 CraftCore.log.debug(f"Adding {app} to app cache {appLocation}")
                 self._nonPersistentCache.applicationLocations[app] = appLocation
         else:

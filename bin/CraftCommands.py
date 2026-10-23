@@ -86,6 +86,21 @@ def handlePackage(package, buildAction, directTargets):
         CraftCore.debug.debug_line()
         CraftCore.debug.step(f"Handling package: {package}, action: {buildAction}")
 
+        if CraftCore.compiler.isCrossCompiling:
+            CraftCore.debug.debug_line()
+            CraftCore.debug.step(f"Handling package: {package}, action: {buildAction} on non-native platform")
+            # todo: at least cache the host env....
+            if not utils.copyFile(
+                CraftCore.standardDirs.etcDir() / "PristineCraftenv.json", CraftCore.standardDirs.craftHostRoot() / "etc/PristineCraftenv.json"
+            ):
+                return False
+            call_env = os.environ.copy()
+            call_env["CRAFT_FORCE_RESET"] = "1"
+            call_env["CRAFTROOT"] = str(CraftCore.standardDirs.craftHostRoot() / "craft")
+            if not utils.systemWithoutShell([sys.executable, CraftCore.standardDirs.craftHostRoot() / "craft/bin/craft.py", package], env=call_env):
+                return False
+            CraftCore.debug.debug_line()
+
         if buildAction in ["all", "update"]:
             if CraftCore.settings.getboolean("Packager", "UseCache", "False"):
                 if doExec(package, "fetch-binary"):
@@ -193,7 +208,7 @@ def addBlueprintsRepository(url: str) -> bool:
 
 def destroyCraftRoot() -> bool:
     OsUtils.killProcess(prefix=CraftCore.standardDirs.craftRoot() / "bin")
-    settingsFiles = {"kdesettings.ini", "CraftSettings.ini", "BlueprintSettings.ini"}
+    settingsFiles = {"kdesettings.ini", "CraftSettings.ini", "BlueprintSettings.ini", "PristineCraftenv.json"}
     dirsToKeep = [
         CraftCore.standardDirs.downloadDir(),
         CraftCore.standardDirs.craftBin().parent,

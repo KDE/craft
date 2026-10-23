@@ -620,6 +620,10 @@ class CraftCompiler(object):
     def abi(self) -> Abi:
         return self.signature.abi
 
+    @property
+    def isCrossCompiling(self) -> CraftBool:
+        return CraftBool(not self.platform.isNative or not self.architecture.isNative)
+
     @staticmethod
     def _detectHost() -> CraftCompilerSignature:
         hostPlatform = {
