@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.targets["latest"] = ""
         self.description = "Craft integration package for 7z."
+        self.patchLevel["latest"] = 1
         self.defaultTarget = "latest"
 
     def setDependencies(self):
