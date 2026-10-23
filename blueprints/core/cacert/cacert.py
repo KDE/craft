@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
                 f"https://curl.se/ca/cacert-{ver}.pem.sha256",
                 CraftHash.HashAlgorithm.SHA256,
             )
+        self.patchLevel["2026-05-14"] = 1
         self.defaultTarget = "2026-05-14"
 
 
@@ -31,3 +32,8 @@ class Package(BinaryPackageBase):
 
     def install(self):
         return utils.copyFile(self.localFilePath()[0], self.installDir() / "cacert.pem")
+
+    def binaryArchiveName(self, **kwargs):
+        # never use 7z to compress bootstrap package
+        kwargs["fileType"] = ".tar.xz"
+        return super().binaryArchiveName(**kwargs)

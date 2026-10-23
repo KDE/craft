@@ -37,6 +37,6 @@ class Package(BinaryPackageBase):
         super().__init__(**kwargs)
 
     def binaryArchiveName(self, **kwargs):
-        # never use 7z to compress this package
+        # never use 7z to compress bootstrap package
         kwargs["fileType"] = ".tar.xz"
         return super().binaryArchiveName(**kwargs)
