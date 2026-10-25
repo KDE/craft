@@ -134,7 +134,7 @@ class AppxPackager(CollectionPackagerBase):
             CraftCompiler.Architecture.arm32: "arm",
             CraftCompiler.Architecture.arm64: "arm64",
         }
-        defines.setdefault("architecture", architectures[CraftCore.compiler.architecture])
+        defines.setdefault("architecture", architectures[CraftCore.compiler.architecture.key])
         version = [int(x) for x in CraftVersion(defines.get("version", self.version)).normalizedVersion.versionstr.split(".")]
         # we require a version of the format 1.2.3.4
         version += [0] * (4 - len(version))
