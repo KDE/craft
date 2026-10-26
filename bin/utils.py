@@ -585,8 +585,8 @@ def copyFile(
             CraftCore.log.error(f"Can't copy a file into itself {src}=={dest}")
             return False
         OsUtils.rm(dest, True)
-    # don't link to links
-    if linkOnly and not os.path.islink(src):
+    # don't link to links, hardlinks can't cross file systems (e.g. docker bind mounts)
+    if linkOnly and not os.path.islink(src) and src.stat().st_dev == dest.parent.stat().st_dev:
         try:
             os.link(src, dest)
             return True
