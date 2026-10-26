@@ -21,7 +21,7 @@ class subinfo(info.infoclass):
 class Package(BinaryPackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.subinfo.options.package.disableBinaryArchive = True
+        self.subinfo.options.package.disableBinaryCache = True
 
     def fetch(self):
         with utils.ScopedEnv({"SSL_CERT_FILE": None, "REQUESTS_CA_BUNDLE": None}):
