@@ -16,6 +16,7 @@ from Utils.Arguments import Arguments
 class subinfo(info.infoclass):
     def registerOptions(self):
         self.parent.package.categoryInfo.platforms = ~CraftCore.compiler.Platforms.Android
+        self.options.dynamic.registerOption("withRelocation", True)
 
     def setTargets(self):
         self.description = (
@@ -136,14 +137,14 @@ class PackageAutoTools(AutoToolsPackageBase):
                 f"prefix={self.installPrefix()}",
                 "-D",
                 "mksymlinks",
-                "-D",
-                "userelocatableinc",
                 "-U",
                 "default_inc_excludes_dot",
                 "-D",
                 "usethreads",
             ]
         )
+        if self.subinfo.options.dynamic.withRelocation:
+            self.subinfo.options.configure.args += ["-D", "userelocatableinc"]
 
         cflags = self.shell.environment["CFLAGS"]
         ldflags = self.shell.environment["LDFLAGS"]
