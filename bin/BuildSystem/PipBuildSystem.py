@@ -1,4 +1,6 @@
+import io
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -62,9 +64,25 @@ class PipBuildSystem(BuildSystemBase):
                 return False
         return True
 
+    def _latestPipVersion(self) -> str | None:
+        # pin the latest version, else pip silently falls back to older versions if the latest fails to build
+        with io.StringIO() as log:
+            if not utils.system([self.python, "-m", "pip", "index", "versions", "--no-input", self.pipPackageName], stdout=log, logCommand=False):
+                return None
+            # first line: "name (version)"
+            match = re.search(r"\((.+?)\)", log.getvalue())
+        if not match:
+            CraftCore.log.error(f"Failed to determine the latest version of {self.pipPackageName}")
+            return None
+        return match.group(1)
+
     def make(self):
         if self._isPipTarget:
             return True
+
+        # remove artifacts of previous builds, else pip will find and possibly build multiple versions via --find-links
+        if not utils.cleanDirectory(self.buildDir()):
+            return False
 
         setupFile = self.sourceDir() / "setup.py"
         # See https://bernat.tech/posts/pep-517-518/
@@ -147,7 +165,14 @@ class PipBuildSystem(BuildSystemBase):
                 command += ["--no-cache-dir", "--no-build-isolation", "--no-deps", "--no-index", "--find-links", self.buildDir(), self.pipPackageName]
             else:
                 if self.buildTarget in {"master", "latest"}:
-                    command += [self.pipPackageName]
+                    if bootstrap:
+                        # pip itself might not be available yet
+                        command += [self.pipPackageName]
+                    else:
+                        version = self._latestPipVersion()
+                        if not version:
+                            return False
+                        command += [f"{self.pipPackageName}=={version}"]
                 else:
                     command += [f"{self.pipPackageName}=={self.buildTarget}"]
             if not utils.system(command):
