@@ -12,6 +12,7 @@ class subinfo(info.infoclass):
         self.buildDependencies["python-modules/pip"] = None
         self.buildDependencies["python-modules/setuptools"] = None
         self.runtimeDependencies["libs/python"] = None
+        self.runtimeDependencies["python-modules/humanfriendly"] = None
         self.buildDependencies["dev-utils/system-python3"] = None
 
 

@@ -6,8 +6,9 @@ from Package.PipPackageBase import PipPackageBase
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.svnTargets["1.27.0"] = ""
-        self.defaultTarget = "1.27.0"
+        for ver in ["1.27.0", "1.33.0"]:
+            self.svnTargets[ver] = ""
+        self.defaultTarget = "1.33.0"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
@@ -18,6 +19,7 @@ class subinfo(info.infoclass):
         self.buildDependencies["python-modules/pathspec"] = None
         self.buildDependencies["python-modules/pluggy"] = None
         self.buildDependencies["python-modules/trove-classifiers"] = None
+        self.buildDependencies["python-modules/tomlkit"] = None
 
 
 class Package(PipPackageBase):

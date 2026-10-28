@@ -1,11 +1,14 @@
 import io
+import json
 import os
 import re
 import sys
 from pathlib import Path
+from typing import Optional
 
 import utils
 from Blueprints.CraftPackageObject import CraftPackageObject
+from Blueprints.CraftVersion import CraftVersion
 from BuildSystem.BuildSystemBase import BuildSystemBase
 from CraftCore import CraftCore
 from utils import ScopedEnv
@@ -76,12 +79,44 @@ class PipBuildSystem(BuildSystemBase):
             return None
         return match.group(1)
 
+    def _unsatisfiedRequirements(self, *args) -> list[dict] | None:
+        # requirements not satisfied by the packages installed by craft, see pipcheckrequirements.py
+        with io.StringIO() as log:
+            if not utils.system([self.python, Path(__file__).parent / "pipcheckrequirements.py", *args], stdout=log, logCommand=False):
+                CraftCore.log.warning(f"Failed to check the requirements of {self.pipPackageName}")
+                return None
+            return json.loads(log.getvalue())
+
+    def _reportUnsatisfiedRequirements(self, kind: str, requirements: list[dict] | None) -> bool:
+        if not requirements:
+            return True
+        CraftCore.debug.debug_line()
+        dependencyType = "buildDependencies" if kind == "build" else "runtimeDependencies"
+        message = [f"{self.package} has unsatisfied {kind} requirements, they must be provided by craft:"]
+        for requirement in requirements:
+            installed = f"installed: {requirement['installed']}" if requirement["installed"] else "not installed"
+            blueprint = f"python-modules/{re.sub(r'[-_.]+', '-', requirement['name']).lower()}"
+            if CraftPackageObject.get(blueprint):
+                if requirement["installed"]:
+                    hint = f"{blueprint} must provide a matching version"
+                else:
+                    hint = f'add self.{dependencyType}["{blueprint}"] = None'
+            else:
+                hint = f"no blueprint {blueprint} exists"
+            message.append(f"    {requirement['requirement']} ({installed}), {hint}")
+        CraftCore.log.error("\n".join(message))
+        CraftCore.debug.debug_line()
+        return False
+
     def make(self):
         if self._isPipTarget:
             return True
 
         # remove artifacts of previous builds, else pip will find and possibly build multiple versions via --find-links
         if not utils.cleanDirectory(self.buildDir()):
+            return False
+
+        if not self._reportUnsatisfiedRequirements("build", self._unsatisfiedRequirements("build", self.sourceDir())):
             return False
 
         setupFile = self.sourceDir() / "setup.py"
@@ -92,7 +127,8 @@ class PipBuildSystem(BuildSystemBase):
                 return False
         else:
             # The modern approach
-            if not utils.system([self.python, "-m", "build", "--outdir", self.buildDir()], cwd=self.sourceDir()):
+            # use the build dependencies provided by craft instead of fetching them into an isolated env
+            if not utils.system([self.python, "-m", "build", "--no-isolation", "--outdir", self.buildDir()], cwd=self.sourceDir()):
                 return False
         return True
 
@@ -138,6 +174,10 @@ class PipBuildSystem(BuildSystemBase):
                 # we can only cache stuff if we actually do something
                 command += [
                     "--force-reinstall",
+                    "--ignore-installed",
+                    # dependencies are provided by craft, don't fetch them
+                    "--no-deps",
+                    "--no-build-isolation",
                 ]
                 if self._isPipTarget and not self.allowPrebuildBinaries:
                     # Build binaries ourself when installing from pip.
@@ -147,7 +187,6 @@ class PipBuildSystem(BuildSystemBase):
                         "--no-binary",
                         ":all:",
                         "--no-cache-dir",
-                        "--no-build-isolation",
                         "--config-settings=--global-option=build_ext",
                         f"--config-settings=--global-option=--include-dirs={CraftCore.standardDirs.craftRoot()}/include",
                         f"--config-settings=--global-option=--library-dirs={CraftCore.standardDirs.craftRoot()}/lib",
@@ -164,6 +203,7 @@ class PipBuildSystem(BuildSystemBase):
                 # See https://stackoverflow.com/questions/48183160/how-to-pip-install-whl-on-windows-using-a-wildcard
                 command += ["--no-cache-dir", "--no-build-isolation", "--no-deps", "--no-index", "--find-links", self.buildDir(), self.pipPackageName]
             else:
+                version = None
                 if self.buildTarget in {"master", "latest"}:
                     if bootstrap:
                         # pip itself might not be available yet
@@ -174,13 +214,27 @@ class PipBuildSystem(BuildSystemBase):
                             return False
                         command += [f"{self.pipPackageName}=={version}"]
                 else:
+                    version = self.buildTarget
                     command += [f"{self.pipPackageName}=={self.buildTarget}"]
             if not utils.system(command):
+                if usesCraftPython and self._isPipTarget and not bootstrap and version:
+                    # pip doesn't tell us about missing build requirements, it only fails to build
+                    self._reportUnsatisfiedRequirements("build", self._unsatisfiedRequirements("build-pypi", self.pipPackageName, version))
                 return False
             if usesCraftPython:
                 if not self._fixInstallPrefix():
                     return False
+                if not bootstrap and not self._checkRuntimeRequirements():
+                    return False
             return True
+
+    def _checkRuntimeRequirements(self) -> bool:
+        # with --no-deps pip doesn't install missing runtime requirements
+        name = re.sub(r"[-_.]+", "_", self.pipPackageName).lower()
+        for metadata in self.installDir().glob("**/site-packages/*.dist-info/METADATA"):
+            if metadata.parent.name.lower().startswith(f"{name}-"):
+                return self._reportUnsatisfiedRequirements("runtime", self._unsatisfiedRequirements("runtime", metadata))
+        return True
 
     def runTest(self):
         return False
@@ -189,3 +243,13 @@ class PipBuildSystem(BuildSystemBase):
         if self.subinfo.options.isActive("libs/python"):
             return super().createPackage()
         return True
+
+    @property
+    def latestVersion(self) -> Optional[CraftVersion]:
+        if not self._latestVersion:
+            version = self._latestPipVersion()
+            if version:
+                self._latestVersion = CraftVersion(version)
+            else:
+                return super().latestVersion
+        return self._latestVersion
