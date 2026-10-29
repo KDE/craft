@@ -22,6 +22,7 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 import configparser
+import datetime
 import glob
 import os
 import re
@@ -469,7 +470,7 @@ def run(package: list[CraftPackageObject], action: str, args) -> bool:
             else:
                 if CraftCore.settings.ciMode:
                     CraftCore.debug.debug_line()
-                    CraftCore.log.info(f"Status: {CraftTitleUpdater.instance}")
+                    CraftCore.log.info(f"Status: {datetime.datetime.now(datetime.timezone.utc).strftime('%H:%M:%S UTC')} {CraftTitleUpdater.instance}")
                 else:
                     CraftTitleUpdater.instance.updateTitle()
                 if action in ["install-deps"]:
