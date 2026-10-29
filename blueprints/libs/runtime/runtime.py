@@ -10,6 +10,7 @@ from Package.BinaryPackageBase import BinaryPackageBase
 class subinfo(info.infoclass):
     def registerOptions(self):
         self.parent.package.categoryInfo.platforms &= CraftCore.compiler.Platforms.Windows
+        self.shelveAble = False
 
     def setTargets(self):
         # not used  yet only for reference
@@ -54,7 +55,7 @@ class Package(BinaryPackageBase):
             if self.buildType() != "Debug":
                 if CraftCore.compiler.getInternalVersion() >= 15:
                     if CraftCore.compiler.abi.isMSVC2026:
-                        flavor = "2026"
+                        flavor = "18"
                     elif CraftCore.compiler.abi.isMSVC2022:
                         flavor = "2022"
                     elif CraftCore.compiler.abi.isMSVC2019:
@@ -69,7 +70,13 @@ class Package(BinaryPackageBase):
                             f"VCTOOLSREDISTDIR does not exist, and likely should point to '*\\Microsoft Visual Studio\\{flavor}\\Community\\VC\\Redist\\MSVC\\xx.xx.xxxxx'."
                         )
                 if redistDir:
-                    redistDir = os.path.join(redistDir, "x86" if CraftCore.compiler.architecture.isX86_32 else "x64")
+                    if CraftCore.compiler.architecture.isArm64:
+                        arch = "arm64"
+                    elif CraftCore.compiler.architecture.isX86_32:
+                        arch = "x86"
+                    else:
+                        arch = "x64"
+                    redistDir = os.path.join(redistDir, arch)
                     files = glob.glob(
                         os.path.join(redistDir, "**/*.dll"),
                         recursive=True,
