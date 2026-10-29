@@ -294,11 +294,15 @@ def unShelve(shelve, args):
 
 def checkCache(packageNames: list[str]) -> bool:
     missing = []
+    knownPackages = []
     for name in packageNames:
-        package = CraftPackageObject.get(name)
-        if not package:
+        if not CraftPackageObject.get(name):
             CraftCore.log.warning(f"{name} is not known to Craft, assuming it requires a rebuild")
             missing.append(name)
+        else:
+            knownPackages.append(name)
+    for package in CraftDependencyPackage(resolvePackage(knownPackages)).getDependencies(depType=DependencyType.All):
+        if not package.name:
             continue
         # registerOptions of the blueprint might restrict the supported platforms
         package.instance
