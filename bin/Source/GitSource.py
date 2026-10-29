@@ -98,7 +98,7 @@ class GitSource(VersionSystemSourceBase):
         if "stdout" not in kwargs and "stderr" not in kwargs and CraftCore.settings.getboolean("General", "AllowAnsiColor", True):
             parts += ["-c", "color.ui=always"]
         parts.append(command)
-        if command in ("clone", "checkout", "fetch", "pull", "submodule"):
+        if command in ("clone", "checkout", "fetch", "merge", "pull", "submodule"):
             if CraftCore.debug.verbose() < 0:
                 # -q is an option of the sub command, not of git itself
                 parts += ["-q"]
