@@ -109,8 +109,9 @@ def main(timer):
     parser.add_argument(
         "--unshelve",
         action="store",
-        help="Build all packages from the shelve file provided",
+        help="Build all packages from the shelve file provided, combined with --probe only list the packages that are not available in the binary cache",
     )
+    parser.add_argument("--check-cache", action="store_true", help=argparse.SUPPRESS, dest="checkCache")
     parser.add_argument(
         "--options",
         action="append",
@@ -391,6 +392,8 @@ def main(timer):
                 CraftCore.log.error(f"List file {tempArgs.unshelve!r} does not exist")
                 return False
             return CraftCommands.unShelve(tempArgs.unshelve, args)
+        elif tempArgs.checkCache:
+            return CraftCommands.checkCache(packageNames)
         elif tempArgs.shelve:
             return CraftCommands.shelve(tempArgs.shelve)
 

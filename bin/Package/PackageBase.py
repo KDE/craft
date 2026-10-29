@@ -80,9 +80,7 @@ class PackageBase(CraftBase):
             package.uninstall()
         return True
 
-    def fetchBinary(self, downloadRetriesLeft=3) -> bool:
-        if self.subinfo.options.package.disableBinaryCache:
-            return False
+    def _cachedBuilds(self):
         for url in [self.cacheLocation()] + self.cacheRepositoryUrls():
             CraftCore.log.debug(f"Trying to restore {self} from cache: {url}")
             if url == self.cacheLocation():
@@ -112,7 +110,17 @@ class PackageBase(CraftBase):
                 CraftCore.debug.debug_line()
                 # try next cache
                 continue
+            yield url, latest
 
+    def isInBinaryCache(self) -> bool:
+        if self.subinfo.options.package.disableBinaryCache:
+            return False
+        return next(self._cachedBuilds(), None) is not None
+
+    def fetchBinary(self, downloadRetriesLeft=3) -> bool:
+        if self.subinfo.options.package.disableBinaryCache:
+            return False
+        for url, latest in self._cachedBuilds():
             # if we are creating the cache, a rebuild on a failed fetch would be suboptimal
             createingCache = CraftCore.settings.getboolean("Packager", "CreateCache", False)
 

@@ -274,6 +274,9 @@ def unShelve(shelve, args):
             opt.append(o)
         skip = False
 
+    if args.probe:
+        return __recurseCraft(["--check-cache"] + opt, list(packages.keys()))
+
     # first lets check out the blueprints before we setup the rest
     updateCommand = ["--update"] + opt
     # workaround
@@ -287,6 +290,34 @@ def unShelve(shelve, args):
     if not __recurseCraft(opt, ["craft"]):
         return False
     return __recurseCraft(opt, list(packages.keys()))
+
+
+def checkCache(packageNames: list[str]) -> bool:
+    missing = []
+    for name in packageNames:
+        package = CraftPackageObject.get(name)
+        if not package:
+            CraftCore.log.warning(f"{name} is not known to Craft, assuming it requires a rebuild")
+            missing.append(name)
+            continue
+        # registerOptions of the blueprint might restrict the supported platforms
+        package.instance
+        if not package.categoryInfo.isActive:
+            CraftCore.log.info(f"Skipping {package} as it is not supported on this platform")
+            continue
+        if package.isIgnored():
+            CraftCore.log.info(f"Skipping {package} as it is ignored")
+            continue
+        if package.subinfo.options.package.disableBinaryCache:
+            CraftCore.log.info(f"Skipping {package} as it does not use the binary cache")
+            continue
+        if not package.instance.isInBinaryCache():
+            missing.append(package.path)
+    if missing:
+        CraftCore.debug.printOut(f"Packages requiring a rebuild: {' '.join(missing)}")
+    else:
+        CraftCore.debug.printOut("No packages require a rebuild")
+    return True
 
 
 def shelve(target: str):
