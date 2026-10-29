@@ -334,10 +334,11 @@ def shelve(target: str):
         if len(patchLvl) == 2:
             # have we encoded a date or a patch lvl?
             clean = packageObject.subinfo.options.dailyUpdate and bool(reDate.match(patchLvl[1]))
-            clean |= (
-                patchLvl[0] in packageObject.subinfo.patchLevel
-                and str(packageObject.subinfo.patchLevel[patchLvl[0]] + packageObject.categoryInfo.patchLevel) == patchLvl[1]
-            )
+            # mirror CraftBase.version, the category patch level is applied even if the target has no patch level
+            expectedPatchLvl = int(packageObject.subinfo.patchLevel.get(patchLvl[0], 0)) + packageObject.categoryInfo.patchLevel
+            if packageObject.subinfo.options.dynamic.patchLevel:
+                expectedPatchLvl += int(packageObject.subinfo.options.dynamic.patchLevel)
+            clean |= str(expectedPatchLvl) == patchLvl[1]
             if clean:
                 version = patchLvl[0]
         _set(package, "version", version)
