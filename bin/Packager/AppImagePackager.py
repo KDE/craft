@@ -45,7 +45,7 @@ class AppImagePackager(CollectionPackagerBase):
 
     def __isInstalled(self):
         """check if linuxdeploy is installed somewhere"""
-        self.linuxdeployExe = CraftCore.cache.findApplication("linuxdeploy-x86_64.AppImage")
+        self.linuxdeployExe = CraftCore.cache.findApplication(f"linuxdeploy-{CraftCore.compiler.architecture.appImageArchitecture}.AppImage")
         if not self.linuxdeployExe:
             return False
         return True
