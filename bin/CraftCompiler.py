@@ -637,6 +637,7 @@ class CraftCompiler(object):
                 "amd64": CraftCompiler.Architecture.x86_64,
                 "x86_64": CraftCompiler.Architecture.x86_64,
                 "arm64": CraftCompiler.Architecture.arm64,
+                "aarch64": CraftCompiler.Architecture.arm64,
             }.get(platform.machine().lower())
         if not hostArchitecture or not hostPlatform:
             print(f"Unsupported host platform: {platform.system()} {platform.machine()}", file=sys.stderr)
