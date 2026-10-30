@@ -81,8 +81,8 @@ class PackageBase(CraftBase):
             imageDir = Path(imageDir)
             if not imageDir.exists():
                 continue
-            for root, dirs, files in os.walk(imageDir):
-                root = Path(root)
+            for rootStr, dirs, files in os.walk(imageDir):
+                root = Path(rootStr)
                 files += [d for d in dirs if (root / d).is_symlink()]
                 for name in files:
                     dest = destDir / (root / name).relative_to(imageDir)
