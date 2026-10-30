@@ -15,11 +15,11 @@ class subinfo(info.infoclass):
         self.buildDependencies["python-modules/pip"] = None
         self.runtimeDependencies["libs/python"] = None
         self.buildDependencies["python-modules/setuptools"] = None
-        self.buildDependencies["python-modules/packaging"] = None
-        self.buildDependencies["python-modules/pathspec"] = None
-        self.buildDependencies["python-modules/pluggy"] = None
-        self.buildDependencies["python-modules/trove-classifiers"] = None
-        self.buildDependencies["python-modules/tomlkit"] = None
+        self.runtimeDependencies["python-modules/packaging"] = None
+        self.runtimeDependencies["python-modules/pathspec"] = None
+        self.runtimeDependencies["python-modules/pluggy"] = None
+        self.runtimeDependencies["python-modules/trove-classifiers"] = None
+        self.runtimeDependencies["python-modules/tomlkit"] = None
 
 
 class Package(PipPackageBase):

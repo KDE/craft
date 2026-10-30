@@ -15,6 +15,8 @@ class subinfo(info.infoclass):
         self.buildDependencies["python-modules/pip"] = None
         self.runtimeDependencies["libs/python"] = None
         self.buildDependencies["dev-utils/system-python3"] = None
+        self.buildDependencies["python-modules/setuptools"] = None
+        self.buildDependencies["python-modules/calver"] = None
 
 
 class Package(PipPackageBase):

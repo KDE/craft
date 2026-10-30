@@ -16,12 +16,15 @@ class subinfo(info.infoclass):
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
         self.buildDependencies["python-modules/pip"] = None
-        self.runtimeDependencies["python-modules/hatch-vcs"] = None
+        self.runtimeDependencies["libs/python"] = None
+        self.buildDependencies["python-modules/hatchling"] = None
+        self.buildDependencies["python-modules/hatch-vcs"] = None
         self.buildDependencies["python-modules/hatch-fancy-pypi-readme"] = None
         self.runtimeDependencies["python-modules/distlib"] = None
         self.runtimeDependencies["python-modules/filelock"] = None
         self.runtimeDependencies["python-modules/platformdirs"] = None
         self.runtimeDependencies["python-modules/python-discovery"] = None
+        self.runtimeDependencies["python-modules/packaging"] = None
 
 
 class Package(PipPackageBase):
