@@ -278,9 +278,10 @@ class PackageBase(CraftBase):
             # check whether we are in an empty dir that we should remove
             if not fileList or fileList[-1].path.parent != file.path.parent:
                 containingDir = file.path.parent
-                if containingDir.exists() and not any(containingDir.iterdir()):
+                while containingDir != rootdir and containingDir.exists() and not any(containingDir.iterdir()):
                     CraftCore.log.debug(f"Delete empty dir {containingDir}")
                     utils.rmtree(containingDir)
+                    containingDir = containingDir.parent
 
     def _update(self):
         from Source.GitSource import GitSource
