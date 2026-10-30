@@ -551,6 +551,12 @@ class OptionsInstall(OptionsBase):
         self.args = Arguments(["install"])
 
 
+class OptionsQmerge(OptionsBase):
+    def __init__(self):
+        # by default allow overwriting existing files
+        self.allowOverwrite = True
+
+
 # options for the package action
 class OptionsPackage(OptionsBase):
     def __init__(self):
@@ -596,6 +602,7 @@ class Options(object):
         self.configure = OptionsConfigure(self.dynamic)
         self.make = OptionsMake()
         self.install = OptionsInstall()
+        self.qmerge = OptionsQmerge()
         # options of the package action
         self.package = OptionsPackage()
         # add the date to the target

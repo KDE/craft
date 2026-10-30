@@ -18,6 +18,7 @@ class PipPackageBase(PackageBase, MultiSource, PipBuildSystem, TypePackager):
         MultiSource.__init__(self, **kwargs)
         PipBuildSystem.__init__(self, **kwargs)
         TypePackager.__init__(self, **kwargs)
+        self.subinfo.options.qmerge.allowOverwrite = False
 
     def fetch(self):
         if self._sourceClass:

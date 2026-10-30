@@ -46,6 +46,11 @@ class PackageBase(CraftBase):
 
         copiedFiles = []  # will be populated by the next call
         if not dbOnly:
+            if not self.subinfo.options.qmerge.allowOverwrite:
+                clashes = self._findClashingFiles(CraftCore.standardDirs.craftRoot())
+                if clashes:
+                    CraftCore.log.error(f"{self} would overwrite the following files:\n" + "\n".join(str(f) for f in clashes))
+                    return False
             for imageDir in [self.imageDir(), self.symbolsImageDir()]:
                 if imageDir.exists():
                     if not utils.copyDir(
@@ -68,6 +73,22 @@ class PackageBase(CraftBase):
             package.setCacheVersion(self.cacheVersion())
 
         return True
+
+    def _findClashingFiles(self, destDir) -> list[Path]:
+        destDir = Path(destDir)
+        clashes = []
+        for imageDir in [self.imageDir(), self.symbolsImageDir()]:
+            imageDir = Path(imageDir)
+            if not imageDir.exists():
+                continue
+            for root, dirs, files in os.walk(imageDir):
+                root = Path(root)
+                files += [d for d in dirs if (root / d).is_symlink()]
+                for name in files:
+                    dest = destDir / (root / name).relative_to(imageDir)
+                    if os.path.lexists(dest):
+                        clashes.append(dest)
+        return clashes
 
     def unmerge(self, dbOnly=False):
         """unmergeing the files from the filesystem"""
