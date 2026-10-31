@@ -187,6 +187,8 @@ class PipBuildSystem(BuildSystemBase):
                         "--no-binary",
                         ":all:",
                         "--no-cache-dir",
+                        # build_ext alone would skip build_clib, breaking packages with internal C libraries
+                        "--config-settings=--global-option=build_clib",
                         "--config-settings=--global-option=build_ext",
                         f"--config-settings=--global-option=--include-dirs={CraftCore.standardDirs.craftRoot()}/include",
                         f"--config-settings=--global-option=--library-dirs={CraftCore.standardDirs.craftRoot()}/lib",
