@@ -10,8 +10,9 @@ class subinfo(info.infoclass):
         self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.Windows
 
     def setTargets(self):
-        self.svnTargets["latest"] = ""
-        self.defaultTarget = "latest"
+        for ver in ["3.5.6"]:
+            self.svnTargets[ver] = ""
+        self.defaultTarget = "3.5.6"
         self.description = "A python implementation of GNU readline"
 
     def setDependencies(self):

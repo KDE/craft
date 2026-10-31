@@ -7,8 +7,10 @@ from Package.PipPackageBase import PipPackageBase
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.svnTargets["latest"] = ""
-        self.defaultTarget = "latest"
+        for ver in ["10.0"]:
+            self.svnTargets[ver] = ""
+        self.defaultTarget = "10.0"
+        self.releaseManagerId = 70529
         self.description = "Human friendly output for text interfaces using Python"
 
     def setDependencies(self):

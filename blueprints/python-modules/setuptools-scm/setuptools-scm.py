@@ -6,9 +6,11 @@ from Package.PipPackageBase import PipPackageBase
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.svnTargets["master"] = ""
+        for ver in ["10.3.4"]:
+            self.svnTargets[ver] = ""
         self.description = "The blessed package to manage your versions by scm tags"
-        self.defaultTarget = "master"
+        self.defaultTarget = "10.3.4"
+        self.releaseManagerId = 7874
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None

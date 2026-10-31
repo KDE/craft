@@ -6,8 +6,10 @@ from Package.PipPackageBase import PipPackageBase
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.svnTargets["latest"] = ""
-        self.defaultTarget = "latest"
+        for ver in ["0.48.0"]:
+            self.svnTargets[ver] = ""
+        self.defaultTarget = "0.48.0"
+        self.releaseManagerId = 11428
         self.description = "Command line tool for manipulating wheel files"
 
     def setDependencies(self):

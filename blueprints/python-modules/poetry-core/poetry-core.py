@@ -6,8 +6,10 @@ from Package.PipPackageBase import PipPackageBase
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.svnTargets["latest"] = ""
-        self.defaultTarget = "latest"
+        for ver in ["2.5.0"]:
+            self.svnTargets[ver] = ""
+        self.defaultTarget = "2.5.0"
+        self.releaseManagerId = 71155
         self.description = "Poetry PEP 517 Build Backend"
 
     def setDependencies(self):

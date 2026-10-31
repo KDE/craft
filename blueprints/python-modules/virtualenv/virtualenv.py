@@ -10,8 +10,10 @@ class subinfo(info.infoclass):
     # don't confuse it with "virtual/craft-venv" which creates a venv
 
     def setTargets(self):
-        self.svnTargets["master"] = ""
-        self.defaultTarget = "master"
+        for ver in ["21.15.2"]:
+            self.svnTargets[ver] = ""
+        self.defaultTarget = "21.15.2"
+        self.releaseManagerId = 6904
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None

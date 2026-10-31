@@ -14,6 +14,7 @@ class subinfo(info.infoclass):
         self.targetDigests["26.2.2"] = (["e5ef64ef63ff89a746014ad81658b76c1940385fdcdbc4fcbfa6e3ef1887352d"], CraftHash.HashAlgorithm.SHA256)
         self.patchLevel["25.0.1"] = 1
         self.defaultTarget = "26.2.2"
+        self.releaseManagerId = 6529
 
     def setDependencies(self):
         self.buildDependencies["core/cacert"] = None

@@ -6,8 +6,10 @@ from Package.PipPackageBase import PipPackageBase
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.svnTargets["latest"] = ""
-        self.defaultTarget = "latest"
+        for ver in ["0.4.6"]:
+            self.svnTargets[ver] = ""
+        self.defaultTarget = "0.4.6"
+        self.releaseManagerId = 3807
         self.description = "Cross-platform colored terminal text"
 
     def setDependencies(self):

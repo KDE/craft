@@ -9,6 +9,7 @@ class subinfo(info.infoclass):
         for ver in ["1.27.0", "1.33.0"]:
             self.svnTargets[ver] = ""
         self.defaultTarget = "1.33.0"
+        self.releaseManagerId = 185085
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None

@@ -6,8 +6,10 @@ from Package.PipPackageBase import PipPackageBase
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.svnTargets["latest"] = ""
-        self.defaultTarget = "latest"
+        for ver in ["3.2.0"]:
+            self.svnTargets[ver] = ""
+        self.defaultTarget = "3.2.0"
+        self.releaseManagerId = 119596
         self.description = "Use git repo data for building a version number according to PEP-440"
 
     def setDependencies(self):

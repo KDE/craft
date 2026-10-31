@@ -6,8 +6,10 @@ from Package.PipPackageBase import PipPackageBase
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.svnTargets["latest"] = ""
-        self.defaultTarget = "latest"
+        for ver in ["3.5.0"]:
+            self.svnTargets[ver] = ""
+        self.defaultTarget = "3.5.0"
+        self.releaseManagerId = 72190
         self.description = "Validate configuration and produce human readable error messages"
 
     def setDependencies(self):

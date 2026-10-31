@@ -6,8 +6,10 @@ from Package.PipPackageBase import PipPackageBase
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.svnTargets["latest"] = ""
-        self.defaultTarget = "latest"
+        for ver in ["1.3.3"]:
+            self.svnTargets[ver] = ""
+        self.defaultTarget = "1.3.3"
+        self.releaseManagerId = 387211
         self.description = "Wrappers to call pyproject.toml-based build backend hooks"
 
     def setDependencies(self):

@@ -6,8 +6,10 @@ from Package.PipPackageBase import PipPackageBase
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.svnTargets["latest"] = ""
-        self.defaultTarget = "latest"
+        for ver in ["4.14.2"]:
+            self.svnTargets[ver] = ""
+        self.defaultTarget = "4.14.2"
+        self.releaseManagerId = 200932
         self.description = "A small Python package for determining appropriate platform-specific dirs"
 
     def setDependencies(self):

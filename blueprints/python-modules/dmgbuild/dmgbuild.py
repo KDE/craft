@@ -6,8 +6,10 @@ from Package.PipPackageBase import PipPackageBase
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.svnTargets["master"] = ""
-        self.defaultTarget = "master"
+        for ver in ["1.6.7"]:
+            self.svnTargets[ver] = ""
+        self.defaultTarget = "1.6.7"
+        self.releaseManagerId = 24983
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None

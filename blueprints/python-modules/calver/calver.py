@@ -6,8 +6,10 @@ from Package.PipPackageBase import PipPackageBase
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.svnTargets["latest"] = ""
-        self.defaultTarget = "latest"
+        for ver in ["2025.10.20"]:
+            self.svnTargets[ver] = ""
+        self.defaultTarget = "2025.10.20"
+        self.releaseManagerId = 100823
         self.description = "Setuptools extension for CalVer package versions"
 
     def setDependencies(self):

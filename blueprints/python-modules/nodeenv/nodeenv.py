@@ -6,8 +6,10 @@ from Package.PipPackageBase import PipPackageBase
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.svnTargets["latest"] = ""
-        self.defaultTarget = "latest"
+        for ver in ["1.11.1"]:
+            self.svnTargets[ver] = ""
+        self.defaultTarget = "1.11.1"
+        self.releaseManagerId = 61153
         self.description = "Node.js virtual environment builder"
 
     def setDependencies(self):

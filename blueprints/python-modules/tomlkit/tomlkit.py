@@ -6,8 +6,10 @@ from Package.PipPackageBase import PipPackageBase
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.svnTargets["latest"] = ""
-        self.defaultTarget = "latest"
+        for ver in ["0.15.2"]:
+            self.svnTargets[ver] = ""
+        self.defaultTarget = "0.15.2"
+        self.releaseManagerId = 19609
         self.description = "Style preserving TOML library"
 
     def setDependencies(self):

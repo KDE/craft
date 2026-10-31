@@ -20,6 +20,7 @@ class subinfo(info.infoclass):
             self.targets[ver] = pip.targets[ver]
             self.targetDigests[ver] = pip.targetDigests[ver]
         self.defaultTarget = pip.defaultTarget
+        self.releaseManagerId = 6529
 
     def setDependencies(self):
         self.buildDependencies["core/cacert"] = None

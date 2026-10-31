@@ -6,9 +6,11 @@ from Package.PipPackageBase import PipPackageBase
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.svnTargets["master"] = ""
+        for ver in ["2.6.0"]:
+            self.svnTargets[ver] = ""
         self.description = "Core version inference from version control systems, used by setuptools-scm"
-        self.defaultTarget = "master"
+        self.defaultTarget = "2.6.0"
+        self.releaseManagerId = 389421
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None

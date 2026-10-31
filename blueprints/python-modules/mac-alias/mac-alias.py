@@ -6,8 +6,10 @@ from Package.PipPackageBase import PipPackageBase
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.svnTargets["latest"] = ""
-        self.defaultTarget = "latest"
+        for ver in ["2.2.3"]:
+            self.svnTargets[ver] = ""
+        self.defaultTarget = "2.2.3"
+        self.releaseManagerId = 305188
         self.description = "Generate/parse macOS Alias records from Python"
 
     def setDependencies(self):

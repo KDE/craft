@@ -6,8 +6,10 @@ from Package.PipPackageBase import PipPackageBase
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.svnTargets["latest"] = ""
-        self.defaultTarget = "latest"
+        for ver in ["25.1.0"]:
+            self.svnTargets[ver] = ""
+        self.defaultTarget = "25.1.0"
+        self.releaseManagerId = 274452
         self.description = "Fancy PyPI READMEs with Hatch"
 
     def setDependencies(self):

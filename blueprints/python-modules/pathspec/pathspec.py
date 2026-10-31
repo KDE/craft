@@ -6,8 +6,10 @@ from Package.PipPackageBase import PipPackageBase
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        self.svnTargets["latest"] = ""
-        self.defaultTarget = "latest"
+        for ver in ["1.1.1"]:
+            self.svnTargets[ver] = ""
+        self.defaultTarget = "1.1.1"
+        self.releaseManagerId = 23424
         self.description = "Distribution-building parts of Flit. See flit package for more information"
 
     def setDependencies(self):
