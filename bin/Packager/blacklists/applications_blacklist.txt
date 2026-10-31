@@ -37,6 +37,7 @@ doc/.*
 (bin/data|share)/bash-completion/.*
 
 lib/gettext/.*
+libexec/gettext/.*
 lib/metatypes/.*
 
 # docbook stuff
