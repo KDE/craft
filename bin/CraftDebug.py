@@ -12,11 +12,29 @@ import sys
 from CraftCore import CraftCore
 
 try:
-    import coloredlogs
+    from rich.console import Console
+    from rich.text import Text
+except ImportError:
+    Console = None
 
-    _SUPPORTS_COLORED_LOGS = True
-except:
-    _SUPPORTS_COLORED_LOGS = False
+
+class _RichHandler(logging.Handler):
+    _styles = {
+        logging.DEBUG: "green",
+        logging.WARNING: "yellow",
+        logging.ERROR: "red",
+        logging.CRITICAL: "bold red",
+    }
+
+    def __init__(self, console):
+        super().__init__()
+        self.console = console
+
+    def emit(self, record):
+        try:
+            self.console.print(Text.from_ansi(self.format(record), style=self._styles.get(record.levelno, "")), soft_wrap=True)
+        except Exception:
+            self.handleError(record)
 
 
 class _StageLogHandler(logging.Handler):
@@ -78,12 +96,13 @@ class CraftDebug(object):
                 "Right now we don't support running multiple Craft instances with the same configuration.",
                 file=sys.stderr,
             )
-        if _SUPPORTS_COLORED_LOGS and CraftCore.settings.getboolean("General", "AllowAnsiColor", True):
-            coloredlogs.install(logger=self._log, fmt="%(message)s", stream=sys.stdout)
-            self._handler = self._log.handlers[-1]
+        self.console = None
+        if Console:
+            self.console = Console(no_color=not CraftCore.settings.getboolean("General", "AllowAnsiColor", True))
+            self._handler = _RichHandler(self.console)
         else:
             self._handler = logging.StreamHandler(sys.stdout)
-            self._log.addHandler(self._handler)
+        self._log.addHandler(self._handler)
 
         self._handler.setLevel(logging.INFO)
         if self._fileHandler:
@@ -133,24 +152,30 @@ class CraftDebug(object):
     def log(self):
         return self._log
 
-    def print(self, msg, file=sys.stdout, stack_info=False):
+    def setStream(self, stream):
+        if self.console:
+            self.console.file = stream
+        else:
+            self._handler.setStream(stream or sys.stdout)
+
+    def print(self, msg, file=None, stack_info=False):
         if 0 <= self.verbose() < 2:
             print(
                 msg,
-                file=file if not CraftCore.settings.ciMode else sys.stdout,
+                file=file if file and not CraftCore.settings.ciMode else sys.stdout,
             )
             self.log.debug(msg, stack_info=stack_info)
         else:
             self.log.debug(msg, stack_info=stack_info)
 
-    def printOut(self, msg, file=sys.stdout):
+    def printOut(self, msg, file=None):
         """Should only be used to report independent of the verbosity level
         for example to print the installed files etc
         """
         if self.verbose() < 2:
             print(
                 msg,
-                file=file if not CraftCore.settings.ciMode else sys.stdout,
+                file=file if file and not CraftCore.settings.ciMode else sys.stdout,
             )
             self.log.debug(msg)
         else:

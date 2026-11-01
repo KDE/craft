@@ -73,14 +73,13 @@ class TestAPI(CraftHashTest):
     def test_printFilesDigests(self):
         path, name = os.path.split(self.tmpFile)
         log = io.StringIO()
-        oldLog = CraftCore.debug._handler.stream
-        CraftCore.debug._handler.stream = log
+        CraftCore.debug.setStream(log)
         CraftHash.printFilesDigests(path, [name], "test", CraftHash.HashAlgorithm.SHA256)
         self.assertEqual(
             "Digests for test: (['4fc1e96dc5ecf625efe228fce1b0964b6302cfa4d4fb2bb8d16c665d23f6ff30'], CraftHash.HashAlgorithm.SHA256)\n",
             log.getvalue(),
         )
-        CraftCore.debug._handler.stream = oldLog
+        CraftCore.debug.setStream(None)
 
     def test_createDigestFiles(self):
         # TODO: check file content

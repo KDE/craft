@@ -343,10 +343,14 @@ def systemWithoutShell(
         for line in proc.stdout:
             lineUtf8 = line.decode("utf-8", errors="backslashreplace")
             StageLogger.log(lineUtf8)
-            if isinstance(stdout, io.TextIOWrapper):
+            if stdout is sys.stdout or isinstance(stdout, io.TextIOWrapper):
                 if not outputOnFailure and CraftCore.debug.verbose() < 3:  # don't print if we write the debug log to stdout anyhow
                     ansiFix()
-                    stdout.buffer.write(line)
+                    if isinstance(stdout, io.TextIOWrapper):
+                        stdout.buffer.write(line)
+                    else:
+                        # rich treats \r as carriage return and would print an empty line, and it prints OSC sequences like the console title
+                        stdout.write(re.sub(r"\x1b\][^\x07\x1b]*(\x07|\x1b\\)", "", lineUtf8.replace("\r\n", "\n")))
                     stdout.flush()
             elif stdout == subprocess.DEVNULL:
                 pass

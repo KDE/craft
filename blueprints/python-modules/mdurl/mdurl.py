@@ -1,25 +1,22 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # SPDX-FileCopyrightText: 2026 Hannah von Reth <vonreth@kde.org>
 import info
-from CraftCore import CraftCore
 from Package.PipPackageBase import PipPackageBase
 
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        for ver in ["10.0"]:
+        for ver in ["0.1.2"]:
             self.svnTargets[ver] = ""
-        self.defaultTarget = "10.0"
-        self.releaseManagerId = 70529
-        self.description = "Human friendly output for text interfaces using Python"
+        self.defaultTarget = "0.1.2"
+        self.releaseManagerId = 223069
+        self.description = "Markdown URL utilities"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
         self.buildDependencies["python-modules/pip"] = None
+        self.buildDependencies["python-modules/flit-core"] = None
         self.runtimeDependencies["libs/python"] = None
-        self.buildDependencies["python-modules/setuptools"] = None
-        if CraftCore.compiler.platform.isWindows:
-            self.runtimeDependencies["python-modules/pyreadline3"] = None
 
 
 class Package(PipPackageBase):

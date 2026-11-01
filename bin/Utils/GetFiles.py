@@ -28,14 +28,88 @@
 import io
 import os
 import re
+import ssl
 import subprocess
 import sys
+import threading
 import urllib
 from pathlib import Path
 
 import utils
 from CraftCore import CraftCore
 from shells import Powershell
+
+try:
+    from rich.progress import (
+        BarColumn,
+        DownloadColumn,
+        Progress,
+        TextColumn,
+        TimeRemainingColumn,
+        TransferSpeedColumn,
+    )
+except ImportError:
+    Progress = None
+
+
+def _richConsole():
+    console = CraftCore.debug.console
+    if Progress and console and console.is_terminal and not CraftCore.settings.ciMode:
+        return console
+    return None
+
+
+def _downloadProgress(console):
+    return Progress(
+        TextColumn("[bold blue]{task.description}"),
+        BarColumn(),
+        DownloadColumn(),
+        TransferSpeedColumn(),
+        TimeRemainingColumn(),
+        console=console,
+        transient=True,
+    )
+
+
+def _contentLength(url) -> int | None:
+    cert = CraftCore.standardDirs.etcDir() / "cacert.pem"
+    context = ssl.create_default_context(cafile=cert if cert.exists() else None)
+    try:
+        with urllib.request.urlopen(urllib.request.Request(url, method="HEAD"), timeout=10, context=context) as response:
+            return int(response.headers["Content-Length"])
+    except Exception as e:
+        CraftCore.log.debug(f"Failed to get the size of {url}: {e}")
+        return None
+
+
+def _systemWithProgress(command, url, absFilename: Path) -> bool:
+    console = _richConsole()
+    if not console:
+        return utils.system(command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT)
+    command = [str(x) for x in command]
+    CraftCore.log.debug(f"executing command: {command!r}")
+    try:
+        proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    except Exception as e:
+        CraftCore.log.error(f"Failed to execute command: {command}: {e}")
+        return False
+    output = []
+    reader = threading.Thread(target=lambda: output.append(proc.stdout.read()), daemon=True)
+    reader.start()
+    with _downloadProgress(console) as progress:
+        task = progress.add_task(absFilename.name, total=None)
+        threading.Thread(target=lambda: progress.update(task, total=_contentLength(url)), daemon=True).start()
+        while reader.is_alive():
+            reader.join(0.2)
+            progress.update(task, completed=absFilename.stat().st_size if absFilename.exists() else 0)
+    proc.wait()
+    log = b"".join(output).decode("utf-8", errors="backslashreplace")
+    CraftCore.log.debug(log)
+    if proc.returncode != 0:
+        CraftCore.log.warning(log)
+        CraftCore.log.info(f"Command {command} failed with exit code {proc.returncode}")
+        return False
+    return True
 
 
 def getFile(url, destdir, filename="", quiet=None) -> bool:
@@ -88,10 +162,14 @@ def getFile(url, destdir, filename="", quiet=None) -> bool:
         return True
 
     CraftCore.log.info(f"Downloading: {url} to {absFilename}")
-    with utils.ProgressBar() as progress:
+    console = _richConsole()
+    with _downloadProgress(console) if console else utils.ProgressBar() as progress:
+        task = progress.add_task(absFilename.name, total=None) if console else None
 
         def dlProgress(count, blockSize, totalSize):
-            if totalSize != -1:
+            if console:
+                progress.update(task, completed=count * blockSize, total=totalSize if totalSize != -1 else None)
+            elif totalSize != -1:
                 progress.print(int(count * blockSize * 100 / totalSize))
             else:
                 sys.stdout.write(("\r%s bytes downloaded" % (count * blockSize)))
@@ -148,7 +226,7 @@ def curlFile(url, destdir, filename, quiet):
         elif CraftCore.cache.checkCommandOutputFor(curl, "--progress-bar", helpCommand="--help all"):
             command += ["--progress-bar"]
         CraftCore.log.info(f"curl {url}")
-        return utils.system(command, displayProgress=True, logCommand=False, stderr=subprocess.STDOUT)
+        return _systemWithProgress(command, url, Path(destdir) / filename)
     command += ["-v"]
     return utils.system(command)
 
@@ -187,12 +265,7 @@ def wgetFile(url, destdir, filename, quiet):
         elif CraftCore.cache.checkCommandOutputFor(wget, "--show-progress"):
             command += ["-q", "--show-progress"]
             CraftCore.log.info(f"wget {url}")
-            return utils.system(
-                command,
-                displayProgress=True,
-                logCommand=False,
-                stderr=subprocess.STDOUT,
-            )
+            return _systemWithProgress(command, url, Path(destdir) / filename)
     return utils.system(command)
 
 
@@ -229,12 +302,7 @@ def wget2File(wgetCommand, url, destdir, filename, quiet):
         else:
             command += ["-q", "--progress=bar", "--force-progress"]
             CraftCore.log.info(f"wget2 {url}")
-            return utils.system(
-                command,
-                displayProgress=True,
-                logCommand=False,
-                stderr=subprocess.STDOUT,
-            )
+            return _systemWithProgress(command, url, Path(destdir) / filename)
     return utils.system(command)
 
 

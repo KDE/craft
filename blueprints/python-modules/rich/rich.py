@@ -1,27 +1,24 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # SPDX-FileCopyrightText: 2026 Hannah von Reth <vonreth@kde.org>
 import info
-from CraftCore import CraftCore
 from Package.PipPackageBase import PipPackageBase
 
 
 class subinfo(info.infoclass):
-    def registerOptions(self):
-        self.parent.package.categoryInfo.platforms = CraftCore.compiler.Platforms.Windows
-
     def setTargets(self):
-        for ver in ["3.5.6"]:
+        for ver in ["15.0.0"]:
             self.svnTargets[ver] = ""
-        self.defaultTarget = "3.5.6"
-        self.description = "A python implementation of GNU readline"
+        self.defaultTarget = "15.0.0"
+        self.releaseManagerId = 41376
+        self.description = "Rich is a library for rich text and beautiful formatting in the terminal"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
         self.buildDependencies["python-modules/pip"] = None
+        self.buildDependencies["python-modules/poetry-core"] = None
         self.runtimeDependencies["libs/python"] = None
-        self.buildDependencies["python-modules/setuptools"] = None
-        self.buildDependencies["python-modules/setuptools-scm"] = None
-        self.buildDependencies["python-modules/setuptools-git-versioning"] = None
+        self.runtimeDependencies["python-modules/markdown-it-py"] = None
+        self.runtimeDependencies["python-modules/pygments"] = None
 
 
 class Package(PipPackageBase):

@@ -311,12 +311,12 @@ def setUp(args):
     shortPath, installShortCut = windowsSetup()
 
     if CraftBootstrap.promptForChoice(
-        "Do you want to enable the support for colored logs",
+        "Do you want to enable the support for colored logs and status display",
         [("Yes", True), ("No", False)],
         default="Yes",
         returnDefaultWithoutPrompt=args.use_defaults,
     ):
-        shelf["python-modules/coloredlogs"]
+        shelf["python-modules/rich"]
 
     if not args.dry_run:
         if args.localDev:
