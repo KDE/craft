@@ -39,7 +39,7 @@ import stat
 import subprocess
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Iterable, Optional
 
 import Notifier.NotificationLoader
 from CraftCore import CraftCore
@@ -1356,19 +1356,17 @@ def urljoin(root, path):
     return "/".join([root.rstrip("/"), path])
 
 
-def redact(input: str, secrests: set[str]):
-    if secrests is None:
+def redact(input: str | list[str], secrets: Iterable[str] | None):
+    if not secrets:
         return input
+    secrets = [str(s) for s in secrets if s]
     if isinstance(input, str):
-        for s in secrests:
+        for s in secrets:
             input = input.replace(s, "***")
         return input
     elif isinstance(input, list):
-        out = []
-        for var in input:
-            for s in secrests:
-                out.append(var.replace(s, "***"))
-        return out
+        return [redact(str(var), secrets) for var in input]
+    return input
 
 
 def localSignMac(binaries):
