@@ -6,9 +6,9 @@ from Package.PipPackageBase import PipPackageBase
 
 class subinfo(info.infoclass):
     def setTargets(self):
-        for ver in ["1.9.0"]:
+        for ver in ["1.9.0", "1.9.1"]:
             self.svnTargets[ver] = ""
-        self.defaultTarget = "1.9.0"
+        self.defaultTarget = "1.9.1"
         self.releaseManagerId = 388662
         self.description = "Python interpreter discovery"
 
