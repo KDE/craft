@@ -6,11 +6,13 @@
 """@package provides cmake build system"""
 
 import os
+import sys
 from pathlib import Path
 
 import utils
 from Blueprints.CraftPackageObject import CraftPackageObject
 from BuildSystem.BuildSystemBase import BuildSystemBase
+from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from Utils.Arguments import Arguments
@@ -24,6 +26,83 @@ class CMakeBuildSystem(BuildSystemBase):
         """constructor. configureOptions are added to the configure command line and makeOptions are added to the make command line"""
         BuildSystemBase.__init__(self, package, "cmake")
         self.supportsNinja = True
+
+    @staticmethod
+    def __cmakeSystem() -> tuple[str, str]:
+        """return CMAKE_SYSTEM_NAME and CMAKE_SYSTEM_PROCESSOR for the target"""
+        arch = CraftCore.compiler.architecture.key
+        platform = CraftCore.compiler.platform
+        if platform.isWindows:
+            processors = {
+                CraftCompiler.Architecture.x86_32: "X86",
+                CraftCompiler.Architecture.x86_64: "AMD64",
+                CraftCompiler.Architecture.arm64: "ARM64",
+            }
+            return "Windows", processors[arch]
+        if platform.isApple:
+            processors = {
+                CraftCompiler.Architecture.x86_64: "x86_64",
+                CraftCompiler.Architecture.arm64: "arm64",
+                CraftCompiler.Architecture.arm64e: "arm64e",
+            }
+            return "iOS" if platform.isIOS else "Darwin", processors[arch]
+        if platform.isFreeBSD:
+            return "FreeBSD", arch.autotoolsArchitecture
+        return "Linux", arch.autotoolsArchitecture
+
+    def __toolchain(self) -> str:
+        """return base toolchain file, chain loading the ECM or Qt toolchain where applicable"""
+        useQtToolchain = True
+        lines = [
+            # Qt's toolchain file chain loads the toolchain qtbase was configured with, which is this one
+            "if(__craft_qt_toolchain_loading)",
+            "    return()",
+            "endif()",
+        ]
+        python = CraftCore.standardDirs.craftHostRoot() / f"bin/python3{CraftCore.compiler.hostPlatform.executableSuffix}"
+        python = (python if python.exists() else Path(sys.executable)).as_posix()
+        lines += [f'set({name} "{python}" CACHE FILEPATH "")' for name in ["Python3_EXECUTABLE", "Python_EXECUTABLE", "PYTHON_EXECUTABLE"]]
+        if CraftCore.compiler.platform.isAndroid:
+            kfVersion = CraftCore.settings.get("General", "KFHostToolingVersion", "5")
+            nativeToolingRoot = Path(CraftCore.settings.get("General", f"KF{kfVersion}HostToolingRoot", "/opt/nativetooling"))
+            ecmToolchain = CraftCore.standardDirs.craftRoot() / "share/ECM/toolchain/Android.cmake"
+            if not ecmToolchain.exists():
+                ecmToolchain = nativeToolingRoot / "share/ECM/toolchain/Android.cmake"
+            lines += [f'include("{ecmToolchain.as_posix()}")']
+            useQtToolchain = kfVersion == "6"
+        # CMake ignores CMAKE_SYSTEM_PROCESSOR unless CMAKE_SYSTEM_NAME is set, which also enables CMAKE_CROSSCOMPILING
+        elif CraftCore.compiler.isCrossCompiling:
+            systemName, processor = self.__cmakeSystem()
+            hostRoot = CraftCore.standardDirs.craftHostRoot()
+            lines += [
+                f'set(CMAKE_SYSTEM_NAME "{systemName}")',
+                f'set(CMAKE_SYSTEM_PROCESSOR "{processor}")',
+                # programs are searched in the prefix paths before PATH, the host ones must come first.
+                # The host prefixes are not below the find root, so the ONLY mode hides them from find_package
+                f'list(PREPEND CMAKE_PREFIX_PATH "{(hostRoot / "dev-utils").as_posix()}" "{hostRoot.as_posix()}")',
+                f'list(PREPEND CMAKE_FIND_ROOT_PATH "{CraftCore.standardDirs.craftRoot().as_posix()}")',
+                "set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)",
+                "set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)",
+            ]
+        if useQtToolchain:
+            # the existence check is done by CMake so the file is the same before and after qtbase is installed,
+            # qtbase itself must not be built with its own toolchain file, see CRAFT_SKIP_QT_TOOLCHAIN
+            qtToolchain = (CraftCore.standardDirs.craftRoot() / "lib/cmake/Qt6/qt.toolchain.cmake").as_posix()
+            lines += [
+                "list(APPEND CMAKE_TRY_COMPILE_PLATFORM_VARIABLES CRAFT_SKIP_QT_TOOLCHAIN)",
+                f'if(NOT CRAFT_SKIP_QT_TOOLCHAIN AND EXISTS "{qtToolchain}")',
+                "    set(__craft_qt_toolchain_loading ON)",
+                f'    include("{qtToolchain}")',
+                "    unset(__craft_qt_toolchain_loading)",
+                "endif()",
+            ]
+        content = "\n".join(lines) + "\n"
+        toolchain = CraftCore.standardDirs.etcDir() / "toolchain.cmake"
+        # shared by all builds, rewriting it would trigger a reconfigure
+        if not toolchain.exists() or toolchain.read_text(encoding="utf-8") != content:
+            toolchain.parent.mkdir(parents=True, exist_ok=True)
+            toolchain.write_text(content, encoding="utf-8")
+        return toolchain.as_posix()
 
     def __makeFileGenerator(self):
         """return cmake related make file generator"""
@@ -51,7 +130,10 @@ class CMakeBuildSystem(BuildSystemBase):
             f"-DCMAKE_REQUIRED_INCLUDES={craftRoot}/include",
             f"-DCMAKE_C_STANDARD_INCLUDE_DIRECTORIES={craftRoot}/include",
             "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+            f"-DCMAKE_TOOLCHAIN_FILE={self.__toolchain()}",
         ]
+        if self.package == "libs/qt6/qtbase":
+            options.append("-DCRAFT_SKIP_QT_TOOLCHAIN=ON")
 
         if self.buildType() is not None:
             options.append(f"-DCMAKE_BUILD_TYPE={self.buildType()}")
@@ -66,7 +148,10 @@ class CMakeBuildSystem(BuildSystemBase):
         if CraftCore.compiler.platform.isWindows:
             # people use InstallRequiredSystemLibraries.cmake wrong and unconditionally install the
             # msvc crt...
-            options += ["-DCMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP=ON", f"-DCMAKE_SYSTEM_PROCESSOR={CraftCore.compiler.architecture.key.name}"]
+            options += ["-DCMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP=ON"]
+            if CraftCore.compiler.isCrossCompiling:
+                hostRoot = CraftCore.standardDirs.craftHostRoot()
+                options += [f"-DKF6_HOST_TOOLING={(hostRoot / 'lib/cmake').as_posix()};{(hostRoot / 'bin').as_posix()}"]
         elif CraftCore.compiler.platform.isMacOS:
             options += [
                 f"-DKDE_INSTALL_BUNDLEDIR={OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot())}/Applications/KDE",
@@ -80,44 +165,20 @@ class CMakeBuildSystem(BuildSystemBase):
             options += ["-DCMAKE_INSTALL_LIBDIR:PATH=lib"]
         elif CraftCore.compiler.platform.isAndroid:
             kfVersion = CraftCore.settings.get("General", "KFHostToolingVersion", "5")
-            nativeToolingRoot = CraftCore.settings.get("General", f"KF{kfVersion}HostToolingRoot", "/opt/nativetooling")
-
-            # prefer the toolchain file ECM installed, fall back to the one in the host tools
-            ecmToolchain = os.path.join(OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot()), "share/ECM/toolchain/Android.cmake")
-            if not os.path.exists(ecmToolchain):
-                ecmToolchain = os.path.join(nativeToolingRoot, "share/ECM/toolchain/Android.cmake")
-
             if kfVersion == "5":
                 nativeToolingCMake = CraftCore.settings.get(
                     "General",
                     "KF5HostToolingCMakePath",
                     "/opt/nativetooling/lib/x86_64-linux-gnu/cmake/",
                 )
-                options += [
-                    f"-DCMAKE_TOOLCHAIN_FILE={ecmToolchain}",
-                    f"-DKF5_HOST_TOOLING={nativeToolingCMake}",
-                ]
+                options += [f"-DKF5_HOST_TOOLING={nativeToolingCMake}"]
             elif kfVersion == "6":
                 nativeToolingCMake = CraftCore.settings.get(
                     "General",
                     "KF6HostToolingCMakePath",
                     "/opt/nativetooling6/lib/x86_64-linux-gnu/cmake/",
                 )
-                qtToolchainPath = os.path.join(OsUtils.toUnixPath(CraftCore.standardDirs.craftRoot()), "lib/cmake/Qt6/qt.toolchain.cmake")
-                # Exclude qtbase here so we don't try to build it with its own toolchain file in subsequent builds,
-                # that wont work, instead we want to use the same setup as in its initial build in a clean environment.
-                if os.path.exists(qtToolchainPath) and not self.package == "libs/qt6/qtbase":
-                    options += [
-                        f"-DCMAKE_TOOLCHAIN_FILE={qtToolchainPath}",
-                        f"-DQT_CHAINLOAD_TOOLCHAIN_FILE={ecmToolchain}",
-                        f"-DKF6_HOST_TOOLING={nativeToolingCMake}",
-                    ]
-                else:
-                    # the ECM toolchain file still works standalone, if we don't have Qt's own toolchain file yet
-                    options += [
-                        f"-DCMAKE_TOOLCHAIN_FILE={ecmToolchain}",
-                        f"-DKF6_HOST_TOOLING={nativeToolingCMake}",
-                    ]
+                options += [f"-DKF6_HOST_TOOLING={nativeToolingCMake}"]
 
             additionalFindRoots = ";".join(
                 filter(
