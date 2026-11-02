@@ -59,7 +59,7 @@ class subinfo(info.infoclass):
             CraftHash.HashAlgorithm.SHA256,
         )
 
-        self.defaultTarget = "1.3.1"
+        self.defaultTarget = "1.3.2"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
