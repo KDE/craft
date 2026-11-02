@@ -39,12 +39,13 @@ class PipBuildSystem(BuildSystemBase):
                     # don't cache the system python location
                     return sys.executable
             elif craftPython.isInstalled:
+                root = CraftCore.standardDirs.craftHostRoot()
                 suffix = "_d" if CraftCore.compiler.platform.isWindows and craftPython.instance.subinfo.options.dynamic.buildType == "Debug" else ""
-                python = CraftCore.standardDirs.craftRoot() / f"bin/python{suffix}{CraftCore.compiler.platform.executableSuffix}"
+                python = root / f"bin/python{suffix}{CraftCore.compiler.platform.executableSuffix}"
                 if python.exists():
                     self._python = python
                 else:
-                    python = CraftCore.standardDirs.craftRoot() / f"bin/python3{suffix}{CraftCore.compiler.platform.executableSuffix}"
+                    python = root / f"bin/python3{suffix}{CraftCore.compiler.platform.executableSuffix}"
                     if python.exists():
                         self._python = python
             if not self._python:
@@ -66,6 +67,45 @@ class PipBuildSystem(BuildSystemBase):
             ):
                 return False
         return True
+
+    @property
+    def _isArchCrossCompiling(self) -> bool:
+        return CraftCore.compiler.platform.isNative and not CraftCore.compiler.architecture.isNative
+
+    def _crossCompileEnv(self) -> dict | None:
+        if not self._isArchCrossCompiling:
+            return {}
+        arch = CraftCore.compiler.architecture
+        if CraftCore.compiler.platform.isWindows:
+            return {"VSCMD_ARG_TGT_ARCH": {"x86_32": "x86", "x86_64": "x64", "arm64": "arm64"}[arch.key.name]}
+
+        env = {}
+        if CraftCore.compiler.platform.isMacOS:
+            macArch = "arm64" if arch.isArm64 else "x86_64"
+            env["ARCHFLAGS"] = f"-arch {macArch}"
+            env["_PYTHON_HOST_PLATFORM"] = f"macosx-{CraftCore.compiler.macOSDeploymentTarget}-{macArch}"
+        else:
+            env["_PYTHON_HOST_PLATFORM"] = f"{CraftCore.compiler.platform.key.name.lower()}-{arch.autotoolsArchitecture}"
+
+        root = CraftCore.standardDirs.craftRoot()
+        sysconfigData = next(
+            (
+                x
+                for pattern in ["lib/python3.*/_sysconfigdata_*.py", "lib/Python.framework/Versions/Current/lib/python3.*/_sysconfigdata_*.py"]
+                for x in root.glob(pattern)
+            ),
+            None,
+        )
+        if not sysconfigData:
+            CraftCore.log.error(f"Failed to locate the sysconfig data of the target python in {root}")
+            return None
+        sysconfigDir = self.buildDir() / "_craft_sysconfig"
+        sysconfigDir.mkdir(parents=True, exist_ok=True)
+        if not utils.copyFile(sysconfigData, sysconfigDir / sysconfigData.name, linkOnly=False):
+            return None
+        env["_PYTHON_SYSCONFIGDATA_NAME"] = sysconfigData.stem
+        env["PYTHONPATH"] = os.pathsep.join(filter(None, [str(sysconfigDir), os.environ.get("PYTHONPATH")]))
+        return env
 
     def _latestPipVersion(self) -> str | None:
         # pin the latest version, else pip silently falls back to older versions if the latest fails to build
@@ -128,7 +168,10 @@ class PipBuildSystem(BuildSystemBase):
         else:
             # The modern approach
             # use the build dependencies provided by craft instead of fetching them into an isolated env
-            if not utils.system([self.python, "-m", "build", "--no-isolation", "--outdir", self.buildDir()], cwd=self.sourceDir()):
+            command = [self.python, "-m", "build", "--no-isolation", "--outdir", self.buildDir()]
+            if self._isArchCrossCompiling:
+                command += ["--sdist"]
+            if not utils.system(command, cwd=self.sourceDir()):
                 return False
         return True
 
@@ -157,6 +200,11 @@ class PipBuildSystem(BuildSystemBase):
             arch = CraftCore.compiler.architecture.key.name.lower()
             env["CC"] = f"{env['CC']} -arch {arch}"
             env["CXX"] = f"{env['CXX']} -arch {arch}"
+
+        crossEnv = self._crossCompileEnv()
+        if crossEnv is None:
+            return False
+        env.update(crossEnv)
 
         with ScopedEnv(env):
             usesCraftPython = CraftPackageObject.get("libs/python").categoryInfo.isActive
@@ -224,7 +272,7 @@ class PipBuildSystem(BuildSystemBase):
                     self._reportUnsatisfiedRequirements("build", self._unsatisfiedRequirements("build-pypi", self.pipPackageName, version))
                 return False
             if usesCraftPython:
-                if not self._fixInstallPrefix():
+                if not self._fixInstallPrefix(CraftCore.standardDirs.craftHostRoot()):
                     return False
                 if not bootstrap and not self._checkRuntimeRequirements():
                     return False
