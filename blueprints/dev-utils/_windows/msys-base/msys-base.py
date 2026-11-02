@@ -1,15 +1,14 @@
 import io
 import subprocess
-from pathlib import Path
 
 import info
 import shells
 import utils
 from CraftCore import CraftCore
-from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
 from Package.BinaryPackageBase import BinaryPackageBase
 from Package.MaybeVirtualPackageBase import MaybeVirtualPackageBase
+from Package.MsysPackageBase import MsysPackageBase
 from Package.VirtualPackageBase import VirtualPackageBase
 from Utils.Arguments import Arguments
 
@@ -28,19 +27,13 @@ class subinfo(info.infoclass):
         self.runtimeDependencies["virtual/base"] = None
 
     def updateMsys(self):
-        msysDir = CraftCore.settings.get("Paths", "Msys", CraftStandardDirs.craftRoot() / "msys")
+        msysDir = CraftStandardDirs.msysDir()
         shell = shells.BashShell()
-        useOverwrite = CraftCore.cache.checkCommandOutputFor(Path(msysDir) / "usr/bin/pacman.exe", "--overwrite", "-Sh")
-
-        # force was replace by overwrite
-        overwrite = Arguments(["--overwrite='*'" if useOverwrite else "--force"])
-
-        def stopProcesses():
-            return OsUtils.killProcess("*", msysDir)
+        stopProcesses = MsysPackageBase.stopMsysProcesses
 
         def queryForUpdate():
             out = io.BytesIO()
-            if not shell.execute(".", "pacman", Arguments(["-Sy", "--noconfirm", overwrite])):
+            if not shell.execute(".", "pacman", ["-Sy", "--noconfirm"]):
                 raise Exception()
             shell.execute(".", "pacman", ["-Qu", "--noconfirm"], stdout=out, stderr=subprocess.PIPE)
             out = out.getvalue()
@@ -56,31 +49,13 @@ class subinfo(info.infoclass):
                 if not queryForUpdate():
                     break
                 # might return 1 on core updates...
-                shell.execute(".", "pacman", Arguments(["-Su", "--noconfirm", overwrite, "--ask", "20"]))
+                shell.execute(".", "pacman", Arguments(["-Su", "--noconfirm", "--overwrite='*'", "--ask", "20"]))
                 if not stopProcesses():
                     return False
         except Exception as e:
             CraftCore.log.error(e, exc_info=e)
             return False
-        basePackages = ["base-devel", "msys/binutils", "msys/autoconf-archive", "msys/autotools", "msys/intltool", "msys/gettext-devel", "msys/texinfo"]
-        if CraftCore.compiler.architecture.isArm64:
-            basePackages.append("msys/mingw-w64-cross-clang")
-        if not (
-            shell.execute(
-                ".",
-                "pacman",
-                Arguments(
-                    ["-S"]
-                    + basePackages
-                    + [
-                        "--noconfirm",
-                        overwrite,
-                        "--needed",
-                    ]
-                ),
-            )
-            and stopProcesses()
-        ):
+        if not MsysPackageBase.pacmanInstall(["base-devel", "msys/binutils", "msys/autoconf-archive", "msys/intltool", "msys/gettext-devel"]):
             return False
         # rebase: Too many DLLs for available address space: Cannot allocate memory => ignore return code ATM
         utils.system("autorebase.bat", cwd=msysDir)
