@@ -33,7 +33,7 @@ class subinfo(info.infoclass):
         for ver in ["2.3.0", "2.4.3", "2.5.1"]:
             self.targets[ver] = f"https://distfiles.ariadne.space/pkgconf/pkgconf-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"pkgconf-{ver}"
-        for ver in ["3.0.3", "3.0.4", "3.0.5"]:
+        for ver in ["3.0.3", "3.0.4", "3.0.5", "3.0.10"]:
             self.targets[ver] = f"https://github.com/pkgconf/pkgconf/releases/download/pkgconf-{ver}/pkgconf-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"pkgconf-{ver}"
         self.targetDigests["2.3.0"] = (["3a9080ac51d03615e7c1910a0a2a8df08424892b5f13b0628a204d3fcce0ea8b"], CraftHash.HashAlgorithm.SHA256)
@@ -41,7 +41,8 @@ class subinfo(info.infoclass):
         self.targetDigests["2.5.1"] = (["cd05c9589b9f86ecf044c10a2269822bc9eb001eced2582cfffd658b0a50c243"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["3.0.3"] = (["aa033abb2b777ba4e66635495a931e53c49d86e4e4e38af68c0f76d666cbd8cf"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["3.0.5"] = (["3acd3a8a3cce65a8d620321855d92fb602e026cbe8e13ee36bdec58483b59ace"], CraftHash.HashAlgorithm.SHA256)
-        self.defaultTarget = "3.0.5"
+        self.targetDigests["3.0.10"] = (["9371b2f6372da574d4c6dc96fe9b1463037bcf6afcb6671c1555afde7b17e2de"], CraftHash.HashAlgorithm.SHA256)
+        self.defaultTarget = "3.0.10"
 
 
 class Package(MesonPackageBase):
