@@ -22,10 +22,13 @@
 # SUCH DAMAGE.
 
 import os
+import sys
 import textwrap
+from pathlib import Path
 
 import utils
 from BuildSystem.BuildSystemBase import BuildSystemBase
+from CraftCompiler import CraftCompiler
 from CraftCore import CraftCore
 from CraftStandardDirs import CraftStandardDirs
 from Utils.Arguments import Arguments
@@ -58,7 +61,17 @@ class MesonBuildSystem(BuildSystemBase):
             env["LDFLAGS"] = f"-L{CraftStandardDirs.craftRoot() / 'lib'} {env['LDFLAGS']}"
             env["CFLAGS"] = f"-I{CraftStandardDirs.craftRoot() / 'include'} {env['CFLAGS']}"
             env["CXXFLAGS"] = f"-I{CraftStandardDirs.craftRoot() / 'include'} {env['CXXFLAGS']}"
+        if self._isWindowsCross:
+            env["PATH"] = os.pathsep.join([str(x) for x in CraftCore.standardDirs.hostPaths()] + [os.environ["PATH"]])
         return env
+
+    @property
+    def _isWindowsCross(self) -> bool:
+        return CraftCore.compiler.platform.isWindows and CraftCore.compiler.isCrossCompiling
+
+    @staticmethod
+    def _mesonCpuFamily(arch: CraftCompiler.Architecture) -> str:
+        return "x86" if arch.isX86_32 else arch.autotoolsArchitecture
 
     def configureOptions(self, defines=""):
         buildType = {
@@ -140,11 +153,88 @@ class MesonBuildSystem(BuildSystemBase):
                         objcpp = ['c++', '-arch', {arch!r}]
                     """)
             args = ["--native-file", craftCrossFilePath]
+        elif self._isWindowsCross:
+            arch = CraftCore.compiler.architecture
+            hostArch = CraftCore.compiler.hostArchitecture
+            hostPlatform = CraftCore.compiler.hostPlatform
+            if hostPlatform.isWindows:
+                buildSystem = "windows"
+            elif hostPlatform.isMacOS:
+                buildSystem = "darwin"
+            elif hostPlatform.isFreeBSD:
+                buildSystem = "freebsd"
+            else:
+                buildSystem = "linux"
+            if CraftCore.compiler.compiler.isMSVC:
+                c, cpp = "cl", "cl"
+            else:
+                triple = f"{arch.autotoolsArchitecture}-w64-mingw32"
+                if CraftCore.compiler.compiler.isClang:
+                    c, cpp = f"{triple}-clang", f"{triple}-clang++"
+                else:
+                    c, cpp = f"{triple}-gcc", f"{triple}-g++"
+            python = Path(sys.executable).as_posix()
+            binaries = {"c": c, "cpp": cpp, "python": python, "python3": python}
+            # meson doesn't look up pkg-config and cmake in PATH when cross compiling
+            for name, apps in {"pkg-config": ["pkg-config", "pkgconf"], "cmake": ["cmake"]}.items():
+                for app in apps:
+                    if path := CraftCore.cache.findApplication(app):
+                        binaries[name] = path.as_posix()
+                        break
+            config = "[binaries]\n" + "".join(f"{name} = {value!r}\n" for name, value in binaries.items())
+            config += textwrap.dedent(f"""
+                        [properties]
+                        needs_exe_wrapper = true
+                        [build_machine]
+                        system = {buildSystem!r}
+                        cpu_family = {self._mesonCpuFamily(hostArch)!r}
+                        cpu = {hostArch.autotoolsArchitecture!r}
+                        endian = 'little'
+                        [host_machine]
+                        system = 'windows'
+                        cpu_family = {self._mesonCpuFamily(arch)!r}
+                        cpu = {arch.autotoolsArchitecture!r}
+                        endian = 'little'
+                    """)
+            args = ["--cross-file", craftCrossFilePath]
+            if CraftCore.compiler.compiler.isMSVC and hostPlatform.isWindows:
+                args += self.__msvcNativeFile(python)
         if config:
             with craftCrossFilePath.open("wt", encoding="UTF-8") as f:
                 f.write(config)
 
         return args
+
+    def __msvcNativeFile(self, python: str):
+        """The cross msvc env only provides the target cl and libs, meson would use them for build machine binaries too."""
+        msvcArch = {
+            CraftCompiler.Architecture.x86_32: "x86",
+            CraftCompiler.Architecture.x86_64: "x64",
+            CraftCompiler.Architecture.arm64: "arm64",
+        }
+        hostArch = msvcArch[CraftCore.compiler.hostArchitecture.key]
+        targetArch = msvcArch[CraftCore.compiler.architecture.key]
+        cl = (Path(os.environ["VCToolsInstallDir"]) / f"bin/Host{hostArch}/{hostArch}/cl.exe").as_posix()
+
+        libPaths = []
+        for lib in filter(None, os.environ.get("LIB", "").split(";")):
+            lib = Path(lib)
+            hostLib = lib.parent / hostArch
+            if lib.name.lower() == targetArch and hostLib.exists():
+                libPaths.append(f"/LIBPATH:{hostLib.as_posix()}")
+        nativeFilePath = CraftStandardDirs.craftRoot() / "etc/craft-native-file.txt"
+        with nativeFilePath.open("wt", encoding="UTF-8") as f:
+            f.write(textwrap.dedent(f"""
+                    [binaries]
+                    c = {cl!r}
+                    cpp = {cl!r}
+                    python = {python!r}
+                    python3 = {python!r}
+                    [built-in options]
+                    c_link_args = {libPaths!r}
+                    cpp_link_args = {libPaths!r}
+                """))
+        return ["--native-file", nativeFilePath]
 
     def configure(self, defines=""):
         with utils.ScopedEnv(self._env()):
