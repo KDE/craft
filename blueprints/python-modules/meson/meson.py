@@ -30,6 +30,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "1.12.1"
         self.releaseManagerId = 6472
+        self.webpage = "https://mesonbuild.com"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None

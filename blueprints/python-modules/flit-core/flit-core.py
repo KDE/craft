@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "4.2.0"
         self.releaseManagerId = 44841
+        self.webpage = "https://pypi.org/project/flit-core/"
         self.description = "Distribution-building parts of Flit. See flit package for more information"
 
     def setDependencies(self):

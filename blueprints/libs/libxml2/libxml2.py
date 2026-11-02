@@ -8,6 +8,9 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.description = "XML C parser and toolkit (runtime and applications)"
         self.releaseManagerId = 1783
+        self.webpage = "https://gitlab.gnome.org/GNOME/libxml2"
+        self.license = "MIT"
+        self.cpe = "cpe:2.3:a:xmlsoft:libxml2"
 
         for ver in ["2.10.3", "2.12.7", "2.14.4", "2.14.5"]:
             self.targets[ver] = f"https://download.gnome.org/sources/libxml2/{'.'.join(ver.split('.')[:-1])}/libxml2-{ver}.tar.xz"

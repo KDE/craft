@@ -9,6 +9,9 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.description = "shared libraries for handling bzip2 archives (runtime)"
         self.releaseManagerId = 237
+        self.webpage = "https://sourceware.org/bzip2/"
+        self.license = "bzip2-1.0.6"
+        self.cpe = "cpe:2.3:a:bzip:bzip2"
 
         self.targets["1.0.8"] = "https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz"
         self.targetInstSrc["1.0.8"] = "bzip2-1.0.8"

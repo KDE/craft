@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "3.5.0"
         self.releaseManagerId = 72190
+        self.webpage = "https://pypi.org/project/cfgv/"
         self.description = "Validate configuration and produce human readable error messages"
 
     def setDependencies(self):

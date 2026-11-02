@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "4.14.2"
         self.releaseManagerId = 200932
+        self.webpage = "https://github.com/platformdirs/platformdirs"
         self.description = "A small Python package for determining appropriate platform-specific dirs"
 
     def setDependencies(self):

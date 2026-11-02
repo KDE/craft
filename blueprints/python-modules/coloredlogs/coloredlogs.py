@@ -8,6 +8,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "15.0.1"
         self.releaseManagerId = 74372
+        self.webpage = "https://pypi.org/project/coloredlogs/"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None

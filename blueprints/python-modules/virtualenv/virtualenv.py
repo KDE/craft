@@ -14,6 +14,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "21.15.2"
         self.releaseManagerId = 6904
+        self.webpage = "https://pypi.org/project/virtualenv/"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None

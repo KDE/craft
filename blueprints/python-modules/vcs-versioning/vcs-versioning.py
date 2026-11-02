@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
         self.description = "Core version inference from version control systems, used by setuptools-scm"
         self.defaultTarget = "2.6.0"
         self.releaseManagerId = 389421
+        self.webpage = "https://github.com/pypa/setuptools-scm"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None

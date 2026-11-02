@@ -18,6 +18,7 @@ class subinfo(info.infoclass):
 
         self.description = "a character set conversion library binary compatible with GNU iconv"
         self.releaseManagerId = 10085
+        self.webpage = "https://github.com/win-iconv/win-iconv"
 
         self.defaultTarget = "0.0.10"
 

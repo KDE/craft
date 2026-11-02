@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "84.2.1"
         self.releaseManagerId = 4021
+        self.webpage = "https://pypi.org/project/setuptools/"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None

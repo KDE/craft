@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "2.2.3"
         self.releaseManagerId = 305188
+        self.webpage = "https://pypi.org/project/mac-alias/"
         self.description = "Generate/parse macOS Alias records from Python"
 
     def setDependencies(self):

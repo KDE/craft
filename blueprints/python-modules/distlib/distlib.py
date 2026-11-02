@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "0.4.4"
         self.releaseManagerId = 34504
+        self.webpage = "https://pypi.org/project/distlib/"
         self.description = "Distribution utilities"
 
     def setDependencies(self):

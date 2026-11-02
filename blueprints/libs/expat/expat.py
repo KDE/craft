@@ -10,6 +10,9 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.description = "XML parser library written in C"
         self.releaseManagerId = 770
+        self.webpage = "https://libexpat.github.io"
+        self.license = "MIT"
+        self.cpe = "cpe:2.3:a:libexpat_project:libexpat"
 
         for ver in ["2.1.0", "2.2.10", "2.7.3"]:
             self.targets[ver] = "https://github.com/libexpat/libexpat/releases/download/R_{tag}/expat-{ver}.tar.gz".format(tag=ver.replace(".", "_"), ver=ver)

@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "0.4.6"
         self.releaseManagerId = 3807
+        self.webpage = "https://pypi.org/project/colorama/"
         self.description = "Cross-platform colored terminal text"
 
     def setDependencies(self):

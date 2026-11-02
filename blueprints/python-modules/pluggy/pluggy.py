@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "1.7.0"
         self.releaseManagerId = 7500
+        self.webpage = "https://github.com/pytest-dev/pluggy"
         self.description = "Distribution-building parts of Flit. See flit package for more information"
 
     def setDependencies(self):

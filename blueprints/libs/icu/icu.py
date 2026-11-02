@@ -18,6 +18,8 @@ class subinfo(info.infoclass):
         self.description = "ICU -International Components for Unicode"
         self.webpage = "https://icu.unicode.org/"
         self.releaseManagerId = 16134
+        self.license = "Unicode-3.0"
+        self.cpe = "cpe:2.3:a:icu-project:international_components_for_unicode"
 
         for ver in ["71.1", "74.1", "74.2", "76.1", "77.1"]:
             major, minor = ver.split(".")

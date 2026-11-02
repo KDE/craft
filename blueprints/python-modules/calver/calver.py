@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "2025.10.20"
         self.releaseManagerId = 100823
+        self.webpage = "https://pypi.org/project/calver/"
         self.description = "Setuptools extension for CalVer package versions"
 
     def setDependencies(self):

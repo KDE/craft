@@ -15,6 +15,7 @@ class subinfo(info.infoclass):
         self.patchLevel["25.0.1"] = 1
         self.defaultTarget = "26.2.2"
         self.releaseManagerId = 6529
+        self.webpage = "https://pypi.org/project/pip/"
 
     def setDependencies(self):
         self.buildDependencies["core/cacert"] = None

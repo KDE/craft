@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "25.1.0"
         self.releaseManagerId = 274452
+        self.webpage = "https://pypi.org/project/hatch-fancy-pypi-readme/"
         self.description = "Fancy PyPI READMEs with Hatch"
 
     def setDependencies(self):

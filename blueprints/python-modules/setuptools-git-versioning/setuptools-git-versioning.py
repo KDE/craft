@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "3.2.0"
         self.releaseManagerId = 119596
+        self.webpage = "https://pypi.org/project/setuptools-git-versioning/"
         self.description = "Use git repo data for building a version number according to PEP-440"
 
     def setDependencies(self):

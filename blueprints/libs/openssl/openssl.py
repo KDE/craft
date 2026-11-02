@@ -40,6 +40,8 @@ class subinfo(info.infoclass):
         self.description = "The OpenSSL runtime environment"
         self.webpage = "https://openssl.org"
         self.releaseManagerId = 2566
+        self.license = "Apache-2.0"
+        self.cpe = "cpe:2.3:a:openssl:openssl"
 
         for ver in [
             "3.2.1",

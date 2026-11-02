@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "0.5.0"
         self.releaseManagerId = 301800
+        self.webpage = "https://pypi.org/project/hatch-vcs/"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None

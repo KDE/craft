@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "1.33.0"
         self.releaseManagerId = 185085
+        self.webpage = "https://pypi.org/project/hatchling/"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None

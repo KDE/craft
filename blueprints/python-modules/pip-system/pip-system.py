@@ -21,6 +21,7 @@ class subinfo(info.infoclass):
             self.targetDigests[ver] = pip.targetDigests[ver]
         self.defaultTarget = pip.defaultTarget
         self.releaseManagerId = 6529
+        self.webpage = "https://pypi.org/project/pip/"
 
     def setDependencies(self):
         self.buildDependencies["core/cacert"] = None

@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "0.48.0"
         self.releaseManagerId = 11428
+        self.webpage = "https://github.com/pypa/wheel"
         self.description = "Command line tool for manipulating wheel files"
 
     def setDependencies(self):

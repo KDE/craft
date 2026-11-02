@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "1.1.1"
         self.releaseManagerId = 23424
+        self.webpage = "https://pypi.org/project/pathspec/"
         self.description = "Distribution-building parts of Flit. See flit package for more information"
 
     def setDependencies(self):

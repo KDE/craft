@@ -17,6 +17,8 @@ class subinfo(info.infoclass):
 
         self.description = "GNU internationalization (i18n)"
         self.releaseManagerId = 10656
+        self.webpage = "https://www.gnu.org/software/libiconv/"
+        self.license = "LGPL-2.1-or-later"
 
         self.defaultTarget = "1.18"
 

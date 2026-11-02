@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "1.11.1"
         self.releaseManagerId = 61153
+        self.webpage = "https://pypi.org/project/nodeenv/"
         self.description = "Node.js virtual environment builder"
 
     def setDependencies(self):

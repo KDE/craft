@@ -10,6 +10,8 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.webpage = "https://www.gnu.org/software/libunistring/"
         self.releaseManagerId = 1747
+        self.license = "LGPL-3.0-or-later OR GPL-2.0-or-later"
+        self.cpe = "cpe:2.3:a:gnu:libunistring"
 
         for ver in ["0.9.10", "1.2", "1.3", "1.4.1", "1.4.2"]:
             self.targets[ver] = f"https://ftpmirror.gnu.org/gnu/libunistring/libunistring-{ver}.tar.xz"

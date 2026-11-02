@@ -7,6 +7,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.description = "PatchELF is a simple utility for modifying existing ELF executables and libraries."
         self.releaseManagerId = 2598
+        self.webpage = "https://github.com/NixOS/patchelf"
 
         for ver in ["0.18.0"]:
             self.targets[ver] = f"https://github.com/NixOS/patchelf/releases/download/{ver}/patchelf-{ver}.tar.gz"

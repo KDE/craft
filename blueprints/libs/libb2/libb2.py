@@ -15,6 +15,8 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.description = "C library providing BLAKE2b, BLAKE2s, BLAKE2bp, BLAKE2sp"
         self.releaseManagerId = 21574
+        self.webpage = "https://github.com/BLAKE2/libb2"
+        self.license = "CC0-1.0"
 
         for ver in ["0.98.1"]:
             self.targets[ver] = f"https://github.com/BLAKE2/libb2/releases/download/v{ver}/libb2-{ver}.tar.gz"

@@ -9,6 +9,8 @@ class subinfo(info.infoclass):
         self.webpage = "https://github.com/libffi/libffi/"
         self.description = "A portable foreign-function interface library."
         self.releaseManagerId = 1611
+        self.license = "MIT"
+        self.cpe = "cpe:2.3:a:libffi_project:libffi"
 
         for ver in ["3.3", "3.4.6", "3.4.7", "3.5.2", "3.8.0"]:
             self.targets[ver] = f"https://github.com/libffi/libffi/releases/download/v{ver}/libffi-{ver}.tar.gz"

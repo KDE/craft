@@ -23,6 +23,8 @@ class subinfo(info.infoclass):
         self.description = "Python is a high-level, general-purpose programming language"
         self.webpage = "https://www.python.org"
         self.releaseManagerId = 13254
+        self.license = "PSF-2.0"
+        self.cpe = "cpe:2.3:a:python:python"
 
         for ver in ["3.11.7", "3.11.11", "3.12.13", "3.14.6"]:
             self.targets[ver] = f"https://www.python.org/ftp/python/{ver}/Python-{ver}.tar.xz"

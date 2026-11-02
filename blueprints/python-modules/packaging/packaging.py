@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "26.3"
         self.releaseManagerId = 60461
+        self.webpage = "https://pypi.org/project/packaging/"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None

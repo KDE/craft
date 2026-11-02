@@ -33,6 +33,8 @@ class subinfo(info.infoclass):
         self.description = "a library providing a self-contained, serverless, zero-configuration, transactional SQL database engine"
         self.webpage = "https://sqlite.org"
         self.releaseManagerId = 4877
+        self.license = "blessing"
+        self.cpe = "cpe:2.3:a:sqlite:sqlite"
 
         self.targets["3.39.2"] = "https://sqlite.org/2022/sqlite-amalgamation-3390200.zip"
         self.targetInstSrc["3.39.2"] = "sqlite-amalgamation-3390200"

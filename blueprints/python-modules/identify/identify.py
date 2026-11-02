@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "2.6.20"
         self.releaseManagerId = 63864
+        self.webpage = "https://pypi.org/project/identify/"
         self.description = "File identification library for Python"
 
     def setDependencies(self):

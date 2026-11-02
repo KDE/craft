@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "4.2.6"
         self.releaseManagerId = 11739
+        self.webpage = "https://github.com/tox-dev/filelock"
         self.description = "A platform independent file lock"
 
     def setDependencies(self):

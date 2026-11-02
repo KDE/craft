@@ -14,6 +14,9 @@ class subinfo(info.infoclass):
     def setTargets(self):
         self.description = "GNU internationalization (i18n)"
         self.releaseManagerId = 898
+        self.webpage = "https://www.gnu.org/software/gettext/"
+        self.license = "LGPL-2.1-or-later"
+        self.cpe = "cpe:2.3:a:gnu:gettext"
 
         for ver in ["0.22.3", "1.0"]:
             self.targets[ver] = f"https://ftpmirror.gnu.org/gettext/gettext-{ver}.tar.gz"

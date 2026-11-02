@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
         self.description = "The blessed package to manage your versions by scm tags"
         self.defaultTarget = "10.3.4"
         self.releaseManagerId = 7874
+        self.webpage = "https://pypi.org/project/setuptools_scm/"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None

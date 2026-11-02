@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "0.15.2"
         self.releaseManagerId = 19609
+        self.webpage = "https://github.com/python-poetry/tomlkit"
         self.description = "Style preserving TOML library"
 
     def setDependencies(self):

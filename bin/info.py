@@ -84,6 +84,15 @@ class infoclass(object):
         # https://release-monitoring.org/project/{self.releaseManagerId}/
         self.releaseManagerId = None  # type: Optional[int]
 
+        # SPDX license expression of what gets shipped (for a library: the library, not its tools),
+        # e.g. "LGPL-2.1-or-later" or "MIT OR Apache-2.0", see https://spdx.org/licenses/
+        self.license = None  # type: Optional[str]
+
+        # CPE 2.3 prefix identifying the upstream project in vulnerability databases (NVD),
+        # without version, e.g. "cpe:2.3:a:openssl:openssl". Craft appends the version.
+        # See https://nvd.nist.gov/products/cpe/search
+        self.cpe = None  # type: Optional[str]
+
         self.registerOptions()
 
         self.setTargets()

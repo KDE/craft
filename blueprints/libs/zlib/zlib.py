@@ -15,6 +15,8 @@ class subinfo(info.infoclass):
         self.description = "The zlib compression and decompression library"
         self.webpage = "https://www.zlib.net"
         self.releaseManagerId = 5303
+        self.license = "Zlib"
+        self.cpe = "cpe:2.3:a:zlib:zlib"
 
         for ver in ["1.3", "1.3.1", "1.3.2"]:
             self.targets[ver] = f"https://github.com/madler/zlib/releases/download/v{ver}/zlib-{ver}.tar.xz"

@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "2026.9.21.13"
         self.releaseManagerId = 88298
+        self.webpage = "https://pypi.org/project/trove-classifiers/"
         self.description = "Distribution-building parts of Flit. See flit package for more information"
 
     def setDependencies(self):

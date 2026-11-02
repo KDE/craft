@@ -14,6 +14,8 @@ class subinfo(info.infoclass):
         self.description = "free general-purpose data compression software with high compression ratio"
         self.webpage = "https://tukaani.org/xz"
         self.releaseManagerId = 5277
+        self.license = "0BSD"
+        self.cpe = "cpe:2.3:a:tukaani:xz"
 
         for ver in ["5.8.4"]:
             self.targets[ver] = f"https://github.com/tukaani-project/xz/releases/download/v{ver}/xz-{ver}.tar.xz"

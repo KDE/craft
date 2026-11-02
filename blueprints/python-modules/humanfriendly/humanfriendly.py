@@ -11,6 +11,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "10.0"
         self.releaseManagerId = 70529
+        self.webpage = "https://pypi.org/project/humanfriendly/"
         self.description = "Human friendly output for text interfaces using Python"
 
     def setDependencies(self):

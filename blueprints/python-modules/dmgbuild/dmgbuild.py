@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "1.6.7"
         self.releaseManagerId = 24983
+        self.webpage = "https://pypi.org/project/dmgbuild/"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None

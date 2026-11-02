@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "1.3.3"
         self.releaseManagerId = 305189
+        self.webpage = "https://pypi.org/project/ds-store/"
         self.description = "Manipulate Finder .DS_Store files from Python"
 
     def setDependencies(self):

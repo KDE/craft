@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "1.9.0"
         self.releaseManagerId = 388662
+        self.webpage = "https://pypi.org/project/python-discovery/"
         self.description = "Python interpreter discovery"
 
     def setDependencies(self):

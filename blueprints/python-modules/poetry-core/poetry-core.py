@@ -10,6 +10,7 @@ class subinfo(info.infoclass):
             self.svnTargets[ver] = ""
         self.defaultTarget = "2.5.0"
         self.releaseManagerId = 71155
+        self.webpage = "https://pypi.org/project/poetry-core/"
         self.description = "Poetry PEP 517 Build Backend"
 
     def setDependencies(self):
