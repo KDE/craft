@@ -529,28 +529,20 @@ class SetupHelper(object):
             ],
         )
 
-        if CraftCore.compiler.platform.isWindows:
-            self.prependEnvVar(
-                "PATH",
-                CraftCore.standardDirs.craftRoot() / "bin/Scripts",
-            )
-
         # make sure that craftroot bin is the first to look for dlls etc
-        if not CraftCore.compiler.platform.isNative or not CraftCore.compiler.architecture.isNative:
-            self.prependEnvVar(
-                "PATH",
-                [
-                    CraftCore.standardDirs.craftHostRoot() / "dev-utils/bin",
-                    CraftCore.standardDirs.craftHostRoot() / "bin",
-                    CraftCore.standardDirs.craftHostRoot() / "libexec",
-                    # shims?
-                    CraftCore.standardDirs.craftHostRoot() / "bin/Scripts",
-                ],
-            )
         self.prependEnvVar(
             "PATH",
-            [CraftCore.standardDirs.craftRoot() / "dev-utils/bin", CraftCore.standardDirs.craftRoot() / "bin", CraftCore.standardDirs.craftRoot() / "libexec"],
+            [
+                CraftCore.standardDirs.craftHostRoot() / "dev-utils/bin",
+                CraftCore.standardDirs.craftHostRoot() / "bin",
+                CraftCore.standardDirs.craftHostRoot() / "libexec",
+            ],
         )
+        if CraftCore.compiler.hostPlatform.isWindows:
+            self.prependEnvVar(
+                "PATH",
+                CraftCore.standardDirs.craftHostRoot() / "bin/Scripts",
+            )
 
         if CraftCore.compiler.compiler.isClang:
             if CraftCore.compiler.platform.isAndroid:

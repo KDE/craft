@@ -39,6 +39,7 @@ class subinfo(info.infoclass):
         self.patchToApply["77.1"] = [("icu-71.1-20221112.diff", 1)]
         self.patchToApply["78.1"] = [("icu-71.1-20221112.diff", 1)]
         self.patchToApply["78.3"] = [("icu-71.1-20221112.diff", 1)]
+        self.patchLevel["78.3"] = 1
 
         self.defaultTarget = "78.3"
 
@@ -58,6 +59,9 @@ class Package(AutoToolsPackageBase):
             "--enable-debug=no",
             "--enable-release=yes",
         ]
+        if CraftCore.compiler.isCrossCompiling:
+            # use the tools and icucross.* files installed by the host build, see install()
+            self.subinfo.options.configure.args += [f"--with-cross-build={self.shell.toNativePath(CraftCore.standardDirs.craftHostRoot())}"]
         if CraftCore.compiler.platform.isWindows:
             self.subinfo.options.configure.args += ["--with-data-packaging=dll"]
             if CraftCore.compiler.compiler.isMSVC:
@@ -100,6 +104,17 @@ class Package(AutoToolsPackageBase):
             for dll in files:
                 if dll.endswith(".dll"):
                     utils.moveFile(os.path.join(self.installDir(), "lib", dll), os.path.join(self.installDir(), "bin", dll))
+                # --with-cross-build=<root> expects <root>/config/icucross.{mk,inc} and the build tools in <root>/bin
+        # see https://github.com/microsoft/vcpkg/blob/master/ports/icu/portfile.cmake
+        for f in (Path(self.buildDir()) / "config").glob("icucross.*"):
+            if not utils.copyFile(f, self.installDir() / "config" / f.name, linkOnly=False):
+                return False
+        # icu expects these tools in bin for cross compiling
+        suffix = CraftCore.compiler.platform.executableSuffix
+        for tool in ["icupkg", "gennorm2", "gencmn", "genccode", "gensprep"]:
+            src = self.installDir() / "sbin" / f"{tool}{suffix}"
+            if src.exists() and not utils.copyFile(src, self.installDir() / "bin" / src.name, linkOnly=False):
+                return False
         return True
 
     def postInstall(self):
