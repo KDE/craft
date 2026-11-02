@@ -39,7 +39,7 @@ class subinfo(info.infoclass):
         self.webpage = "https://gitforwindows.org/"
         self.releaseManagerId = 378017
 
-        ver = "2.49.0"
+        ver = "2.56.0"
         build = "1"
         self.targets[ver] = f"https://github.com/git-for-windows/git/releases/download/v{ver}.windows.{build}/PortableGit-{ver}-64-bit.7z.exe"
         self.archiveNames[ver] = f"PortableGit-{ver}-64-bit.7z"
