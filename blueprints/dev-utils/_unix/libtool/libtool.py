@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.webpage = "https://www.gnu.org/software/libtool/ "
         self.releaseManagerId = 1741
 
-        for ver in ["2.5.4"]:
+        for ver in ["2.5.4", "2.6.2"]:
             # self.targets[ver] = f"https://files.kde.org/craft/sources/dev-utils/libtool/libtool-{ver}.tar.xz"
             self.targets[ver] = f"https://ftpmirror.gnu.org/libtool/libtool-{ver}.tar.gz"
             self.targetInstSrc[ver] = f"libtool-{ver}"
@@ -19,7 +19,8 @@ class subinfo(info.infoclass):
             ["da8ebb2ce4dcf46b90098daf962cffa68f4b4f62ea60f798d0ef12929ede6adf"],
             CraftHash.HashAlgorithm.SHA256,
         )
-        self.defaultTarget = "2.5.4"
+        self.targetDigests["2.6.2"] = (["24adb3aa9ae035c70faba344af57d73215eb89281045af6c7ccd307751f8b0bf"], CraftHash.HashAlgorithm.SHA256)
+        self.defaultTarget = "2.6.2"
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/automake"] = None
