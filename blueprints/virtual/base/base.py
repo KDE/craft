@@ -31,9 +31,11 @@ class subinfo(info.infoclass):
 
         if CraftCore.compiler.platform.isWindows:
             self.buildDependencies["dev-utils/msys-base"] = None
-        else:
-            self.buildDependencies["dev-utils/automake"] = None
-            self.buildDependencies["dev-utils/libtool"] = None
+            if CraftCore.compiler.architecture.isArm64:
+                self.buildDependencies["dev-utils/mingw-w64-cross-clang"] = None
+
+        self.buildDependencies["dev-utils/automake"] = None
+        self.buildDependencies["dev-utils/libtool"] = None
 
         if CraftCore.compiler.compiler.isMSVC or CraftCore.settings.get("Compile", "MakeProgram", "") == "jom":
             self.buildDependencies["dev-utils/jom"] = None
