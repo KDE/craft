@@ -10,7 +10,7 @@ class subinfo(info.infoclass):
         self.webpage = "http://www.gnu.org/software/automake/"
         self.releaseManagerId = 144
 
-        for ver in ["1.16.1", "1.16.3", "1.16.5", "1.18.1"]:
+        for ver in ["1.16.1", "1.16.3", "1.16.5", "1.18.1", "1.19"]:
             self.targets[ver] = f"https://ftpmirror.gnu.org/gnu/automake/automake-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"automake-{ver}"
 
@@ -30,8 +30,9 @@ class subinfo(info.infoclass):
             ["168aa363278351b89af56684448f525a5bce5079d0b6842bd910fdd3f1646887"],
             CraftHash.HashAlgorithm.SHA256,
         )
+        self.targetDigests["1.19"] = (["e3e2c2e3abf37898138db5b6c1d1dc35c9160c5978be7947d2c741705251d445"], CraftHash.HashAlgorithm.SHA256)
         self.patchLevel["1.16.3"] = 1
-        self.defaultTarget = "1.18.1"
+        self.defaultTarget = "1.19"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
