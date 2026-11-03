@@ -47,10 +47,10 @@ class subinfo(info.infoclass):
         ]
 
         self.patchToApply["1.3.2"] = [
-            ("zlib-1.3.2-0001-don-t-conditonlessly-define-Z_HAVE_UNISTD_H.patch", 1),
-            ("zlib-1.3.2-0002-zlib-library-name-needs-to-be-zlib-on-Windows-for-co.patch", 1),
-            ("zlib-1.3.2-0003-special-handling-of-lib-prefix-for-mingw.patch", 1),
-            ("zlib-1.3.2-0004-do-not-set-library-debug-postfix.patch", 1),
+            ("1.3.2/zlib-1.3.2-0001-don-t-conditonlessly-define-Z_HAVE_UNISTD_H.patch", 1),
+            ("1.3.2/zlib-1.3.2-0002-zlib-library-name-needs-to-be-zlib-on-Windows-for-co.patch", 1),
+            ("1.3.2/zlib-1.3.2-0003-special-handling-of-lib-prefix-for-mingw.patch", 1),
+            ("1.3.2/zlib-1.3.2-0004-do-not-set-library-debug-postfix.patch", 1),
         ]
 
         self.targetDigests["1.3"] = (
