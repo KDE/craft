@@ -9,7 +9,7 @@ class subinfo(info.infoclass):
         self.description = "XML C parser and toolkit (runtime and applications)"
         self.releaseManagerId = 1783
 
-        for ver in ["2.10.3", "2.12.7", "2.14.4", "2.14.5"]:
+        for ver in ["2.10.3", "2.12.7", "2.14.4", "2.14.5", "2.15.4"]:
             self.targets[ver] = f"https://download.gnome.org/sources/libxml2/{'.'.join(ver.split('.')[:-1])}/libxml2-{ver}.tar.xz"
             self.targetInstSrc[ver] = f"libxml2-{ver}"
         self.targetDigests["2.10.3"] = (["5d2cc3d78bec3dbe212a9d7fa629ada25a7da928af432c93060ff5c17ee28a9c"], CraftHash.HashAlgorithm.SHA256)
@@ -35,7 +35,7 @@ class subinfo(info.infoclass):
 
         self.svnTargets["master"] = "https://gitlab.gnome.org/GNOME/libxml2.git"
 
-        self.defaultTarget = "2.14.5"
+        self.defaultTarget = "2.15.4"
 
     def setDependencies(self):
         self.runtimeDependencies["virtual/base"] = None
