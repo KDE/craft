@@ -51,6 +51,7 @@ class subinfo(info.infoclass):
             ("1.3.2/zlib-1.3.2-0002-zlib-library-name-needs-to-be-zlib-on-Windows-for-co.patch", 1),
             ("1.3.2/zlib-1.3.2-0003-special-handling-of-lib-prefix-for-mingw.patch", 1),
             ("1.3.2/zlib-1.3.2-0004-do-not-set-library-debug-postfix.patch", 1),
+            ("1.3.2/zlib-1.3.2-0005-chore-really-goes-back-to-zlib1.dll-name.patch", 1),
         ]
 
         self.targetDigests["1.3"] = (
