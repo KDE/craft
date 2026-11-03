@@ -1,0 +1,26 @@
+From 1c2d18a05f244e3290849af863aa138ca832488c Mon Sep 17 00:00:00 2001
+From: Matthieu Gallien <matthieu.gallien@nextcloud.com>
+Date: Mon, 5 Oct 2026 17:28:32 +0200
+Subject: [PATCH 5/5] chore: really goes back to zlib1.dll name
+
+Signed-off-by: Matthieu Gallien <matthieu.gallien@nextcloud.com>
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9c6d176..5016a88 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -114,7 +114,7 @@ unset(CMAKE_COMPILE_FLAGS)
+ set(ZLIB_PC ${zlib_BINARY_DIR}/zlib.pc)
+ 
+ if(WIN32)
+-    set(ZLIB_NAME zlib)
++    set(ZLIB_NAME zlib1)
+ else()
+     set(ZLIB_NAME z)
+ endif()
+-- 
+2.55.0
+
