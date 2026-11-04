@@ -251,6 +251,27 @@ class infoclass(object):
             return out
         return None
 
+    @staticmethod
+    def _mingwManifestKey(manifest, architecture):
+        """Return the key under which the Windows MinGW packages are stored in the manifest.
+
+        Since the compiler signature for Windows GCC became "windows-mingw-<arch>",
+        manifests created before that change still use "windows-gcc-<arch>".
+        """
+        compiler = CraftCompilerSignature(
+            CraftCompiler.Platforms.Windows,
+            CraftCompiler.Compiler.GCC,
+            None,
+            architecture,
+        )
+        key = str(compiler)
+        if key in manifest.packages:
+            return key
+        legacyKey = key.replace("-mingw-", "-gcc-", 1)
+        if legacyKey in manifest.packages:
+            return legacyKey
+        return None
+
     def addCachedAutotoolsBuild(self, packageName=None, targetInstallPath=None, versionInfo=None):
         if not CraftCore.compiler.compiler.isMSVC:
             return
@@ -279,17 +300,12 @@ class infoclass(object):
                 CraftCore.log.error(f"Failed to load manifest for {self.package} {manifestUrl}")
                 continue
             manifest = CraftManifest.CraftManifest.fromJson(json)
-            compiler = CraftCompilerSignature(
-                CraftCompiler.Platforms.Windows,
-                CraftCompiler.Compiler.GCC,
-                None,
-                CraftCore.compiler.architecture,
-            )
-            if packageName not in manifest.packages[str(compiler)]:
+            compilerKey = self._mingwManifestKey(manifest, CraftCore.compiler.architecture)
+            if not compilerKey or packageName not in manifest.packages[compilerKey]:
                 del self.targets[key]
                 CraftCore.log.debug(f"Failed to find {packageName} on {url}")
                 continue
-            data = manifest.packages[str(compiler)][packageName].latest
+            data = manifest.packages[compilerKey][packageName].latest
             binaryFile = data.files[CraftManifest.FileType.Binary]
             self.targets[key] = f"{url}/{binaryFile.fileName}"
             self.targetDigests[key] = (
@@ -315,14 +331,9 @@ class infoclass(object):
         if url.endswith("/"):
             url = url[:-1]
         manifest = CraftManifest.CraftManifest.fromJson(CraftCore.cache.cacheJsonFromUrl(f"{url}/manifest.json"))
-        compiler = CraftCompilerSignature(
-            CraftCompiler.Platforms.Windows,
-            CraftCompiler.Compiler.GCC,
-            None,
-            architecture or CraftCore.compiler.architecture,
-        )
-        if str(compiler) in manifest.packages:
-            latest = manifest.packages[str(compiler)].get(str(packagePath)).latest
+        compilerKey = self._mingwManifestKey(manifest, architecture or CraftCore.compiler.architecture)
+        if compilerKey:
+            latest = manifest.packages[compilerKey].get(str(packagePath)).latest
             binaryFile = latest.files[CraftManifest.FileType.Binary]
             self.targets[latest.version] = f"{url}/{binaryFile.fileName}"
             self.targetDigests[latest.version] = (
