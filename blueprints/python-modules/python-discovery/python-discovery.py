@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         for ver in ["1.9.0", "1.9.1"]:
             self.svnTargets[ver] = ""
-        self.defaultTarget = "1.9.1"
+        self.defaultTarget = "1.9.5"
         self.releaseManagerId = 388662
         self.description = "Python interpreter discovery"
 
