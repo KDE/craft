@@ -326,6 +326,9 @@ class SetupHelper(object):
         elif CraftCore.compiler.platform.isLinux:
             # we will later replace the hard coded path in BuildSystemBase.internalPostInstall
             self.prependEnvVar("LDFLAGS", [f"-Wl,-rpath,{craftLibDir}", f"-L{craftLibDir}"], sep=" ")
+            askpass = CraftCore.standardDirs.craftHostRoot() / "dev-utils/bin/ssh-askpass"
+            if askpass.exists():
+                self.addEnvVar("SSH_ASKPASS", askpass)
         self.prependEnvVar(
             "BISON_PKGDATADIR",
             os.path.join(CraftCore.standardDirs.craftRoot(), "share", "bison"),

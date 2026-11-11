@@ -24,6 +24,7 @@ class subinfo(info.infoclass):
 
         if CraftCore.compiler.platform.isLinux:
             self.buildDependencies["dev-utils/patchelf"] = None
+            self.buildDependencies["dev-utils/askpass"] = None
 
         self.buildDependencies["dev-utils/git"] = None
         self.buildDependencies["dev-utils/patch"] = None
