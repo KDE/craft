@@ -243,10 +243,19 @@ class AppxPackager(CollectionPackagerBase):
         archive = defines["setupname"]
         if os.path.isfile(archive):
             utils.deleteFile(archive)
+
+        priconfig = os.path.join(self.archiveDir(), "priconfig.xml")
+        appxmanifest = os.path.join(self.archiveDir(), "AppxManifest.xml")
+        resources = os.path.join(self.archiveDir(), "resources.pri")
+
         return utils.configureFile(
             os.path.join(os.path.dirname(__file__), "AppxManifest.xml"),
-            os.path.join(self.archiveDir(), "AppxManifest.xml"),
+            appxmanifest,
             defines,
+        ) and utils.system(
+            ["makepri", "createconfig", "/cf", priconfig, "/dq", "en-US"]
+        ) and utils.system(
+            ["makepri", "new", "/pr", self.archiveDir(), "/cf", priconfig, "/mn", appxmanifest, "/of", resources]
         ) and utils.system(["makeappx", "pack", "/d", self.archiveDir(), "/p", archive])
 
     def __createSideloadAppX(self, defines) -> bool:
