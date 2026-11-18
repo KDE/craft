@@ -30,3 +30,10 @@ class subinfo(info.infoclass):
 class Package(CMakePackageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.subinfo.options.configure.args += [
+            f"-DXZ_TOOL_XZDEC={self.subinfo.options.dynamic.buildTools.asOnOff}",
+            f"-DXZ_TOOL_LZMADEC={self.subinfo.options.dynamic.buildTools.asOnOff}",
+            f"-DXZ_TOOL_LZMAINFO={self.subinfo.options.dynamic.buildTools.asOnOff}",
+            f"-DXZ_TOOL_XZ={self.subinfo.options.dynamic.buildTools.asOnOff}",
+            f"-DXZ_DOC={self.subinfo.options.dynamic.buildTools.asOnOff}",
+        ]

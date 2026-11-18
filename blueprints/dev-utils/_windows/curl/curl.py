@@ -1,8 +1,5 @@
-import re
-
 import info
 import utils
-from Blueprints.CraftVersion import CraftVersion
 from CraftCore import CraftCore
 from Package.BinaryPackageBase import BinaryPackageBase
 from Utils import CraftHash
@@ -14,19 +11,16 @@ class subinfo(info.infoclass):
         self.description = "curl for Windows, used by craft as a fallback downloader."
 
         arch = "win64a" if CraftCore.compiler.hostArchitecture.isArm64 else "win64"
-        pattern = re.compile(rf'dl-([\d._]+)/curl-\1-{arch}-mingw\.zip"')
-        versions = CraftCore.cache.getNightlyVersionsFromUrl(self.webpage, pattern)
-        # fall back to a known good version if the page can't be reached, e.g. when offline
-        ver = sorted(versions, key=CraftVersion)[-1] if versions else "8.23.0_4"
-
-        self.targets[ver] = f"https://curl.se/windows/dl-{ver}/curl-{ver}-{arch}-mingw.zip"
-        self.targetInstSrc[ver] = f"curl-{ver}-{arch}-mingw"
-        self.targetInstallPath[ver] = "dev-utils/curl"
-        self.targetDigestUrls[ver] = (
-            f"https://curl.se/windows/dl-{ver}/curl-{ver}-{arch}-mingw.zip.txt",
-            CraftHash.HashAlgorithm.SHA256,
-        )
+        for ver in ["8.23.0_8"]:
+            self.targets[ver] = f"https://curl.se/windows/dl-{ver}/curl-{ver}-{arch}-mingw.zip"
+            self.targetInstSrc[ver] = f"curl-{ver}-{arch}-mingw"
+            self.targetInstallPath[ver] = "dev-utils/curl"
+            self.targetDigestUrls[ver] = (
+                f"https://curl.se/windows/dl-{ver}/curl-{ver}-{arch}-mingw.zip.txt",
+                CraftHash.HashAlgorithm.SHA256,
+            )
         self.defaultTarget = ver
+        self.releaseManagerId = 381
 
     def setDependencies(self):
         self.buildDependencies["dev-utils/7zip"] = None

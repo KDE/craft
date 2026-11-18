@@ -139,7 +139,9 @@ class MesonBuildSystem(BuildSystemBase):
                         objc = ['cc', '-arch', {arch!r}]
                         objcpp = ['c++', '-arch', {arch!r}]
                     """)
-            args = ["--native-file", craftCrossFilePath]
+            # muon applies native files to the build machine only, the host machine needs a cross file
+            isMuon = os.path.basename(str(self._meson[0])).startswith("muon")
+            args = ["--cross-file" if isMuon else "--native-file", craftCrossFilePath]
         if config:
             with craftCrossFilePath.open("wt", encoding="UTF-8") as f:
                 f.write(config)

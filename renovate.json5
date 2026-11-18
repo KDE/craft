@@ -1,0 +1,81 @@
+// SPDX-FileCopyrightText: 2026 Carl Schwan <carl@carlschwan.eu>
+// SPDX-License-Identifier: CC0-1.0
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "baseBranchPatterns": ["dev"],
+  "enabledManagers": [
+    "custom.regex"
+  ],
+  "automerge": false,
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/\\.py$/"
+      ],
+      "matchStringsStrategy": "combination",
+      "matchStrings": [
+        "(?:^|\\n)[ \\t]*self\\.releaseManagerId[ \\t]*=[ \\t]*(?<packageName>[0-9]+)[ \\t]*(?:\\r?\\n|$)",
+        "(?:^|\\n)[ \\t]*self\\.defaultTarget[ \\t]*=[ \\t]*[\"'](?<currentValue>[^\"'\\s]+)[\"']"
+      ],
+      "depNameTemplate": "{{#if packageName}}{{{packageFileDir}}}{{/if}}",
+      "datasourceTemplate": "custom.release-monitoring",
+      "versioningTemplate": "loose"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/\\.py$/"
+      ],
+      "matchStringsStrategy": "combination",
+      "matchStrings": [
+        "(?:^|\\n)[ \\t]*self\\.releaseManagerId[ \\t]*=[ \\t]*(?<packageName>[0-9]+)[ \\t]*(?:\\r?\\n|$)",
+        "(?:^|\\n)[ \\t]*ver[ \\t]*=[ \\t]*[\"'](?<currentValue>[^\"'\\s]+)[\"']",
+        "(?:^|\\n)[ \\t]*self\\.defaultTarget[ \\t]*=[ \\t]*(?<defaultVariable>ver)[ \\t]*(?:\\r?\\n|$)"
+      ],
+      "depNameTemplate": "{{#if packageName}}{{{packageFileDir}}}{{/if}}",
+      "datasourceTemplate": "{{#if defaultVariable}}custom.release-monitoring{{/if}}",
+      "versioningTemplate": "loose"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|\\/)version[^/]*\\.ini$/"
+      ],
+      "matchStringsStrategy": "combination",
+      "matchStrings": [
+        "(?:^|\\n)[ \\t]*releaseManagerId[ \\t]*=[ \\t]*(?<packageName>[0-9]+)[ \\t]*(?:\\r?\\n|$)",
+        "(?:^|\\n)[ \\t]*default[Tt]arget[ \\t]*=[ \\t]*(?<currentValue>[^\\s;]+)"
+      ],
+      "depNameTemplate": "{{#if packageName}}{{{packageFileDir}}}{{/if}}",
+      "datasourceTemplate": "custom.release-monitoring",
+      "versioningTemplate": "loose"
+    }
+  ],
+  "customDatasources": {
+    "release-monitoring": {
+      "defaultRegistryUrlTemplate": "https://release-monitoring.org/api/v2/versions/?project_id={{{packageName}}}",
+      "format": "json",
+      "transformTemplates": [
+        "{\"releases\": [stable_versions.{\"version\": $}]}"
+      ]
+    }
+  },
+  "packageRules": [
+    {
+      "matchDepNames": ["blueprints/dev-utils/_windows/git"],
+      "extractVersion": "^(?<version>\\d+\\.\\d+\\.\\d+)\\.windows\\.\\d+$"
+    },
+    {
+      "matchDepNames": ["blueprints/dev-utils/muon"],
+      "allowedVersions": "!/^5\\.3\\.1$/"
+    }
+  ],
+  "commitMessagePrefix": "{{{replace '^.*/' '' depName}}}:",
+  "commitMessageAction": "Update",
+  "commitMessageTopic": "to {{{newVersion}}}",
+  "commitMessageExtra": "",
+  "prBodyNotes": [
+    "**Craft follow-up required:** This MR updates the selected version. Before merging, check the checksum, review version-specific patches, and test the package."
+  ]
+}
