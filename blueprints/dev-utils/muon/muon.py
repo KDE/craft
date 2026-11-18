@@ -32,6 +32,7 @@ class subinfo(info.infoclass):
         self.targetDigests["0.7.1"] = (["956b5a74f7852ec4c57a11825dac79052da878da78f507bee1a0ef955053fbbb"], CraftHash.HashAlgorithm.SHA256)
         if CraftCore.compiler.architecture.isArm64 and CraftCore.compiler.platform.isWindows:
             self.patchToApply["0.7.0"] = [("muon-arm64.patch", 1)]
+            self.patchToApply["0.7.1"] = [("muon-arm64.patch", 1)]
 
         self.defaultTarget = "0.7.1"
 
