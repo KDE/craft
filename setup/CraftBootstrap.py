@@ -191,12 +191,30 @@ class CraftBootstrap(object):
         return os.path.exists(os.path.join(destdir, filename))
 
 
+def venvPython(prefix):
+    return Path(prefix) / "etc/virtualenv/3" / ("Scripts/python.exe" if CraftBootstrap.isWin() else "bin/python3")
+
+
+def setUpVenv(args, packages):
+    venv = Path(args.prefix) / "etc/virtualenv/3"
+    commands = [[sys.executable, "-m", "venv", venv]]
+    if packages:
+        commands.append([venvPython(args.prefix), "-m", "pip", "install", "--require-virtualenv", "--upgrade", "--no-input"] + packages)
+    for command in commands:
+        command = [str(x) for x in command]
+        print(f"Execute: {' '.join(command)}")
+        if not args.dry_run and subprocess.run(command).returncode != 0:
+            print(f"Error: failed to set up the Python venv in {venv}")
+            exit(1)
+
+
 def run(args, command):
     root = os.path.join(args.prefix, "craft")
     if not os.path.isdir(root):
         root = os.path.join(args.prefix, "craft-tmp")
     script = os.path.join(root, "bin", "craft.py")
-    command = [sys.executable, script] + [str(x) for x in command]
+    python = venvPython(args.prefix)
+    command = [str(python if python.exists() else sys.executable), script] + [str(x) for x in command]
     commandStr = " ".join(command)
     print(f"Execute: {commandStr}")
     if not args.dry_run:
@@ -287,7 +305,15 @@ class ShelfPackage(object):
         self.version = None
 
 
+def isCraftPython():
+    prefix = Path(sys.base_prefix).resolve()
+    return any((d / "etc/CraftSettings.ini").exists() for d in (prefix, *prefix.parents))
+
+
 def setUp(args):
+    if isCraftPython():
+        print(f"Error: Craft must be set up with a system Python, {sys.executable} was built by Craft")
+        exit(1)
     shelf = collections.defaultdict(ShelfPackage)
     while not args.prefix:
         print("Where do you want us to install Craft")
@@ -310,13 +336,14 @@ def setUp(args):
 
     shortPath, installShortCut = windowsSetup()
 
+    venvPackages = []
     if CraftBootstrap.promptForChoice(
         "Do you want to enable the support for colored logs and status display",
         [("Yes", True), ("No", False)],
         default="Yes",
         returnDefaultWithoutPrompt=args.use_defaults,
     ):
-        shelf["python-modules/rich"]
+        venvPackages.append("rich")
 
     if not args.dry_run:
         if args.localDev:
@@ -359,6 +386,7 @@ def setUp(args):
     boot.setSettingsValue("Packager", "RepositoryUrl", "https://files.kde.org/craft/Qt6/")
 
     boot.writeSettings()
+    setUpVenv(args, venvPackages)
 
     if installShortCut:  # Windows only
         shelf["dev-utils/craft-startmenu-entry"]

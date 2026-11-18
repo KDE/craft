@@ -9,21 +9,27 @@ cls
 $env:CraftRoot=[System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definition)
 
 &{
-[version]$minPythonVersion = '3.11'
+function isSystemPython([string] $python)
+{
+    & $python -c "import sys; from pathlib import Path; p = Path(sys.base_prefix).resolve(); sys.exit(sys.version_info < (3, 11) or any((d / 'etc/CraftSettings.ini').exists() for d in (p, *p.parents)))" 2>$null
+    return $LASTEXITCODE -eq 0
+}
 
 function findPython([string] $name)
 {
-    if ($env:CRAFT_PYTHON -and (Test-Path -path $env:CRAFT_PYTHON)) {
+    if ($env:CRAFT_PYTHON) {
         return
     }
-    $py = (Get-Command $name -ErrorAction SilentlyContinue)
-    if ($py) {
-        if (($py | Get-Member Version) -and $py.Version -ge $minPythonVersion) {
+    foreach ($py in (Get-Command $name -All -CommandType Application -ErrorAction SilentlyContinue)) {
+        if (isSystemPython $py.Source) {
             $env:CRAFT_PYTHON=$py.Source
-        } elseif ((& $py --version) -match 'Python (?<version>[\d.]+)' -and [version]$Matches['version'] -ge $minPythonVersion) {
-            $env:CRAFT_PYTHON=$py.Source
+            return
         }
     }
+}
+
+if ($env:CRAFT_PYTHON -and -not ((Test-Path -path $env:CRAFT_PYTHON) -and (isSystemPython $env:CRAFT_PYTHON))) {
+    Remove-Item env:CRAFT_PYTHON
 }
 
 function readINI([string] $fileName)
@@ -58,6 +64,8 @@ else
     Write-Error("$env:CraftRoot\..\etc\CraftSettings.ini Does not exist")
     break
 }
+
+findPython("$env:CraftRoot\..\etc\virtualenv\3\Scripts\python.exe")
 
 if($settings["Paths"].Contains("Python") -and (Test-Path -path $settings["Paths"]["Python"]))
 {

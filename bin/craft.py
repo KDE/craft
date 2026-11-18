@@ -31,6 +31,7 @@ import copy
 import os
 import subprocess
 import sys
+from pathlib import Path
 
 import blueprintSearch
 import CraftCommands
@@ -87,6 +88,11 @@ class ActionHandler:
 
 
 def main(timer):
+    python = Path(sys.base_prefix).resolve()
+    if any(python.is_relative_to(root.resolve()) for root in {CraftCore.standardDirs.craftRoot(), CraftCore.standardDirs.craftHostRoot()}):
+        CraftCore.log.error(f"Craft must be run with a system Python, {sys.executable} was built by Craft")
+        return False
+
     parser = argparse.ArgumentParser(
         prog="Craft",
         description="Craft is an open source meta build system and package manager. "

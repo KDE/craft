@@ -12,13 +12,8 @@ if [[ -z "$craftRoot" ]];then
     exit 1
 fi
 
-# Helper: check if a Python binary is >= 3.11
 check_python_version() {
-    local py="$1"
-    "$py" - <<'EOF' >/dev/null 2>&1
-import sys
-sys.exit(0 if sys.version_info >= (3, 11) else 1)
-EOF
+    "$1" -c "import sys; from pathlib import Path; p = Path(sys.base_prefix).resolve(); sys.exit(sys.version_info < (3, 11) or any((d / 'etc/CraftSettings.ini').exists() for d in (p, *p.parents)))" >/dev/null 2>&1
 }
 
 # Python detection
@@ -26,12 +21,12 @@ if [ -n "$CRAFT_PYTHON_BIN" ]; then
     if check_python_version "$CRAFT_PYTHON_BIN"; then
         echo "Using user-provided CRAFT_PYTHON_BIN: $CRAFT_PYTHON_BIN"
     else
-        echo "User-provided Python ($CRAFT_PYTHON_BIN) is too old. Need >= 3.11"
+        echo "User-provided Python ($CRAFT_PYTHON_BIN) must be a system Python >= 3.11, not one built by Craft"
         exit 1
     fi
 else
     # Preferred Python versions, newest first
-    for py in python3 $(ls -1 ${PATH//:/\/python3.* }/python3.* 2>/dev/null | sort -V -r); do
+    for py in "$(dirname "$craftRoot")/../etc/virtualenv/3/bin/python3" python3 $(ls -1 ${PATH//:/\/python3.* }/python3.* 2>/dev/null | sort -V -r); do
         if check_python_version "$py"; then
             CRAFT_PYTHON_BIN="$(command -v "$py")"
             break
@@ -39,7 +34,7 @@ else
     done
 
     if [ -z "$CRAFT_PYTHON_BIN" ]; then
-        echo "Failed to find Python >= 3.11"
+        echo "Failed to find a system Python >= 3.11"
         exit 1
     fi
 
