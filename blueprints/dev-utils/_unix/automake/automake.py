@@ -46,7 +46,7 @@ class Package(AutoToolsPackageBase):
         self.subinfo.options.configure.autoreconf = False
 
     def postInstall(self):
-        major, minor, patch = self.subinfo.buildTarget.split(".")
+        major, minor = self.subinfo.buildTarget.split(".")[:2]
 
         return self.patchInstallPrefix(
             [
