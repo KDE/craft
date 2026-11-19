@@ -258,7 +258,8 @@ def systemWithoutShell(
             ctypes.windll.kernel32.SetConsoleMode(ctypes.windll.kernel32.GetStdHandle(-11), 7)
             ctypes.windll.kernel32.SetConsoleMode(ctypes.windll.kernel32.GetStdHandle(-12), 7)
 
-    environment = kw.get("env", os.environ)
+    environment = dict(kw.get("env", os.environ))
+    kw["env"] = environment
     cwd = kw.get("cwd", os.getcwd())
     acceptableExitCodes = acceptableExitCodes or [0]
 
