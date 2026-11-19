@@ -263,9 +263,9 @@ def systemWithoutShell(
     acceptableExitCodes = acceptableExitCodes or [0]
 
     # make sure our venv python is used
-    python_venv = Path(CraftCore.standardDirs.etcDir()) / f"virtualenv/3/Scripts/python{CraftCore.compiler.platform.executableSuffix}"
-    if python_venv.exists():
-        environment["VIRTUAL_ENV"] = str(python_venv.parent)
+    python_venv = Path(CraftCore.standardDirs.etcDir()) / "virtualenv/3"
+    if (python_venv / "pyvenv.cfg").exists():
+        environment["VIRTUAL_ENV"] = str(python_venv)
 
     # if the first argument is not an absolute path replace it with the full path to the application
     if isinstance(cmd, Arguments):
