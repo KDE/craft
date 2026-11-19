@@ -26,7 +26,7 @@ if [ -n "$CRAFT_PYTHON_BIN" ]; then
     fi
 else
     # Preferred Python versions, newest first
-    for py in "$(dirname "$craftRoot")/../etc/virtualenv/3/bin/python3" python3 $(ls -1 ${PATH//:/\/python3.* }/python3.* 2>/dev/null | sort -V -r); do
+    for py in "$(dirname "$craftRoot")/../etc/virtualenv/craft/bin/python3" python3 $(ls -1 ${PATH//:/\/python3.* }/python3.* 2>/dev/null | sort -V -r); do
         if check_python_version "$py"; then
             CRAFT_PYTHON_BIN="$(command -v "$py")"
             break

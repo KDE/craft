@@ -65,7 +65,7 @@ else
     break
 }
 
-findPython("$env:CraftRoot\..\etc\virtualenv\3\Scripts\python.exe")
+findPython("$env:CraftRoot\..\etc\virtualenv\craft\Scripts\python.exe")
 
 if($settings["Paths"].Contains("Python") -and (Test-Path -path $settings["Paths"]["Python"]))
 {

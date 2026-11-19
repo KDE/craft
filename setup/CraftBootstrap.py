@@ -191,12 +191,16 @@ class CraftBootstrap(object):
         return os.path.exists(os.path.join(destdir, filename))
 
 
+def venvDir(prefix):
+    return Path(prefix) / "etc/virtualenv/craft"
+
+
 def venvPython(prefix):
-    return Path(prefix) / "etc/virtualenv/3" / ("Scripts/python.exe" if CraftBootstrap.isWin() else "bin/python3")
+    return venvDir(prefix) / ("Scripts/python.exe" if CraftBootstrap.isWin() else "bin/python3")
 
 
 def setUpVenv(args, packages):
-    venv = Path(args.prefix) / "etc/virtualenv/3"
+    venv = venvDir(args.prefix)
     commands = [[sys.executable, "-m", "venv", venv]]
     if packages:
         commands.append([venvPython(args.prefix), "-m", "pip", "install", "--require-virtualenv", "--upgrade", "--no-input"] + packages)
