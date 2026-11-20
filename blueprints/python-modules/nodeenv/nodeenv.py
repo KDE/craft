@@ -8,7 +8,7 @@ class subinfo(info.infoclass):
     def setTargets(self):
         for ver in ["1.11.1"]:
             self.svnTargets[ver] = ""
-        self.defaultTarget = "1.11.1"
+        self.defaultTarget = "1.12.0"
         self.releaseManagerId = 61153
         self.description = "Node.js virtual environment builder"
 
