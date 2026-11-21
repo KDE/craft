@@ -146,11 +146,65 @@ FunctionEnd
 
 AutoCloseWindow false
 
+!macro UninstallPrevious
+    IfFileExists "$MultiUser.InstDir\uninstall.exe" 0 no_previous_uninstaller
+
+    DetailPrint "Uninstalling previous version from: $MultiUser.InstDir"
+
+    ; Our EndProcessWithDialog macro conflicts with NSIS _?= uninstall option:
+    ; The _?= option is required to make sure ExecWait really waits for the uninstall to be completed.
+    ; However it also stops the uninstaller from copying itself to a temporary directory and running from there.
+    ; Instead it runs the uninstaller in $MultiUser.InstDir, but at the same time EndProcessWithDialog makes it
+    ; fail as long as an process is running inside $MultiUser.InstDir
+    ; To fix this, we copy the uninstaller to a temp dir ourself and run it from there with _?=$MultiUser.InstDir
+    ; This way we get the best from both worlds.
+
+    ; Create a temporary plugin directory and copy uninstaller to it
+    InitPluginsDir
+
+    ClearErrors
+    CopyFiles "$MultiUser.InstDir\uninstall.exe" "$PLUGINSDIR\uninstall.exe"
+
+    ${If} ${Errors}
+        MessageBox MB_ICONSTOP|MB_OK \
+            "Could not copy the previous uninstaller. Installation will be aborted."
+        Abort
+    ${EndIf}
+
+    ; Run the temporary copy.
+    ClearErrors
+    ExecWait '"$PLUGINSDIR\uninstall.exe" /S _?=$MultiUser.InstDir' $0
+
+    ${If} ${Errors}
+        MessageBox MB_ICONSTOP|MB_OK \
+            "@{productname} is already installed. To install a new version or reinstall it, the current installation needs to be uninstalled. We tried to do this autimatically, but failed to execute the uninstaller. Installation will be aborted."
+        Abort
+    ${EndIf}
+
+    ${If} $0 != 0
+        MessageBox MB_ICONSTOP|MB_OK \
+            "@{productname} is already installed. To install a new version or reinstall it, the current installation needs to be uninstalled. We tried to do this autimatically, but the uninstaller failed (exit code: $0). Installation will be aborted."
+        Abort
+    ${EndIf}
+
+    ; Remove temporary copy.
+    Delete "$PLUGINSDIR\uninstall.exe"
+
+    DetailPrint "Previous version successfully uninstalled."
+    Goto uninstall_check_done
+
+    no_previous_uninstaller:
+        DetailPrint "No previous uninstaller found. Continuing with installation."
+
+    uninstall_check_done:
+
+!macroend
+
 
 ; beginning (invisible) section
 Section
   !insertmacro EndProcessWithDialog
-  ExecWait '"$MultiUser.InstDir\uninstall.exe" /S _?=$MultiUser.InstDir'
+  !insertmacro UninstallPrevious
   @{preInstallHook}
   WriteRegStr SHCTX "${regkey}" "Install_Dir" "$INSTDIR"
   WriteRegStr SHCTX "${MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY}" "${MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_VALUENAME}" "$MultiUser.InstallMode"
