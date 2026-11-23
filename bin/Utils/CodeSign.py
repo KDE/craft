@@ -22,6 +22,7 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 import io
+import json
 import os
 import re
 import secrets
@@ -457,9 +458,36 @@ def __notarizeMacPackage(packagePath: Path):
         message=f"Enter the app password for {appleID}",
         key="MAC_APP_PASSWORD",
     )
-    return utils.system(
-        ["xcrun", "notarytool", "submit", packagePath, "--wait", "--apple-id", appleID, "--team-id", teamId, "--password", password], secret=[password]
-    )
+    credentials = ["--apple-id", appleID, "--team-id", teamId, "--password", password]
+    with io.StringIO() as out:
+        submitted = utils.system(
+            ["xcrun", "notarytool", "submit", packagePath, "--wait", "--output-format", "json"] + credentials,
+            secret=[password],
+            stdout=out,
+        )
+        output = out.getvalue()
+
+    result = None
+    for line in reversed(output.strip().splitlines()):
+        try:
+            result = json.loads(line)
+            break
+        except json.JSONDecodeError:
+            continue
+    if not isinstance(result, dict):
+        CraftCore.log.error(f"Failed to parse the notarization result for {packagePath}: {utils.redact(output, [password])}")
+        return False
+
+    submissionId = result.get("id")
+    status = result.get("status")
+    CraftCore.log.info(f"Notarization of {packagePath.name}: status={status}, id={submissionId}, message={result.get('message')}")
+    if submitted and status == "Accepted":
+        return True
+
+    CraftCore.log.error(f"Notarization of {packagePath} failed")
+    if submissionId:
+        utils.system(["xcrun", "notarytool", "log", submissionId] + credentials, secret=[password])
+    return False
 
 
 def signMacPackage(packagePath: str):
