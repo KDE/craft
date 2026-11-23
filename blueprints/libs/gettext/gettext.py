@@ -71,7 +71,7 @@ class subinfo(info.infoclass):
         self.patchLevel["0.22.3"] = 3
 
         self.patchToApply["1.0"] += [("gettext-1.0-fix-syntax-progreloc.diff", 1)]
-        self.patchLevel["1.0"] = 1
+        self.patchLevel["1.0"] = 2
 
         self.defaultTarget = "1.0"
 
@@ -92,6 +92,7 @@ class Package(AutoToolsPackageBase):
         self.subinfo.options.configure.args += [
             "--disable-java",
             "--disable-native-java",
+            "--disable-csharp",
             "--enable-nls",
             "--enable-c++",
             "--with-included-libintl",
