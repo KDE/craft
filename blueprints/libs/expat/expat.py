@@ -11,19 +11,20 @@ class subinfo(info.infoclass):
         self.description = "XML parser library written in C"
         self.releaseManagerId = 770
 
-        for ver in ["2.1.0", "2.2.10", "2.7.3"]:
+        for ver in ["2.1.0", "2.2.10", "2.7.3", "2.10.0"]:
             self.targets[ver] = "https://github.com/libexpat/libexpat/releases/download/R_{tag}/expat-{ver}.tar.gz".format(tag=ver.replace(".", "_"), ver=ver)
             self.targetInstSrc[ver] = "expat-" + ver
 
         self.targetDigests["2.1.0"] = "b08197d146930a5543a7b99e871cba3da614f6f0"
         self.targetDigests["2.2.10"] = (["bf42d1f52371d23684de36cc6d2f0f1acd02de264d1105bdc17792bbeb7e7ceb"], CraftHash.HashAlgorithm.SHA256)
         self.targetDigests["2.7.3"] = (["821ac9710d2c073eaf13e1b1895a9c9aa66c1157a99635c639fbff65cdbdd732"], CraftHash.HashAlgorithm.SHA256)
+        self.targetDigests["2.10.0"] = (["5466a341f9c692ef7a958a6881311be597f8e1ce345984cf78414f54793dea4c"], CraftHash.HashAlgorithm.SHA256)
 
         self.patchToApply["2.1.0"] = ("expat-2.1.0-20130311.diff", 1)
         self.patchToApply["2.2.10"] = [("expat-2.2.10-20210426.diff", 1), ("expat-2.1.0-20130311.diff", 1)]
         self.patchLevel["2.2.10"] = 5
 
-        self.defaultTarget = "2.7.3"
+        self.defaultTarget = "2.10.0"
 
 
 class Package(CMakePackageBase):
