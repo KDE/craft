@@ -5,6 +5,7 @@ import io
 import subprocess
 
 import shells
+from Blueprints.CraftPackageObject import CraftPackageObject
 from CraftCore import CraftCore
 from CraftOS.osutils import OsUtils
 from CraftStandardDirs import CraftStandardDirs
@@ -17,6 +18,9 @@ class MsysPackageBase(VirtualPackageBase):
         CraftCore.log.debug("MsysPackageBase.__init__ called")
         VirtualPackageBase.__init__(self, **kwargs)
         self.msysPackages = [f"msys/{self.package.name}"]
+        msysBase = CraftPackageObject.get("dev-utils/msys-base")
+        if msysBase and msysBase.isIgnored():
+            self.subinfo.options.dynamic.ignored = True
 
     @staticmethod
     def stopMsysProcesses() -> bool:
