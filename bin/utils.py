@@ -1266,18 +1266,25 @@ def makeTemporaryWritable(targetPath: Path):
 
 
 def getPDBForBinary(path: str) -> Path:
+    """Extract PDB debug symbol path embedded in a Windows binary.
+
+    MSVC embeds the PDB path in the binary's CodeView section. Returns None
+    if no valid path found or decoding fails.
+    """
     with open(path, "rb") as f:
         data = f.read()
     pdb = data.rfind(b".pdb")
     if pdb != -1:
-        pdbPathBytes = data[(data.rfind(0x00, 0, pdb) + 1) : pdb + 4]
-        try:
-            return Path(pdbPathBytes.decode("utf-8"))
-        except UnicodeDecodeError:
-            # Limit output to avoid flooding logs with long byte strings
-            preview = pdbPathBytes[:100] if len(pdbPathBytes) > 100 else pdbPathBytes
-            CraftCore.log.warning(f"Could not decode PDB path for {path}: {preview!r}, skipping")
-            return None
+        start = data.rfind(0x00, 0, pdb) + 1
+        pdbPathBytes = data[start : pdb + 4]
+        # Quick sanity check: a valid Windows path starts with drive letter (e.g., C:\)
+        # Check the raw bytes before attempting decode to avoid decoding random binary data can contain .pdb by coincidence
+        if len(pdbPathBytes) > 4 and pdbPathBytes[1:3] == b":\\":
+            try:
+                return Path(pdbPathBytes.decode("utf-8"))
+            except UnicodeDecodeError:
+                preview = pdbPathBytes[:100] if len(pdbPathBytes) > 100 else pdbPathBytes
+                CraftCore.log.warning(f"Could not decode PDB path for {path}: {preview!r}")
     return None
 
 
