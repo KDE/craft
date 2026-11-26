@@ -1270,10 +1270,13 @@ def getPDBForBinary(path: str) -> Path:
         data = f.read()
     pdb = data.rfind(b".pdb")
     if pdb != -1:
+        pdbPathBytes = data[(data.rfind(0x00, 0, pdb) + 1) : pdb + 4]
         try:
-            return Path(data[(data.rfind(0x00, 0, pdb) + 1) : pdb + 4].decode("utf-8"))
+            return Path(pdbPathBytes.decode("utf-8"))
         except UnicodeDecodeError:
-            CraftCore.log.warning(f"Could not decode PDB path for {path}, skipping")
+            # Limit output to avoid flooding logs with long byte strings
+            preview = pdbPathBytes[:100] if len(pdbPathBytes) > 100 else pdbPathBytes
+            CraftCore.log.warning(f"Could not decode PDB path for {path}: {preview!r}, skipping")
             return None
     return None
 
